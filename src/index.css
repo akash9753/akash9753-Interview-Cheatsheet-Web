@@ -111,22 +111,24 @@ body {
 }
 
 .layout {
-  display: grid;
-  grid-template-columns: 248px minmax(0, 1fr);
   min-height: 100vh;
 }
 
 aside {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  width: 248px;
   height: 100vh;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 10px 8px 12px;
   background: rgba(17, 24, 39, 0.92);
   border-right: 1px solid var(--border);
   backdrop-filter: blur(10px);
   font-size: 11px;
   line-height: 1.2;
+  z-index: 20;
 }
 
 .home-link {
@@ -266,6 +268,7 @@ aside {
 main {
   max-width: 1120px;
   width: 100%;
+  margin-left: 248px;
   padding: 42px 52px 96px;
 }
 
@@ -278,6 +281,7 @@ main h6 {
   color: #f8fafc;
   line-height: 1.25;
   margin: 2.2rem 0 0.8rem;
+  scroll-margin-top: 20px;
 }
 
 main h1 {
@@ -478,13 +482,16 @@ tr:nth-child(even) td { background: var(--table-stripe); }
 }
 
 @media (max-width: 900px) {
-  .layout { grid-template-columns: 1fr; }
   aside {
     position: relative;
+    width: auto;
     height: auto;
     max-height: 420px;
   }
-  main { padding: 28px 20px 84px; }
+  main {
+    margin-left: 0;
+    padding: 28px 20px 84px;
+  }
 }
 
 @media (max-width: 640px) {

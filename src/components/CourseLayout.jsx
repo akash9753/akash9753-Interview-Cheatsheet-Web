@@ -8,20 +8,34 @@ export function CourseLayout({ brand, markdown }) {
   const headings = extractHeadings(markdown);
 
   useEffect(() => {
-    function handleToggle(event) {
+    function handleAsideClick(event) {
       const button = event.target.closest('.toc-arrow-btn');
-      if (!button) return;
+      if (button) {
+        const children = button.closest('.toc-toggle')?.nextElementSibling;
+        if (!children) return;
 
-      const children = button.closest('.toc-toggle')?.nextElementSibling;
-      if (!children) return;
+        const expanded = button.getAttribute('aria-expanded') === 'true';
+        button.setAttribute('aria-expanded', String(!expanded));
+        children.classList.toggle('collapsed', expanded);
+        return;
+      }
 
-      const expanded = button.getAttribute('aria-expanded') === 'true';
-      button.setAttribute('aria-expanded', String(!expanded));
-      children.classList.toggle('collapsed', expanded);
+      const link = event.target.closest('aside .toc-link, aside .toc-title');
+      if (!link) return;
+
+      const href = link.getAttribute('href');
+      if (!href?.startsWith('#')) return;
+
+      const target = document.getElementById(href.slice(1));
+      if (!target) return;
+
+      event.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      history.replaceState(null, '', href);
     }
 
-    document.addEventListener('click', handleToggle);
-    return () => document.removeEventListener('click', handleToggle);
+    document.addEventListener('click', handleAsideClick);
+    return () => document.removeEventListener('click', handleAsideClick);
   }, []);
 
   return (
