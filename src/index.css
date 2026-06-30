@@ -10,6 +10,9 @@
   --code-bg: #0f172a;
   --table-stripe: #101a2d;
   --sidebar-width: 300px;
+  --scrollbar-track: #0f172a;
+  --scrollbar-thumb: #334155;
+  --scrollbar-thumb-hover: #475569;
 }
 
 * { box-sizing: border-box; }
@@ -124,12 +127,39 @@ aside {
   overflow-y: auto;
   overflow-x: hidden;
   padding: 18px 14px 24px;
-  background: rgba(17, 24, 39, 0.94);
+  background: var(--panel);
   border-right: 1px solid var(--border);
-  backdrop-filter: blur(10px);
   font-size: 15px;
   line-height: 1.45;
   z-index: 20;
+  color-scheme: dark;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+aside::-webkit-scrollbar {
+  width: 8px;
+}
+
+aside::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+aside::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 999px;
+  border: 2px solid var(--scrollbar-track);
+}
+
+aside::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+aside::-webkit-scrollbar-button,
+aside::-webkit-scrollbar-corner {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .home-link {
