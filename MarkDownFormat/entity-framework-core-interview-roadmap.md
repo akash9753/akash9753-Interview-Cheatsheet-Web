@@ -226,6 +226,54 @@ modelBuilder.Entity<Order>().OwnsOne(o => o.ShippingAddress);
 | `[ForeignKey("AuthorId")]` | Explicit FK mapping |
 | `[NotMapped]` | Exclude property from database |
 
+### Entity vs Model vs DTO
+
+In interviews, **model** is the vague term — always clarify which layer you mean.
+
+| Aspect | Entity | Model (ViewModel / domain) | DTO |
+| --- | --- | --- | --- |
+| Purpose | Map to a database table | Shape data for UI or app logic | Transfer data across boundaries (API, services) |
+| Layer | Data / persistence | Presentation or domain | API contract / service boundary |
+| EF mapping | Yes — `DbSet<T>`, tracked by `DbContext` | Usually not mapped to DB | Never mapped to DB |
+| Navigation properties | Yes (`Author`, `List<Book>`) | Sometimes (flattened for views) | No — flat, only needed fields |
+| Tracking / change detection | Yes (when attached) | No | No |
+| Validation | Data annotations + Fluent API | UI validation, display metadata | Input validation for API contracts |
+| Typical use | `SaveChanges`, queries inside repository | MVC views, forms, Razor pages | REST request/response, gRPC messages |
+
+```csharp
+// Entity — persistence shape (maps to Books table)
+public class Book
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public decimal Price { get; set; }
+    public int AuthorId { get; set; }
+    public Author Author { get; set; }
+}
+
+// Model / ViewModel — UI shape (MVC, Blazor forms)
+public class BookEditViewModel
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public decimal Price { get; set; }
+    public int AuthorId { get; set; }
+    public List<SelectListItem> Authors { get; set; }  // dropdown data for the view
+}
+
+// DTO — API contract (no navigation, no EF concerns)
+public record BookListDto(int Id, string Title, string AuthorName);
+public record CreateBookDto(string Title, decimal Price, int AuthorId);
+```
+
+| Question | Answer |
+| --- | --- |
+| Entity vs DTO? | Entity = DB table mapping with relationships and tracking; DTO = flat contract for input/output — never expose entities from APIs |
+| What is a "model" in .NET? | Context-dependent: in EF docs it often means entity; in MVC it means ViewModel; in Clean Architecture it may mean domain object — state the layer |
+| Why not return entities from APIs? | Over-posting risk, leaks internal schema, circular JSON from navigations, unnecessary columns, harder to version |
+| Entity → DTO mapping? | Project in query: `.Select(b => new BookListDto(...))` — EF translates to SQL and fetches only needed columns |
+| Can a DTO be used as entity? | No — DTOs lack EF configuration, navigations, and should not be in `DbSet<T>` |
+
 **Must-know points:**
 - Reference navigation = single related entity; collection navigation = `List<T>`
 - Nullable FK (`int?`) = optional relationship
