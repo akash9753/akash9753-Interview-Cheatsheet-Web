@@ -3,7 +3,7 @@ import { courses } from '../data/courses';
 
 export function Home() {
   return (
-    <main className="wrap">
+    <div className="home-page">
       <h1>Interview Cheatsheet</h1>
       <p className="subtitle">Choose a topic to open the learning roadmap.</p>
 
@@ -19,6 +19,6 @@ export function Home() {
       </div>
 
       <p className="footer">Made by Akash</p>
-    </main>
+    </div>
   );
 }
