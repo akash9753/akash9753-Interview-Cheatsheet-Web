@@ -1,3 +1,15 @@
+const SKIP_H2_TITLES = new Set(['goal', 'topic index']);
+
+export function filterTocHeadings(headings) {
+  return headings.filter((heading) => {
+    if (heading.level === 1) return false;
+    if (heading.level === 2 && SKIP_H2_TITLES.has(heading.text.trim().toLowerCase())) {
+      return false;
+    }
+    return true;
+  });
+}
+
 function renderTocNodes(headings, start, end, parentLevel) {
   const nodes = [];
   let i = start;

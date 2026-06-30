@@ -1,16 +1,17 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { MarkdownContent } from './MarkdownContent';
-import { TableOfContents } from '../utils/toc';
+import { TableOfContents, filterTocHeadings } from '../utils/toc';
 import { extractHeadings } from '../utils/headings';
 
 export function CourseLayout({ brand, markdown }) {
   const headings = extractHeadings(markdown);
+  const tocHeadings = filterTocHeadings(headings);
 
   useEffect(() => {
-    if (!headings.length) return undefined;
+    if (!tocHeadings.length) return undefined;
 
-    const headingEls = headings
+    const headingEls = tocHeadings
       .map(({ id }) => document.getElementById(id))
       .filter(Boolean);
 
@@ -91,7 +92,7 @@ export function CourseLayout({ brand, markdown }) {
         el.classList.remove('is-active', 'is-active-parent');
       });
     };
-  }, [markdown, headings]);
+  }, [markdown, tocHeadings]);
 
   useEffect(() => {
     function handleAsideClick(event) {
@@ -131,7 +132,7 @@ export function CourseLayout({ brand, markdown }) {
       <aside>
         <Link className="home-link" to="/">← All Courses</Link>
         <h2 className="brand">{brand}</h2>
-        <TableOfContents headings={headings} />
+        <TableOfContents headings={tocHeadings} />
       </aside>
       <main id="top">
         <MarkdownContent markdown={markdown} />
