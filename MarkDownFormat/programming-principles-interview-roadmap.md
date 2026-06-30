@@ -78,9 +78,16 @@ SOLID Principles
 ```
 
 ### SOLID Summary
-![SOLID principles in .NET with bad vs good examples](assets/solid/solid-principles-dotnet-examples.jpg)
 
-![Five common SOLID violations and fixes in .NET codebases](assets/solid/solid-violations-wrong-vs-right.jpg)
+### SOLID — Bad vs Good (.NET)
+
+| Principle | Violation (bad) | Fix (good) |
+| --- | --- | --- |
+| SRP | `EmployeeService` saves to DB, sends email, generates PDF | Split into `EmployeeService`, `EmployeeRepository`, `EmailService` |
+| OCP | `if (type == "RazorPay")` in payment method | `IPaymentGateway` + strategy — add new gateway without editing existing code |
+| LSP | `Square : Rectangle` breaks `SetWidth`/`SetHeight` contract | Subtypes must honor parent behavior — don't weaken preconditions |
+| ISP | Fat `IMachine` with `Print`, `Scan`, `Fax` — client uses only `Print` | `IPrinter`, `IScanner` — small focused interfaces |
+| DIP | `OrderService` does `new SqlRepository()` | Depend on `IOrderRepository` — inject via constructor |
 
 | Principle | Full Form | Meaning | Example |
 | --- | --- | --- | --- |
@@ -104,12 +111,58 @@ SOLID Principles
 3. Manages object lifetime.
 4. Resolves dependencies automatically.
 
+### DI Injection Types
+
+| Type | How | Pros | Cons |
+| --- | --- | --- | --- |
+| Constructor | Via ctor parameters | Required deps clear, testable | Many deps = large ctor |
+| Property | `public IService Svc { get; set; }` | Optional / late binding | Easy to forget injection |
+| Method | Passed into method | Per-call dependency | Not for core deps |
+
+### Service Lifetimes (ASP.NET Core)
+
+| Lifetime | Registration | Instance scope | Example |
+| --- | --- | --- | --- |
+| Transient | `AddTransient` | New every resolve | Lightweight stateless helpers |
+| Scoped | `AddScoped` | One per HTTP request | `DbContext`, unit-of-work |
+| Singleton | `AddSingleton` | One for app lifetime | Config, logging, caches |
+
+| Question | Answer |
+| --- | --- |
+| SRP in one line? | One class, one reason to change |
+| OCP in one line? | Extend via new types/interfaces, don't modify existing working code |
+| LSP classic trap? | `Square : Rectangle` — substituting breaks area logic |
+| DIP vs DI? | DIP = principle (depend on abstractions); DI = pattern implementing it |
+| IoC vs DI? | IoC = who creates objects (container); DI = how dependencies arrive (injection) |
+| Scoped vs Singleton for DbContext? | **Scoped** — DbContext is not thread-safe; never Singleton |
+
+**Must-know points:**
+- SOLID is about maintainability and testability — tie each letter to a real refactor story
+- Constructor injection is the default in ASP.NET Core
+- `DbContext` = Scoped; logging/config = Singleton; avoid captive dependencies (Singleton holding Scoped)
+
 ---
 
 ## 2. Design Patterns
-![Top 5 .NET design patterns summary](assets/patterns/top-5-design-patterns.jpg)
 
-![Decorator design pattern with visual analogy](assets/patterns/decorator-design-pattern.jpg)
+### Top 5 Patterns for .NET Interviews
+
+| Pattern | Category | When to use | .NET example |
+| --- | --- | --- | --- |
+| Singleton | Creational | One shared instance | Logger, config holder |
+| Factory | Creational | Hide concrete type creation | `PaymentGatewayFactory` |
+| Repository | Structural-ish | Abstract data access | `IRepository<T>` over EF |
+| Strategy | Behavioral | Swap algorithms at runtime | Payment methods, pricing rules |
+| Decorator | Structural | Add behavior without subclassing | `LoggingDecorator` around service |
+
+### Decorator vs Inheritance
+
+| Aspect | Inheritance | Decorator |
+| --- | --- | --- |
+| Extension | Compile-time subclass | Runtime wrap |
+| Flexibility | Fixed hierarchy | Stack multiple decorators |
+| Open/Closed | Often violates OCP | Aligns with OCP |
+| Example | `LoggedService : Service` | `new LoggingDecorator(new Service())` |
 
 ```text
 Design Patterns
@@ -244,26 +297,67 @@ Design Patterns
 | State | Changes behavior based on object state | ATM machine states |
 | Chain of Responsibility | Passes request through chain of handlers | ASP.NET Core Middleware Pipeline |
 
+| Question | Answer |
+| --- | --- |
+| Singleton thread safety? | Use `Lazy<T>` or lock — interview follow-up for double-checked locking |
+| Factory vs Abstract Factory? | Factory = one product; Abstract Factory = families of related products (UI themes) |
+| Strategy vs State? | Strategy = client picks algorithm; State = object changes behavior by internal state |
+| Observer in .NET? | Events, `IObservable<T>`, MediatR notifications |
+| Repository pattern? | Abstraction over data access — not a GoF pattern but very common in .NET interviews |
+| Middleware = which pattern? | Chain of Responsibility |
+
+**Must-know points:**
+- **Creational** = how objects are born; **Structural** = how they're composed; **Behavioral** = how they communicate
+- EF Core lazy loading uses **Proxy** pattern
+- MediatR handlers often implement **Command** pattern
+
 ---
 
 ## 3. Architectural Patterns
-![CQRS architecture with DTO, entity, and handler flow](assets/patterns/cqrs-dto-entity-handler-architecture.png)
 
-![Microservice communication sync vs async patterns](assets/patterns/microservice-communication-sync-async.png)
+### Layered vs Clean Architecture
 
-![SOA interoperability with Java and .NET via XML](assets/patterns/soa-java-dotnet-xml.png)
+| Layer (traditional) | Clean Architecture ring | Responsibility |
+| --- | --- | --- |
+| UI / API | Presentation | Controllers, DTOs, HTTP |
+| Business / Service | Application | Use cases, commands, queries |
+| Domain | Domain | Entities, value objects, rules |
+| Data / Infrastructure | Infrastructure | EF, files, external APIs |
 
-![Layered architecture in .NET applications](assets/patterns/layered-architecture-dotnet.jpg)
+**Dependency rule (Clean):** inner layers never reference outer layers — Domain has zero framework references.
 
-![Clean Architecture layers in .NET](assets/patterns/clean-architecture-layers.jpg)
+### CQRS Flow
 
-![Clean Architecture cheat sheet for scalable .NET apps](assets/patterns/clean-architecture-cheat-sheet.jpg)
+| Step | Command side | Query side |
+| --- | --- | --- |
+| Input | `CreateOrderCommand` | `GetOrderByIdQuery` |
+| Handler | Validates, writes to DB | Reads optimized model / projection |
+| Model | Write entity / aggregate | Read DTO / view model |
+| Storage | Same DB or separate write DB | Read replica / materialized view |
 
-![Modern .NET architecture roadmap for 2026](assets/patterns/modern-dotnet-architecture-2026.jpg)
+### Microservices Communication
 
-![Microservice transactions with Saga and Outbox patterns](assets/patterns/microservices-transactions-saga-outbox.jpg)
+| Style | Mechanism | Pros | Cons |
+| --- | --- | --- | --- |
+| Sync | HTTP/gRPC REST call | Simple, immediate response | Tight coupling, cascading failures |
+| Async | Message queue (RabbitMQ, Kafka) | Loose coupling, resilience | Eventual consistency, complexity |
 
-![Inbox pattern for reliable message consumption in .NET](assets/patterns/inbox-pattern-reliable-consumption.jpg)
+### Distributed Transaction Patterns
+
+| Pattern | Purpose | How |
+| --- | --- | --- |
+| Saga | Multi-service transaction | Choreography (events) or orchestration (coordinator) |
+| Outbox | Reliable publish | Write event to outbox table in same DB transaction as business data |
+| Inbox | Reliable consume | Store message ID — process once, idempotent handler |
+
+### SOA vs Microservices
+
+| Aspect | SOA | Microservices |
+| --- | --- | --- |
+| Granularity | Larger services | Small, bounded-context services |
+| Communication | Often ESB, SOAP/XML | REST, gRPC, events |
+| Deployment | Shared infrastructure common | Independent deploy per service |
+| Data | Shared DB possible | Database per service (ideal) |
 
 ```text
 Architectural Patterns → High-level application structure design patterns.
@@ -326,3 +420,18 @@ Architectural Patterns → High-level application structure design patterns.
 | --- | --- | --- |
 | Command | Handles create, update, delete operations | `CreateOrderCommand` |
 | Query | Handles read/fetch operations | `GetOrderByIdQuery` |
+
+| Question | Answer |
+| --- | --- |
+| MVC vs Layered? | MVC is presentation pattern; layered is full-stack separation (UI → BLL → DAL) |
+| When CQRS? | High read/write asymmetry, complex domains, separate scaling of reads |
+| CQRS always two databases? | No — can start with one DB; separate read models as optimization |
+| Microservices vs monolith? | Monolith first for small teams; microservices for independent scale/deploy boundaries |
+| Saga vs 2PC? | 2PC (two-phase commit) rare in microservices; Saga uses compensating transactions |
+| Outbox pattern why? | Avoid "DB saved but message not published" — atomic write + outbox poll |
+| Clean Architecture core idea? | Business rules at center; frameworks are plugins on the outside |
+
+**Must-know points:**
+- **Event-driven** decouples producers/consumers — good for audit, integrations, async workflows
+- MediatR in ASP.NET Core is a popular CQRS/command dispatcher
+- Microservices trade operational complexity for team autonomy and independent deployment

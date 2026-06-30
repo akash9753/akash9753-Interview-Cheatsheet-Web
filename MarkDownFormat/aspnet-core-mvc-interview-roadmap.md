@@ -90,6 +90,19 @@ Common static files:
 - Fonts
 - Static HTML files
 
+| Question | Answer |
+| --- | --- |
+| What is ASP.NET Core? | Cross-platform, unified framework for web apps, MVC, Razor Pages, and HTTP APIs |
+| ASP.NET Core vs ASP.NET Framework? | Core is cross-platform with built-in DI and `appsettings.json`; Framework is Windows-only with `web.config` |
+| Why no `Startup.cs` in newer templates? | .NET 6+ minimal hosting model merges setup into `Program.cs` (top-level statements) |
+| What is `wwwroot`? | Convention folder for static assets served by `UseStaticFiles()` |
+| Environment-specific configuration? | `appsettings.{Environment}.json` layered over base; environment variables override |
+
+**Must-know points:**
+- Built-in dependency injection, configuration, and logging — no third-party container required
+- Runs on Kestrel by default; production often uses reverse proxy (IIS, Nginx, Apache)
+- `Program.cs` registers services (`builder.Services`) and configures middleware (`app.Use*`)
+
 ---
 
 <a id="topic-2"></a>
@@ -108,8 +121,15 @@ Common static files:
 
 Kestrel is the default cross-platform web server used in ASP.NET Core applications.
 
-### Kestrel Flow
-![Kestrel and MVC request flow diagram](assets/aspnet/kestrel-mvc-request-flow.png)
+### Kestrel Request Flow
+
+| Step | Component | Role |
+| --- | --- | --- |
+| 1 | Browser / client | Sends HTTP request |
+| 2 | Kestrel | Terminates HTTP connection, forwards to app pipeline |
+| 3 | Middleware pipeline | Auth, routing, static files, logging, etc. |
+| 4 | Controller / endpoint | Executes application logic |
+| 5 | Kestrel | Writes HTTP response back to client |
 
 ```text
 Browser Request
@@ -197,6 +217,19 @@ Reverse proxy benefits:
 - Request filtering
 - Process management
 
+| Question | Answer |
+| --- | --- |
+| What is Kestrel? | Cross-platform, high-performance web server built into ASP.NET Core |
+| Kestrel vs IIS? | Kestrel runs the app; IIS/Nginx/Apache often act as reverse proxy in production |
+| In-process vs out-of-process? | In-process runs inside `w3wp.exe` (Windows, faster); out-of-process runs `dotnet.exe` with IIS as proxy |
+| Does Kestrel replace IIS? | No — they complement; proxy handles SSL, load balancing; Kestrel runs ASP.NET Core |
+| Why use a reverse proxy? | SSL termination, security filtering, load balancing, static file offload |
+
+**Must-know points:**
+- Kestrel is the default server — lightweight, async, HTTP/1.1 and HTTP/2
+- Never expose Kestrel directly to the internet without a reverse proxy in production
+- In-process hosting is Windows-only and offers lowest latency with IIS
+
 ---
 
 <a id="topic-3"></a>
@@ -221,8 +254,14 @@ MVC separates an application into Model, View, and Controller.
 | View | Handles UI and display logic |
 | Controller | Handles user requests and connects Model with View |
 
-### MVC Flow
-![HTTP stateless behavior with controller example](assets/aspnet/http-stateless-controller-example.png)
+### HTTP Stateless Model and MVC Flow
+
+| Aspect | Behavior |
+| --- | --- |
+| HTTP default | Stateless — each request is independent; server does not remember prior requests |
+| Where state lives | Cookies, session, JWT, database — not in the HTTP protocol itself |
+| Controller role | Receives request, calls model/service, selects view — fresh `HttpContext` per request |
+| vs Web Forms | No ViewState or postback lifecycle; MVC rebuilds page from scratch each request |
 
 ```text
 User Request
@@ -232,6 +271,19 @@ User Request
     -> View
     -> HTML Response
 ```
+
+| Question | Answer |
+| --- | --- |
+| What is MVC? | Separation of concerns: Model (data/logic), View (UI), Controller (request handling) |
+| Role of Model? | Business logic, data access, validation rules |
+| Role of View? | Renders HTML via Razor; displays data from controller |
+| Role of Controller? | Handles HTTP request, invokes model, returns view or result |
+| Why is HTTP stateless relevant? | MVC does not preserve page state — use session, cookies, or tokens for user state |
+
+**Must-know points:**
+- Controller should stay thin — delegate business logic to services/models
+- Strongly typed views (`@model`) give compile-time safety and IntelliSense
+- MVC is a pattern, not exclusive to ASP.NET — but Razor is the ASP.NET Core view engine
 
 ---
 
@@ -292,10 +344,30 @@ Client Request
 
 Request delegates are used to build the request pipeline. They are configured using `Run`, `Map`, and `Use` extension methods.
 
-### Common Built-In Middleware
-![ASP.NET Core middleware pipeline order](assets/aspnet/middleware-pipeline-order.jpg)
+### Middleware Pipeline Order (Typical)
 
-![Complete ASP.NET Core 2026 cheat sheet](assets/aspnet/aspnet-core-2026-cheat-sheet.jpg)
+| Order | Middleware | Purpose |
+| --- | --- | --- |
+| 1 | Exception handling (`UseExceptionHandler` / dev page) | Catch unhandled errors; dev page in Development only |
+| 2 | HTTPS redirection | Redirect HTTP → HTTPS |
+| 3 | Static files (`UseStaticFiles`) | Serve `wwwroot` before routing |
+| 4 | Routing (`UseRouting`) | Match URL to endpoint |
+| 5 | CORS (`UseCors`) | Cross-origin headers — before auth when needed |
+| 6 | Authentication (`UseAuthentication`) | Identify user (JWT, cookies) |
+| 7 | Authorization (`UseAuthorization`) | Enforce permissions |
+| 8 | Endpoints (`MapControllers`, `MapGet`, etc.) | Execute controller action or minimal API |
+
+### ASP.NET Core Quick Reference
+
+| Area | Key API / concept |
+| --- | --- |
+| Hosting | `WebApplication.CreateBuilder`, Kestrel, reverse proxy |
+| Services | `builder.Services.Add*` — DI registration |
+| Pipeline | `app.Use*`, `app.Map*` — middleware order matters |
+| MVC | `[ApiController]`, `ControllerBase`, Razor views |
+| Config | `appsettings.json`, `IOptions<T>`, environment variables |
+| Auth | JWT bearer, `[Authorize]`, Identity |
+| Errors | `UseExceptionHandler`, `ProblemDetails` (RFC 7807) |
 
 - `UseAuthentication()`
 - `UseAuthorization()`
@@ -354,6 +426,19 @@ Application Start
     -> Application Ready
 ```
 
+| Question | Answer |
+| --- | --- |
+| What is middleware? | Components in the HTTP pipeline that can inspect/modify request and response |
+| `Use` vs `Run` vs `Map`? | `Use` calls next middleware; `Run` is terminal; `Map` branches by path |
+| Why does order matter? | Auth must run after routing; static files before endpoints; exception handler early |
+| Middleware vs filters? | Middleware runs for entire pipeline (incl. static files); filters run only in MVC/controller pipeline |
+| Custom middleware registration? | `app.UseMiddleware<T>()` or inline `app.Use(async (ctx, next) => ...)` |
+
+**Must-know points:**
+- Each middleware can run code before and after `await _next(context)`
+- `ConfigureServices` / `builder.Services` = DI; `Configure` / `app` = pipeline (legacy vs minimal hosting)
+- Wrong middleware order is a common interview trap — auth after routing, static files before endpoints
+
 ---
 
 <a id="topic-5"></a>
@@ -404,6 +489,19 @@ public class ProductsController : ControllerBase
 | Attribute routing | Route defined using attributes on controllers/actions |
 | Endpoint routing | Modern endpoint-based routing introduced in ASP.NET Core 3.0 |
 | Area routing | Used to organize large MVC applications into areas |
+
+| Question | Answer |
+| --- | --- |
+| Conventional vs attribute routing? | Conventional = global pattern in `Program.cs`; attribute = `[Route]` on controller/action |
+| What is endpoint routing? | Unified routing (ASP.NET Core 3.0+) — maps to endpoints, not just controllers |
+| Optional route parameter syntax? | `{id?}` — parameter is optional |
+| Route constraints? | `{id:int}`, `{name:alpha}` — restrict parameter shape |
+| Area routing pattern? | `[Area("Admin")]` + route template `{area:exists}/{controller}/{action}` |
+
+**Must-know points:**
+- Attribute routing takes precedence over conventional when both apply
+- `[controller]` and `[action]` tokens substitute class/method names in route templates
+- `MapControllerRoute` and `MapControllers` are the modern endpoint-routing equivalents
 
 ---
 
@@ -479,6 +577,19 @@ Common error status codes:
 | 403 | Forbidden |
 | 404 | Not Found |
 | 500 | Internal Server Error |
+
+| Question | Answer |
+| --- | --- |
+| `Controller` vs `ControllerBase`? | `Controller` adds view support (`View()`, ViewBag); `ControllerBase` is API-focused, lighter |
+| `IActionResult` vs `ActionResult<T>`? | `ActionResult<T>` gives typed response + better OpenAPI/Swagger docs |
+| When use `ControllerBase`? | Web APIs returning JSON/XML — no Razor views needed |
+| Common result helpers? | `Ok()`, `NotFound()`, `BadRequest()`, `CreatedAtAction()`, `NoContent()` |
+| `[ApiController]` attribute? | Enables automatic model validation, binding source inference, problem details |
+
+**Must-know points:**
+- Prefer `ActionResult<T>` for APIs — compile-time type checking and Swagger clarity
+- `return Ok(data)` sets 200; use correct status codes (`201` for create, `204` for delete with no body)
+- `Controller` inherits `ControllerBase` — API controllers should not inherit `Controller`
 
 ---
 
@@ -560,6 +671,19 @@ Benefits:
 | Need type casting | Yes | No | Yes | Yes | No |
 | Recommended use | Less preferred | Less preferred | Redirect messages | User/login data | Preferred |
 
+| Question | Answer |
+| --- | --- |
+| ViewData vs ViewBag? | Both request-scoped dictionaries; ViewData needs string keys and casting; ViewBag is dynamic |
+| When to use TempData? | Pass data across redirect (`RedirectToAction`) — survives one request |
+| ViewModel vs entity? | ViewModel is POCO shaped for a view (dropdowns, display fields); entity maps to DB |
+| Strongly typed view benefit? | `@model` gives IntelliSense, compile-time checks, fewer runtime errors |
+| Session vs TempData? | Session lasts entire user session; TempData is one redirect/read then gone |
+
+**Must-know points:**
+- Prefer ViewModel over ViewBag/ViewData for maintainability and type safety
+- TempData uses session provider by default — requires `AddSession()` + `UseSession()`
+- ViewModels are POCOs — not EF entities; keep view concerns separate from persistence
+
 ---
 
 <a id="topic-8"></a>
@@ -623,7 +747,16 @@ public record EmployeeDto(int Id, string Name, string Department);
 | POCO in Web API? | Request/response models are plain classes — no `ControllerBase` inheritance on data types |
 
 ### Web API Advantages
-![Web API versioning with MapToApiVersion](assets/aspnet/api-versioning-maptoapiversion.jpg)
+
+### API Versioning Approaches
+
+| Approach | How | Example |
+| --- | --- | --- |
+| URL path | Version in route | `api/v1/products`, `api/v2/products` |
+| Query string | `?api-version=1.0` | `api/products?api-version=2.0` |
+| Header | Custom header | `X-Api-Version: 1.0` |
+| Media type | `Accept` header | `application/vnd.company.v2+json` |
+| Attribute | `[MapToApiVersion("2.0")]` on controller/action | Works with `Asp.Versioning.Mvc` package |
 
 - Supports multiple clients
 - Supports JSON and XML responses
@@ -633,10 +766,27 @@ public record EmployeeDto(int Id, string Name, string Department);
 - Supports REST architecture
 - Platform-independent communication
 
-### REST Constraints
-![REST architecture diagram](assets/aspnet/rest-architecture.png)
+### REST Architecture Overview
 
-![Common HTTP status codes reference](assets/aspnet/http-status-codes.gif)
+| Layer | Responsibility |
+| --- | --- |
+| Client | UI or app consuming the API (browser, mobile, SPA) |
+| API gateway / load balancer | Optional — routing, rate limiting, SSL (YARP, Ocelot) |
+| Web API | REST endpoints — resources identified by URLs, HTTP verbs for actions |
+| Business / service layer | Domain logic, validation |
+| Data store | Database, cache |
+
+### Common HTTP Status Codes
+
+| Code | Meaning | Typical use |
+| --- | --- | --- |
+| 200 | OK | Successful GET, PUT, PATCH |
+| 201 | Created | Successful POST — resource created |
+| 400 | Bad Request | Validation failure, malformed body |
+| 401 | Unauthorized | Missing or invalid authentication |
+| 403 | Forbidden | Authenticated but not permitted |
+| 404 | Not Found | Resource does not exist |
+| 500 | Internal Server Error | Unhandled server exception |
 
 | Constraint | Meaning |
 | --- | --- |
@@ -688,9 +838,27 @@ public class EmployeeController : ControllerBase
 | Base class | `ControllerBase` | `Controller` |
 
 ### Content Negotiation
-![Content negotiation with Accept JSON and XML](assets/aspnet/content-negotiation-json-xml.png)
 
-![Client to Web API HTTP JSON flow](assets/aspnet/client-webapi-http-json-flow.png)
+| `Accept` header | Response format |
+| --- | --- |
+| `application/json` | JSON (default in most APIs) |
+| `application/xml` | XML |
+| `*/*` | Server picks default formatter |
+
+- Client sends `Accept` header; server selects formatter (`System.Text.Json`, `XmlSerializer`)
+- `[Produces("application/json")]` constrains output on controller/action
+- For APIs, most teams standardize on JSON and skip negotiation
+
+### Client → Web API Request Flow
+
+| Step | What happens |
+| --- | --- |
+| 1 | Client builds HTTP request (method, URL, headers, JSON body) |
+| 2 | Request hits Kestrel → middleware → routing |
+| 3 | Model binding maps body/query/route to action parameters |
+| 4 | Action executes, returns `IActionResult` / `ActionResult<T>` |
+| 5 | Formatter serializes response to JSON; status code set |
+| 6 | Response returned to client |
 
 Content negotiation decides the response format based on the `Accept` header.
 
@@ -708,6 +876,21 @@ Accept: application/xml  -> XML response
 | Protocol | HTTP | Multiple protocols |
 | Best for | Web/mobile HTTP services | Enterprise services |
 | JSON support | Easy | More configuration |
+
+| Question | Answer |
+| --- | --- |
+| REST vs SOAP? | REST uses HTTP + JSON/XML over URLs; SOAP uses XML envelopes and WSDL |
+| Idempotent HTTP methods? | GET, PUT, DELETE are idempotent; POST and PATCH are not |
+| When return 201 vs 200? | 201 + `Location` header after POST create; 200 for successful GET/PUT |
+| 401 vs 403? | 401 = not authenticated; 403 = authenticated but lacks permission |
+| What is content negotiation? | Server picks response format (JSON/XML) based on `Accept` header |
+| API versioning strategies? | URL path, query string, header, or media type — pick one and document it |
+| Swagger/OpenAPI purpose? | Interactive API docs, client codegen, contract testing |
+
+**Must-know points:**
+- Never expose EF entities directly — use DTOs to prevent over-posting and hide schema
+- `[ApiController]` enables automatic 400 on validation errors and infers `[FromBody]` for complex types
+- Stateless REST — auth via JWT or API key per request, not server session for pure APIs
 
 ---
 
@@ -737,6 +920,19 @@ Common binding sources:
 - Request body
 - Headers
 - Form data
+
+| Question | Answer |
+| --- | --- |
+| What is model binding? | Maps HTTP request data (route, query, body, form) to action parameters or models |
+| `[FromBody]` vs `[FromQuery]`? | Body = JSON/XML payload; query = URL `?key=value` parameters |
+| `[FromRoute]`? | Binds from route template values (`{id}`) |
+| How does validation run? | Data annotations + `ModelState`; `[ApiController]` auto-returns 400 if invalid |
+| FluentValidation vs annotations? | Annotations on model properties; FluentValidation = separate validator classes, richer rules |
+
+**Must-know points:**
+- Check `ModelState.IsValid` in MVC; `[ApiController]` returns 400 automatically for APIs
+- Complex types from body default to `[FromBody]` with `[ApiController]`; primitives from query
+- Custom validation: implement `IValidatableObject` or create `ValidationAttribute` subclass
 
 ---
 
@@ -835,13 +1031,12 @@ public class EmployeeController : Controller
 ```
 
 ### Service Lifetimes
-![ASP.NET Core DI service lifetimes simplified](assets/aspnet/di-service-lifetimes.jpg)
 
-| Lifetime | Meaning | Common Use |
-| --- | --- | --- |
-| `AddTransient` | Creates a new object every time requested | Temporary calculation service |
-| `AddScoped` | Creates one object per HTTP request | Request-specific services |
-| `AddSingleton` | Creates one object for entire application lifetime | Cache service, logger service |
+| Lifetime | Registration | Instance scope | Common use |
+| --- | --- | --- | --- |
+| Transient | `AddTransient` | New instance every time resolved | Lightweight, stateless helpers |
+| Scoped | `AddScoped` | One instance per HTTP request | DbContext, unit-of-work, request context |
+| Singleton | `AddSingleton` | One instance for app lifetime | Cache, config readers, logging sinks |
 
 Important points:
 
@@ -849,12 +1044,32 @@ Important points:
 - Scoped is commonly used in ASP.NET Core web applications.
 - Singleton services should be thread-safe.
 
+| Question | Answer |
+| --- | --- |
+| Why use DI? | Loose coupling, testability, centralized registration, lifecycle management |
+| Preferred injection style? | Constructor injection — dependencies explicit and required |
+| Transient vs scoped? | Transient = new every resolve; scoped = one per request (default for web services) |
+| Can scoped be injected into singleton? | No — captive dependency; inject `IServiceScopeFactory` instead |
+| `DbContext` lifetime? | Always scoped — one per request; never singleton |
+
+**Must-know points:**
+- Register interfaces, not concrete types, in `Program.cs` / `ConfigureServices`
+- Captive dependency (singleton holding scoped) causes stale state and bugs — common interview question
+- `IServiceProvider` resolves services; prefer constructor injection over `GetService()` in app code
+
 ---
 
 <a id="topic-11"></a>
 
 ## 11. Configuration and Options Pattern
-![IOptions vs IOptionsSnapshot vs IOptionsMonitor](assets/aspnet/options-interfaces-comparison.png)
+
+### IOptions Interfaces Comparison
+
+| Interface | Reloads on change? | Lifetime | Best for |
+| --- | --- | --- | --- |
+| `IOptions<T>` | No — snapshot at first resolve | Singleton | Static settings that never change at runtime |
+| `IOptionsSnapshot<T>` | Yes — per scope/request | Scoped | Settings that may change between requests |
+| `IOptionsMonitor<T>` | Yes — pushes `OnChange` callbacks | Singleton | Dynamic config with change notifications |
 
 ### What to Learn
 
@@ -923,16 +1138,57 @@ Benefits:
 - Better maintainability
 - Supports strongly typed settings using options pattern
 
+### Options Pattern Registration
+
+```csharp
+builder.Services.Configure<MySettings>(builder.Configuration.GetSection("MySettings"));
+// Inject IOptions<MySettings>, IOptionsSnapshot<MySettings>, or IOptionsMonitor<MySettings>
+```
+
+| Question | Answer |
+| --- | --- |
+| `IConfiguration` vs Options pattern? | `IConfiguration` is key-value access; Options = strongly typed, validated settings class |
+| `IOptions` vs `IOptionsSnapshot`? | `IOptions` = singleton snapshot; `IOptionsSnapshot` = reloads per scope/request |
+| `IOptionsMonitor` use case? | Singleton with `OnChange` callback when config file changes |
+| Configuration precedence? | env vars > command line > `appsettings.{Environment}.json` > `appsettings.json` |
+| User secrets? | Development-only secrets store — `dotnet user-secrets`; not for production |
+
+**Must-know points:**
+- Never commit secrets — use User Secrets (dev), environment variables, or Azure Key Vault (prod)
+- `Configure<T>` binds a section to a POCO; validate with `ValidateOnStart()` or data annotations
+- `ASPNETCORE_ENVIRONMENT` drives which `appsettings.{Environment}.json` loads
+
 ---
 
 <a id="topic-12"></a>
 
 ## 12. Logging and Error Handling
-![Serilog structured logging vs plain text logging](assets/aspnet/serilog-structured-logging.jpg)
 
-![Global error handling with ProblemDetails](assets/aspnet/global-error-handling-problemdetails.jpg)
+### Structured Logging (Serilog vs Plain Text)
 
-![OpenTelemetry tracing and metrics setup](assets/aspnet/opentelemetry-tracing-metrics.jpg)
+| Aspect | Plain text logging | Structured logging (Serilog) |
+| --- | --- | --- |
+| Format | Free-form strings | Properties + message template |
+| Queryability | Hard to search/filter | Easy to query in Seq, ELK, Application Insights |
+| Example | `Log.Info("User " + id)` | `Log.Information("User {UserId} logged in", id)` |
+| Correlation | Manual | Built-in support for trace/correlation IDs |
+
+### Global Error Handling with ProblemDetails
+
+| Approach | When | Output |
+| --- | --- | --- |
+| Developer exception page | Development only | Full stack trace (`UseDeveloperExceptionPage`) |
+| Exception handler middleware | Production | Friendly error page or JSON (`UseExceptionHandler`) |
+| `ProblemDetails` (RFC 7807) | APIs | Standard JSON: `type`, `title`, `status`, `detail`, `traceId` |
+| `[ApiController]` validation | Invalid model | Automatic 400 `ValidationProblemDetails` |
+
+### OpenTelemetry Observability
+
+| Signal | What it captures | ASP.NET Core integration |
+| --- | --- | --- |
+| Traces | Request spans across services | `AddOpenTelemetry().WithTracing()` |
+| Metrics | Counters, histograms (latency, errors) | `WithMetrics()` — request duration, active connections |
+| Logs | Structured log events | Bridge `ILogger` to OTLP exporter |
 
 ### What to Learn
 
@@ -952,6 +1208,19 @@ Common use cases:
 - Log exceptions
 - Centralize error handling
 - Return consistent error responses
+
+| Question | Answer |
+| --- | --- |
+| Log levels in order? | Trace → Debug → Information → Warning → Error → Critical |
+| Structured logging benefit? | Searchable properties (`{UserId}`) instead of string concatenation |
+| `ProblemDetails`? | RFC 7807 standard error JSON for APIs — `title`, `status`, `detail`, `traceId` |
+| Dev vs prod exception handling? | Dev page shows stack trace; prod uses `UseExceptionHandler` — never expose internals |
+| Correlation ID? | Unique ID per request — propagate in logs and response headers for tracing |
+
+**Must-know points:**
+- Use `ILogger<T>` via DI — category name = fully qualified type name
+- Never log passwords, tokens, or PII — mask sensitive fields
+- Global exception middleware catches unhandled errors; filters catch controller-level exceptions
 
 ---
 
@@ -1001,6 +1270,19 @@ Filters run inside the MVC/controller pipeline. Middleware runs in the full HTTP
 | Filter | Result filter | Runs before/after result execution | `IResultFilter` |
 | Filter | Endpoint filter | Used with Minimal APIs | `IEndpointFilter` |
 
+| Question | Answer |
+| --- | --- |
+| Filter execution order? | Authorization → Resource → Action → Exception → Result |
+| Middleware vs authorization filter? | Middleware runs before routing; `[Authorize]` filter runs at controller level |
+| Action filter use case? | Logging, model validation tweaks, short-circuit before/after action |
+| Exception filter vs middleware? | Filter has access to action context; middleware catches all pipeline errors |
+| Endpoint filters? | Minimal API equivalent of action filters — `IEndpointFilter` |
+
+**Must-know points:**
+- Filters run only for MVC/controller endpoints — not for static files or non-MVC middleware
+- `IAsyncActionFilter` preferred over sync for async action methods
+- Global filters registered via `options.Filters.Add<T>()` in `AddControllers`
+
 ---
 
 <a id="topic-14"></a>
@@ -1046,10 +1328,26 @@ Client Login
     -> Access Granted
 ```
 
-### JWT Token
-![How JWT authentication works in ASP.NET Core](assets/aspnet/jwt-authentication-flow.jpg)
+### JWT Authentication Flow
 
-![Two-factor authentication with TOTP in ASP.NET Core](assets/aspnet/tfa-totp-implementation.jpg)
+| Step | Actor | Action |
+| --- | --- | --- |
+| 1 | Client | POST credentials to `/login` |
+| 2 | Server | Validate user, sign JWT (header + payload + signature) |
+| 3 | Server | Return access token (and optionally refresh token) |
+| 4 | Client | Store token; send `Authorization: Bearer {token}` on each request |
+| 5 | Server | Validate signature, expiry, issuer, audience |
+| 6 | Server | Build `ClaimsPrincipal`; authorization checks run |
+
+### Two-Factor Authentication (TOTP)
+
+| Step | What happens |
+| --- | --- |
+| 1 | User enables 2FA — server generates shared secret |
+| 2 | User scans QR code in authenticator app (Google Authenticator, etc.) |
+| 3 | Login: password + 6-digit TOTP code from app |
+| 4 | Server validates TOTP against shared secret (time-based, ~30s window) |
+| 5 | Recovery codes issued for backup access |
 
 JWT stands for JSON Web Token.
 
@@ -1071,8 +1369,15 @@ Structure:
 Header.Payload.Signature
 ```
 
-### Claims, Roles, Identity, and Principal
-![Roles vs Claims comparison](assets/aspnet/roles-vs-claims.png)
+### Roles vs Claims
+
+| Aspect | Roles | Claims |
+| --- | --- | --- |
+| Granularity | Coarse groups (Admin, User) | Fine-grained key-value pairs (email, department, permission) |
+| Storage | `ClaimTypes.Role` in identity | Any `type` + `value` pair in token or cookie |
+| Authorization | `[Authorize(Roles = "Admin")]` | `[Authorize(Policy = "CanEdit")]` with claim requirements |
+| Flexibility | Limited — role explosion problem | Preferred for policy-based auth |
+| JWT payload | Role claim(s) | Multiple custom claims |
 
 | Concept | Meaning |
 | --- | --- |
@@ -1175,6 +1480,20 @@ Login
     -> Server Validates Refresh Token
     -> New Access Token Generated
 ```
+
+| Question | Answer |
+| --- | --- |
+| Authentication vs authorization? | AuthN = who you are (login); AuthZ = what you can do (permissions) |
+| JWT three parts? | Header (algorithm), Payload (claims), Signature (integrity verification) |
+| Is JWT encrypted? | No — Base64-encoded and signed, not encrypted; never store secrets in payload |
+| Access vs refresh token? | Access = short-lived API access; refresh = long-lived, used only to get new access token |
+| Where send JWT? | `Authorization: Bearer {token}` header |
+| Roles vs claims for authZ? | Roles for simple cases; claims + policies for fine-grained, scalable permissions |
+
+**Must-know points:**
+- Validate issuer, audience, expiry, and signature on every request — use `AddJwtBearer`
+- Refresh tokens should be stored securely (httpOnly cookie or secure storage) — not in localStorage for sensitive apps
+- `[AllowAnonymous]` bypasses `[Authorize]` on specific actions
 
 ---
 
@@ -1279,12 +1598,35 @@ Common technologies:
 - SAML
 - JWT tokens
 
+| Question | Answer |
+| --- | --- |
+| OAuth vs OpenID Connect? | OAuth = authorization (what app can access); OIDC = authentication layer on OAuth 2.0 (who user is) |
+| OAuth vs JWT? | OAuth is a protocol/framework; JWT is a token format — OIDC often issues JWTs |
+| What is SSO? | Single login grants access to multiple apps without re-authenticating |
+| Microsoft Entra ID? | Formerly Azure AD — cloud identity provider with OIDC/OAuth support |
+| IdentityServer4 vs Duende? | IdentityServer4 is legacy; Duende is the supported commercial successor for .NET |
+
+**Must-know points:**
+- "Login with Google/Microsoft" = OIDC flow on top of OAuth 2.0
+- JWT carries claims after OIDC login — app validates token, does not call IdP every request
+- SAML is enterprise SSO alternative to OIDC — common in corporate environments
+
 ---
 
 <a id="topic-16"></a>
 
 ## 16. Cookies, Session, TempData, ViewData, and ViewBag
-![Web session lifecycle from browser open to close](assets/aspnet/web-session-lifecycle.png)
+
+### Web Session Lifecycle
+
+| Phase | What happens |
+| --- | --- |
+| Browser opens | No session yet |
+| First request | Server creates session, issues session ID cookie |
+| Subsequent requests | Browser sends session ID; server loads session data |
+| Data read/write | `HttpContext.Session.SetString/GetString` |
+| Timeout / close | Session expires (idle timeout) or `Session.Clear()` |
+| Browser closes | Session cookie may persist (depends on cookie settings) — server session may still expire |
 
 ### What to Learn
 
@@ -1464,18 +1806,62 @@ public IActionResult Index()
 }
 ```
 
+| Question | Answer |
+| --- | --- |
+| Cookie vs session storage? | Cookie = client-side (4 KB limit); session = server-side (session ID in cookie only) |
+| Is session enabled by default? | No — requires `AddSession()` and `UseSession()` |
+| TempData lifetime? | Survives one redirect; removed after read unless `Keep()` or `Peek()` |
+| `Keep()` vs `Peek()`? | `Keep()` preserves after read; `Peek()` reads without deleting |
+| What is `HttpContext`? | Per-request context — request, response, session, user, cookies, `Items` |
+
+**Must-know points:**
+- Session uses server memory by default — use distributed session (Redis/SQL) for scale-out
+- Never store sensitive data in cookies without encryption — prefer server session or JWT
+- TempData is backed by session provider — requires session middleware
+
 ---
 
 <a id="topic-17"></a>
 
 ## 17. Minimal APIs
-![Controllers vs Minimal APIs comparison](assets/aspnet/controllers-vs-minimal-apis.jpg)
 
-![Primary constructor in ASP.NET Core controller](assets/aspnet/primary-constructor-controller.jpg)
+### Controllers vs Minimal APIs
 
-![DTO request/response naming for Web APIs](assets/aspnet/dto-request-response-naming.jpg)
+| Aspect | Controller-based API | Minimal API |
+| --- | --- | --- |
+| Structure | Class + action methods | Lambda/delegate per route |
+| Ceremony | More boilerplate (class, attributes) | Less code — `app.MapGet(...)` |
+| Filters | Action/authorization filters | Endpoint filters (`IEndpointFilter`) |
+| OpenAPI | Mature support | Good support in .NET 7+ |
+| Best for | Large APIs, teams preferring MVC patterns | Microservices, small endpoints, prototypes |
 
-![Avoid binding directly to entities in Minimal APIs](assets/aspnet/minimal-api-dto-overposting-security.jpg)
+### Primary Constructor Controllers (.NET 8+)
+
+| Pattern | Example |
+| --- | --- |
+| Traditional | Explicit constructor assigning `private readonly` fields |
+| Primary constructor | `public class ProductsController(IProductService svc) : ControllerBase` — params become fields |
+
+- Reduces boilerplate for DI-injected dependencies
+- Same DI rules apply — services injected via constructor parameters
+
+### DTO Naming Conventions
+
+| Direction | Naming pattern | Example |
+| --- | --- | --- |
+| Create request | `Create{Entity}Dto` / `Create{Entity}Request` | `CreateEmployeeDto` |
+| Update request | `Update{Entity}Dto` | `UpdateEmployeeDto` |
+| Response | `{Entity}Dto` / `{Entity}Response` | `EmployeeDto` |
+| List response | `IEnumerable<{Entity}Dto>` or wrapper | `List<EmployeeDto>` |
+
+### Minimal API — Avoid Entity Over-Posting
+
+| Risk | Mitigation |
+| --- | --- |
+| Binding directly to EF entity | Client can set `Id`, `IsAdmin`, navigation properties |
+| Mass assignment | Use dedicated request DTO with only allowed fields |
+| Response leakage | Return response DTO — hide internal columns and relationships |
+| Validation | Data annotations on DTO + `Results.ValidationProblem` |
 
 ### What to Learn
 
@@ -1499,6 +1885,19 @@ app.MapGet("/", () => "Hello World");
 app.Run();
 ```
 
+| Question | Answer |
+| --- | --- |
+| Minimal API vs controller? | Minimal = less ceremony, inline routes; controllers = better for large APIs with filters |
+| How inject services in Minimal API? | Parameters in handler delegate — resolved from DI automatically |
+| Grouping endpoints? | `app.MapGroup("/api/v1/products")` with shared prefix and filters |
+| Endpoint filters? | `IEndpointFilter` — like action filters for minimal APIs |
+| Primary constructor controllers? | C# 12 / .NET 8 — `class MyController(IService svc) : ControllerBase` |
+
+**Must-know points:**
+- Minimal APIs and controllers can coexist in the same project
+- Use DTOs in minimal API handlers — never bind POST body directly to EF entities
+- `MapGroup` + `WithTags` improves Swagger organization
+
 ---
 
 <a id="topic-18"></a>
@@ -1515,6 +1914,19 @@ app.Run();
 - Streaming files
 - Returning files from APIs
 - Security risks in file upload
+
+| Question | Answer |
+| --- | --- |
+| What is `IFormFile`? | Represents uploaded file in multipart form — `file.OpenReadStream()`, `.FileName`, `.Length` |
+| File size limits? | `RequestSizeLimit`, `MultipartBodyLengthLimit`, `FormOptions` in config |
+| Secure upload practices? | Validate extension, MIME type, size; store outside web root; generate random filenames |
+| Return file from API? | `return File(bytes, "application/pdf", "report.pdf")` or `PhysicalFile` |
+| Streaming large files? | `return File(stream, contentType, enableRangeProcessing: true)` |
+
+**Must-know points:**
+- Never trust client-provided filename or extension — validate and sanitize
+- Store uploads outside `wwwroot` or use blob storage (Azure Blob, S3)
+- Scan uploads for malware in production; enforce max size to prevent DoS
 
 ---
 
@@ -1533,12 +1945,34 @@ app.Run();
 - Cancellation tokens
 - Logging in background services
 
+| Question | Answer |
+| --- | --- |
+| `IHostedService` vs `BackgroundService`? | `BackgroundService` is base class with `ExecuteAsync` loop; implements `IHostedService` |
+| Worker Service template? | Standalone project for long-running background tasks (not web requests) |
+| Cancellation in background work? | Pass `CancellationToken` from `stoppingToken` — respect shutdown gracefully |
+| Scoped services in background? | Create scope: `using var scope = _scopeFactory.CreateScope()` |
+| Queued background tasks? | `Channel<T>` or `IBackgroundTaskQueue` pattern for fire-and-forget with control |
+
+**Must-know points:**
+- Background services start with the host and stop on shutdown — handle `CancellationToken`
+- Do not inject scoped services (e.g. `DbContext`) directly into singleton hosted service
+- Use `IHostedService` for one-shot startup tasks; `BackgroundService` for continuous loops
+
 ---
 
 <a id="topic-20"></a>
 
 ## 20. Caching
-![Response caching vs output caching vs HybridCache](assets/aspnet/caching-strategies-response-output-hybrid.jpg)
+
+### Caching Strategies Comparison
+
+| Type | Scope | Invalidation | Best for |
+| --- | --- | --- | --- |
+| In-memory (`IMemoryCache`) | Single server | Manual or absolute/sliding expiration | Single-instance, hot data |
+| Distributed (`IDistributedCache`) | Multi-server (Redis, SQL Server) | TTL or manual remove | Scale-out, shared cache |
+| Response caching | HTTP cache headers | Client/proxy revalidation | Static or semi-static GET responses |
+| Output caching (.NET 7+) | Server-side response cache | Policy-based (VaryByQuery, tags) | Full page/API response without re-execution |
+| HybridCache (.NET 9+) | L1 in-memory + L2 distributed | Tag-based invalidation | Best of both — local speed + shared L2 |
 
 ### What to Learn
 
@@ -1550,16 +1984,54 @@ app.Run();
 - Cache invalidation
 - Redis basics
 
+| Question | Answer |
+| --- | --- |
+| In-memory vs distributed cache? | In-memory = single server; distributed (Redis) = shared across instances |
+| Response vs output caching? | Response caching = HTTP headers for client/proxy; output caching = server skips re-execution |
+| Cache invalidation strategies? | Absolute expiration, sliding expiration, manual remove, tag-based (HybridCache) |
+| When not to cache? | User-specific, frequently changing, or sensitive data |
+| Redis role? | Distributed cache backplane — session, SignalR scale-out, cache |
+
+**Must-know points:**
+- Always set expiration — unbounded cache causes memory pressure
+- Cache keys must be unique and include relevant parameters (e.g. `product:{id}`)
+- `IDistributedCache` serializes to bytes — use JSON or MessagePack for complex objects
+
 ---
 
 <a id="topic-21"></a>
 
 ## 21. Security Best Practices
-![Fixed and sliding window rate limiting in ASP.NET Core](assets/aspnet/rate-limiting-fixed-sliding-window.jpg)
 
-![YARP reverse proxy setup in .NET](assets/aspnet/yarp-reverse-proxy.jpg)
+### Rate Limiting Strategies
 
-![Ocelot API gateway setup in .NET](assets/aspnet/ocelot-api-gateway.jpg)
+| Algorithm | Behavior | Use case |
+| --- | --- | --- |
+| Fixed window | N requests per fixed time window | Simple API throttling |
+| Sliding window | Rolling window — smoother than fixed | Fairer burst control |
+| Token bucket | Tokens refill at rate; burst allowed | APIs with occasional spikes |
+| Concurrency | Limit simultaneous requests | Protect resource-heavy endpoints |
+
+- Configure via `AddRateLimiter()` + `UseRateLimiter()` (.NET 7+)
+- Return `429 Too Many Requests` with `Retry-After` header
+
+### YARP Reverse Proxy
+
+| Feature | YARP |
+| --- | --- |
+| Type | Yet Another Reverse Proxy — Microsoft library |
+| Config | Code, `appsettings.json`, or custom provider |
+| Use case | Route `/api/*` to backend clusters, load balancing, transforms |
+| vs Ocelot | YARP is lower-level, high-performance, Microsoft-maintained |
+
+### Ocelot API Gateway
+
+| Feature | Ocelot |
+| --- | --- |
+| Type | API gateway for .NET |
+| Features | Routing, aggregation, rate limiting, auth, QoS |
+| Config | `ocelot.json` route definitions |
+| Use case | Microservices gateway — single entry point to multiple downstream APIs |
 
 ### What to Learn
 
@@ -1595,6 +2067,19 @@ public class PolicyController : ControllerBase
 }
 ```
 
+| Question | Answer |
+| --- | --- |
+| CORS purpose? | Controls which origins can call your API from browser — server-side header policy |
+| CSRF protection in MVC? | Anti-forgery tokens (`[ValidateAntiForgeryToken]`) for cookie-based forms |
+| XSS prevention? | Encode output in Razor (`@`), validate input, Content-Security-Policy headers |
+| SQL injection prevention? | Parameterized queries / EF Core — never concatenate user input into SQL |
+| Rate limiting? | `AddRateLimiter()` — fixed/sliding window; return 429 when exceeded |
+
+**Must-know points:**
+- HTTPS everywhere in production — `UseHttpsRedirection` + HSTS
+- CORS is not auth — it only relaxes browser same-origin policy; APIs still need JWT/auth
+- Store secrets in environment variables or Key Vault — never in source code or `appsettings.json` committed to git
+
 ---
 
 <a id="topic-22"></a>
@@ -1611,6 +2096,19 @@ public class PolicyController : ControllerBase
 - Mocking dependencies
 - Testing middleware
 - Testing APIs
+
+| Question | Answer |
+| --- | --- |
+| Unit vs integration test? | Unit = isolate class with mocks; integration = real HTTP pipeline via test server |
+| `WebApplicationFactory`? | Boots in-memory test host with same `Program.cs` configuration |
+| Mocking in controller tests? | Mock `IService` with Moq/NSubstitute; inject via constructor |
+| Test server? | `factory.CreateClient()` sends real HTTP requests to in-memory pipeline |
+| Testing middleware? | Integration test with `CreateClient()` or unit test `InvokeAsync` directly |
+
+**Must-know points:**
+- Use `WebApplicationFactory<Program>` for integration tests — exercises routing, DI, middleware
+- Override services in test: `factory.WithWebHostBuilder(b => b.ConfigureServices(...))`
+- Prefer testing behavior (status code, response body) over implementation details
 
 ---
 
@@ -1635,12 +2133,35 @@ Production hosting examples:
 - Linux Server: Nginx + Kestrel
 - Apache + Kestrel
 
+| Question | Answer |
+| --- | --- |
+| `ASPNETCORE_ENVIRONMENT` values? | Development, Staging, Production — drives config and exception pages |
+| Publish command? | `dotnet publish -c Release -o ./publish` |
+| IIS hosting model? | In-process (inside w3wp) or out-of-process (Kestrel + IIS reverse proxy) |
+| Linux production stack? | Nginx or Apache as reverse proxy → Kestrel |
+| Health checks? | `AddHealthChecks()` + `MapHealthChecks("/health")` for load balancer probes |
+
+**Must-know points:**
+- Never run as Development in production — exposes developer exception page
+- Docker: multi-stage build — SDK image for build, runtime image for deploy
+- Configure production secrets via environment variables or secret manager — not appsettings in image
+
 ---
 
 <a id="topic-24"></a>
 
 ## 24. Performance and Best Practices
-![Scaling SignalR with a Redis backplane](assets/aspnet/signalr-redis-backplane.jpg)
+
+### Scaling SignalR with Redis Backplane
+
+| Without backplane | With Redis backplane |
+| --- | --- |
+| Messages only reach clients on same server | Messages broadcast across all server instances |
+| Single-server SignalR only | Horizontal scale-out behind load balancer |
+| In-memory connection tracking | Redis pub/sub synchronizes groups and connections |
+
+- Add `AddSignalR().AddStackExchangeRedis(connectionString)` for multi-server deployments
+- Sticky sessions not required when backplane is configured
 
 ### What to Learn
 
@@ -1678,6 +2199,19 @@ Important differences:
 - TPL can use multiple cores for parallel work.
 - Threading uses time slicing and context switching.
 - Synchronization context connects callbacks back to the original context when needed.
+
+| Question | Answer |
+| --- | --- |
+| Why async in ASP.NET Core? | Frees threads during I/O wait — improves scalability under load |
+| Async vs multithreading? | Async = concurrency without extra threads for I/O; multithreading = parallel CPU work |
+| Pagination benefit? | Limits payload size and DB load — `Skip/Take` or keyset pagination |
+| Response compression? | `AddResponseCompression()` — gzip/Brotli for text responses |
+| SignalR scale-out? | Redis backplane syncs messages across server instances |
+
+**Must-know points:**
+- Use `async`/`await` for I/O-bound work (DB, HTTP, file) — avoid `.Result` and `.Wait()` (deadlocks)
+- Enable response compression for JSON/HTML — not for already-compressed content (images)
+- Monitor with OpenTelemetry + Application Insights — traces, metrics, logs
 
 ---
 

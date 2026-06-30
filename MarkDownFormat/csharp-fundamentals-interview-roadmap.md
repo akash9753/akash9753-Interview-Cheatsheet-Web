@@ -71,7 +71,14 @@ This roadmap is designed to prepare core C# and .NET fundamentals for interviews
 
 ### CLR Execution Flow
 
-![CLR Execution Flow](assets/clr-execution-flow.png)
+| Stage | What Happens |
+| --- | --- |
+| **Source (.cs)** | C# code written by the developer |
+| **Compiler (Roslyn)** | Compiles source to platform-independent IL |
+| **IL** | Bytecode packaged inside `.exe` / `.dll` assemblies |
+| **CLR** | Loads assembly; provides GC, security, threading, exception handling |
+| **JIT** | Translates IL to native CPU instructions when code is first needed |
+| **Native code** | Executed by the OS and processor |
 
 ### CLR Responsibilities
 
@@ -87,6 +94,19 @@ This roadmap is designed to prepare core C# and .NET fundamentals for interviews
 | Security management | Provides code and application security |
 | Debugging | Helps developers find and fix errors |
 | Exception handling | Handles runtime errors without crashing the application |
+
+| Question | Answer |
+| --- | --- |
+| What is CLR? | Common Language Runtime — executes .NET apps and provides managed services |
+| IL vs native code? | IL is platform-independent bytecode; JIT converts it to CPU-specific machine code at runtime |
+| Managed vs unmanaged? | Managed = CLR-controlled (.NET); unmanaged = direct OS/COM/native resources |
+| .NET Framework vs .NET Core vs modern .NET? | Framework = Windows-only legacy; Core = cross-platform rewrite; modern .NET (5+) unifies the platform |
+| What is an assembly? | Deployment unit (.exe/.dll) containing IL, metadata, and manifest |
+
+**Must-know points:**
+- C# compiles to **IL**, not directly to machine code — JIT runs at **runtime**
+- **CTS** defines all .NET types; **CLS** defines cross-language rules
+- `.dll` = library; `.exe` = entry-point application — both are assemblies
 
 ---
 
@@ -224,7 +244,6 @@ int y = (int)x;     // Explicit casting, data loss possible
 | Type safety | Strong | Weak |
 
 ### `const` vs `readonly`
-![const vs readonly in C#](assets/csharp/const-vs-readonly.jpg)
 
 | Feature | `const` | `readonly` |
 | --- | --- | --- |
@@ -233,8 +252,27 @@ int y = (int)x;     // Explicit casting, data loss possible
 | Runtime vs compile time | Compile time | Runtime |
 | Scope | Always static | Instance-level or static |
 
+### Null-Conditional vs Traditional Null Checks
+
+| Approach | Syntax | Behavior |
+| --- | --- | --- |
+| Traditional | `if (obj != null) obj.Method();` | Verbose; repeated null checks |
+| Null-conditional `?.` | `obj?.Method()` | Calls only if not null; short-circuits |
+| Chained `?.` | `obj?.Child?.Name` | Returns null at first null in chain |
+| Null-coalescing `??` | `name ?? "Guest"` | Default when left side is null |
+| Null-coalescing assign `??=` | `name ??= "Guest"` | Assign only when variable is null |
+
+```csharp
+// Traditional
+string city = null;
+if (customer != null && customer.Address != null)
+    city = customer.Address.City;
+
+// Null-conditional
+string city = customer?.Address?.City;
+```
+
 ### Null-Coalescing Operators
-![Traditional null checks vs null-conditional operator](assets/csharp/null-conditional-vs-traditional.jpg)
 
 - `??` returns a default value when the left side value is null.
 - `??=` assigns a value only when the variable is null.
@@ -276,6 +314,19 @@ Use this table to choose the right conversion API or concept at a glance.
 | Boxing | **Concept** | No specific namespace | When value type is stored in `object` | `object obj = 10;` |
 | Unboxing | **Concept** | No specific namespace | When object is converted back to value type | `int n = (int)obj;` |
 
+| Question | Answer |
+| --- | --- |
+| Value type vs reference type? | Value = stack/inline copy; reference = heap object accessed via reference |
+| `var` vs `dynamic`? | `var` = compile-time inferred type; `dynamic` = runtime binding, no compile-time checks |
+| `const` vs `readonly`? | `const` = compile-time constant, always static; `readonly` = set at declaration or ctor, instance or static |
+| `Parse` vs `TryParse`? | `Parse` throws on invalid input; `TryParse` returns `bool` — safer for user input |
+| Boxing cost? | Value → `object` allocates on heap; avoid in hot paths and generic collections |
+
+**Must-know points:**
+- Implicit cast = safe widening; explicit cast = narrowing with possible **data loss**
+- `is` checks type; `as` casts reference types and returns **null** on failure
+- Prefer `TryParse` over `Parse` for **untrusted input**
+
 ---
 
 <a id="topic-3"></a>
@@ -303,6 +354,19 @@ Use this table to choose the right conversion API or concept at a glance.
 - Use `foreach` to iterate through collections.
 - `foreach` internally uses `IEnumerable` and `IEnumerator`.
 - `foreach` hides calls to `MoveNext()` and `Current`.
+
+| Question | Answer |
+| --- | --- |
+| `switch` statement vs expression? | Statement uses `case`/`break`; expression returns a value with `=>` syntax |
+| `for` vs `foreach`? | `for` when index/control needed; `foreach` for any `IEnumerable` collection |
+| `break` vs `continue`? | `break` exits loop; `continue` skips to next iteration |
+| Pattern matching in `switch`? | Type patterns, relational patterns, property patterns (C# 7+) |
+| When avoid `goto`? | Almost always — use structured control flow instead |
+
+**Must-know points:**
+- `foreach` cannot modify the collection during iteration (throws `InvalidOperationException`)
+- `switch` expression is **expression-bodied** — must cover all cases or have `default`
+- `do-while` always runs **at least once**; `while` may never run
 
 ---
 
@@ -332,17 +396,16 @@ Use this table to choose the right conversion API or concept at a glance.
 - `out` is used to return a new value. The variable does not need to be initialized before being passed.
 - `ref` is used to modify an existing value. The variable must be initialized before being passed.
 
-### `ref` vs `out`
-![C# ref, out, and in parameter modifiers compared](assets/csharp/ref-out-in-comparison.jpg)
+### `ref` vs `out` vs `in`
 
-| Feature | `ref` | `out` |
-| --- | --- | --- |
-| Purpose | Pass an existing value and allow the method to modify it | Return a value from the method through a parameter |
-| Initialization before method call | Required | Not required |
-| Assignment inside method | Optional, but usually modified | Required before method returns |
-| Data flow | Input and output | Output only |
-| Common use | Modify an existing variable | Return multiple values from a method |
-| Compiler rule | Variable must be assigned before passing | Method must assign value before returning |
+| Feature | `ref` | `out` | `in` |
+| --- | --- | --- | --- |
+| Purpose | Pass by reference (read/write) | Return value via parameter | Pass by read-only reference |
+| Initialization before call | Required | Not required | Required |
+| Assignment inside method | Optional (usually modified) | Required before return | Cannot modify |
+| Data flow | Input and output | Output only | Input only |
+| Common use | Modify existing variable | Multiple return values | Large struct without copying |
+| Compiler rule | Must be assigned before passing | Method must assign before return | Passed as `readonly` ref |
 
 ```csharp
 static void UpdateValue(ref int number)
@@ -355,6 +418,19 @@ static void GetValue(out int number)
     number = 100;
 }
 ```
+
+| Question | Answer |
+| --- | --- |
+| `ref` vs `out`? | `ref` = read/write existing var; `out` = output-only, no pre-init required |
+| What is `in`? | Read-only reference — avoids copying large structs |
+| `params` keyword? | Accepts variable number of arguments as array — must be last parameter |
+| Method overloading? | Same name, different parameter types/count — resolved at compile time |
+| Expression-bodied method? | `int Double(int x) => x * 2;` — single-expression shorthand |
+
+**Must-know points:**
+- Named arguments improve readability: `Save(name: "Akash", age: 30)`
+- Optional parameters need **default values** and must come after required params
+- `out` enables `TryParse` pattern — returns `bool` + parsed value
 
 ---
 
@@ -388,6 +464,19 @@ public static class StringExtensions
     }
 }
 ```
+
+| Question | Answer |
+| --- | --- |
+| Static class rules? | All members static, sealed implicitly, no inheritance, no `new` |
+| Extension method requirements? | Static class, static method, first param prefixed with `this` |
+| Static constructor? | Runs once before first static member access — no access modifier, no params |
+| Why extension methods? | Add behavior to types you don't own without modifying source |
+| Static vs instance? | Static = one copy shared; instance = per-object state |
+
+**Must-know points:**
+- Extension methods are **syntactic sugar** — compiler calls static method with instance as first arg
+- Static fields are **shared** across all instances — thread-safety matters for mutable static state
+- Cannot add instance fields via extension methods — only methods
 
 ---
 
@@ -454,6 +543,19 @@ StringBuilder sb = new StringBuilder();
 sb.Append("Hello");
 sb.Append(" World");
 ```
+
+| Question | Answer |
+| --- | --- |
+| Why are strings immutable? | Thread safety, interning, and hash stability — modification creates new object |
+| `string` vs `StringBuilder`? | `string` for few changes; `StringBuilder` for repeated concatenation in loops |
+| String interpolation? | `$"Hello {name}"` — readable formatting, compile-time checked |
+| Verbatim string? | `@"C:\path\file"` — backslashes literal, no escaping |
+| Raw string literal? | `"""multi-line"""` — C# 11+ for embedded quotes/newlines |
+
+**Must-know points:**
+- `+` in a loop on strings causes **many allocations** — use `StringBuilder`
+- String interning: identical literals may share **one heap instance**
+- `string.Compare` / `Equals` — specify `StringComparison` for culture/case rules
 
 ---
 
@@ -780,8 +882,17 @@ System.Collections.Generic
 - `ICollection` browses the collection and also provides count.
 - `IList` or `IDictionary` supports browse, count, add, and remove operations.
 
+### Dictionary vs List Lookup Performance
+
+| Feature | `Dictionary<TKey,TValue>` | `List<T>` |
+| --- | --- | --- |
+| Lookup complexity | **O(1)** average (hash table) | **O(n)** linear scan |
+| Key-based access | Yes — `dict[key]`, `TryGetValue` | No — use `Find`, `First`, or loop |
+| Order | Not guaranteed | Insertion order preserved |
+| Duplicates | Keys must be unique | Allows duplicates |
+| Best for | Frequent key lookups, maps | Indexed access, ordered iteration, small sets |
+
 ### Common Collection Interfaces
-![Dictionary vs List lookup performance comparison](assets/csharp/dictionary-vs-list-lookups.jpg)
 
 | Interface | Purpose |
 | --- | --- |
@@ -813,6 +924,19 @@ System.Collections.Generic
 | Namespace | `System` | `System.Collections.Generic` |
 | Sorting type | Single/default | Multiple/custom |
 | Who controls sorting | Object itself | External comparer |
+
+| Question | Answer |
+| --- | --- |
+| Generic vs non-generic collections? | Generic = type-safe, no boxing; non-generic stores `object` — legacy |
+| `List<T>` vs `Dictionary<K,V>`? | List for indexed access; dictionary for O(1) key lookups |
+| `IEnumerable` vs `IEnumerator`? | `IEnumerable` = get enumerator; `IEnumerator` = `MoveNext`/`Current` state machine |
+| `HashSet<T>` use case? | Unique items, fast `Contains`, set operations (union/intersect) |
+| `Queue` vs `Stack`? | Queue = FIFO (`Enqueue`/`Dequeue`); Stack = LIFO (`Push`/`Pop`) |
+
+**Must-know points:**
+- Prefer **generic** collections (`List<T>`, `Dictionary<K,V>`) over `ArrayList`/`Hashtable`
+- `foreach` uses `IEnumerator` — modifying collection during iteration throws
+- Choose collection by **access pattern**: lookup → Dictionary; order/index → List
 
 ---
 
@@ -857,6 +981,19 @@ class Repository<T> where T : class
 | `where T : BaseClass` | Requires type to inherit from a specific base class |
 | `where T : IInterface` | Requires type to implement a specific interface |
 
+| Question | Answer |
+| --- | --- |
+| Why generics? | Type safety without boxing; reusable code for any type |
+| `where T : class`? | Reference types only |
+| `where T : struct`? | Value types only (excludes nullable) |
+| Covariance `out`? | `IEnumerable<Derived>` assignable to `IEnumerable<Base>` — output positions |
+| Contravariance `in`? | `Action<Base>` assignable to `Action<Derived>` — input positions |
+
+**Must-know points:**
+- Generics are resolved at **compile time** — no runtime type erasure like Java
+- Constraints enable calling methods on `T` after narrowing type
+- `List<int>` avoids boxing that `ArrayList` would cause
+
 ---
 
 <a id="topic-9"></a>
@@ -883,14 +1020,44 @@ class Repository<T> where T : class
 - `throw ex` resets the stack trace and is usually avoided.
 - Do not use exceptions for normal control flow.
 
+| Question | Answer |
+| --- | --- |
+| `throw` vs `throw ex`? | `throw` preserves stack trace; `throw ex` resets it — avoid `throw ex` |
+| `finally` always runs? | Yes — even if `return` in `try` or `catch` (unless process crash) |
+| Exception filters? | `catch (Ex ex) when (ex.HResult == …)` — conditional catch |
+| When create custom exception? | Domain-specific errors callers should handle distinctly |
+| Checked vs unchecked in C#? | C# has no checked exceptions — all are unchecked |
+
+**Must-know points:**
+- Catch **specific** exceptions before general ones
+- Never swallow exceptions silently — log or rethrow
+- `using` + `IDisposable` preferred over relying on finalizers
+
 ---
 
 <a id="topic-10"></a>
 
 ## 10. Delegates, Events, and Lambda Expressions
-![Sync, async, threads, delegates, and events flow](assets/csharp/sync-async-delegates-events-flow.png)
 
-![Review questions on sync/async, threads, and delegates](assets/csharp/sync-async-delegates-review-questions.png)
+### Delegates, Func, Action, Predicate
+
+| Type | Signature | Returns | Example |
+| --- | --- | --- | --- |
+| `Delegate` | Custom method signature | Varies | `delegate void Notify(string msg);` |
+| `Action` | 0–16 parameters | `void` | `Action<string> log = Console.WriteLine;` |
+| `Func` | 0–16 params + return type | `TResult` | `Func<int,int,int> add = (a,b) => a + b;` |
+| `Predicate<T>` | One `T` parameter | `bool` | `Predicate<int> isEven = n => n % 2 == 0;` |
+| Lambda | Inline anonymous function | Varies | `nums.Where(x => x > 5)` |
+
+### Events vs Delegates
+
+| Feature | Delegate field | Event |
+| --- | --- | --- |
+| Who can invoke? | Anyone holding the reference | Only the declaring class raises it |
+| Purpose | General method pointer | Publisher-subscriber encapsulation |
+| Multicast | Yes | Yes (backed by delegate) |
+| Syntax | `MyDelegate handler;` | `event MyDelegate Handler;` |
+| Memory leaks risk | Subscribers must `-=` manually | Same — always unsubscribe in `Dispose` |
 
 ### What to Learn
 
@@ -911,26 +1078,58 @@ class Repository<T> where T : class
 - `Predicate` represents a method that returns a boolean value.
 - Lambda expressions provide a short syntax for anonymous functions.
 
+| Question | Answer |
+| --- | --- |
+| Delegate vs interface? | Delegate = single method signature; interface = full contract with multiple members |
+| Multicast delegate? | Delegate holding multiple methods — invokes all in order |
+| `Func` vs `Action`? | `Func` returns value; `Action` returns void |
+| Event vs delegate field? | Event restricts invocation to publisher — subscribers use `+=`/`-=` |
+| Lambda vs anonymous method? | Lambda is shorter; anonymous method allows more statement bodies |
+
+**Must-know points:**
+- Always **unsubscribe** event handlers to prevent memory leaks
+- `Predicate<T>` is legacy — prefer `Func<T, bool>`
+- Delegates enable LINQ, callbacks, and observer pattern
+
 ---
 
 <a id="topic-11"></a>
 
 ## 11. LINQ
-![LINQ methods cheat sheet](assets/csharp/linq-methods-cheatsheet.gif)
 
-![LINQ methods grouped by category](assets/csharp/linq-methods-by-category.jpg)
+### LINQ Operators by Category
 
-![Complete LINQ operators cheat sheet](assets/csharp/linq-operators-complete-cheatsheet.jpg)
+| Category | Operators | Purpose |
+| --- | --- | --- |
+| **Filtering** | `Where`, `OfType`, `Distinct` | Narrow the sequence |
+| **Projection** | `Select`, `SelectMany` | Transform or flatten elements |
+| **Sorting** | `OrderBy`, `OrderByDescending`, `ThenBy`, `ThenByDescending`, `Reverse` | Order results |
+| **Grouping** | `GroupBy`, `ToLookup` | Group by key |
+| **Joining** | `Join`, `GroupJoin`, `Zip` | Combine two sequences |
+| **Aggregation** | `Count`, `Sum`, `Min`, `Max`, `Average`, `Aggregate` | Reduce to scalar |
+| **Quantifiers** | `Any`, `All`, `Contains` | Boolean existence checks |
+| **Element** | `First`, `FirstOrDefault`, `Single`, `SingleOrDefault`, `Last`, `LastOrDefault`, `ElementAt` | Pick one element |
+| **Set** | `Union`, `Intersect`, `Except`, `Distinct` | Set operations |
+| **Partition** | `Skip`, `Take`, `SkipWhile`, `TakeWhile` | Pagination and slicing |
+| **Conversion** | `ToList`, `ToArray`, `ToDictionary`, `Cast`, `AsEnumerable` | Materialize or convert |
 
-![Mastering LINQ in ASP.NET Core](assets/csharp/linq-mastery-aspnet-core.jpg)
+### LINQ Best Practices
 
-![12 best practices for LINQ in .NET](assets/csharp/linq-best-practices-12-rules.jpg)
+| Rule | Why |
+| --- | --- |
+| Filter before `Select` / `OrderBy` | Smaller working set |
+| Use `Any()` not `Count() > 0` | Short-circuits at first match |
+| Materialize once when iterating twice | Deferred queries re-execute |
+| Push filters to `IQueryable` with EF | Server-side SQL, less memory |
+| Avoid `ToList()` in tight loops | Reduces allocations |
+| Prefer method syntax for chaining | Composable with lambdas |
 
-![LINQ deferred execution example](assets/csharp/linq-deferred-execution.jpg)
+### Deferred vs Immediate Execution
 
-![Vertical LINQ method chaining style](assets/csharp/vertical-linq-coding-style.jpg)
-
-![.NET code optimization examples for LINQ](assets/csharp/dotnet-code-optimization-linq.jpg)
+| Execution | When it runs | Examples |
+| --- | --- | --- |
+| **Deferred** | When enumerated (`foreach`, `ToList`, etc.) | `Where`, `Select`, `OrderBy` |
+| **Immediate** | As soon as operator is called | `ToList`, `ToArray`, `Count`, `First`, `Sum`, `Max` |
 
 ### What to Learn
 
@@ -992,22 +1191,22 @@ var page = numbers
 ```
 
 ### `IEnumerable` vs `IQueryable`
-![IEnumerable client-side filtering diagram](assets/efcore/ienumerable-client-side-filter.png)
-
-![IQueryable server-side filtering diagram](assets/efcore/iqueryable-server-side-filter.png)
 
 | Feature | `IEnumerable` | `IQueryable` |
 | --- | --- | --- |
 | Namespace | `System.Collections` | `System.Linq` |
-| Purpose | Iterates in-memory collection | Builds queries for a remote data source |
-| Execution | Deferred for LINQ methods | Deferred |
-| Filtering | Usually done in application memory | Usually done at data source/server |
-| Performance | Slower for large remote data | Better for queryable data sources |
-| Supports LINQ | Yes | Yes |
-| Query translation | No | Yes, provider-based |
-| Best used for | Arrays, lists, collections | Remote query providers |
-| Data source | In-memory data | Remote data source |
-| Extension methods | `Enumerable` methods | `Queryable` methods |
+| Evaluation | **Client-side** (in-memory) | **Server-side** when provider supports it (e.g. EF → SQL) |
+| Data source | Arrays, lists, in-memory collections | EF Core, LINQ to SQL, remote providers |
+| Query building | LINQ to Objects | Expression tree translated by provider |
+| Extension methods | `System.Linq.Enumerable` | `System.Linq.Queryable` |
+| Best for | In-memory filtering/projection | Database and remote query sources |
+| Performance pitfall | Pulls all rows then filters in app | Builds SQL — filters at source |
+
+| Scenario | `IEnumerable` behavior | `IQueryable` behavior |
+| --- | --- | --- |
+| `.Where(x => x.Age > 18)` | Filters in application memory | Translated to `WHERE Age > 18` in SQL |
+| Chained operators | Each step in memory | Combined into single query when possible |
+| Provider | Always LINQ to Objects | EF Core, NHibernate, etc. |
 
 ### `System.Linq` Hierarchy
 
@@ -1096,6 +1295,19 @@ System.Linq
     └── Converts LINQ query into SQL query
 ```
 
+| Question | Answer |
+| --- | --- |
+| Query syntax vs method syntax? | Both compile to same calls — method syntax more common in production |
+| `First` vs `FirstOrDefault`? | `First` throws if empty; `FirstOrDefault` returns default |
+| `Single` vs `SingleOrDefault`? | Expects exactly one; throws if zero or many (unless `OrDefault`) |
+| Deferred execution? | Query not run until enumerated or terminal operator called |
+| `IEnumerable` vs `IQueryable`? | In-memory vs expression-tree query — EF needs `IQueryable` for SQL |
+
+**Must-know points:**
+- Calling `ToList()` **materializes** — use when you need multiple passes or count
+- `SelectMany` flattens nested collections — `from x in xs from y in x.Items` equivalent
+- Never call `.ToList()` before `.Where()` on EF queries — kills server-side filtering
+
 ---
 
 <a id="topic-12"></a>
@@ -1137,6 +1349,19 @@ using (var stream = new FileStream("file.txt", FileMode.Open))
 
 using ProjectA = MyCompany.ProjectA.SubModule;
 ```
+
+| Question | Answer |
+| --- | --- |
+| `using` directive vs statement? | Directive = import namespace; statement = `IDisposable` scope |
+| `using` declaration (C# 8)? | `using var stream = …` — disposes at end of scope |
+| `File` vs `FileStream`? | `File` = static helpers; `FileStream` = low-level byte stream |
+| `StreamReader` vs `StreamWriter`? | Text read vs text write — built on `Stream` |
+| When use `MemoryStream`? | In-memory buffer — testing, serialization without disk I/O |
+
+**Must-know points:**
+- Always dispose streams — `using` ensures `Dispose()` even on exception
+- `Path.Combine` handles directory separators cross-platform
+- Prefer `async` file APIs (`ReadAllTextAsync`) in ASP.NET Core for scalability
 
 ---
 
@@ -1331,20 +1556,66 @@ Memory Management in .NET
                   └── Automatically calls Dispose().
 ```
 
+| Question | Answer |
+| --- | --- |
+| Stack vs heap? | Stack = value types, locals, fast; heap = objects, GC-managed |
+| Gen 0 / 1 / 2? | Short-lived → survived → long-lived; Gen 2 collections are expensive |
+| LOH? | Objects ≥ ~85 KB on Large Object Heap — collected with Gen 2 |
+| `Dispose` vs finalizer? | `Dispose` = deterministic cleanup; finalizer = non-deterministic safety net |
+| Memory leak in .NET? | Usually event handlers, static collections, or undisposed unmanaged handles |
+
+**Must-know points:**
+- Prefer **`using`** over finalizers for files, streams, DB connections
+- `GC.Collect()` — rarely needed; can hurt performance
+- Value types on stack; reference type **object** on heap, **reference** may be on stack
+
 ---
 
 <a id="topic-14"></a>
 
 ## 14. Asynchronous Programming
-![Sync vs async operation comparison in .NET](assets/csharp/sync-vs-async-comparison.jpg)
 
-![async and await usage patterns in C#](assets/csharp/async-await-quick-tips.jpg)
+### Synchronous vs Asynchronous
 
-![10 rules for asynchronous programming in C#](assets/csharp/async-programming-10-rules.jpg)
+| Aspect | Synchronous | Asynchronous |
+| --- | --- | --- |
+| Thread blocking | Thread waits until I/O completes | Thread released during I/O |
+| Responsiveness | UI/server thread can freeze | UI stays responsive; server handles more requests |
+| Return type | Normal return | `Task`, `Task<T>`, `ValueTask` |
+| Keywords | None | `async` / `await` |
+| Best for | CPU-bound quick work | I/O-bound — network, DB, file |
 
-![Optimize async workflows with Task.WhenAll](assets/csharp/task-whenall-async-optimization.gif)
+### Async Programming Rules
 
-![Cooperative cancellation with CancellationToken](assets/csharp/cancellation-token-propagation.jpg)
+| Rule | Detail |
+| --- | --- |
+| `async` all the way | Don't mix blocking calls in async methods |
+| Avoid `Task.Result` / `.Wait()` | Causes deadlocks on sync context (ASP.NET legacy) |
+| Return `Task` not `void` | Except event handlers |
+| Use `ConfigureAwait(false)` in libraries | Avoids capturing UI/sync context |
+| Prefer `await` over `ContinueWith` | Cleaner exception propagation |
+| Name async methods with `Async` suffix | Convention — `GetDataAsync()` |
+| Don't wrap purely CPU work in fake async | Use `Task.Run` for CPU offload, not `Task.Delay(0)` |
+| Propagate `CancellationToken` | Cooperative cancellation through call chain |
+
+### `Task.WhenAll` vs `Task.WhenAny`
+
+| API | Behavior | Use case |
+| --- | --- | --- |
+| `Task.WhenAll(t1, t2)` | Waits for **all** tasks; throws first exception | Parallel independent I/O (multiple API calls) |
+| `Task.WhenAny(tasks)` | Returns when **first** completes | Timeout race, first-available result |
+| `await Task.WhenAll(...)` | Unwraps when all done | `var results = await Task.WhenAll(t1, t2);` |
+
+### `CancellationToken` Pattern
+
+| Step | Code / behavior |
+| --- | --- |
+| Create source | `var cts = new CancellationTokenSource();` |
+| Pass token | `await HttpClient.GetAsync(url, cts.Token);` |
+| Cancel | `cts.Cancel();` — sets token to cancelled state |
+| Check in loop | `token.ThrowIfCancellationRequested();` |
+| Timeout | `cts.CancelAfter(TimeSpan.FromSeconds(30));` |
+| Propagate | Pass same token to all nested async calls |
 
 ### What to Learn
 
@@ -1371,6 +1642,19 @@ Memory Management in .NET
 - `Task.WhenAll()` waits for all tasks to complete.
 - `Task.WhenAny()` waits for the first completed task.
 - `CancellationToken` cancels long-running tasks safely.
+
+| Question | Answer |
+| --- | --- |
+| `Task` vs `Task<T>`? | `Task` = no return value; `Task<T>` = async operation returning `T` |
+| `async` without `await`? | Compiler warning — method runs synchronously |
+| `Task.Run` purpose? | Offload CPU-bound work to thread pool |
+| Async deadlock cause? | `.Result`/`.Wait()` on UI/ASP.NET sync context blocks continuation |
+| `ValueTask` vs `Task`? | `ValueTask` reduces allocation when result often synchronous |
+
+**Must-know points:**
+- Async is for **I/O-bound** work — not a magic speedup for CPU loops
+- `await` captures context by default — use `ConfigureAwait(false)` in library code
+- Always pass **CancellationToken** through public async APIs
 
 ---
 
@@ -1407,19 +1691,16 @@ Memory Management in .NET
 - Concurrency vs parallelism
 
 ### Concurrency vs Parallelism
-![Concurrency with events and shared state vs parallel cores](assets/csharp/concurrency-events-share-parallel-cores.png)
-
-![Concurrency vs parallelism comparison table](assets/csharp/concurrency-vs-parallelism-table.png)
 
 | Feature | Concurrency | Parallelism |
 | --- | --- | --- |
-| Meaning | Multiple tasks progress together | Multiple tasks run at the same time |
-| Execution | Tasks may switch one by one | Tasks execute simultaneously |
-| CPU core requirement | Can work on single core | Usually requires multiple cores |
-| Goal | Better responsiveness | Better performance/speed |
-| Task handling | Interleaving tasks | Running tasks together |
-| Example in C# | `Task`, `async`/`await` | `Parallel.For`, `Task.Run()` |
-| Focus | Managing tasks | Executing tasks faster |
+| Meaning | Multiple tasks **make progress** (may interleave) | Multiple tasks **run simultaneously** on multiple cores |
+| Execution | Time-slicing on one or more cores | True simultaneous execution |
+| CPU cores | Works on single core | Requires multiple cores for real parallelism |
+| Goal | Responsiveness, structuring work | Throughput, CPU utilization |
+| Shared state | Often shares data — needs synchronization | Often partitions work — less contention |
+| C# examples | `async`/`await`, `Task`, event-driven | `Parallel.For`, `Parallel.ForEach`, PLINQ |
+| Analogy | One chef switching between dishes | Multiple chefs cooking at once |
 
 ### Thread vs TPL
 
@@ -1673,6 +1954,19 @@ Concurrency Control
 
 - Optimistic locking assumes that concurrency conflicts will rarely happen, so there is no lock; it only checks old values against new values during update.
 
+| Question | Answer |
+| --- | --- |
+| Process vs thread? | Process = isolated app instance; thread = execution unit within process |
+| `lock` vs `Monitor`? | `lock` is syntactic sugar for `Monitor.Enter`/`Exit` |
+| Race condition? | Unsynchronized shared mutable state — unpredictable results |
+| Deadlock? | Two threads each hold a lock the other needs — circular wait |
+| `ConcurrentDictionary` vs `Dictionary` + lock? | Built-in thread-safe operations without manual locking |
+
+**Must-know points:**
+- Prefer **TPL** (`Task`, `Parallel`) over raw `Thread` for most scenarios
+- `lock` only works on **reference types** — lock on private readonly object, not `this` or strings
+- `async`/`await` is concurrency; `Parallel.For` is parallelism
+
 ---
 
 <a id="topic-16"></a>
@@ -1699,36 +1993,81 @@ Concurrency Control
 - `dynamic` uses runtime binding and may use reflection-like behavior internally.
 
 ### `typeof` vs `GetType()`
-![typeof vs GetType diagram](assets/csharp/typeof-vs-gettype-diagram.png)
-
-![dynamic keyword vs Reflection comparison](assets/csharp/dynamic-vs-reflection-comparison.png)
 
 | Feature | `typeof` | `GetType()` |
 | --- | --- | --- |
-| Works on | Type/class name | Object instance |
+| Works on | Type name (compile-time) | Object instance (runtime) |
 | Evaluated | Compile time | Runtime |
-| Returns | `Type` object | `Type` object |
-| Null safe | Yes | No |
+| Returns | `Type` object | `Type` of **actual** runtime type |
+| Null safe | Yes — no instance needed | No — throws on null instance |
 | Syntax | `typeof(int)` | `obj.GetType()` |
+| Polymorphism | Returns declared type name | Returns derived type if overridden |
+
+### `dynamic` vs Reflection
+
+| Feature | `dynamic` | Reflection |
+| --- | --- | --- |
+| Purpose | Late-bound member access | Inspect/invoke types and metadata at runtime |
+| Syntax | Natural — `dyn.Method()` | Verbose — `type.GetMethod("M").Invoke(...)` |
+| Compile-time checking | None | None for invoked members |
+| Performance | DLR cache helps; still slower | Slow — avoid in hot paths |
+| Use case | COM interop, JSON to dynamic | Plugins, serializers, DI containers |
+| Type info | Implicit at runtime | Explicit `Type`, `PropertyInfo`, etc. |
+
+| Question | Answer |
+| --- | --- |
+| What is reflection? | Runtime inspection of types, methods, properties via `System.Reflection` |
+| `typeof` vs `GetType()`? | `typeof` on type name at compile time; `GetType()` on instance — returns runtime type |
+| Custom attributes? | Metadata on types/members — read via reflection (`[Serializable]`, `[Required]`) |
+| Performance cost? | Reflection is slow — cache `MethodInfo` if used repeatedly |
+| `Activator.CreateInstance`? | Creates object from `Type` at runtime — used in factories/DI |
+
+**Must-know points:**
+- Attributes don't **do** anything alone — something must read them (serializer, validator, framework)
+- `dynamic` uses DLR — not the same as reflection but similar late binding
+- Prefer compile-time generics over reflection when possible
 
 ---
 
 <a id="topic-17"></a>
 
 ## 17. Records, Tuples, and Modern C# Features
-![C# 12 collection expressions and spread operator](assets/csharp/csharp12-collection-expressions.jpg)
 
-![Primary constructors for DI services in C#](assets/csharp/primary-constructors-service-di.jpg)
+### Collection Expressions (C# 12)
 
-![Traditional constructors vs primary constructors](assets/csharp/primary-constructors-vs-traditional.jpg)
+| Syntax | Equivalent | Notes |
+| --- | --- | --- |
+| `int[] a = [1, 2, 3];` | `new int[] { 1, 2, 3 }` | Works for arrays, spans, lists |
+| `[..existing, 4]` | Spread operator — append items | Combines collections |
+| `List<int> list = [1, 2];` | `new List<int> { 1, 2 }` | Target-typed |
 
-![Declaration pattern for type checking in C#](assets/csharp/declaration-pattern.jpg)
+### Primary Constructors
 
-![Switch statement vs switch expression](assets/csharp/switch-expression-vs-statement.jpg)
+| Feature | Traditional constructor | Primary constructor (C# 12) |
+| --- | --- | --- |
+| Syntax | Fields + ctor body | `class Person(string name) { }` |
+| DI in ASP.NET Core | Explicit ctor parameters | `class Svc(ILogger log) : ISvc` — params become fields |
+| Validation | In ctor body | Can use ctor body block after declaration |
+| Inheritance | Standard `base()` | Primary params passed to base |
 
-![Relational pattern matching in C#](assets/csharp/relational-pattern-matching.jpg)
+### Pattern Matching
 
-![Null argument guard patterns in .NET](assets/csharp/null-argument-guards.jpg)
+| Pattern | Example | Use |
+| --- | --- | --- |
+| Type / declaration | `if (obj is string s)` | Type check + cast in one step |
+| Switch expression | `status switch { 1 => "Ok", _ => "?" }` | Expression-bodied switch |
+| Relational | `x is > 0 and < 100` | Range checks |
+| Property | `person is { Age: > 18 }` | Deconstruct and match properties |
+| Null guard | `ArgumentNullException.ThrowIfNull(arg);` | .NET 6+ guard clauses |
+
+### Switch Statement vs Expression
+
+| Feature | `switch` statement | `switch` expression |
+| --- | --- | --- |
+| Returns value | No (uses `break`) | Yes — assigned to variable |
+| Syntax | `case` / `break` | `pattern => result` |
+| Exhaustiveness | Optional `default` | Compiler warns if not exhaustive |
+| Example | `switch(x) { case 1: … break; }` | `var r = x switch { 1 => "a", _ => "b" };` |
 
 ### What to Learn
 
@@ -1750,8 +2089,15 @@ Concurrency Control
 - `yield break`
 - Enum
 
-### Yield
-![yield return vs return List comparison](assets/csharp/yield-return-vs-list.jpg)
+### Yield: `yield return` vs Returning a List
+
+| Feature | `yield return` | `return list` |
+| --- | --- | --- |
+| Execution | Deferred — one item at a time | Eager — builds entire list first |
+| Memory | O(1) extra — no full buffer | O(n) — holds all items in memory |
+| State | Iterator preserves position between calls | All items materialized upfront |
+| Return type | `IEnumerable` / `IEnumerable<T>` | `List<T>` or similar |
+| Best for | Large/streaming sequences, pipelines | Small collections, need count/index |
 
 - `yield` supports deferred execution.
 - Values are returned one at a time when requested, not all at once.
@@ -1768,6 +2114,19 @@ Concurrency Control
 - Default enum values start from `0`.
 - Values can be custom defined.
 - Enum values can be cast to integers and integers can be cast to enum values.
+
+| Question | Answer |
+| --- | --- |
+| Record vs class? | Record = value-based equality, `with` expressions, concise syntax for DTOs |
+| Tuple vs record? | Tuple = lightweight anonymous grouping; record = named named type with semantics |
+| `init` vs `set`? | `init` = set only during object initialization |
+| Nullable reference types? | `string?` vs `string` — compile-time null analysis (C# 8+) |
+| `yield return` benefit? | Lazy iteration — memory efficient for large sequences |
+
+**Must-know points:**
+- Records: `public record Person(string Name, int Age);` — positional syntax
+- Deconstruction: `(var x, var y) = tuple;` or `var (a, b) = point;`
+- File-scoped namespace: `namespace MyApp;` — less indentation (C# 10)
 
 ---
 
@@ -1793,16 +2152,61 @@ Concurrency Control
 - Mocking replaces external dependencies with controlled test objects.
 - Arrange, Act, Assert keeps tests readable and consistent.
 
+| Question | Answer |
+| --- | --- |
+| Unit vs integration test? | Unit = isolated logic; integration = multiple components + real dependencies |
+| xUnit vs NUnit vs MSTest? | xUnit most common in .NET Core OSS; all support `[Fact]`/`[Test]` patterns |
+| What is mocking? | Replace dependencies with test doubles (Moq, NSubstitute) |
+| AAA pattern? | Arrange setup → Act execute → Assert verify |
+| TDD? | Write failing test first, then minimal code to pass, then refactor |
+
+**Must-know points:**
+- Tests should be **fast**, **isolated**, **repeatable**, **self-validating**
+- Mock **interfaces**, not concrete classes when possible
+- Integration tests often use `WebApplicationFactory` in ASP.NET Core
+
 ---
 
 <a id="topic-19"></a>
 
 ## 19. Advanced C# Concepts
-![Serialization and deserialization flow](assets/csharp/serialization-deserialization-flow.png)
 
-![Important C# keywords every ASP.NET Core developer should know](assets/csharp/csharp-keywords-cheat-sheet.jpg)
+### Serialization Flow
 
-![Better alternatives in C# and .NET](assets/csharp/better-csharp-alternatives.jpg)
+| Step | Component | Action |
+| --- | --- | --- |
+| 1 | Object (in memory) | .NET object graph in heap |
+| 2 | Serializer (`System.Text.Json`, Newtonsoft) | Converts object to JSON/XML/binary |
+| 3 | Wire format | JSON string, XML, protobuf bytes |
+| 4 | Transport | HTTP body, file, message queue |
+| 5 | Deserializer | Reconstructs object from wire format |
+| 6 | Object (restored) | New instance — not same reference as original |
+
+### Key C# Keywords Quick Reference
+
+| Keyword | Purpose |
+| --- | --- |
+| `ref` / `out` / `in` | Parameter passing modifiers |
+| `async` / `await` | Asynchronous programming |
+| `yield` | Iterator blocks |
+| `lock` | Thread synchronization |
+| `nameof` | Compile-time safe name string |
+| `stackalloc` | Stack-allocated buffer |
+| `scoped` | Limits ref struct lifetime (C# 11) |
+| `required` | Caller must set property (C# 11) |
+| `file` | File-local types (C# 11) |
+
+### Better Alternatives
+
+| Instead of | Prefer | Why |
+| --- | --- | --- |
+| `string` concat in loop | `StringBuilder` | Fewer allocations |
+| `ArrayList` | `List<T>` | Type safety |
+| `Parse()` on user input | `TryParse()` | No exception on failure |
+| `throw ex` | `throw` | Preserves stack trace |
+| `.Result` / `.Wait()` | `await` | Avoids deadlocks |
+| `Substring` in hot path | `AsSpan().Slice()` | Zero-allocation slice |
+| Reflection in hot path | Compiled expressions / source generators | Performance |
 
 ### What to Learn
 
@@ -1826,12 +2230,34 @@ Concurrency Control
 - Unsafe code allows pointer operations but should be used carefully.
 - `Span<T>` and `Memory<T>` help work efficiently with contiguous memory while reducing allocations.
 
+| Question | Answer |
+| --- | --- |
+| Expression trees? | Code represented as data — EF translates `IQueryable` to SQL |
+| `Span<T>` vs array? | `Span` = stack-only view over memory; no heap allocation for slice |
+| `ref struct`? | Must live on stack — cannot box or use as class field |
+| Source generators? | Compile-time code generation — reduces reflection at runtime |
+| Unsafe code? | Pointers with `unsafe` block — bypasses type safety, use sparingly |
+
+**Must-know points:**
+- `Span<T>` and `ReadOnlySpan<T>` enable high-performance string/array processing
+- `Memory<T>` is heap-safe alternative when `Span` can't be stored
+- `dynamic` bypasses compile-time checking — runtime errors possible
+
 ---
 
 <a id="topic-20"></a>
 
 ## 20. Performance and Best Practices
-![Prefer AsSpan over Substring for string performance](assets/csharp/asspan-vs-substring-performance.jpg)
+
+### `AsSpan` vs `Substring`
+
+| Feature | `Substring` | `AsSpan().Slice()` |
+| --- | --- | --- |
+| Allocation | **New string** on heap | **No allocation** — view over existing memory |
+| Return type | `string` | `ReadOnlySpan<char>` |
+| Lifetime | Independent copy | Must not outlive source string |
+| Use case | Need new string instance | Parsing, tokenizing, comparisons in hot paths |
+| Performance | Slower for many slices | Faster — zero-copy |
 
 ### What to Learn
 
@@ -1870,3 +2296,16 @@ Concurrency Control
 - Avoid using exceptions for normal control flow.
 - Use LINQ carefully for large collections when performance matters.
 - Use profiling and benchmarking to measure performance instead of guessing.
+
+| Question | Answer |
+| --- | --- |
+| Big O for `List` lookup vs `Dictionary`? | List O(n); Dictionary O(1) average |
+| When use `StringBuilder`? | Repeated string modifications in loops |
+| LINQ performance tip? | Defer `ToList()`; filter early; avoid LINQ in tight hot loops |
+| BenchmarkDotNet? | NuGet package for statistically valid micro-benchmarks |
+| Naming: private field? | `_camelCase` with underscore prefix |
+
+**Must-know points:**
+- Measure first — **BenchmarkDotNet** / dotMemory / Visual Studio profiler
+- Avoid premature optimization — optimize proven bottlenecks
+- `struct` for small immutable value types can reduce heap pressure

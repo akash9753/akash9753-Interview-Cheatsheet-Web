@@ -197,6 +197,22 @@
 - Column: one field or attribute in a table.
 - Schema: logical container for database objects.
 
+| Question | Answer |
+| --- | --- |
+| What is the difference between DBMS and RDBMS? | DBMS stores data in files; RDBMS stores data in related tables with keys and relationships |
+| SQL vs T-SQL? | SQL is the ANSI standard; T-SQL is Microsoft's extension with variables, procedures, TRY/CATCH |
+| What is a schema? | Logical namespace that groups tables, views, and other objects (e.g. `dbo.Employees`) |
+| What is a row vs a column? | Row = one record; column = one attribute/field for all rows |
+| What is SQL Server vs SSMS? | SQL Server is the database engine; SSMS is the management GUI tool |
+| Why use a relational database? | Structured storage, data integrity via keys, efficient querying with SQL, ACID transactions |
+
+**Must-know points:**
+- RDBMS stores data in **tables** linked by primary/foreign keys
+- T-SQL adds procedural features (`DECLARE`, `IF`, stored procedures) on top of standard SQL
+- A **schema** organizes objects and controls access (`dbo` is the default schema)
+- SQL is declarative — you describe *what* data you want, not *how* to fetch it
+- SQL Server is one RDBMS product; PostgreSQL, MySQL, and Oracle are others
+
 ## 2. Data Definition Language (DDL)
 
 ### Database Queries
@@ -341,6 +357,22 @@ ALTER TABLE employees
 DROP CONSTRAINT chk_emp_positive_sal;
 ```
 
+| Question | Answer |
+| --- | --- |
+| What is DDL? | Data Definition Language — commands that define/modify database structure (`CREATE`, `ALTER`, `DROP`) |
+| CREATE vs ALTER vs DROP? | CREATE adds new objects; ALTER modifies existing; DROP removes objects permanently |
+| TRUNCATE vs DELETE? | TRUNCATE removes all rows fast (no row-by-row log); DELETE removes specific rows and can be rolled back |
+| DROP TABLE vs TRUNCATE TABLE? | DROP removes the table structure; TRUNCATE empties data but keeps the table |
+| How to rename a column in SQL Server? | `EXEC sp_rename 'table.old_name', 'new_name', 'column'` — not standard SQL |
+| What does `USE database` do? | Sets the current database context for subsequent commands |
+
+**Must-know points:**
+- DDL changes are often **auto-committed** — cannot roll back in many engines without explicit transactions
+- `ALTER TABLE ADD` is non-destructive; `DROP COLUMN` may fail if constraints depend on it
+- `TRUNCATE` resets IDENTITY seed; `DELETE` does not
+- Always back up before `DROP DATABASE` or `DROP TABLE` in production
+- `sp_help` and `INFORMATION_SCHEMA` views are useful for inspecting object metadata
+
 ## 3. Data Types
 
 ### Datatypes
@@ -350,6 +382,22 @@ DROP CONSTRAINT chk_emp_positive_sal;
 - Date: DATE
 - Date Time: DATETIME
 - Boolean: BIT(0/1)
+
+| Question | Answer |
+| --- | --- |
+| VARCHAR vs CHAR? | VARCHAR is variable-length; CHAR is fixed-length, padded with spaces |
+| DECIMAL vs FLOAT? | DECIMAL is exact (money); FLOAT is approximate (scientific) — use DECIMAL for financial data |
+| INT vs BIGINT? | INT = 4 bytes (~2.1B max); BIGINT = 8 bytes for very large counters |
+| DATETIME vs DATE? | DATETIME stores date + time; DATE stores only the date portion |
+| What is BIT? | SQL Server's boolean type — stores 0, 1, or NULL |
+| Why choose the smallest correct type? | Saves storage, improves index size, and can speed up comparisons and joins |
+
+**Must-know points:**
+- Pick the **smallest type** that fits the data — oversized columns waste memory and index space
+- Use `DECIMAL(p,s)` or `NUMERIC` for money — never `FLOAT` for currency
+- `VARCHAR(n)` caps length; `VARCHAR(MAX)` for large text (has performance implications)
+- `NVARCHAR` stores Unicode (2 bytes/char); `VARCHAR` is single-byte (ASCII)
+- Implicit conversions between incompatible types can cause **index scans** and wrong results
 
 ## 4. Constraints and Keys
 
@@ -447,6 +495,22 @@ VALUES
 SELECT * FROM employees;
 ```
 
+| Question | Answer |
+| --- | --- |
+| PRIMARY KEY vs UNIQUE? | Both enforce uniqueness; PK cannot be NULL, only one per table, and is the main row identifier |
+| What is a FOREIGN KEY? | Column referencing another table's PK — enforces referential integrity |
+| What is IDENTITY? | Auto-incrementing integer column — `IDENTITY(seed, increment)` |
+| What is a composite key? | Primary key made of two or more columns when no single column is unique |
+| CHECK constraint purpose? | Validates data on insert/update (e.g. `salary > 0`) |
+| DEFAULT constraint purpose? | Supplies a value when INSERT omits that column |
+
+**Must-know points:**
+- Every table should have a **PRIMARY KEY** for reliable row identification
+- FK prevents orphan rows — child cannot reference a non-existent parent
+- `NOT NULL` + `UNIQUE` ≠ PRIMARY KEY — PK is the chosen unique identifier
+- `IDENTITY` columns are read-only on insert unless `SET IDENTITY_INSERT ON`
+- Composite keys are common in junction tables (many-to-many)
+
 ## 5. Data Manipulation Language (DML)
 
 ### CRUD Operations
@@ -492,6 +556,22 @@ WHERE student_id IN (101, 102);
 ```sql
 TRUNCATE TABLE students;
 ```
+
+| Question | Answer |
+| --- | --- |
+| What is DML? | Data Manipulation Language — `INSERT`, `SELECT`, `UPDATE`, `DELETE`, `MERGE` |
+| INSERT with explicit columns vs `INSERT ... SELECT`? | Explicit lists target columns; `SELECT` copies rows from another query/table |
+| UPDATE without WHERE? | Updates **every row** in the table — dangerous in production |
+| DELETE vs TRUNCATE? | DELETE is row-level, logged, supports WHERE; TRUNCATE is fast, all-or-nothing, resets identity |
+| What is MERGE? | Upsert — inserts new rows and updates existing in one statement based on a match condition |
+| Can you roll back DELETE? | Yes, inside an explicit transaction with `BEGIN TRAN` / `COMMIT` / `ROLLBACK` |
+
+**Must-know points:**
+- Always use **WHERE** on UPDATE and DELETE unless you intend to affect all rows
+- `TRUNCATE` cannot be used if FK references exist (unless specific conditions met)
+- `INSERT` column list order must match `VALUES` order
+- `MERGE` is powerful but complex — test carefully for unintended updates
+- DML changes data; DDL changes structure — know which you're running
 
 ## 6. Basic Querying
 
@@ -606,6 +686,22 @@ WHERE fname IS NULL;
 ```
 
 #### NOT LIKE
+
+| Question | Answer |
+| --- | --- |
+| DISTINCT purpose? | Removes duplicate rows from the result set |
+| LIKE wildcards? | `%` = any string; `_` = single char; `[ABC]` = char class; `[^ABC]` = not in class |
+| TOP vs OFFSET/FETCH? | `TOP n` returns first n rows; `OFFSET/FETCH` supports pagination with `ORDER BY` |
+| IS NULL vs = NULL? | `= NULL` is always unknown/false — use `IS NULL` or `IS NOT NULL` |
+| AND vs OR precedence? | AND binds tighter than OR — use parentheses to clarify intent |
+| CASE expression types? | Simple `CASE col WHEN val` or searched `CASE WHEN condition` — both return a value |
+
+**Must-know points:**
+- SQL logical order for basic queries: `FROM` → `WHERE` → `SELECT` → `ORDER BY`
+- `NULL` comparisons need `IS NULL` — three-valued logic (TRUE, FALSE, UNKNOWN)
+- `ORDER BY` without `TOP`/`OFFSET` on large tables can be expensive
+- `LIKE '%text'` (leading wildcard) prevents index use on that column
+- `CASE` is an expression — can appear in `SELECT`, `WHERE`, `ORDER BY`
 
 ## 7. Aggregate and Grouping Queries
 
@@ -754,6 +850,22 @@ HAVING SUM(salary) > 200000;
 
 - GROUP BY ROLLUP is an extension of the GROUP BY clause.
 - It generates subtotals and a grand total for a set of columns.
+
+| Question | Answer |
+| --- | --- |
+| COUNT(*) vs COUNT(column)? | `COUNT(*)` counts all rows; `COUNT(col)` ignores NULLs in that column |
+| Why can't SELECT * with GROUP BY? | Non-aggregated columns must be in GROUP BY — `*` includes columns not grouped |
+| WHERE vs HAVING? | WHERE filters rows before grouping; HAVING filters groups using aggregate conditions |
+| What does GROUP BY ROLLUP do? | Adds subtotal and grand total rows for grouped columns |
+| AVG with NULLs? | NULL values are excluded from average calculation |
+| Multi-column GROUP BY? | Groups by unique combinations — `(dept, city)` treats each pair as one group |
+
+**Must-know points:**
+- Every non-aggregate column in `SELECT` **must** appear in `GROUP BY`
+- Use `HAVING COUNT(*) > 2`, not `WHERE COUNT(*) > 2` — aggregates belong in HAVING
+- `COUNT(DISTINCT col)` counts unique non-NULL values
+- `ROLLUP` is useful for report-style subtotals without separate queries
+- Wrong GROUP BY is a top interview trap — know the partial dependency rule
 
 ## 8. Joins and Relationships
 
@@ -1295,6 +1407,22 @@ Result:
 | Mathematics | 2 | 1000.00 |
 | Physics | 1 | 600.00 |
 
+| Question | Answer |
+| --- | --- |
+| INNER JOIN vs LEFT JOIN? | INNER returns only matching rows; LEFT returns all left rows + matches (NULLs on right if no match) |
+| When to use FULL OUTER JOIN? | When you need all rows from both tables — matches and non-matches from either side |
+| CROSS JOIN use case? | Cartesian product — every row paired with every row (e.g. generate combinations) |
+| What is a self join? | Joining a table to itself — common for employee/manager hierarchies |
+| How to model many-to-many? | Junction/bridge table with FKs to both parent tables |
+| CROSS APPLY vs OUTER APPLY? | CROSS APPLY = inner join to subquery/TVF; OUTER APPLY = left join — keeps left rows even if subquery returns nothing |
+
+**Must-know points:**
+- **INNER JOIN** is the default for matched data only; use **LEFT JOIN** to include unmatched parent rows
+- Always specify join condition with `ON` — missing `ON` on old-style joins causes Cartesian products
+- Many-to-many requires a **junction table** with composite or surrogate PK
+- `ON DELETE CASCADE` auto-deletes child rows when parent is deleted — use carefully
+- Self join aliases the same table twice (`e` employee, `m` manager)
+
 ## 9. Subqueries and CTEs
 
 ### Sub Queries
@@ -1407,6 +1535,22 @@ FROM (
 WHERE avg > 90000;
 ```
 
+| Question | Answer |
+| --- | --- |
+| Subquery vs JOIN? | Subquery nests logic inside another query; JOIN combines tables — often interchangeable, optimizer may treat similarly |
+| Single-row subquery use? | Returns one value — used with `=`, `>`, `<` in WHERE/HAVING |
+| Correlated subquery? | Inner query references outer query — runs per outer row; can be slower than JOIN |
+| IN vs EXISTS? | `IN` checks value in a list; `EXISTS` checks if subquery returns any row — often faster for large sets |
+| What is an inline view? | Subquery in `FROM` clause acting as a temporary named result set |
+| CTE (`WITH`) advantage? | Named temporary result — improves readability; can be referenced multiple times; supports recursion |
+
+**Must-know points:**
+- Subquery in `WHERE` runs first (conceptually) to produce a value or list for the outer query
+- **Correlated** subqueries depend on outer row — evaluate once per outer row
+- CTEs with `WITH ... AS (...)` make complex queries readable and enable **recursive** hierarchies
+- `IN (subquery)` fails if subquery returns NULLs unexpectedly — consider `EXISTS`
+- Inline views in `FROM` must have an alias
+
 ## 10. SQL Functions
 
 ### String Functions
@@ -1439,6 +1583,22 @@ SELECT FORMAT(GETDATE(), 'yyyy-MM-dd');
 SELECT FORMAT(GETDATE(), 'yyyy-MMM-dd');
 SELECT FORMAT(GETDATE(), 'yyyy-MMMM-dd');
 ```
+
+| Question | Answer |
+| --- | --- |
+| Scalar vs aggregate function? | Scalar operates per row (`UPPER`); aggregate collapses rows (`SUM`, `COUNT`) |
+| LEN vs DATALENGTH? | `LEN` returns character count (excludes trailing spaces for char); `DATALENGTH` returns bytes |
+| DATEADD vs DATEDIFF? | `DATEADD` adds interval to a date; `DATEDIFF` calculates difference between two dates |
+| CONCAT vs CONCAT_WS? | `CONCAT` joins strings; `CONCAT_WS` uses a separator between values |
+| CAST vs CONVERT? | Both convert types; `CONVERT` has SQL Server-specific style codes for dates |
+| User-defined function types? | Scalar (returns single value), inline TVF (table), multi-statement TVF |
+
+**Must-know points:**
+- Aggregate functions ignore **NULL** except `COUNT(*)`
+- String functions are case-sensitive based on **collation**
+- `GETDATE()` returns server local time; prefer `SYSDATETIME()` for higher precision
+- `FORMAT()` is convenient but slower than `CONVERT` for large datasets
+- UDFs in `WHERE` can prevent index use — be cautious in performance-critical queries
 
 ## 11. Set Operators
 
@@ -1510,6 +1670,22 @@ EXCEPT
 SELECT EmployeeID, Name, Department FROM DelhiEmployees;
 ```
 
+| Question | Answer |
+| --- | --- |
+| UNION vs UNION ALL? | UNION removes duplicates; UNION ALL keeps all rows including duplicates — faster |
+| EXCEPT purpose? | Returns rows in first query not present in second (set difference) |
+| INTERSECT purpose? | Returns rows common to both queries |
+| Set operator requirements? | Same number of columns, compatible types, corresponding order |
+| Which query supplies column names? | The **first** SELECT in the chain |
+| UNION vs JOIN? | UNION stacks rows vertically (same columns); JOIN combines tables horizontally |
+
+**Must-know points:**
+- Set operators require **compatible column count and types** across all SELECTs
+- Prefer **UNION ALL** when duplicates are acceptable — avoids sort/distinct overhead
+- `EXCEPT` and `INTERSECT` are useful for data comparison and reconciliation
+- `ORDER BY` after set operators applies to the **final combined** result
+- NULLs are considered equal for duplicate removal in UNION
+
 ## 12. Views and Window Functions
 
 ### Views
@@ -1558,6 +1734,22 @@ Example:
 ```sql
 sp_helptext 'enrollment_details';
 ```
+
+| Question | Answer |
+| --- | --- |
+| What is a view? | Saved SELECT query — virtual table with no stored data (unless indexed view) |
+| View vs table? | View is a query definition; data lives in underlying base tables |
+| ROW_NUMBER vs RANK vs DENSE_RANK? | ROW_NUMBER = unique sequential; RANK skips after ties; DENSE_RANK no gaps after ties |
+| LAG vs LEAD? | LAG accesses previous row; LEAD accesses next row — useful for period-over-period |
+| PARTITION BY in window functions? | Divides result into groups — function resets per partition |
+| NTILE purpose? | Divides rows into N roughly equal buckets (e.g. quartiles) |
+
+**Must-know points:**
+- Views simplify complex joins and can enforce **security** (hide columns/rows)
+- Window functions use `OVER (PARTITION BY ... ORDER BY ...)` — no GROUP BY collapse
+- `ROW_NUMBER()` is ideal for deduplication with a CTE + `WHERE rn = 1`
+- Indexed views (materialized) store data — have restrictions on definition
+- `sp_helptext` shows view definition; `INFORMATION_SCHEMA.VIEWS` lists all views
 
 ## 13. Stored Procedures and Programmability
 
@@ -1660,6 +1852,22 @@ BEGIN
 END;
 ```
 
+| Question | Answer |
+| --- | --- |
+| Stored procedure vs ad-hoc SQL? | SP is precompiled, reusable, securable; ad-hoc is flexible but re-parsed each time |
+| AFTER vs INSTEAD OF trigger? | AFTER runs after the event; INSTEAD OF replaces the event (common on views) |
+| `inserted` vs `deleted` tables? | Magic tables in triggers — `inserted` has new values; `deleted` has old values |
+| Scalar vs table-valued function? | Scalar returns one value; TVF returns a table usable in `FROM` |
+| Input vs output parameters? | Input passes values in; output (`OUTPUT`) returns values to the caller |
+| Trigger best practices? | Keep logic minimal; avoid recursion; document side effects |
+
+**Must-know points:**
+- Stored procedures support **parameters**, **transactions**, and **error handling**
+- Triggers fire automatically — hidden logic can surprise developers and hurt performance
+- `RAISERROR` / `THROW` in triggers can roll back the triggering statement
+- `inserted`/`deleted` are only available inside trigger scope
+- Prefer stored procedures for repeated business logic and granular permissions (`GRANT EXECUTE`)
+
 ## 15. Normalization and Database Design
 
 ### Normalization
@@ -1759,6 +1967,22 @@ Better design:
 - Move `zip`, `city`, and `state` into a separate `zip_codes` table.
 - Keep only the required key/reference in the employee table.
 
+| Question | Answer |
+| --- | --- |
+| What is normalization? | Organizing tables to reduce redundancy and improve integrity |
+| 1NF rule? | Atomic values only — no repeating groups or multi-value cells |
+| 2NF rule? | 1NF + no partial dependency on composite key |
+| 3NF rule? | 2NF + no transitive dependency (non-key → non-key) |
+| When to denormalize? | Read-heavy reporting where JOIN cost outweighs redundancy risk |
+| Partial vs transitive dependency? | Partial = non-key depends on part of composite PK; transitive = non-key depends on another non-key |
+
+**Must-know points:**
+- Normalization reduces **update anomalies** (insert, update, delete problems)
+- 1NF = atomic columns; 2NF matters with **composite keys**; 3NF removes **transitive** deps
+- BCNF/4NF/5NF exist but 3NF is the typical interview stopping point
+- Over-normalization can mean too many JOINs — balance with indexing and views
+- Junction tables resolve many-to-many while staying in 3NF
+
 ## 16. Indexes and Performance Tuning
 
 ### Indexes
@@ -1856,3 +2080,18 @@ Example output:
 DROP INDEX i_name ON employees;
 ```
 
+| Question | Answer |
+| --- | --- |
+| Clustered vs non-clustered index? | Clustered sorts/stores table data (one per table); non-clustered is separate structure with pointers |
+| When is clustered index created? | Usually on PRIMARY KEY by default — defines physical row order |
+| Composite index column order? | Leftmost prefix rule — index helps queries filtering on leading columns first |
+| Filtered index benefit? | Indexes subset of rows (`WHERE status = 'Active'`) — smaller, faster for targeted queries |
+| Index trade-offs? | Faster reads; slower writes and more disk space — too many indexes hurt INSERT/UPDATE/DELETE |
+| How to analyze query performance? | `SET STATISTICS IO/TIME ON`, execution plan, `sp_helpindex`, missing index DMVs |
+
+**Must-know points:**
+- A table allows **one clustered** and **many non-clustered** indexes
+- Index columns used in `WHERE`, `JOIN`, `ORDER BY`, and `GROUP BY` benefit most
+- Leading wildcard `LIKE '%x'` and functions on indexed columns cause **scans**
+- `STATISTICS IO` shows logical reads — lower is better
+- Drop unused indexes — each index must be maintained on every data change
