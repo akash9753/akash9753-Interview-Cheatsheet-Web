@@ -544,6 +544,8 @@ Benefits:
 - Fewer runtime errors
 - Better maintainability
 
+**ViewModels are POCOs** — plain classes shaped for a specific view (dropdown lists, display fields, validation). They are not EF entities and are not mapped to database tables.
+
 ### ASP.NET MVC Data Passing Types
 
 | Feature | ViewData | ViewBag | TempData | Session Variable | ViewModel |
@@ -595,6 +597,30 @@ Common clients:
 - Angular, React, Vue applications
 - Desktop applications
 - Third-party integrations
+
+### DTOs and POCOs
+
+**DTO** (Data Transfer Object) = flat object for API request/response. DTOs are always **POCOs** — plain classes or records with no EF mapping and no navigation properties.
+
+```csharp
+// Request DTO — what the client sends
+public record CreateEmployeeDto(string Name, string Department);
+
+// Response DTO — what the API returns (not the EF entity)
+public record EmployeeDto(int Id, string Name, string Department);
+```
+
+| Type | POCO? | Mapped to DB? | Used in |
+| --- | --- | --- | --- |
+| EF entity | Yes | Yes | Repository / `DbContext` |
+| DTO | Yes | No | Web API JSON body |
+| ViewModel | Yes | No | MVC Razor views |
+
+| Question | Answer |
+| --- | --- |
+| DTO vs entity? | Entity = persistence + relationships; DTO = API contract — both can be POCOs |
+| Why DTOs in Web API? | Hide internal schema, prevent over-posting, avoid circular JSON from navigations |
+| POCO in Web API? | Request/response models are plain classes — no `ControllerBase` inheritance on data types |
 
 ### Web API Advantages
 ![Web API versioning with MapToApiVersion](assets/aspnet/api-versioning-maptoapiversion.jpg)

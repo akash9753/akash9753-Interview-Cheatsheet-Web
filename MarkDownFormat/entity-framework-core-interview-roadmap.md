@@ -39,6 +39,7 @@ This roadmap is focused on Entity Framework Core interview preparation.
 - EF vs EF Core vs ADO.NET
 - Code-first vs database-first
 - Entities, DbContext, DbSet
+- POCO entities (plain C# classes, no ORM base class)
 
 EF Core is an ORM that maps C# classes to database tables so you work with objects instead of raw SQL for most operations.
 
@@ -62,6 +63,7 @@ EF Core is an ORM that maps C# classes to database tables so you work with objec
 | Code-first vs Database-first? | Code-first = entities drive schema; DB-first = scaffold from existing DB |
 | What is a DbContext? | Session/unit of work with the database — tracks changes, runs queries |
 | What is a DbSet? | Represents a table — `DbSet<Book>` = Books table |
+| What is a POCO? | Plain Old CLR Object — simple class with `{ get; set; }` and no framework base class; EF Core entities are POCOs |
 
 **Must-know points:**
 - EF Core supports SQL Server, PostgreSQL, SQLite, MySQL, Cosmos DB
@@ -82,6 +84,8 @@ public class AppDbContext : DbContext
     public DbSet<Book> Books => Set<Book>();
 }
 ```
+
+`Book` is a **POCO** — a plain class. EF Core maps it by convention; no need to inherit from `EntityObject` (EF 6) or any EF base type.
 
 ---
 
@@ -155,6 +159,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 ### What to Learn
 
 - Entity classes, primary keys, foreign keys
+- POCO entities — plain classes with no ORM inheritance
 - Navigation properties, required/optional fields
 - Shadow properties, owned types, value objects
 
@@ -226,12 +231,45 @@ modelBuilder.Entity<Order>().OwnsOne(o => o.ShippingAddress);
 | `[ForeignKey("AuthorId")]` | Explicit FK mapping |
 | `[NotMapped]` | Exclude property from database |
 
+### POCO (Plain Old CLR Object)
+
+**POCO** = Plain Old CLR Object — a simple C# class with public properties and **no dependency on a framework base class**.
+
+| Characteristic | POCO | Non-POCO (legacy / coupled) |
+| --- | --- | --- |
+| Base class | `object` only (or none) | `EntityObject` (EF 6), `DataRow` (ADO.NET DataSet) |
+| Properties | `{ get; set; }` auto-properties | Often generated or framework-tied |
+| ORM coupling | None — EF maps by convention | Tied to specific ORM APIs |
+| Testability | Easy to new up in unit tests | Harder — needs ORM infrastructure |
+| EF Core support | **Required style** for entities | Not used in EF Core |
+
+```csharp
+// POCO entity — EF Core maps this to the Books table
+public class Book
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+}
+
+// NOT a POCO — inherits EF 6 base (do not use in EF Core)
+// public class Book : EntityObject { ... }
+```
+
+| Question | Answer |
+| --- | --- |
+| What is a POCO? | Plain class with auto-properties, no framework inheritance — data + optional methods |
+| Why does EF Core use POCOs? | Decouples domain from ORM, supports Code First, easier testing and maintenance |
+| POCO vs entity? | **POCO** = class style (plain); **entity** = role (maps to a DB table). EF entities should be POCOs |
+| Can a POCO have methods? | Yes — POCO describes structure, not “data only”; but keep persistence logic out of entities when using DDD |
+| Annotations on POCO? | Allowed — `[Key]`, `[Required]` are metadata, not inheritance; class stays a POCO |
+
 ### Entity vs Model vs DTO
 
-In interviews, **model** is the vague term — always clarify which layer you mean.
+In interviews, **model** is the vague term — always clarify which layer you mean. Entity, ViewModel, and DTO are often all **POCOs** (same plain-class style) but serve **different purposes**.
 
 | Aspect | Entity | Model (ViewModel / domain) | DTO |
 | --- | --- | --- | --- |
+| POCO? | Yes — plain class | Yes — plain class | Yes — plain class / record |
 | Purpose | Map to a database table | Shape data for UI or app logic | Transfer data across boundaries (API, services) |
 | Layer | Data / persistence | Presentation or domain | API contract / service boundary |
 | EF mapping | Yes — `DbSet<T>`, tracked by `DbContext` | Usually not mapped to DB | Never mapped to DB |
@@ -273,8 +311,10 @@ public record CreateBookDto(string Title, decimal Price, int AuthorId);
 | Why not return entities from APIs? | Over-posting risk, leaks internal schema, circular JSON from navigations, unnecessary columns, harder to version |
 | Entity → DTO mapping? | Project in query: `.Select(b => new BookListDto(...))` — EF translates to SQL and fetches only needed columns |
 | Can a DTO be used as entity? | No — DTOs lack EF configuration, navigations, and should not be in `DbSet<T>` |
+| POCO vs DTO? | DTO is always a POCO; not every POCO is a DTO — entities and ViewModels are POCOs too |
 
 **Must-know points:**
+- EF Core entities **must** be POCOs — no `EntityObject`, no inheriting `DbContext`
 - Reference navigation = single related entity; collection navigation = `List<T>`
 - Nullable FK (`int?`) = optional relationship
 - Owned types are stored in same table (or separate columns), not a separate entity table

@@ -37,6 +37,7 @@ This roadmap is focused only on object-oriented programming concepts in C#. Use 
 - Methods
 - Properties
 - Auto-implemented properties
+- POCO (Plain Old CLR Object)
 - Object initialization
 - Access modifiers
 - `public`
@@ -73,6 +74,30 @@ This roadmap is focused only on object-oriented programming concepts in C#. Use 
 | Private class | Helper class hidden inside another class; helps encapsulation |
 | Static class | Utility/helper functions and constants |
 | Sealed class | Final class where further inheritance should be prevented |
+
+### POCO (Plain Old CLR Object)
+
+A **POCO** is a simple C# class — public properties with `{ get; set; }`, no inheritance from framework or ORM base classes.
+
+```csharp
+public class Customer
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
+```
+
+| Concept | Meaning |
+| --- | --- |
+| POCO | Plain class — `object` or nothing as base; no `EntityObject`, `Controller`, etc. |
+| Used for | EF entities, DTOs, ViewModels, domain objects, configuration models |
+| Not POCO | Classes forced to inherit framework types (EF 6 `EntityObject`, `MarshalByRefObject`) |
+
+| Question | Answer |
+| --- | --- |
+| What is a POCO? | Plain Old CLR Object — simple class with auto-properties, framework-independent |
+| POCO vs class? | Every POCO is a class; not every class is a POCO if it inherits a heavy framework base |
+| Why interviewers ask? | EF Core, Web API DTOs, and MVC ViewModels are all typically POCOs — same pattern, different layer |
 
 ---
 
