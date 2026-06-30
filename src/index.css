@@ -191,6 +191,33 @@ aside {
   outline-offset: 2px;
 }
 
+.toc-link.is-active,
+.toc-title.is-active {
+  color: var(--accent);
+  background: rgba(56, 189, 248, 0.14);
+  border-left-color: var(--accent);
+  font-weight: 600;
+}
+
+.toc-toggle.is-active {
+  background: rgba(56, 189, 248, 0.14);
+  border-left-color: var(--accent);
+}
+
+.toc-toggle.is-active .toc-title {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.toc-toggle.is-active-parent {
+  border-left-color: rgba(56, 189, 248, 0.45);
+  background: rgba(56, 189, 248, 0.06);
+}
+
+.toc-toggle.is-active-parent .toc-title {
+  color: #bae6fd;
+}
+
 .toc-group,
 .toc-subgroup {
   display: flex;
