@@ -295,6 +295,58 @@ main li { color: var(--text); }
 main ul,
 main ol { padding-left: 1.4rem; }
 
+/* In-content links */
+main a:not(.heading-anchor) {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: rgba(56, 189, 248, 0.35);
+  text-underline-offset: 2px;
+}
+
+main a:not(.heading-anchor):hover {
+  color: var(--accent-2);
+  text-decoration-color: var(--accent-2);
+}
+
+/* Topic index lists (HTML <ul> of anchor links in markdown) */
+main ul:has(> li > a) {
+  list-style: none;
+  padding-left: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+  margin: 1rem 0 1.5rem;
+}
+
+main ul:has(> li > a) > li {
+  margin: 0;
+}
+
+main ul:has(> li > a) > li > a {
+  display: block;
+  padding: 0.6rem 0.9rem;
+  background: rgba(17, 24, 39, 0.92);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  text-decoration: none;
+  line-height: 1.4;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+main ul:has(> li > a) > li > a:hover {
+  border-color: var(--accent);
+  background: var(--panel-2);
+  color: #f8fafc;
+  transform: translateY(-1px);
+}
+
+/* Override inline styles from legacy HTML in markdown */
+main ul:has(> li > a) > li > a span {
+  color: inherit !important;
+  font-weight: inherit;
+}
+
 .section-divider {
   border: none;
   border-top: 1px solid var(--border);
