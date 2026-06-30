@@ -177,7 +177,6 @@ public class BankAccount
 <a id="topic-4"></a>
 
 ## 4. Abstraction
-![Interface vs abstraction comparison from .NET interview topics](assets/patterns/top-5-design-patterns.jpg)
 
 ### What to Learn
 
@@ -356,7 +355,6 @@ public interface ILogger
 <a id="topic-8"></a>
 
 ## 8. Abstract Classes vs Interfaces
-![SOLID Interface Segregation and Liskov examples](assets/solid/solid-principles-dotnet-examples.jpg)
 
 ### What to Learn
 
