@@ -1,0 +1,879 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>C# Fundamentals Learning Roadmap for Interview Preparation</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #111827;
+      --panel-2: #172033;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #38bdf8;
+      --accent-2: #a3e635;
+      --border: #263449;
+      --code-bg: #0f172a;
+      --table-stripe: #101a2d;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top left, #15203a 0, var(--bg) 36rem);
+      color: var(--text);
+      font-family: Segoe UI, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      line-height: 1.65;
+    }
+    .layout { display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: 100vh; }
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      padding: 10px 8px 12px;
+      background: rgba(17, 24, 39, 0.92);
+      border-right: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      font-size: 11px;
+      line-height: 1.2;
+    }
+    .home-link {
+      display: inline-block;
+      margin: 0 0 10px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .home-link:hover { text-decoration: underline; }
+    .brand { margin: 0 0 6px; color: white; font-size: 0.95rem; line-height: 1.15; font-weight: 700; }
+    .toc { display: flex; flex-direction: column; gap: 0; }
+    .toc-link {
+      color: var(--muted);
+      text-decoration: none;
+      border-radius: 4px;
+      padding: 1px 4px;
+      font-size: 0.68rem;
+      line-height: 1.2;
+      display: block;
+    }
+    .toc-link:hover { background: var(--panel-2); color: var(--accent); }
+    .toc-group, .toc-subgroup { display: flex; flex-direction: column; gap: 0; }
+    .toc-toggle {
+      display: flex;
+      align-items: flex-start;
+      gap: 3px;
+      width: 100%;
+      border: none;
+      background: transparent;
+      color: inherit;
+      text-align: left;
+      border-radius: 4px;
+      padding: 1px 4px;
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.68rem;
+      line-height: 1.2;
+    }
+    .toc-toggle:hover { background: var(--panel-2); }
+    .toc-toggle .arrow {
+      color: var(--accent);
+      font-size: 0.55rem;
+      width: 8px;
+      margin-top: 2px;
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+    .toc-toggle[aria-expanded="true"] .arrow { transform: rotate(90deg); }
+    .toc-toggle.level-2 { color: #dbeafe; font-weight: 600; font-size: 0.7rem; }
+    .toc-toggle.level-3 { color: var(--muted); font-weight: 500; padding-left: 8px; font-size: 0.66rem; }
+    .toc-title { color: inherit; text-decoration: none; line-height: 1.2; }
+    .toc-title:hover { color: var(--accent); text-decoration: underline; }
+    .toc-children {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      overflow: hidden;
+      transition: max-height 0.25s ease;
+    }
+    .toc-children.collapsed { display: none; }
+    .toc-children .toc-link.level-3 { margin-left: 8px; font-size: 0.66rem; }
+    .toc-children .toc-link.level-4 { margin-left: 14px; font-size: 0.62rem; }
+    .level-1 { color: #f8fafc; font-weight: 600; font-size: 0.72rem; }
+    main { max-width: 1120px; width: 100%; padding: 42px 52px 96px; }
+    h1, h2, h3, h4, h5, h6 { color: #f8fafc; line-height: 1.25; margin: 2.2rem 0 0.8rem; }
+    h1 { font-size: clamp(2.1rem, 4vw, 4rem); margin-top: 0; }
+    h2 { font-size: 2rem; border-top: 1px solid var(--border); padding-top: 1.6rem; }
+    h3 { font-size: 1.45rem; color: var(--accent-2); }
+    h4 { font-size: 1.15rem; color: var(--accent); }
+    .heading-anchor { color: inherit; text-decoration: none; }
+    .heading-anchor:hover { text-decoration: underline; text-decoration-color: var(--accent); }
+    p, li { color: var(--text); }
+    ul, ol { padding-left: 1.4rem; }
+    .section-divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+    .content-figure { margin: 1rem 0 1.35rem; }
+    .content-figure img { max-width: 100%; border-radius: 12px; border: 1px solid var(--border); }
+    .content-figure figcaption { margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem; }
+    code { background: #1f2937; color: #fde68a; padding: 0.12rem 0.32rem; border-radius: 5px; }
+    .code-block { margin: 1rem 0 1.35rem; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--code-bg); }
+    .code-toolbar { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #111827; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 0.82rem; }
+    .copy-btn { cursor: pointer; border: 1px solid var(--border); background: #1f2937; color: var(--text); border-radius: 8px; padding: 4px 10px; }
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+    pre { margin: 0; padding: 16px; overflow: auto; }
+    pre code { background: transparent; color: #e5e7eb; padding: 0; border-radius: 0; font-family: Consolas, Cascadia Code, monospace; font-size: 0.95rem; }
+    .table-wrap { overflow-x: auto; margin: 1rem 0 1.35rem; border: 1px solid var(--border); border-radius: 12px; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+    th { color: #f8fafc; background: #1f2937; }
+    tr:nth-child(even) td { background: var(--table-stripe); }
+    .top-link { position: fixed; right: 22px; bottom: 22px; color: var(--bg); background: var(--accent); padding: 8px 12px; border-radius: 999px; text-decoration: none; font-weight: 700; }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      aside { position: relative; height: auto; max-height: 420px; }
+      main { padding: 28px 20px 84px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <a class="home-link" href="index.html">← All Courses</a>
+      <h2 class="brand">C# Fundamentals</h2>
+      <nav class="toc" aria-label="Table of contents">
+        <a class="toc-link level-1" href="#c-fundamentals-learning-roadmap-for-interview-preparation">C# Fundamentals Learning Roadmap for Interview Preparation</a><a class="toc-link level-2" href="#goal">Goal</a><a class="toc-link level-2" href="#topic-index">Topic Index</a><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#1-c-basics">1. C# Basics</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn">What to Learn</a><a class="toc-link level-3" href="#clr-execution-flow">CLR Execution Flow</a><a class="toc-link level-3" href="#clr-responsibilities">CLR Responsibilities</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#2-variables-data-types-and-operators">2. Variables, Data Types, and Operators</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-2">What to Learn</a><a class="toc-link level-3" href="#signed-data-types">Signed Data Types</a><a class="toc-link level-3" href="#unsigned-data-types">Unsigned Data Types</a><a class="toc-link level-3" href="#other-common-types">Other Common Types</a><a class="toc-link level-3" href="#type-safety-casting-and-conversion">Type Safety, Casting, and Conversion</a><a class="toc-link level-3" href="#convert-class-methods">Convert Class Methods</a><a class="toc-link level-3" href="#parse-vs-tryparse">Parse vs TryParse</a><a class="toc-link level-3" href="#var-vs-dynamic"><code>var</code> vs <code>dynamic</code></a><a class="toc-link level-3" href="#const-vs-readonly"><code>const</code> vs <code>readonly</code></a><a class="toc-link level-3" href="#null-coalescing-operators">Null-Coalescing Operators</a><a class="toc-link level-3" href="#is-and-as-operators"><code>is</code> and <code>as</code> Operators</a><a class="toc-link level-3" href="#boxing-and-unboxing">Boxing and Unboxing</a><a class="toc-link level-3" href="#quick-reference-convert-parse-tryparse-boxing-unboxing">Quick Reference: Convert, Parse, TryParse, Boxing &amp; Unboxing</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#3-control-flow-statements">3. Control Flow Statements</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-3">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#4-methods-and-parameters">4. Methods and Parameters</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-4">What to Learn</a><a class="toc-link level-3" href="#ref-vs-out"><code>ref</code> vs <code>out</code></a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#5-static-members-and-extension-methods">5. Static Members and Extension Methods</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-5">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#6-strings-and-string-handling">6. Strings and String Handling</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-6">What to Learn</a><a class="toc-link level-3" href="#common-string-operations">Common String Operations</a><a class="toc-link level-3" href="#string-vs-stringbuilder"><code>string</code> vs <code>StringBuilder</code></a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#7-arrays-and-collections">7. Arrays and Collections</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-7">What to Learn</a><a class="toc-link level-3" href="#collections-vs-generics">Collections vs Generics</a><a class="toc-link level-3" href="#system-collections-hierarchy"><code>System.Collections</code> Hierarchy</a><a class="toc-link level-3" href="#system-collections-generic-hierarchy"><code>System.Collections.Generic</code> Hierarchy</a><a class="toc-link level-3" href="#common-collection-interfaces">Common Collection Interfaces</a><a class="toc-link level-3" href="#ienumerable-vs-ienumerator"><code>IEnumerable</code> vs <code>IEnumerator</code></a><a class="toc-link level-3" href="#icomparable-vs-icomparer"><code>IComparable</code> vs <code>IComparer</code></a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#8-generics">8. Generics</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-8">What to Learn</a><a class="toc-link level-3" href="#common-generic-constraint-examples">Common Generic Constraint Examples</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#9-exception-handling">9. Exception Handling</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-9">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#10-delegates-events-and-lambda-expressions">10. Delegates, Events, and Lambda Expressions</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-10">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#11-linq">11. LINQ</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-11">What to Learn</a><a class="toc-link level-3" href="#ienumerable-vs-iqueryable"><code>IEnumerable</code> vs <code>IQueryable</code></a><a class="toc-link level-3" href="#system-linq-hierarchy"><code>System.Linq</code> Hierarchy</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#12-file-handling-and-streams">12. File Handling and Streams</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-12">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#13-memory-management-and-garbage-collection">13. Memory Management and Garbage Collection</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-13">What to Learn</a><a class="toc-link level-3" href="#garbage-collector">Garbage Collector</a><a class="toc-link level-3" href="#stack-vs-heap">Stack vs Heap</a><a class="toc-link level-3" href="#value-type-vs-reference-type">Value Type vs Reference Type</a><a class="toc-link level-3" href="#gc-generations">GC Generations</a><a class="toc-link level-3" href="#useful-gc-methods">Useful GC Methods</a><a class="toc-link level-3" href="#memory-management-hierarchy">Memory Management Hierarchy</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#14-asynchronous-programming">14. Asynchronous Programming</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-14">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#15-multithreading-and-parallel-programming">15. Multithreading and Parallel Programming</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-15">What to Learn</a><a class="toc-link level-3" href="#concurrency-vs-parallelism">Concurrency vs Parallelism</a><a class="toc-link level-3" href="#thread-vs-tpl">Thread vs TPL</a><a class="toc-link level-3" href="#tpl-hierarchy">TPL Hierarchy</a><a class="toc-link level-3" href="#synchronization-tools">Synchronization Tools</a><a class="toc-link level-3" href="#concurrency-control-hierarchy">Concurrency Control Hierarchy</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#16-reflection-and-attributes">16. Reflection and Attributes</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-16">What to Learn</a><a class="toc-link level-3" href="#typeof-vs-gettype"><code>typeof</code> vs <code>GetType()</code></a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#17-records-tuples-and-modern-c-features">17. Records, Tuples, and Modern C# Features</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-17">What to Learn</a><a class="toc-link level-3" href="#yield">Yield</a><a class="toc-link level-3" href="#enum">Enum</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#18-testing-in-c">18. Testing in C#</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-18">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#19-advanced-c-concepts">19. Advanced C# Concepts</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-19">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#20-performance-and-best-practices">20. Performance and Best Practices</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-20">What to Learn</a><a class="toc-link level-3" href="#naming-conventions">Naming Conventions</a></div></div>
+      </nav>
+    </aside>
+    <main id="top">
+      <h1 id="c-fundamentals-learning-roadmap-for-interview-preparation"><a class="heading-anchor" href="#c-fundamentals-learning-roadmap-for-interview-preparation">C# Fundamentals Learning Roadmap for Interview Preparation</a></h1><h2 id="goal"><a class="heading-anchor" href="#goal">Goal</a></h2><p>This roadmap is designed to prepare core C# and .NET fundamentals for interviews.</p><hr class="section-divider"><h2 id="topic-index"><a class="heading-anchor" href="#topic-index">Topic Index</a></h2><hr class="section-divider"><h2 id="1-c-basics"><a class="heading-anchor" href="#1-c-basics">1. C# Basics</a></h2><h3 id="what-to-learn"><a class="heading-anchor" href="#what-to-learn">What to Learn</a></h3><ul><li>What is C#?</li><li>What is .NET?</li><li>Difference between .NET Framework, .NET Core, and modern .NET</li><li>Structure of a C# program</li><li>Namespaces</li><li>Assemblies</li><li><code>.exe</code> files</li><li><code>.dll</code> files</li><li>SDK, runtime, and CLI basics</li><li>CLR</li><li>CTS</li><li>CLS</li><li>IL</li><li>JIT compiler</li><li>Managed code</li><li>Unmanaged code</li></ul><ul><li><code>.exe</code> files are executable applications.</li><li><code>.dll</code> files are shared libraries used by other applications.</li><li>The .NET compiler converts C# code into platform-independent Intermediate Language, also called IL.</li><li>IL code is packaged inside assemblies such as <code>.exe</code> and <code>.dll</code>.</li><li>Processors cannot understand IL directly, so IL must be converted into native machine instructions.</li><li>CLR provides the runtime environment required to execute .NET applications.</li><li>CLR provides services like garbage collection, security, threading, debugging, memory management, and exception handling.</li><li>JIT compiler translates IL into CPU-specific native code during runtime.</li><li>JIT compilation happens when the code is needed at runtime.</li><li>After JIT compilation, the generated native code is executed by the operating system and CPU.</li><li>Managed code is code controlled by CLR.</li><li>Unmanaged code runs outside CLR control and has its own runtime or direct operating system interaction.</li></ul><h3 id="clr-execution-flow"><a class="heading-anchor" href="#clr-execution-flow">CLR Execution Flow</a></h3><figure class="content-figure"><img src="assets/clr-execution-flow.png" alt="CLR Execution Flow"><figcaption>CLR Execution Flow</figcaption></figure><h3 id="clr-responsibilities"><a class="heading-anchor" href="#clr-responsibilities">CLR Responsibilities</a></h3><div class="table-wrap"><table><thead><tr><th>Responsibility</th><th>Meaning</th></tr></thead><tbody><tr><td>JIT compilation</td><td>Converts IL code into machine code during runtime</td></tr><tr><td>Memory management</td><td>Automatically allocates and releases managed memory</td></tr><tr><td>Garbage collection</td><td>Removes unused objects from memory automatically</td></tr><tr><td>App domain management</td><td>Isolates applications for secure execution</td></tr><tr><td>CLS</td><td>Defines common rules for .NET languages</td></tr><tr><td>CTS</td><td>Defines all data types used in .NET</td></tr><tr><td>Thread management</td><td>Handles execution of multiple threads</td></tr><tr><td>Security management</td><td>Provides code and application security</td></tr><tr><td>Debugging</td><td>Helps developers find and fix errors</td></tr><tr><td>Exception handling</td><td>Handles runtime errors without crashing the application</td></tr></tbody></table></div><hr class="section-divider"><h2 id="2-variables-data-types-and-operators"><a class="heading-anchor" href="#2-variables-data-types-and-operators">2. Variables, Data Types, and Operators</a></h2><h3 id="what-to-learn-2"><a class="heading-anchor" href="#what-to-learn-2">What to Learn</a></h3><ul><li>Value types and reference types</li><li>Primitive data types</li><li>Signed numeric data types</li><li>Unsigned numeric data types</li><li><code>char</code></li><li><code>bool</code></li><li><code>string</code></li><li><code>object</code></li><li><code>var</code></li><li><code>dynamic</code></li><li><code>const</code></li><li><code>readonly</code></li><li>Nullable types</li><li>Type safety</li><li>Casting</li><li>Conversion</li><li><code>Convert</code></li><li><code>Parse</code></li><li><code>TryParse</code></li><li>Boxing</li><li>Unboxing</li><li>Operators</li><li>Arithmetic operators</li><li>Relational operators</li><li>Logical operators</li><li>Assignment operators</li><li>Bitwise operators</li><li>Ternary operator</li><li>Null-coalescing operator <code>??</code></li><li>Null-coalescing assignment operator <code>??=</code></li><li>Null-conditional operator <code>?.</code></li><li><code>is</code> operator</li><li><code>as</code> operator</li></ul><h3 id="signed-data-types"><a class="heading-anchor" href="#signed-data-types">Signed Data Types</a></h3><div class="table-wrap"><table><thead><tr><th>Type</th><th>Size</th><th>Range / Purpose</th></tr></thead><tbody><tr><td><code>sbyte</code></td><td>1 byte</td><td>-128 to 127</td></tr><tr><td><code>short</code></td><td>2 bytes</td><td>-32,768 to 32,767</td></tr><tr><td><code>int</code></td><td>4 bytes</td><td>Around -2 billion to 2 billion</td></tr><tr><td><code>long</code></td><td>8 bytes</td><td>Very large negative to positive values</td></tr><tr><td><code>float</code></td><td>4 bytes</td><td>Decimal values</td></tr><tr><td><code>double</code></td><td>8 bytes</td><td>Large decimal values</td></tr><tr><td><code>decimal</code></td><td>16 bytes</td><td>High precision decimal values</td></tr><tr><td><code>nint</code></td><td>Platform dependent</td><td>Native signed integer</td></tr></tbody></table></div><h3 id="unsigned-data-types"><a class="heading-anchor" href="#unsigned-data-types">Unsigned Data Types</a></h3><div class="table-wrap"><table><thead><tr><th>Type</th><th>Size</th><th>Range / Purpose</th></tr></thead><tbody><tr><td><code>byte</code></td><td>1 byte</td><td>0 to 255</td></tr><tr><td><code>ushort</code></td><td>2 bytes</td><td>0 to 65,535</td></tr><tr><td><code>uint</code></td><td>4 bytes</td><td>0 to around 4 billion</td></tr><tr><td><code>ulong</code></td><td>8 bytes</td><td>Very large positive values</td></tr><tr><td><code>nuint</code></td><td>Platform dependent</td><td>Native unsigned integer</td></tr></tbody></table></div><h3 id="other-common-types"><a class="heading-anchor" href="#other-common-types">Other Common Types</a></h3><div class="table-wrap"><table><thead><tr><th>Type</th><th>Size / Value</th><th>Purpose</th></tr></thead><tbody><tr><td><code>char</code></td><td>2 bytes</td><td>Stores a single Unicode character</td></tr><tr><td><code>bool</code></td><td><code>true</code> / <code>false</code></td><td>Stores boolean value</td></tr><tr><td><code>string</code></td><td>Reference type</td><td>Stores text</td></tr><tr><td><code>object</code></td><td>Reference type</td><td>Base type of all data types</td></tr></tbody></table></div><h3 id="type-safety-casting-and-conversion"><a class="heading-anchor" href="#type-safety-casting-and-conversion">Type Safety, Casting, and Conversion</a></h3><ul><li>Type safety prevents storing incompatible data types in a variable.</li><li>Casting converts one data type into another using a cast operator.</li><li>Implicit casting is automatic conversion from a smaller or safe type to a larger compatible type.</li><li>Explicit casting is manual conversion from a larger type to a smaller type using a cast operator.</li><li>Conversion uses methods or helper classes such as <code>Convert</code>, <code>Parse</code>, and <code>TryParse</code>.</li></ul><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">int a = 10;
+double b = a;       // Implicit casting
+
+double x = 10.5;
+int y = (int)x;     // Explicit casting, data loss possible</code></pre></div><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Casting</th><th>Conversion</th></tr></thead><tbody><tr><td>Meaning</td><td>Changing datatype using cast operator</td><td>Changing datatype using methods/classes</td></tr><tr><td>Syntax</td><td><code>(type)value</code></td><td><code>Convert</code>, <code>Parse</code>, <code>TryParse</code></td></tr><tr><td>Performed by</td><td>Compiler/runtime</td><td>Methods</td></tr><tr><td>Mostly used for</td><td>Compatible numeric types</td><td>String/object/data conversions</td></tr><tr><td>Can handle null</td><td>No</td><td>Yes, depending on API</td></tr><tr><td>Exception handling</td><td>Limited</td><td>Better control</td></tr></tbody></table></div><h3 id="convert-class-methods"><a class="heading-anchor" href="#convert-class-methods">Convert Class Methods</a></h3><div class="table-wrap"><table><thead><tr><th>Method</th><th>Converts To</th></tr></thead><tbody><tr><td><code>Convert.ToInt16()</code></td><td><code>short</code></td></tr><tr><td><code>Convert.ToInt32()</code></td><td><code>int</code></td></tr><tr><td><code>Convert.ToInt64()</code></td><td><code>long</code></td></tr><tr><td><code>Convert.ToDouble()</code></td><td><code>double</code></td></tr><tr><td><code>Convert.ToDecimal()</code></td><td><code>decimal</code></td></tr><tr><td><code>Convert.ToBoolean()</code></td><td><code>bool</code></td></tr><tr><td><code>Convert.ToString()</code></td><td><code>string</code></td></tr><tr><td><code>Convert.ToChar()</code></td><td><code>char</code></td></tr></tbody></table></div><h3 id="parse-vs-tryparse"><a class="heading-anchor" href="#parse-vs-tryparse">Parse vs TryParse</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th><code>Parse()</code></th><th><code>TryParse()</code></th></tr></thead><tbody><tr><td>Return type</td><td>Actual datatype</td><td><code>bool</code></td></tr><tr><td>Invalid input</td><td>Throws exception</td><td>Returns <code>false</code></td></tr><tr><td>Exception handling</td><td>Required</td><td>Not required</td></tr><tr><td>Safer</td><td>No</td><td>Yes</td></tr><tr><td>Performance</td><td>Slower when exceptions occur</td><td>Better for user input</td></tr><tr><td>Recommended for user input</td><td>No</td><td>Yes</td></tr></tbody></table></div><h3 id="var-vs-dynamic"><a class="heading-anchor" href="#var-vs-dynamic"><code>var</code> vs <code>dynamic</code></a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th><code>var</code></th><th><code>dynamic</code></th></tr></thead><tbody><tr><td>Type decision</td><td>Compile time</td><td>Runtime</td></tr><tr><td>Type checking</td><td>Compile time</td><td>Runtime</td></tr><tr><td>Actual type</td><td>Fixed after assignment</td><td>Decided at runtime</td></tr><tr><td>IntelliSense</td><td>Yes</td><td>Limited</td></tr><tr><td>Performance</td><td>Faster</td><td>Slower</td></tr><tr><td>Error detection</td><td>Compile time</td><td>Runtime</td></tr><tr><td>Type safety</td><td>Strong</td><td>Weak</td></tr></tbody></table></div><h3 id="const-vs-readonly"><a class="heading-anchor" href="#const-vs-readonly"><code>const</code> vs <code>readonly</code></a></h3><figure class="content-figure"><img src="assets/csharp/const-vs-readonly.jpg" alt="const vs readonly in C#"><figcaption>const vs readonly in C#</figcaption></figure><div class="table-wrap"><table><thead><tr><th>Feature</th><th><code>const</code></th><th><code>readonly</code></th></tr></thead><tbody><tr><td>Initialization</td><td>Only at declaration</td><td>At declaration or in constructor</td></tr><tr><td>Mutability</td><td>Always immutable</td><td>Immutable after initialization</td></tr><tr><td>Runtime vs compile time</td><td>Compile time</td><td>Runtime</td></tr><tr><td>Scope</td><td>Always static</td><td>Instance-level or static</td></tr></tbody></table></div><h3 id="null-coalescing-operators"><a class="heading-anchor" href="#null-coalescing-operators">Null-Coalescing Operators</a></h3><figure class="content-figure"><img src="assets/csharp/null-conditional-vs-traditional.jpg" alt="Traditional null checks vs null-conditional operator"><figcaption>Traditional null checks vs null-conditional operator</figcaption></figure><ul><li><code>??</code> returns a default value when the left side value is null.</li><li><code>??=</code> assigns a value only when the variable is null.</li></ul><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">string name = null;
+string result = name ?? &quot;Guest&quot;;
+
+name ??= &quot;Akash&quot;;</code></pre></div><h3 id="is-and-as-operators"><a class="heading-anchor" href="#is-and-as-operators"><code>is</code> and <code>as</code> Operators</a></h3><ul><li><code>is</code> checks whether an object is compatible with a specific type.</li><li><code>as</code> performs conversion between compatible reference types and returns <code>null</code> if conversion fails.</li></ul><h3 id="boxing-and-unboxing"><a class="heading-anchor" href="#boxing-and-unboxing">Boxing and Unboxing</a></h3><ul><li>Boxing converts a value type into a reference type such as <code>object</code>.</li><li>Unboxing converts the boxed object back into a value type.</li><li>Boxing and unboxing create extra heap objects, increase GC pressure, and reduce performance.</li></ul><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">int x = 10;
+object obj = x;     // Boxing
+
+int value = (int)obj; // Unboxing</code></pre></div><h3 id="quick-reference-convert-parse-tryparse-boxing-unboxing"><a class="heading-anchor" href="#quick-reference-convert-parse-tryparse-boxing-unboxing">Quick Reference: Convert, Parse, TryParse, Boxing &amp; Unboxing</a></h3><p>Use this table to choose the right conversion API or concept at a glance.</p><div class="table-wrap"><table><thead><tr><th>Topic</th><th>Method / Property / Concept</th><th>Namespace</th><th>When to use</th><th>Example</th></tr></thead><tbody><tr><td><code>Convert</code></td><td><strong>Method</strong></td><td><code>System</code></td><td>When value can be <code>null</code></td><td><code>int n = Convert.ToInt32(null); // 0</code></td></tr><tr><td><code>Parse</code></td><td><strong>Method</strong></td><td><code>System</code></td><td>When string value is 100% valid</td><td><code>int n = int.Parse(&quot;123&quot;); // 123</code></td></tr><tr><td><code>TryParse</code></td><td><strong>Method</strong></td><td><code>System</code></td><td>When value may be invalid, like user input</td><td><code>bool ok = int.TryParse(&quot;abc&quot;, out int n); // false</code></td></tr><tr><td>Boxing</td><td><strong>Concept</strong></td><td>No specific namespace</td><td>When value type is stored in <code>object</code></td><td><code>object obj = 10;</code></td></tr><tr><td>Unboxing</td><td><strong>Concept</strong></td><td>No specific namespace</td><td>When object is converted back to value type</td><td><code>int n = (int)obj;</code></td></tr></tbody></table></div><hr class="section-divider"><h2 id="3-control-flow-statements"><a class="heading-anchor" href="#3-control-flow-statements">3. Control Flow Statements</a></h2><h3 id="what-to-learn-3"><a class="heading-anchor" href="#what-to-learn-3">What to Learn</a></h3><ul><li><code>if</code>, <code>else if</code>, and <code>else</code></li><li><code>switch</code> statement</li><li><code>switch</code> expression</li><li><code>for</code> loop</li><li><code>while</code> loop</li><li><code>do while</code> loop</li><li><code>foreach</code> loop</li><li><code>break</code></li><li><code>continue</code></li><li><code>goto</code></li><li>Pattern matching basics</li></ul><ul><li>Use <code>if</code> and <code>else</code> when conditions are different or complex.</li><li>Use <code>switch</code> when comparing one value against multiple possible values.</li><li>Use <code>for</code> when the number of iterations is known.</li><li>Use <code>while</code> when the number of iterations depends on a condition.</li><li>Use <code>foreach</code> to iterate through collections.</li><li><code>foreach</code> internally uses <code>IEnumerable</code> and <code>IEnumerator</code>.</li><li><code>foreach</code> hides calls to <code>MoveNext()</code> and <code>Current</code>.</li></ul><hr class="section-divider"><h2 id="4-methods-and-parameters"><a class="heading-anchor" href="#4-methods-and-parameters">4. Methods and Parameters</a></h2><h3 id="what-to-learn-4"><a class="heading-anchor" href="#what-to-learn-4">What to Learn</a></h3><ul><li>Method declaration</li><li>Return types</li><li>Method overloading</li><li>Optional parameters</li><li>Named arguments</li><li><code>ref</code> parameters</li><li><code>out</code> parameters</li><li><code>in</code> parameters</li><li><code>params</code> keyword</li><li>Local functions</li><li>Expression-bodied methods</li><li>Recursive methods</li></ul><ul><li>Named parameters are used to specify an argument by name instead of position.</li><li>Optional parameters allow some arguments to be skipped by providing default values.</li><li><code>params</code> is used when a method can accept a variable number of parameters.</li><li><code>out</code> and <code>ref</code> can be used to return or modify more than one value from a method.</li><li><code>out</code> is used to return a new value. The variable does not need to be initialized before being passed.</li><li><code>ref</code> is used to modify an existing value. The variable must be initialized before being passed.</li></ul><h3 id="ref-vs-out"><a class="heading-anchor" href="#ref-vs-out"><code>ref</code> vs <code>out</code></a></h3><figure class="content-figure"><img src="assets/csharp/ref-out-in-comparison.jpg" alt="C# ref, out, and in parameter modifiers compared"><figcaption>C# ref, out, and in parameter modifiers compared</figcaption></figure><div class="table-wrap"><table><thead><tr><th>Feature</th><th><code>ref</code></th><th><code>out</code></th></tr></thead><tbody><tr><td>Purpose</td><td>Pass an existing value and allow the method to modify it</td><td>Return a value from the method through a parameter</td></tr><tr><td>Initialization before method call</td><td>Required</td><td>Not required</td></tr><tr><td>Assignment inside method</td><td>Optional, but usually modified</td><td>Required before method returns</td></tr><tr><td>Data flow</td><td>Input and output</td><td>Output only</td></tr><tr><td>Common use</td><td>Modify an existing variable</td><td>Return multiple values from a method</td></tr><tr><td>Compiler rule</td><td>Variable must be assigned before passing</td><td>Method must assign value before returning</td></tr></tbody></table></div><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">static void UpdateValue(ref int number)
+{
+    number += 10;
+}
+
+static void GetValue(out int number)
+{
+    number = 100;
+}</code></pre></div><hr class="section-divider"><h2 id="5-static-members-and-extension-methods"><a class="heading-anchor" href="#5-static-members-and-extension-methods">5. Static Members and Extension Methods</a></h2><h3 id="what-to-learn-5"><a class="heading-anchor" href="#what-to-learn-5">What to Learn</a></h3><ul><li>Static class</li><li>Static fields</li><li>Static methods</li><li>Static properties</li><li>Static constructor</li><li>Extension methods</li><li><code>this</code> keyword in extension methods</li><li>Common use cases of extension methods</li></ul><ul><li>Extension methods allow adding new methods to an existing type without modifying the original source code.</li><li>Extension methods must be declared inside a static class.</li><li>Extension methods themselves must be static.</li><li>The <code>this</code> keyword binds the extension method to the target type.</li><li>Extension methods are useful when you want to add helper behavior to a type whose source code you do not control.</li></ul><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public static class StringExtensions
+{
+    public static bool IsNullOrEmptyText(this string value)
+    {
+        return string.IsNullOrEmpty(value);
+    }
+}</code></pre></div><hr class="section-divider"><h2 id="6-strings-and-string-handling"><a class="heading-anchor" href="#6-strings-and-string-handling">6. Strings and String Handling</a></h2><h3 id="what-to-learn-6"><a class="heading-anchor" href="#what-to-learn-6">What to Learn</a></h3><ul><li><code>string</code> type</li><li><code>System.String</code></li><li>String immutability</li><li>String interpolation</li><li>String concatenation</li><li>String interning</li><li><code>StringBuilder</code></li><li>Common string methods</li><li>String comparison</li><li>String formatting</li><li>Verbatim strings</li><li>Raw string literals</li></ul><ul><li>C# strings are objects.</li><li><code>string</code> is a reference type.</li><li><code>string</code> is a C# alias for <code>System.String</code>.</li><li><code>String</code> and <code>string</code> work identically.</li><li>String objects are created in heap memory.</li><li>Strings are immutable, meaning the value cannot be changed after creation.</li><li>When a string is modified, a new string object is created.</li><li>String interning allows CLR to store only one copy of identical string literals.</li><li>Strings are immutable, which also helps thread safety because multiple threads can read the same string without one thread changing it.</li></ul><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">string name = &quot;Akash&quot;;
+name = name + &quot; Patel&quot;;
+
+// Original string: &quot;Akash&quot;
+// New string: &quot;Akash Patel&quot;</code></pre></div><h3 id="common-string-operations"><a class="heading-anchor" href="#common-string-operations">Common String Operations</a></h3><ul><li>Concatenate</li><li>Trim</li><li>Replace</li><li>Contains</li><li>Compare</li><li>Format</li><li>Split</li><li>Join</li></ul><h3 id="string-vs-stringbuilder"><a class="heading-anchor" href="#string-vs-stringbuilder"><code>string</code> vs <code>StringBuilder</code></a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th><code>string</code></th><th><code>StringBuilder</code></th></tr></thead><tbody><tr><td>Type</td><td>Immutable</td><td>Mutable</td></tr><tr><td>Performance</td><td>Slow for repeated modifications</td><td>Fast for repeated modifications</td></tr><tr><td>Memory usage</td><td>Creates new memory on each change</td><td>Reuses internal buffer</td></tr><tr><td>Namespace</td><td><code>System</code></td><td><code>System.Text</code></td></tr><tr><td>Best use</td><td>Few changes or fixed text</td><td>Many repeated changes</td></tr></tbody></table></div><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">StringBuilder sb = new StringBuilder();
+sb.Append(&quot;Hello&quot;);
+sb.Append(&quot; World&quot;);</code></pre></div><hr class="section-divider"><h2 id="7-arrays-and-collections"><a class="heading-anchor" href="#7-arrays-and-collections">7. Arrays and Collections</a></h2><h3 id="what-to-learn-7"><a class="heading-anchor" href="#what-to-learn-7">What to Learn</a></h3><ul><li>Single-dimensional arrays</li><li>Multi-dimensional arrays</li><li>Jagged arrays</li><li><code>Array</code> class</li><li>Non-generic collections</li><li>Generic collections</li><li><code>List&lt;T&gt;</code></li><li><code>Dictionary&lt;TKey, TValue&gt;</code></li><li><code>HashSet&lt;T&gt;</code></li><li><code>Queue&lt;T&gt;</code></li><li><code>Stack&lt;T&gt;</code></li><li><code>LinkedList&lt;T&gt;</code></li><li><code>SortedList</code></li><li><code>SortedDictionary</code></li><li><code>IEnumerable</code></li><li><code>IEnumerator</code></li><li><code>ICollection</code></li><li><code>IList</code></li><li><code>IDictionary</code></li><li><code>IComparable</code></li><li><code>IComparer</code></li><li>Generic vs non-generic collections</li></ul><h3 id="collections-vs-generics"><a class="heading-anchor" href="#collections-vs-generics">Collections vs Generics</a></h3><ul><li>Non-generic collections store data as <code>object</code>, so they are not type safe.</li><li>Generic collections store strongly typed data and are safer and faster.</li><li>Generics avoid unnecessary casting and reduce boxing/unboxing.</li></ul><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Non-Generic Collections</th><th>Generic Collections</th></tr></thead><tbody><tr><td>Namespace</td><td><code>System.Collections</code></td><td><code>System.Collections.Generic</code></td></tr><tr><td>Type safety</td><td>No</td><td>Yes</td></tr><tr><td>Data storage</td><td>Stores as <code>object</code></td><td>Stores specific type</td></tr><tr><td>Casting required</td><td>Yes</td><td>No</td></tr><tr><td>Boxing/unboxing</td><td>Required for value types</td><td>Not required</td></tr><tr><td>Performance</td><td>Slower</td><td>Faster</td></tr><tr><td>Compile-time checking</td><td>No</td><td>Yes</td></tr><tr><td>Runtime error chance</td><td>More</td><td>Less</td></tr><tr><td>Examples</td><td><code>ArrayList</code>, <code>Hashtable</code>, <code>Stack</code>, <code>Queue</code></td><td><code>List&lt;int&gt;</code>, <code>Dictionary&lt;int,string&gt;</code>, <code>Stack&lt;int&gt;</code></td></tr><tr><td>Recommendation</td><td>Old applications</td><td>Modern applications</td></tr></tbody></table></div><h3 id="system-collections-hierarchy"><a class="heading-anchor" href="#system-collections-hierarchy"><code>System.Collections</code> Hierarchy</a></h3><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">System.Collections
+│
+├── IEnumerable
+│   │
+│   ├── Method
+│   │      └── GetEnumerator()
+│   │
+│   └── IEnumerator
+│       │
+│       ├── Property
+│       │      └── Current
+│       │
+│       └── Methods
+│              ├── MoveNext()
+│              ├── Reset()
+│              └── Dispose()
+│
+├── ICollection
+│   │
+│   ├── Properties
+│   │      ├── Count
+│   │      ├── IsSynchronized
+│   │      └── SyncRoot
+│   │
+│   └── Methods
+│          ├── CopyTo()
+│          └── GetEnumerator()
+│
+├── IList
+│   │
+│   ├── Properties
+│   │      ├── IsFixedSize
+│   │      ├── IsReadOnly
+│   │      └── Item[index]
+│   │
+│   └── Methods
+│          ├── Add()
+│          ├── Insert()
+│          ├── Remove()
+│          ├── RemoveAt()
+│          ├── Contains()
+│          ├── IndexOf()
+│          └── Clear()
+│
+├── IDictionary
+│   │
+│   ├── Properties
+│   │      ├── Keys
+│   │      ├── Values
+│   │      ├── Item[key]
+│   │      ├── IsFixedSize
+│   │      └── IsReadOnly
+│   │
+│   └── Methods
+│          ├── Add()
+│          ├── Remove()
+│          ├── Contains()
+│          └── Clear()
+│
+├── ArrayList
+│   │
+│   ├── Methods
+│   │      ├── Add()
+│   │      ├── Insert()
+│   │      ├── Remove()
+│   │      ├── RemoveAt()
+│   │      ├── Sort()
+│   │      ├── Reverse()
+│   │      └── Clear()
+│   │
+│   └── Properties
+│          ├── Count
+│          ├── Capacity
+│          └── Item[index]
+│
+├── Queue
+│   │
+│   ├── Methods
+│   │      ├── Enqueue()
+│   │      ├── Dequeue()
+│   │      ├── Peek()
+│   │      └── Clear()
+│   │
+│   └── Property
+│          └── Count
+│
+├── Stack
+│   │
+│   ├── Methods
+│   │      ├── Push()
+│   │      ├── Pop()
+│   │      ├── Peek()
+│   │      └── Clear()
+│   │
+│   └── Property
+│          └── Count
+│
+└── Hashtable
+    │
+    ├── Methods
+    │      ├── Add()
+    │      ├── Remove()
+    │      ├── ContainsKey()
+    │      ├── ContainsValue()
+    │      └── Clear()
+    │
+    └── Properties
+           ├── Keys
+           ├── Values
+           └── Count</code></pre></div><h3 id="system-collections-generic-hierarchy"><a class="heading-anchor" href="#system-collections-generic-hierarchy"><code>System.Collections.Generic</code> Hierarchy</a></h3><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">System.Collections.Generic
+│
+├── IEnumerable&lt;T&gt;
+│   │
+│   ├── Method
+│   │      └── GetEnumerator()
+│   │
+│   └── IEnumerator&lt;T&gt;
+│       │
+│       ├── Property
+│       │      └── Current
+│       │
+│       └── Methods
+│              ├── MoveNext()
+│              ├── Reset()
+│              └── Dispose()
+│
+├── ICollection&lt;T&gt;
+│   │
+│   ├── Properties
+│   │      ├── Count
+│   │      └── IsReadOnly
+│   │
+│   └── Methods
+│          ├── Add()
+│          ├── Remove()
+│          ├── Clear()
+│          ├── Contains()
+│          ├── CopyTo()
+│          └── GetEnumerator()
+│
+├── IList&lt;T&gt;
+│   │
+│   ├── Property
+│   │      └── this[int index]
+│   │
+│   └── Methods
+│          ├── IndexOf()
+│          ├── Insert()
+│          └── RemoveAt()
+│
+├── IDictionary&lt;TKey, TValue&gt;
+│   │
+│   ├── Properties
+│   │      ├── Keys
+│   │      └── Values
+│   │
+│   └── Methods
+│          ├── Add()
+│          ├── Remove()
+│          ├── ContainsKey()
+│          └── TryGetValue()
+│
+├── ISet&lt;T&gt;
+│   │
+│   └── Methods
+│          ├── UnionWith()
+│          ├── IntersectWith()
+│          ├── ExceptWith()
+│          └── SymmetricExceptWith()
+│
+├── IReadOnlyCollection&lt;T&gt;
+│   │
+│   └── Property
+│          └── Count
+│
+├── IReadOnlyList&lt;T&gt;
+│   │
+│   └── Property
+│          └── this[int index]
+│
+├── List&lt;T&gt;
+│   │
+│   ├── Methods
+│   │      ├── Add()
+│   │      ├── Insert()
+│   │      ├── Remove()
+│   │      ├── RemoveAt()
+│   │      ├── Sort()
+│   │      ├── Reverse()
+│   │      └── Clear()
+│   │
+│   └── Properties
+│          ├── Count
+│          ├── Capacity
+│          └── Item[index]
+│
+├── Queue&lt;T&gt;
+│   │
+│   ├── Methods
+│   │      ├── Enqueue()
+│   │      ├── Dequeue()
+│   │      ├── Peek()
+│   │      └── Clear()
+│   │
+│   └── Property
+│          └── Count
+│
+├── Stack&lt;T&gt;
+│   │
+│   ├── Methods
+│   │      ├── Push()
+│   │      ├── Pop()
+│   │      ├── Peek()
+│   │      └── Clear()
+│   │
+│   └── Property
+│          └── Count
+│
+├── Dictionary&lt;TKey, TValue&gt;
+│   │
+│   ├── Methods
+│   │      ├── Add()
+│   │      ├── Remove()
+│   │      ├── ContainsKey()
+│   │      ├── TryGetValue()
+│   │      └── Clear()
+│   │
+│   └── Properties
+│          ├── Keys
+│          ├── Values
+│          └── Count
+│
+├── HashSet&lt;T&gt;
+│   │
+│   ├── Methods
+│   │      ├── Add()
+│   │      ├── Remove()
+│   │      ├── UnionWith()
+│   │      ├── IntersectWith()
+│   │      └── Clear()
+│   │
+│   └── Property
+│          └── Count
+│
+└── LinkedList&lt;T&gt;
+    │
+    ├── Methods
+    │      ├── AddFirst()
+    │      ├── AddLast()
+    │      ├── Remove()
+    │      ├── Find()
+    │      └── Clear()
+    │
+    └── Properties
+           ├── First
+           ├── Last
+           └── Count</code></pre></div><ul><li><code>foreach</code> hides <code>MoveNext()</code> and <code>Current</code>.</li><li><code>foreach</code> automatically uses <code>IEnumerator&lt;T&gt;</code> internally.</li><li><code>IEnumerable&lt;T&gt;</code> only supports iteration (<code>foreach</code>).</li><li><code>IEnumerator</code> only browses the collection.</li><li><code>ICollection</code> browses the collection and also provides count.</li><li><code>IList</code> or <code>IDictionary</code> supports browse, count, add, and remove operations.</li></ul><h3 id="common-collection-interfaces"><a class="heading-anchor" href="#common-collection-interfaces">Common Collection Interfaces</a></h3><figure class="content-figure"><img src="assets/csharp/dictionary-vs-list-lookups.jpg" alt="Dictionary vs List lookup performance comparison"><figcaption>Dictionary vs List lookup performance comparison</figcaption></figure><div class="table-wrap"><table><thead><tr><th>Interface</th><th>Purpose</th></tr></thead><tbody><tr><td><code>IEnumerable</code> / <code>IEnumerable&lt;T&gt;</code></td><td>Supports iteration using <code>foreach</code></td></tr><tr><td><code>IEnumerator</code> / <code>IEnumerator&lt;T&gt;</code></td><td>Moves through a collection using <code>MoveNext()</code> and <code>Current</code></td></tr><tr><td><code>ICollection</code> / <code>ICollection&lt;T&gt;</code></td><td>Supports iteration plus count and basic collection operations</td></tr><tr><td><code>IList</code> / <code>IList&lt;T&gt;</code></td><td>Supports index-based access, add, insert, remove, and search</td></tr><tr><td><code>IDictionary</code> / <code>IDictionary&lt;TKey,TValue&gt;</code></td><td>Stores key-value pairs</td></tr><tr><td><code>ISet&lt;T&gt;</code></td><td>Supports set operations such as union and intersection</td></tr></tbody></table></div><h3 id="ienumerable-vs-ienumerator"><a class="heading-anchor" href="#ienumerable-vs-ienumerator"><code>IEnumerable</code> vs <code>IEnumerator</code></a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th><code>IEnumerable</code></th><th><code>IEnumerator</code></th></tr></thead><tbody><tr><td>Purpose</td><td>Used to iterate collection</td><td>Used to move through collection</td></tr><tr><td>Generic version</td><td><code>IEnumerable&lt;T&gt;</code></td><td><code>IEnumerator&lt;T&gt;</code></td></tr><tr><td>Main method</td><td><code>GetEnumerator()</code></td><td><code>MoveNext()</code>, <code>Reset()</code>, <code>Dispose()</code></td></tr><tr><td>Main property</td><td>None</td><td><code>Current</code></td></tr><tr><td>Used by</td><td>Collection classes</td><td><code>foreach</code> internally</td></tr><tr><td>Relation</td><td>Creates enumerator</td><td>Used by enumerator</td></tr></tbody></table></div><h3 id="icomparable-vs-icomparer"><a class="heading-anchor" href="#icomparable-vs-icomparer"><code>IComparable</code> vs <code>IComparer</code></a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th><code>IComparable</code></th><th><code>IComparer</code></th></tr></thead><tbody><tr><td>Purpose</td><td>Default sorting</td><td>Custom sorting</td></tr><tr><td>Comparison logic</td><td>Inside same type</td><td>Separate comparer type</td></tr><tr><td>Method</td><td><code>CompareTo()</code></td><td><code>Compare()</code></td></tr><tr><td>Namespace</td><td><code>System</code></td><td><code>System.Collections.Generic</code></td></tr><tr><td>Sorting type</td><td>Single/default</td><td>Multiple/custom</td></tr><tr><td>Who controls sorting</td><td>Object itself</td><td>External comparer</td></tr></tbody></table></div><hr class="section-divider"><h2 id="8-generics"><a class="heading-anchor" href="#8-generics">8. Generics</a></h2><h3 id="what-to-learn-8"><a class="heading-anchor" href="#what-to-learn-8">What to Learn</a></h3><ul><li>Generic classes</li><li>Generic methods</li><li>Generic interfaces</li><li>Type parameters</li><li>Generic constraints</li><li><code>where</code> keyword</li><li>Covariance</li><li>Contravariance</li><li>Benefits of generics</li></ul><ul><li>Generics allow classes, methods, and interfaces to use a placeholder type such as <code>T</code>.</li><li>Generic code can work with different data types safely.</li><li>Generic constraints restrict which types can be used as type arguments.</li><li>Constraints improve compile-time safety and allow access to members of a known base type or interface.</li></ul><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">class Repository&lt;T&gt; where T : class
+{
+    public void Add(T item)
+    {
+        // Add item
+    }
+}</code></pre></div><h3 id="common-generic-constraint-examples"><a class="heading-anchor" href="#common-generic-constraint-examples">Common Generic Constraint Examples</a></h3><div class="table-wrap"><table><thead><tr><th>Constraint</th><th>Meaning</th></tr></thead><tbody><tr><td><code>where T : class</code></td><td>Allows only reference types</td></tr><tr><td><code>where T : struct</code></td><td>Allows only value types</td></tr><tr><td><code>where T : new()</code></td><td>Requires a public parameterless constructor</td></tr><tr><td><code>where T : BaseClass</code></td><td>Requires type to inherit from a specific base class</td></tr><tr><td><code>where T : IInterface</code></td><td>Requires type to implement a specific interface</td></tr></tbody></table></div><hr class="section-divider"><h2 id="9-exception-handling"><a class="heading-anchor" href="#9-exception-handling">9. Exception Handling</a></h2><h3 id="what-to-learn-9"><a class="heading-anchor" href="#what-to-learn-9">What to Learn</a></h3><ul><li><code>try</code></li><li><code>catch</code></li><li><code>finally</code></li><li><code>throw</code></li><li><code>throw ex</code> vs <code>throw</code></li><li>Custom exceptions</li><li>Exception filters</li><li>Checked and unchecked exceptions concept</li><li>Best practices for exception handling</li></ul><ul><li>Exception handling allows runtime errors to be handled without crashing the application.</li><li><code>try</code> contains code that may throw an exception.</li><li><code>catch</code> handles the exception.</li><li><code>finally</code> runs cleanup code whether an exception occurs or not.</li><li><code>throw</code> preserves the original stack trace.</li><li><code>throw ex</code> resets the stack trace and is usually avoided.</li><li>Do not use exceptions for normal control flow.</li></ul><hr class="section-divider"><h2 id="10-delegates-events-and-lambda-expressions"><a class="heading-anchor" href="#10-delegates-events-and-lambda-expressions">10. Delegates, Events, and Lambda Expressions</a></h2><figure class="content-figure"><img src="assets/csharp/sync-async-delegates-events-flow.png" alt="Sync, async, threads, delegates, and events flow"><figcaption>Sync, async, threads, delegates, and events flow</figcaption></figure><figure class="content-figure"><img src="assets/csharp/sync-async-delegates-review-questions.png" alt="Review questions on sync/async, threads, and delegates"><figcaption>Review questions on sync/async, threads, and delegates</figcaption></figure><h3 id="what-to-learn-10"><a class="heading-anchor" href="#what-to-learn-10">What to Learn</a></h3><ul><li>Delegates</li><li>Multicast delegates</li><li>Anonymous methods</li><li>Lambda expressions</li><li><code>Func</code></li><li><code>Action</code></li><li><code>Predicate</code></li><li>Events</li><li>Event handlers</li><li>Publisher-subscriber pattern</li></ul><ul><li>Delegates are type-safe references to methods.</li><li><code>Func</code> represents a method that returns a value.</li><li><code>Action</code> represents a method that does not return a value.</li><li><code>Predicate</code> represents a method that returns a boolean value.</li><li>Lambda expressions provide a short syntax for anonymous functions.</li></ul><hr class="section-divider"><h2 id="11-linq"><a class="heading-anchor" href="#11-linq">11. LINQ</a></h2><figure class="content-figure"><img src="assets/csharp/linq-methods-cheatsheet.gif" alt="LINQ methods cheat sheet"><figcaption>LINQ methods cheat sheet</figcaption></figure><figure class="content-figure"><img src="assets/csharp/linq-methods-by-category.jpg" alt="LINQ methods grouped by category"><figcaption>LINQ methods grouped by category</figcaption></figure><figure class="content-figure"><img src="assets/csharp/linq-operators-complete-cheatsheet.jpg" alt="Complete LINQ operators cheat sheet"><figcaption>Complete LINQ operators cheat sheet</figcaption></figure><figure class="content-figure"><img src="assets/csharp/linq-mastery-aspnet-core.jpg" alt="Mastering LINQ in ASP.NET Core"><figcaption>Mastering LINQ in ASP.NET Core</figcaption></figure><figure class="content-figure"><img src="assets/csharp/linq-best-practices-12-rules.jpg" alt="12 best practices for LINQ in .NET"><figcaption>12 best practices for LINQ in .NET</figcaption></figure><figure class="content-figure"><img src="assets/csharp/linq-deferred-execution.jpg" alt="LINQ deferred execution example"><figcaption>LINQ deferred execution example</figcaption></figure><figure class="content-figure"><img src="assets/csharp/vertical-linq-coding-style.jpg" alt="Vertical LINQ method chaining style"><figcaption>Vertical LINQ method chaining style</figcaption></figure><figure class="content-figure"><img src="assets/csharp/dotnet-code-optimization-linq.jpg" alt=".NET code optimization examples for LINQ"><figcaption>.NET code optimization examples for LINQ</figcaption></figure><h3 id="what-to-learn-11"><a class="heading-anchor" href="#what-to-learn-11">What to Learn</a></h3><ul><li>What is LINQ?</li><li>LINQ query syntax</li><li>LINQ method syntax</li><li><code>Where</code></li><li><code>Select</code></li><li><code>SelectMany</code></li><li><code>OrderBy</code></li><li><code>OrderByDescending</code></li><li><code>ThenBy</code></li><li><code>GroupBy</code></li><li><code>Join</code></li><li><code>GroupJoin</code></li><li><code>Any</code></li><li><code>All</code></li><li><code>Contains</code></li><li><code>First</code></li><li><code>FirstOrDefault</code></li><li><code>Single</code></li><li><code>SingleOrDefault</code></li><li><code>Last</code></li><li><code>LastOrDefault</code></li><li><code>Count</code></li><li><code>Sum</code></li><li><code>Min</code></li><li><code>Max</code></li><li><code>Average</code></li><li><code>Distinct</code></li><li><code>Union</code></li><li><code>Intersect</code></li><li><code>Except</code></li><li><code>Skip</code></li><li><code>Take</code></li><li><code>ToList</code></li><li><code>ToArray</code></li><li><code>ToDictionary</code></li><li>Deferred execution</li><li>Immediate execution</li><li><code>IEnumerable</code> vs <code>IQueryable</code></li></ul><ul><li>LINQ provides query capabilities directly in C#.</li><li>Query syntax looks similar to SQL.</li><li>Method syntax uses extension methods and lambda expressions.</li><li>Deferred execution means query evaluation is delayed until the value is actually needed.</li><li><code>ToList()</code>, <code>ToArray()</code>, and <code>ToDictionary()</code> force immediate execution.</li><li><code>First()</code> expects at least one element and throws an exception if none exists.</li><li><code>FirstOrDefault()</code> returns the first element or the default value when no element is found.</li><li><code>Single()</code> expects exactly one matching element and throws an exception if none or multiple are found.</li><li><code>SingleOrDefault()</code> returns the default value if no record is found and throws an exception if more than one element matches.</li><li>Pagination can be done using <code>Skip()</code> and <code>Take()</code>.</li></ul><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var page = numbers
+    .Skip(0)
+    .Take(2)
+    .ToList();</code></pre></div><h3 id="ienumerable-vs-iqueryable"><a class="heading-anchor" href="#ienumerable-vs-iqueryable"><code>IEnumerable</code> vs <code>IQueryable</code></a></h3><figure class="content-figure"><img src="assets/efcore/ienumerable-client-side-filter.png" alt="IEnumerable client-side filtering diagram"><figcaption>IEnumerable client-side filtering diagram</figcaption></figure><figure class="content-figure"><img src="assets/efcore/iqueryable-server-side-filter.png" alt="IQueryable server-side filtering diagram"><figcaption>IQueryable server-side filtering diagram</figcaption></figure><div class="table-wrap"><table><thead><tr><th>Feature</th><th><code>IEnumerable</code></th><th><code>IQueryable</code></th></tr></thead><tbody><tr><td>Namespace</td><td><code>System.Collections</code></td><td><code>System.Linq</code></td></tr><tr><td>Purpose</td><td>Iterates in-memory collection</td><td>Builds queries for a remote data source</td></tr><tr><td>Execution</td><td>Deferred for LINQ methods</td><td>Deferred</td></tr><tr><td>Filtering</td><td>Usually done in application memory</td><td>Usually done at data source/server</td></tr><tr><td>Performance</td><td>Slower for large remote data</td><td>Better for queryable data sources</td></tr><tr><td>Supports LINQ</td><td>Yes</td><td>Yes</td></tr><tr><td>Query translation</td><td>No</td><td>Yes, provider-based</td></tr><tr><td>Best used for</td><td>Arrays, lists, collections</td><td>Remote query providers</td></tr><tr><td>Data source</td><td>In-memory data</td><td>Remote data source</td></tr><tr><td>Extension methods</td><td><code>Enumerable</code> methods</td><td><code>Queryable</code> methods</td></tr></tbody></table></div><h3 id="system-linq-hierarchy"><a class="heading-anchor" href="#system-linq-hierarchy"><code>System.Linq</code> Hierarchy</a></h3><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">System.Linq
+│
+├── IEnumerable&lt;T&gt;
+│   │
+│   ├── Conversion Methods
+│   │      ├── ToList()                : List&lt;T&gt;
+│   │      ├── ToArray()               : T[]
+│   │      ├── ToDictionary()          : Dictionary&lt;TKey,TValue&gt;
+│   │      └── Cast&lt;TResult&gt;()         : IEnumerable&lt;TResult&gt;
+│   │
+│   ├── Filtering Methods
+│   │      ├── Where()                 : IEnumerable&lt;T&gt;
+│   │      ├── OfType&lt;TResult&gt;()       : IEnumerable&lt;TResult&gt;
+│   │      └── Skip()                  : IEnumerable&lt;T&gt;
+│   │
+│   ├── Projection Methods
+│   │      ├── Select()                : IEnumerable&lt;TResult&gt;
+│   │      └── SelectMany()            : IEnumerable&lt;TResult&gt;
+│   │
+│   ├── Sorting Methods
+│   │      ├── OrderBy()               : IOrderedEnumerable&lt;T&gt;
+│   │      ├── OrderByDescending()     : IOrderedEnumerable&lt;T&gt;
+│   │      ├── ThenBy()                : IOrderedEnumerable&lt;T&gt;
+│   │      └── Reverse()               : IEnumerable&lt;T&gt;
+│   │
+│   ├── Grouping Methods
+│   │      ├── GroupBy()               : IEnumerable&lt;IGrouping&lt;TKey,T&gt;&gt;
+│   │      └── ToLookup()              : ILookup&lt;TKey,T&gt;
+│   │
+│   ├── Joining Methods
+│   │      ├── Join()                  : IEnumerable&lt;TResult&gt;
+│   │      └── GroupJoin()             : IEnumerable&lt;TResult&gt;
+│   │
+│   ├── Aggregate Methods
+│   │      ├── Count()                 : int
+│   │      ├── Sum()                   : numeric type
+│   │      ├── Min()                   : T
+│   │      ├── Max()                   : T
+│   │      ├── Average()               : double
+│   │      └── Aggregate()             : TResult
+│   │
+│   ├── Quantifier Methods
+│   │      ├── Any()                   : bool
+│   │      ├── All()                   : bool
+│   │      └── Contains()              : bool
+│   │
+│   ├── Element Methods
+│   │      ├── First()                 : T
+│   │      ├── FirstOrDefault()        : T
+│   │      ├── Last()                  : T
+│   │      ├── LastOrDefault()         : T
+│   │      ├── Single()                : T
+│   │      └── ElementAt()             : T
+│   │
+│   ├── Set Methods
+│   │      ├── Distinct()              : IEnumerable&lt;T&gt;
+│   │      ├── Union()                 : IEnumerable&lt;T&gt;
+│   │      ├── Intersect()             : IEnumerable&lt;T&gt;
+│   │      └── Except()                : IEnumerable&lt;T&gt;
+│   │
+│   └── Partition Methods
+│          ├── Take()                  : IEnumerable&lt;T&gt;
+│          ├── Skip()                  : IEnumerable&lt;T&gt;
+│          ├── TakeWhile()             : IEnumerable&lt;T&gt;
+│          └── SkipWhile()             : IEnumerable&lt;T&gt;
+│
+│
+└── IQueryable&lt;T&gt;
+    │
+    ├── Properties
+    │      ├── Provider               : IQueryProvider
+    │      ├── Expression             : Expression
+    │      └── ElementType            : Type
+    │
+    ├── Methods
+    │      ├── Where()                : IQueryable&lt;T&gt;
+    │      ├── Select()               : IQueryable&lt;TResult&gt;
+    │      ├── OrderBy()              : IOrderedQueryable&lt;T&gt;
+    │      ├── GroupBy()              : IQueryable&lt;IGrouping&lt;TKey,T&gt;&gt;
+    │      └── Join()                 : IQueryable&lt;TResult&gt;
+    │
+    └── Converts LINQ query into SQL query</code></pre></div><hr class="section-divider"><h2 id="12-file-handling-and-streams"><a class="heading-anchor" href="#12-file-handling-and-streams">12. File Handling and Streams</a></h2><h3 id="what-to-learn-12"><a class="heading-anchor" href="#what-to-learn-12">What to Learn</a></h3><ul><li><code>File</code></li><li><code>FileInfo</code></li><li><code>Directory</code></li><li><code>DirectoryInfo</code></li><li><code>Path</code></li><li><code>Stream</code></li><li><code>FileStream</code></li><li><code>StreamReader</code></li><li><code>StreamWriter</code></li><li><code>MemoryStream</code></li><li>Reading and writing files</li><li><code>using</code> directive</li><li><code>using</code> statement</li><li><code>using</code> declaration</li><li>Alias directive</li><li><code>IDisposable</code></li></ul><ul><li><code>using</code> can import namespaces.</li><li><code>using</code> can automatically dispose resources.</li><li>The <code>using</code> statement ensures <code>Dispose()</code> is called even if an exception occurs.</li><li><code>using</code> can also create an alias for a namespace or type.</li><li><code>IDisposable</code> is commonly used for resources such as files, streams, database connections, and network resources.</li></ul><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">using System;
+
+using (var stream = new FileStream(&quot;file.txt&quot;, FileMode.Open))
+{
+    // Use stream
+}
+
+using ProjectA = MyCompany.ProjectA.SubModule;</code></pre></div><hr class="section-divider"><h2 id="13-memory-management-and-garbage-collection"><a class="heading-anchor" href="#13-memory-management-and-garbage-collection">13. Memory Management and Garbage Collection</a></h2><h3 id="what-to-learn-13"><a class="heading-anchor" href="#what-to-learn-13">What to Learn</a></h3><ul><li>Stack memory</li><li>Heap memory</li><li>Managed heap</li><li>Managed memory</li><li>Unmanaged memory</li><li>Garbage collection</li><li>Generations in GC</li><li>Gen 0</li><li>Gen 1</li><li>Gen 2</li><li>Large Object Heap</li><li>Finalizers</li><li>Destructors</li><li><code>IDisposable</code></li><li><code>Dispose()</code></li><li><code>using</code> statement</li><li><code>using</code> declaration</li><li>Weak references</li><li>Memory leaks in .NET</li></ul><h3 id="garbage-collector"><a class="heading-anchor" href="#garbage-collector">Garbage Collector</a></h3><ul><li>Garbage Collector automatically frees unused managed memory in .NET.</li><li>CLR decides when the Garbage Collector should run.</li><li>Developers generally do not control the exact execution time of GC.</li><li>GC usually runs when memory pressure increases or memory allocation is required.</li><li>Memory cleanup in .NET is called non-deterministic finalization because timing is unpredictable.</li><li>Finalization releases resources before an object is removed from memory.</li><li>A finalizer/destructor is executed when the Garbage Collector cleans the object.</li><li>Finalizers are not guaranteed to run immediately after an object becomes unused.</li><li>Heavy business logic inside finalizers is not recommended.</li><li>Finalizers should mainly be used for unmanaged resource cleanup.</li><li><code>Dispose()</code> provides deterministic cleanup and should be preferred over finalizers.</li><li>The <code>IDisposable</code> pattern is commonly used for files, streams, database connections, and similar resources.</li><li><code>using</code> automatically calls <code>Dispose()</code> after resource usage.</li></ul><h3 id="stack-vs-heap"><a class="heading-anchor" href="#stack-vs-heap">Stack vs Heap</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Stack</th><th>Heap</th></tr></thead><tbody><tr><td>Speed</td><td>Fast</td><td>Slower</td></tr><tr><td>Storage</td><td>Local variables, method calls, reference addresses</td><td>Objects and dynamically allocated data</td></tr><tr><td>Managed by</td><td>Automatically by method scope</td><td>Garbage Collector</td></tr><tr><td>Size</td><td>Smaller</td><td>Larger</td></tr><tr><td>Lifetime</td><td>Method scope</td><td>Until GC removes object</td></tr></tbody></table></div><h3 id="value-type-vs-reference-type"><a class="heading-anchor" href="#value-type-vs-reference-type">Value Type vs Reference Type</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Value Type</th><th>Reference Type</th></tr></thead><tbody><tr><td>Stores</td><td>Actual value</td><td>Memory address/reference</td></tr><tr><td>Memory</td><td>Usually stack or inline</td><td>Heap for actual object</td></tr><tr><td>Copy behavior</td><td>Copies value</td><td>Copies reference</td></tr><tr><td>Nullable</td><td>No, except nullable value types</td><td>Yes</td></tr><tr><td>Examples</td><td><code>int</code>, <code>double</code>, <code>bool</code>, <code>char</code>, <code>struct</code>, <code>enum</code>, <code>DateTime</code></td><td><code>class</code>, <code>string</code>, <code>array</code>, <code>delegate</code>, <code>object</code></td></tr></tbody></table></div><h3 id="gc-generations"><a class="heading-anchor" href="#gc-generations">GC Generations</a></h3><div class="table-wrap"><table><thead><tr><th>Generation</th><th>Purpose</th></tr></thead><tbody><tr><td>Gen 0</td><td>Short-lived objects such as temporary objects and method-level objects</td></tr><tr><td>Gen 1</td><td>Objects that survived Gen 0 collection; buffer between Gen 0 and Gen 2</td></tr><tr><td>Gen 2</td><td>Long-lived objects such as static objects, application cache, and long-living references</td></tr><tr><td>Large Object Heap</td><td>Stores objects larger than about 85 KB</td></tr></tbody></table></div><h3 id="useful-gc-methods"><a class="heading-anchor" href="#useful-gc-methods">Useful GC Methods</a></h3><div class="table-wrap"><table><thead><tr><th>Method</th><th>Purpose</th></tr></thead><tbody><tr><td><code>GC.Collect()</code></td><td>Forces garbage collection manually</td></tr><tr><td><code>GC.GetGeneration()</code></td><td>Returns the generation of an object</td></tr><tr><td><code>GC.SuppressFinalize()</code></td><td>Prevents finalizer execution</td></tr></tbody></table></div><h3 id="memory-management-hierarchy"><a class="heading-anchor" href="#memory-management-hierarchy">Memory Management Hierarchy</a></h3><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">Memory Management in .NET
+│
+├── Stack Memory
+│     └── Stores value types, method calls, and local variables.
+│
+├── Heap Memory
+│     └── Stores reference type objects.
+│
+├── Managed Memory
+│     └── Memory controlled by CLR (.NET Runtime).
+│
+│     ├── Managed Code
+│     │     └── Code executed under CLR.
+│     │
+│     │     ├── C#
+│     │     ├── VB.NET
+│     │     └── F#
+│     │
+│     ├── Managed Heap
+│     │     └── Stores managed objects created using new keyword.
+│     │
+│     └── Garbage Collector (GC)
+│           └── Automatically cleans unused managed objects.
+│
+│           ├── Purpose
+│           │     ├── Frees unused memory
+│           │     ├── Prevents memory leaks
+│           │     └── Manages heap automatically
+│           │
+│           ├── Generations
+│           │     │
+│           │     ├── Gen 0
+│           │     │     └── Stores short-lived objects.
+│           │     │
+│           │     │     ├── Example
+│           │     │     │     ├── Local objects
+│           │     │     │     ├── Temporary strings
+│           │     │     │     └── Method-level objects
+│           │     │     │
+│           │     │     └── Fastest collection
+│           │     │
+│           │     ├── Gen 1
+│           │     │     └── Stores objects surviving Gen 0.
+│           │     │
+│           │     │     ├── Medium-lived objects
+│           │     │     └── Buffer between Gen0 and Gen2
+│           │     │
+│           │     └── Gen 2
+│           │           └── Stores long-lived objects.
+│           │
+│           │           ├── Example
+│           │           │     ├── Static objects
+│           │           │     ├── Singleton objects
+│           │           │     └── Application cache
+│           │           │
+│           │           └── Slowest and expensive collection
+│           │
+│           ├── Large Object Heap (LOH)
+│           │     └── Stores objects larger than 85 KB.
+│           │
+│           ├── GC Methods
+│           │     │
+│           │     ├── GC.Collect()
+│           │     │     └── Forces garbage collection manually.
+│           │     │
+│           │     ├── GC.GetGeneration()
+│           │     │     └── Returns generation of object.
+│           │     │
+│           │     └── GC.SuppressFinalize()
+│           │           └── Prevents finalizer execution.
+│           │
+│           └── Object Lifecycle
+│                 │
+│                 ├── Object Created
+│                 │     └── Stored in Gen 0
+│                 │
+│                 ├── Survives Collection
+│                 │     └── Moved to Gen 1
+│                 │
+│                 ├── Survives Again
+│                 │     └── Moved to Gen 2
+│                 │
+│                 └── No References
+│                       └── Removed by GC
+│
+└── Unmanaged Memory
+      └── Memory/resources outside CLR control.
+      
+      ├── Unmanaged Resources
+      │     ├── File Handles
+      │     ├── Database Connections
+      │     ├── Network Sockets
+      │     ├── COM Objects
+      │     └── Printer Resources
+      │
+      ├── Not cleaned directly by GC
+      │
+      └── Manual Cleanup
+            │
+            ├── IDisposable
+            │     └── Provides cleanup mechanism.
+            │
+            ├── Dispose()
+            │     └── Releases unmanaged resources manually.
+            │
+            └── using statement
+                  └── Automatically calls Dispose().</code></pre></div><hr class="section-divider"><h2 id="14-asynchronous-programming"><a class="heading-anchor" href="#14-asynchronous-programming">14. Asynchronous Programming</a></h2><figure class="content-figure"><img src="assets/csharp/sync-vs-async-comparison.jpg" alt="Sync vs async operation comparison in .NET"><figcaption>Sync vs async operation comparison in .NET</figcaption></figure><figure class="content-figure"><img src="assets/csharp/async-await-quick-tips.jpg" alt="async and await usage patterns in C#"><figcaption>async and await usage patterns in C#</figcaption></figure><figure class="content-figure"><img src="assets/csharp/async-programming-10-rules.jpg" alt="10 rules for asynchronous programming in C#"><figcaption>10 rules for asynchronous programming in C#</figcaption></figure><figure class="content-figure"><img src="assets/csharp/task-whenall-async-optimization.gif" alt="Optimize async workflows with Task.WhenAll"><figcaption>Optimize async workflows with Task.WhenAll</figcaption></figure><figure class="content-figure"><img src="assets/csharp/cancellation-token-propagation.jpg" alt="Cooperative cancellation with CancellationToken"><figcaption>Cooperative cancellation with CancellationToken</figcaption></figure><h3 id="what-to-learn-14"><a class="heading-anchor" href="#what-to-learn-14">What to Learn</a></h3><ul><li>Synchronous vs asynchronous programming</li><li><code>Task</code></li><li><code>Task&lt;T&gt;</code></li><li><code>async</code></li><li><code>await</code></li><li><code>Task.Run</code></li><li><code>Task.Wait</code></li><li><code>Task.WhenAll</code></li><li><code>Task.WhenAny</code></li><li><code>ContinueWith</code></li><li>Cancellation token</li><li>Deadlocks in async code</li><li>ConfigureAwait concept</li><li>ValueTask basics</li></ul><ul><li>Asynchronous programming helps keep applications responsive and non-blocking.</li><li><code>Task</code> represents an asynchronous operation.</li><li><code>Task&lt;T&gt;</code> represents an asynchronous operation that returns a value.</li><li><code>async</code> and <code>await</code> simplify asynchronous programming.</li><li><code>Task.Run()</code> runs code on a background thread through the thread pool.</li><li><code>Task.WhenAll()</code> waits for all tasks to complete.</li><li><code>Task.WhenAny()</code> waits for the first completed task.</li><li><code>CancellationToken</code> cancels long-running tasks safely.</li></ul><hr class="section-divider"><h2 id="15-multithreading-and-parallel-programming"><a class="heading-anchor" href="#15-multithreading-and-parallel-programming">15. Multithreading and Parallel Programming</a></h2><h3 id="what-to-learn-15"><a class="heading-anchor" href="#what-to-learn-15">What to Learn</a></h3><ul><li>Process vs thread</li><li>Thread lifecycle</li><li><code>Thread</code> class</li><li>Foreground thread</li><li>Background thread</li><li>Thread pool</li><li>Task Parallel Library</li><li><code>Task</code></li><li><code>Task&lt;T&gt;</code></li><li><code>Parallel.For</code></li><li><code>Parallel.ForEach</code></li><li><code>Parallel.Invoke</code></li><li>PLINQ</li><li>Locking</li><li><code>lock</code> keyword</li><li><code>Monitor</code></li><li><code>Mutex</code></li><li><code>Semaphore</code></li><li><code>SemaphoreSlim</code></li><li><code>ReaderWriterLock</code></li><li>Race conditions</li><li>Deadlocks</li><li>Thread safety</li><li>Concurrent collections</li><li>Concurrency vs parallelism</li></ul><h3 id="concurrency-vs-parallelism"><a class="heading-anchor" href="#concurrency-vs-parallelism">Concurrency vs Parallelism</a></h3><figure class="content-figure"><img src="assets/csharp/concurrency-events-share-parallel-cores.png" alt="Concurrency with events and shared state vs parallel cores"><figcaption>Concurrency with events and shared state vs parallel cores</figcaption></figure><figure class="content-figure"><img src="assets/csharp/concurrency-vs-parallelism-table.png" alt="Concurrency vs parallelism comparison table"><figcaption>Concurrency vs parallelism comparison table</figcaption></figure><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Concurrency</th><th>Parallelism</th></tr></thead><tbody><tr><td>Meaning</td><td>Multiple tasks progress together</td><td>Multiple tasks run at the same time</td></tr><tr><td>Execution</td><td>Tasks may switch one by one</td><td>Tasks execute simultaneously</td></tr><tr><td>CPU core requirement</td><td>Can work on single core</td><td>Usually requires multiple cores</td></tr><tr><td>Goal</td><td>Better responsiveness</td><td>Better performance/speed</td></tr><tr><td>Task handling</td><td>Interleaving tasks</td><td>Running tasks together</td></tr><tr><td>Example in C#</td><td><code>Task</code>, <code>async</code>/<code>await</code></td><td><code>Parallel.For</code>, <code>Task.Run()</code></td></tr><tr><td>Focus</td><td>Managing tasks</td><td>Executing tasks faster</td></tr></tbody></table></div><h3 id="thread-vs-tpl"><a class="heading-anchor" href="#thread-vs-tpl">Thread vs TPL</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th><code>Thread</code></th><th>TPL</th></tr></thead><tbody><tr><td>Level</td><td>Low-level</td><td>High-level</td></tr><tr><td>Namespace</td><td><code>System.Threading</code></td><td><code>System.Threading.Tasks</code></td></tr><tr><td>Management</td><td>Manual</td><td>Automatic</td></tr><tr><td>Performance</td><td>Slower/heavier</td><td>Faster/lighter</td></tr><tr><td>Resource usage</td><td>Heavy</td><td>Lightweight</td></tr><tr><td>Recommended today</td><td>Less common</td><td>Most common</td></tr><tr><td>Uses ThreadPool</td><td>No by default</td><td>Yes</td></tr></tbody></table></div><h3 id="tpl-hierarchy"><a class="heading-anchor" href="#tpl-hierarchy">TPL Hierarchy</a></h3><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">TPL (Task Parallel Library)
+│
+├── Purpose
+│     └── Simplifies concurrent and parallel programming in .NET.
+│
+├── Built On
+│     └── ThreadPool
+│
+├── Core Components
+│     │
+│     ├── Task
+│     │     └── Represents asynchronous operation.
+│     │
+│     ├── Task&lt;TResult&gt;
+│     │     └── Task that returns value/result.
+│     │
+│     ├── async / await
+│     │     └── Simplifies asynchronous programming.
+│     │
+│     ├── CancellationToken
+│     │     └── Cancels running task safely.
+│     │
+│     └── ContinueWith()
+│           └── Executes task after previous task completes.
+│
+├── Task Execution Methods
+│     │
+│     ├── Task.Run()
+│     │     └── Runs code in background thread.
+│     │
+│     ├── Task.Wait()
+│     │     └── Waits for task completion.
+│     │
+│     ├── Task.WhenAll()
+│     │     └── Waits for all tasks to complete.
+│     │
+│     └── Task.WhenAny()
+│           └── Waits for first completed task.
+│
+├── Parallel Programming
+│     │
+│     ├── Parallel.For()
+│     │     └── Executes loop iterations in parallel.
+│     │
+│     ├── Parallel.ForEach()
+│     │     └── Executes collection items in parallel.
+│     │
+│     ├── Parallel.Invoke()
+│     │     └── Executes multiple methods simultaneously.
+│     │
+│     └── PLINQ
+│           └── Executes LINQ queries in parallel.
+│
+├── Best Use Cases
+│     │
+│     ├── async/await + Task.WhenAll()
+│     │     └── API calls, DB calls, network operations.
+│     │
+│     ├── Parallel.ForEach()
+│     │     └── CPU-intensive processing.
+│     │
+│     ├── Task.Run()
+│     │     └── Background processing.
+│     │
+│     └── CancellationToken
+│           └── Cancel long-running operations.
+│
+└── Benefits
+      │
+      ├── Better performance
+      ├── Automatic thread management
+      ├── Better scalability
+      ├── Simplified async programming
+      ├── Efficient CPU utilization
+      └── Easier than manual threading</code></pre></div><h3 id="synchronization-tools"><a class="heading-anchor" href="#synchronization-tools">Synchronization Tools</a></h3><div class="table-wrap"><table><thead><tr><th>Tool</th><th>Purpose</th></tr></thead><tbody><tr><td><code>lock</code></td><td>Allows only one thread at a time inside a critical section</td></tr><tr><td><code>Monitor</code></td><td>Advanced thread synchronization mechanism</td></tr><tr><td><code>Mutex</code></td><td>Synchronizes threads across processes</td></tr><tr><td><code>Semaphore</code></td><td>Allows a limited number of threads simultaneously</td></tr><tr><td><code>SemaphoreSlim</code></td><td>Lightweight in-process semaphore</td></tr><tr><td><code>ReaderWriterLock</code></td><td>Allows multiple readers but a single writer</td></tr></tbody></table></div><h3 id="concurrency-control-hierarchy"><a class="heading-anchor" href="#concurrency-control-hierarchy">Concurrency Control Hierarchy</a></h3><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">Concurrency Control
+│
+├── Programming Concurrency
+│     └── Multiple tasks making progress together.
+│
+│     ├── Multithreading
+│     │     └── Multiple threads executing in application.
+│     │
+│     ├── async/await
+│     │     └── Non-blocking asynchronous execution.
+│     │
+│     ├── Task Parallel Library (TPL)
+│     │     └── Task-based concurrent programming in .NET.
+│     │
+│     ├── Parallelism
+│     │     └── Multiple tasks executing simultaneously on multiple CPU cores.
+│     │
+│     └── Synchronization
+│           │
+│           ├── lock
+│           │     └── Allows only one thread at a time.
+│           │
+│           ├── Monitor
+│           │     └── Advanced thread synchronization mechanism.
+│           │
+│           ├── Mutex
+│           │     └── Synchronizes threads across processes. Only one instance.
+│           │
+│           ├── Semaphore
+│           │     └── Allows limited number of threads simultaneously. More sophisticated version of mutex. Out-of-process.
+│           │
+│           ├── SemaphoreSlim
+│           │     └── More sophisticated version of lock and monitor. In-process.
+│           │
+│           └── ReaderWriterLock
+│                 └── Multiple readers but single writer.
+│
+└── Database Concurrency Control
+      └── Prevents data conflicts when multiple users access same data.
+      
+      ├── Why Concurrency Control?
+      │     │
+      │     ├── Dirty Read
+      │     │     └── Reading uncommitted data.
+      │     │
+      │     ├── Unrepeatable Read
+      │     │     └── Same query returns different values.
+      │     │
+      │     ├── Phantom Read
+      │     │     └── New rows appear during same transaction.
+      │     │
+      │     └── Lost Update
+      │           └── One update overwrites another update.
+      │
+      ├── Concurrency Types
+      │     │
+      │     ├── Optimistic Concurrency (Most Common)
+      │     │     │
+      │     │     ├── Assumes conflicts are rare.
+      │     │     ├── No immediate lock on data.
+      │     │     ├── Conflict checked during update.
+      │     │     ├── Better performance and scalability.
+      │     │     ├── Mostly used in Web Apps &amp; EF Core.
+      │     │     │
+      │     │     ├── SQL Server
+      │     │     │     ├── RowVersion
+      │     │     │     ├── Timestamp
+      │     │     │     └── Version Column
+      │     │     │
+      │     │     └── EF Core
+      │     │           ├── [Timestamp]
+      │     │           ├── IsRowVersion()
+      │     │           ├── Concurrency Token
+      │     │           └── DbUpdateConcurrencyException
+      │     │
+      │     └── Pessimistic Concurrency
+      │           │
+      │           ├── Assumes conflicts are common.
+      │           ├── Locks data immediately.
+      │           ├── Other users must wait.
+      │           ├── Prevents simultaneous updates.
+      │           ├── Mostly used in Banking &amp; Payment Systems.
+      │           │
+      │           ├── Lock Types
+      │           │     │
+      │           │     ├── Row Lock
+      │           │     │     └── Locks single row.
+      │           │     │
+      │           │     ├── Page Lock
+      │           │     │     └── Locks group of rows/pages.
+      │           │     │
+      │           │     ├── Table Lock
+      │           │     │     └── Locks entire table.
+      │           │     │
+      │           │     ├── Dataset Lock
+      │           │     │     └── Locks complete dataset/result set.
+      │           │     │
+      │           │     ├── Shared Lock (S)
+      │           │     │     └── Multiple users can read but not update.
+      │           │     │
+      │           │     ├── Exclusive Lock (X)
+      │           │     │     └── Only one transaction can read/write.
+      │           │     │
+      │           │     ├── Update Lock (U)
+      │           │     │     └── Used before converting to exclusive lock.
+      │           │     │
+      │           │     ├── Intent Lock
+      │           │     │     └── Indicates lower-level locks will be used.
+      │           │     │
+      │           │     └── Schema Lock
+      │           │           └── Prevents schema modifications.
+      │           │
+      │           └── Transactions
+      │                 │
+      │                 ├── BEGIN TRANSACTION
+      │                 │     └── Starts transaction scope.
+      │                 │
+      │                 ├── COMMIT
+      │                 │     └── Saves all changes permanently.
+      │                 │
+      │                 ├── ROLLBACK
+      │                 │     └── Reverts all changes.
+      │                 │
+      │                 └── WITH (UPDLOCK, ROWLOCK)
+      │                       └── Applies pessimistic locking in SQL Server.
+      │
+      └── Isolation Levels
+            │
+            ├── Read Uncommitted
+            │     └── Allows dirty reads.
+            │
+            ├── Read Committed
+            │     └── Prevents dirty reads.
+            │
+            ├── Repeatable Read
+            │     └── Prevents unrepeatable reads.
+            │
+            ├── Snapshot
+            │     └── Uses row versioning for consistency.
+            │
+            └── Serializable
+                  └── Highest isolation and strict consistency.</code></pre></div><ul><li>Optimistic locking assumes that concurrency conflicts will rarely happen, so there is no lock; it only checks old values against new values during update.</li></ul><hr class="section-divider"><h2 id="16-reflection-and-attributes"><a class="heading-anchor" href="#16-reflection-and-attributes">16. Reflection and Attributes</a></h2><h3 id="what-to-learn-16"><a class="heading-anchor" href="#what-to-learn-16">What to Learn</a></h3><ul><li>Reflection basics</li><li><code>Type</code></li><li><code>typeof</code></li><li><code>GetType</code></li><li><code>Activator.CreateInstance</code></li><li>Reading metadata</li><li>Invoking public members</li><li>Attributes</li><li>Built-in attributes</li><li>Custom attributes</li><li>Use cases of reflection</li><li>Performance impact of reflection</li></ul><ul><li>Reflection allows a program to inspect and interact with types and metadata dynamically at runtime.</li><li>Reflection can be used to read metadata and invoke members dynamically.</li><li><code>dynamic</code> uses runtime binding and may use reflection-like behavior internally.</li></ul><h3 id="typeof-vs-gettype"><a class="heading-anchor" href="#typeof-vs-gettype"><code>typeof</code> vs <code>GetType()</code></a></h3><figure class="content-figure"><img src="assets/csharp/typeof-vs-gettype-diagram.png" alt="typeof vs GetType diagram"><figcaption>typeof vs GetType diagram</figcaption></figure><figure class="content-figure"><img src="assets/csharp/dynamic-vs-reflection-comparison.png" alt="dynamic keyword vs Reflection comparison"><figcaption>dynamic keyword vs Reflection comparison</figcaption></figure><div class="table-wrap"><table><thead><tr><th>Feature</th><th><code>typeof</code></th><th><code>GetType()</code></th></tr></thead><tbody><tr><td>Works on</td><td>Type/class name</td><td>Object instance</td></tr><tr><td>Evaluated</td><td>Compile time</td><td>Runtime</td></tr><tr><td>Returns</td><td><code>Type</code> object</td><td><code>Type</code> object</td></tr><tr><td>Null safe</td><td>Yes</td><td>No</td></tr><tr><td>Syntax</td><td><code>typeof(int)</code></td><td><code>obj.GetType()</code></td></tr></tbody></table></div><hr class="section-divider"><h2 id="17-records-tuples-and-modern-c-features"><a class="heading-anchor" href="#17-records-tuples-and-modern-c-features">17. Records, Tuples, and Modern C# Features</a></h2><figure class="content-figure"><img src="assets/csharp/csharp12-collection-expressions.jpg" alt="C# 12 collection expressions and spread operator"><figcaption>C# 12 collection expressions and spread operator</figcaption></figure><figure class="content-figure"><img src="assets/csharp/primary-constructors-service-di.jpg" alt="Primary constructors for DI services in C#"><figcaption>Primary constructors for DI services in C#</figcaption></figure><figure class="content-figure"><img src="assets/csharp/primary-constructors-vs-traditional.jpg" alt="Traditional constructors vs primary constructors"><figcaption>Traditional constructors vs primary constructors</figcaption></figure><figure class="content-figure"><img src="assets/csharp/declaration-pattern.jpg" alt="Declaration pattern for type checking in C#"><figcaption>Declaration pattern for type checking in C#</figcaption></figure><figure class="content-figure"><img src="assets/csharp/switch-expression-vs-statement.jpg" alt="Switch statement vs switch expression"><figcaption>Switch statement vs switch expression</figcaption></figure><figure class="content-figure"><img src="assets/csharp/relational-pattern-matching.jpg" alt="Relational pattern matching in C#"><figcaption>Relational pattern matching in C#</figcaption></figure><figure class="content-figure"><img src="assets/csharp/null-argument-guards.jpg" alt="Null argument guard patterns in .NET"><figcaption>Null argument guard patterns in .NET</figcaption></figure><h3 id="what-to-learn-17"><a class="heading-anchor" href="#what-to-learn-17">What to Learn</a></h3><ul><li>Records</li><li>Record classes</li><li>Record structs</li><li>Tuples</li><li>Deconstruction</li><li>Pattern matching</li><li>Nullable reference types</li><li>Init-only properties</li><li>Required members</li><li>Target-typed <code>new</code></li><li>Global using</li><li>File-scoped namespace</li><li>Primary constructors</li><li>Collection expressions</li><li><code>yield return</code></li><li><code>yield break</code></li><li>Enum</li></ul><h3 id="yield"><a class="heading-anchor" href="#yield">Yield</a></h3><figure class="content-figure"><img src="assets/csharp/yield-return-vs-list.jpg" alt="yield return vs return List comparison"><figcaption>yield return vs return List comparison</figcaption></figure><ul><li><code>yield</code> supports deferred execution.</li><li>Values are returned one at a time when requested, not all at once.</li><li><code>yield return</code> returns the current value and pauses execution.</li><li><code>yield break</code> stops the iteration completely.</li><li><code>yield</code> preserves state between iterations.</li><li><code>yield</code> improves memory usage because all values do not need to be stored in a temporary list.</li><li><code>yield</code> works with <code>IEnumerable</code> and <code>IEnumerable&lt;T&gt;</code> for custom iteration.</li></ul><h3 id="enum"><a class="heading-anchor" href="#enum">Enum</a></h3><ul><li>An enum represents a group of named constants.</li><li>Enum is a value type.</li><li>Default enum values start from <code>0</code>.</li><li>Values can be custom defined.</li><li>Enum values can be cast to integers and integers can be cast to enum values.</li></ul><hr class="section-divider"><h2 id="18-testing-in-c"><a class="heading-anchor" href="#18-testing-in-c">18. Testing in C#</a></h2><h3 id="what-to-learn-18"><a class="heading-anchor" href="#what-to-learn-18">What to Learn</a></h3><ul><li>Unit testing</li><li>Integration testing</li><li>Test-driven development basics</li><li>xUnit</li><li>NUnit</li><li>MSTest</li><li>Mocking</li><li>Moq or similar libraries</li><li>Arrange, Act, Assert pattern</li><li>Test coverage</li></ul><ul><li>Unit tests verify small units of logic independently.</li><li>Integration tests verify multiple parts working together.</li><li>Mocking replaces external dependencies with controlled test objects.</li><li>Arrange, Act, Assert keeps tests readable and consistent.</li></ul><hr class="section-divider"><h2 id="19-advanced-c-concepts"><a class="heading-anchor" href="#19-advanced-c-concepts">19. Advanced C# Concepts</a></h2><figure class="content-figure"><img src="assets/csharp/serialization-deserialization-flow.png" alt="Serialization and deserialization flow"><figcaption>Serialization and deserialization flow</figcaption></figure><figure class="content-figure"><img src="assets/csharp/csharp-keywords-cheat-sheet.jpg" alt="Important C# keywords every ASP.NET Core developer should know"><figcaption>Important C# keywords every ASP.NET Core developer should know</figcaption></figure><figure class="content-figure"><img src="assets/csharp/better-csharp-alternatives.jpg" alt="Better alternatives in C# and .NET"><figcaption>Better alternatives in C# and .NET</figcaption></figure><h3 id="what-to-learn-19"><a class="heading-anchor" href="#what-to-learn-19">What to Learn</a></h3><ul><li>Expression trees</li><li>Dynamic keyword</li><li>Unsafe code</li><li>Pointers</li><li>Span&lt;T&gt;</li><li>Memory&lt;T&gt;</li><li>Ref structs</li><li>Attributes in depth</li><li>Source generators</li><li>Interceptors concept</li><li>Analyzers</li><li>Nullable annotations</li><li>Custom awaiters</li></ul><ul><li><code>dynamic</code> delays type checking until runtime.</li><li>Runtime errors are possible with <code>dynamic</code> if the expected member does not exist.</li><li>Expression trees represent code as data and are commonly used by query providers.</li><li>Unsafe code allows pointer operations but should be used carefully.</li><li><code>Span&lt;T&gt;</code> and <code>Memory&lt;T&gt;</code> help work efficiently with contiguous memory while reducing allocations.</li></ul><hr class="section-divider"><h2 id="20-performance-and-best-practices"><a class="heading-anchor" href="#20-performance-and-best-practices">20. Performance and Best Practices</a></h2><figure class="content-figure"><img src="assets/csharp/asspan-vs-substring-performance.jpg" alt="Prefer AsSpan over Substring for string performance"><figcaption>Prefer AsSpan over Substring for string performance</figcaption></figure><h3 id="what-to-learn-20"><a class="heading-anchor" href="#what-to-learn-20">What to Learn</a></h3><ul><li>Big O basics</li><li>Avoiding unnecessary allocations</li><li>Choosing the right collection</li><li>String performance</li><li><code>StringBuilder</code></li><li>Boxing and unboxing performance</li><li>Async performance</li><li>LINQ performance considerations</li><li>Caching basics</li><li>Profiling basics</li><li>BenchmarkDotNet basics</li><li>Logging best practices</li><li>Exception handling best practices</li><li>Naming conventions</li></ul><h3 id="naming-conventions"><a class="heading-anchor" href="#naming-conventions">Naming Conventions</a></h3><div class="table-wrap"><table><thead><tr><th>Type</th><th>Convention</th><th>Example</th></tr></thead><tbody><tr><td>Property</td><td>PascalCase</td><td><code>FirstName</code></td></tr><tr><td>Method</td><td>PascalCase</td><td><code>CalculateTotal()</code></td></tr><tr><td>Class</td><td>PascalCase</td><td><code>EmployeeService</code></td></tr><tr><td>Interface</td><td>PascalCase with <code>I</code> prefix</td><td><code>IRepository</code></td></tr><tr><td>Local variable</td><td>camelCase</td><td><code>firstName</code></td></tr><tr><td>Parameter</td><td>camelCase</td><td><code>userId</code></td></tr><tr><td>Private field</td><td><code>_camelCase</code></td><td><code>_userService</code></td></tr><tr><td>Constant</td><td>PascalCase</td><td><code>MaxLimit</code></td></tr></tbody></table></div><ul><li>Choose the correct collection based on access pattern and lookup needs.</li><li>Avoid repeated string concatenation in loops; use <code>StringBuilder</code>.</li><li>Avoid unnecessary boxing and unboxing.</li><li>Prefer <code>TryParse()</code> for user input.</li><li>Avoid using exceptions for normal control flow.</li><li>Use LINQ carefully for large collections when performance matters.</li><li>Use profiling and benchmarking to measure performance instead of guessing.</li></ul>
+    </main>
+  </div>
+  <a class="top-link" href="#top">Top</a>
+  <script>
+    document.querySelectorAll('.toc-toggle').forEach((button) => {
+      button.addEventListener('click', (event) => {
+        if (event.target.closest('.toc-title')) return;
+        const children = button.nextElementSibling;
+        const expanded = button.getAttribute('aria-expanded') === 'true';
+        button.setAttribute('aria-expanded', String(!expanded));
+        children.classList.toggle('collapsed', expanded);
+      });
+    });
+
+    document.querySelectorAll('.copy-btn').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const code = button.closest('.code-block').querySelector('pre code').innerText;
+        await navigator.clipboard.writeText(code);
+        const old = button.innerText;
+        button.innerText = 'Copied';
+        setTimeout(() => button.innerText = old, 1200);
+      });
+    });
+  </script>
+</body>
+</html>

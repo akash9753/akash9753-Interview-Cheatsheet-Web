@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SQL Course Notes</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #111827;
+      --panel-2: #172033;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #38bdf8;
+      --accent-2: #a3e635;
+      --border: #263449;
+      --code-bg: #0f172a;
+      --table-stripe: #101a2d;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top left, #15203a 0, var(--bg) 36rem);
+      color: var(--text);
+      font-family: Segoe UI, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      line-height: 1.65;
+    }
+    .layout { display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: 100vh; }
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      padding: 10px 8px 12px;
+      background: rgba(17, 24, 39, 0.92);
+      border-right: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      font-size: 11px;
+      line-height: 1.2;
+    }
+    .home-link {
+      display: inline-block;
+      margin: 0 0 10px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .home-link:hover { text-decoration: underline; }
+    .brand { margin: 0 0 6px; color: white; font-size: 0.95rem; line-height: 1.15; font-weight: 700; }
+    .toc { display: flex; flex-direction: column; gap: 0; }
+    .toc-link {
+      color: var(--muted);
+      text-decoration: none;
+      border-radius: 4px;
+      padding: 1px 4px;
+      font-size: 0.68rem;
+      line-height: 1.2;
+      display: block;
+    }
+    .toc-link:hover { background: var(--panel-2); color: var(--accent); }
+    .toc-group, .toc-subgroup { display: flex; flex-direction: column; gap: 0; }
+    .toc-toggle {
+      display: flex;
+      align-items: flex-start;
+      gap: 3px;
+      width: 100%;
+      border: none;
+      background: transparent;
+      color: inherit;
+      text-align: left;
+      border-radius: 4px;
+      padding: 1px 4px;
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.68rem;
+      line-height: 1.2;
+    }
+    .toc-toggle:hover { background: var(--panel-2); }
+    .toc-toggle .arrow {
+      color: var(--accent);
+      font-size: 0.55rem;
+      width: 8px;
+      margin-top: 2px;
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+    .toc-toggle[aria-expanded="true"] .arrow { transform: rotate(90deg); }
+    .toc-toggle.level-2 { color: #dbeafe; font-weight: 600; font-size: 0.7rem; }
+    .toc-toggle.level-3 { color: var(--muted); font-weight: 500; padding-left: 8px; font-size: 0.66rem; }
+    .toc-title { color: inherit; text-decoration: none; line-height: 1.2; }
+    .toc-title:hover { color: var(--accent); text-decoration: underline; }
+    .toc-children {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      overflow: hidden;
+      transition: max-height 0.25s ease;
+    }
+    .toc-children.collapsed { display: none; }
+    .toc-children .toc-link.level-3 { margin-left: 8px; font-size: 0.66rem; }
+    .toc-children .toc-link.level-4 { margin-left: 14px; font-size: 0.62rem; }
+    .level-1 { color: #f8fafc; font-weight: 600; font-size: 0.72rem; }
+    main { max-width: 1120px; width: 100%; padding: 42px 52px 96px; }
+    h1, h2, h3, h4, h5, h6 { color: #f8fafc; line-height: 1.25; margin: 2.2rem 0 0.8rem; }
+    h1 { font-size: clamp(2.1rem, 4vw, 4rem); margin-top: 0; }
+    h2 { font-size: 2rem; border-top: 1px solid var(--border); padding-top: 1.6rem; }
+    h3 { font-size: 1.45rem; color: var(--accent-2); }
+    h4 { font-size: 1.15rem; color: var(--accent); }
+    .heading-anchor { color: inherit; text-decoration: none; }
+    .heading-anchor:hover { text-decoration: underline; text-decoration-color: var(--accent); }
+    p, li { color: var(--text); }
+    ul, ol { padding-left: 1.4rem; }
+    .section-divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+    .content-figure { margin: 1rem 0 1.35rem; }
+    .content-figure img { max-width: 100%; border-radius: 12px; border: 1px solid var(--border); }
+    .content-figure figcaption { margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem; }
+    code { background: #1f2937; color: #fde68a; padding: 0.12rem 0.32rem; border-radius: 5px; }
+    .code-block { margin: 1rem 0 1.35rem; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--code-bg); }
+    .code-toolbar { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #111827; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 0.82rem; }
+    .copy-btn { cursor: pointer; border: 1px solid var(--border); background: #1f2937; color: var(--text); border-radius: 8px; padding: 4px 10px; }
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+    pre { margin: 0; padding: 16px; overflow: auto; }
+    pre code { background: transparent; color: #e5e7eb; padding: 0; border-radius: 0; font-family: Consolas, Cascadia Code, monospace; font-size: 0.95rem; }
+    .table-wrap { overflow-x: auto; margin: 1rem 0 1.35rem; border: 1px solid var(--border); border-radius: 12px; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+    th { color: #f8fafc; background: #1f2937; }
+    tr:nth-child(even) td { background: var(--table-stripe); }
+    .top-link { position: fixed; right: 22px; bottom: 22px; color: var(--bg); background: var(--accent); padding: 8px 12px; border-radius: 999px; text-decoration: none; font-weight: 700; }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      aside { position: relative; height: auto; max-height: 420px; }
+      main { padding: 28px 20px 84px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <a class="home-link" href="index.html">← All Courses</a>
+      <h2 class="brand">MSSQL Learning Course</h2>
+      <nav class="toc" aria-label="Table of contents">
+        <a class="toc-link level-1" href="#sql-course-notes">SQL Course Notes</a><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#course-topics-overview">Course Topics Overview</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#1-sql-and-database-fundamentals">1. SQL and Database Fundamentals</a><a class="toc-link level-3" href="#2-data-definition-language-ddl">2. Data Definition Language (DDL)</a><a class="toc-link level-3" href="#3-data-types">3. Data Types</a><a class="toc-link level-3" href="#4-constraints-and-keys">4. Constraints and Keys</a><a class="toc-link level-3" href="#5-data-manipulation-language-dml">5. Data Manipulation Language (DML)</a><a class="toc-link level-3" href="#6-basic-querying">6. Basic Querying</a><a class="toc-link level-3" href="#7-aggregate-and-grouping-queries">7. Aggregate and Grouping Queries</a><a class="toc-link level-3" href="#8-joins-and-relationships">8. Joins and Relationships</a><a class="toc-link level-3" href="#9-subqueries-and-ctes">9. Subqueries and CTEs</a><a class="toc-link level-3" href="#10-sql-functions">10. SQL Functions</a><a class="toc-link level-3" href="#11-set-operators">11. Set Operators</a><a class="toc-link level-3" href="#12-views-and-window-functions">12. Views and Window Functions</a><a class="toc-link level-3" href="#13-stored-procedures-and-programmability">13. Stored Procedures and Programmability</a><a class="toc-link level-3" href="#14-transactions-and-error-handling">14. Transactions and Error Handling</a><a class="toc-link level-3" href="#15-normalization-and-database-design">15. Normalization and Database Design</a><a class="toc-link level-3" href="#16-indexes-and-performance-tuning">16. Indexes and Performance Tuning</a><a class="toc-link level-3" href="#17-database-administration-basics">17. Database Administration Basics</a><a class="toc-link level-3" href="#18-advanced-sql-server-topics">18. Advanced SQL Server Topics</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#1-sql-and-database-fundamentals-2">1. SQL and Database Fundamentals</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-is-data">What is Data?</a><a class="toc-link level-3" href="#what-is-a-database">What is a Database?</a><a class="toc-link level-3" href="#what-is-dbms">What is DBMS?</a><a class="toc-link level-3" href="#what-is-rdbms">What is RDBMS?</a><a class="toc-link level-3" href="#sql-vs-t-sql-vs-sql-server">SQL vs T-SQL vs SQL Server</a><a class="toc-link level-3" href="#basic-database-structure">Basic Database Structure</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#2-data-definition-language-ddl-2">2. Data Definition Language (DDL)</a></button><div class="toc-children collapsed"><div class="toc-subgroup"><button type="button" class="toc-toggle level-3" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#database-queries">Database Queries</a></button><div class="toc-children collapsed"><a class="toc-link level-4" href="#create-a-database">Create a Database</a><a class="toc-link level-4" href="#select-a-database">Select a Database</a><a class="toc-link level-4" href="#delete-or-drop-a-database">Delete or Drop a Database</a></div></div><div class="toc-subgroup"><button type="button" class="toc-toggle level-3" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#table-queries">Table Queries</a></button><div class="toc-children collapsed"><a class="toc-link level-4" href="#create-a-table">Create a Table</a><a class="toc-link level-4" href="#check-existing-table">Check Existing Table</a></div></div><div class="toc-subgroup"><button type="button" class="toc-toggle level-3" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#alter-queries">ALTER Queries</a></button><div class="toc-children collapsed"><a class="toc-link level-4" href="#select-data">Select Data</a><a class="toc-link level-4" href="#add-column">Add Column</a><a class="toc-link level-4" href="#drop-column">Drop Column</a><a class="toc-link level-4" href="#check-table-details">Check Table Details</a><a class="toc-link level-4" href="#alter-column">Alter Column</a><a class="toc-link level-4" href="#rename-column">Rename Column</a><a class="toc-link level-4" href="#rename-table">Rename Table</a><a class="toc-link level-4" href="#add-or-drop-constraints">Add or Drop Constraints</a><a class="toc-link level-4" href="#set-default-value-to-a-column">Set Default Value to a Column</a><a class="toc-link level-4" href="#add-unique-constraint">Add Unique Constraint</a><a class="toc-link level-4" href="#check-constraint">CHECK Constraint</a><a class="toc-link level-4" href="#named-constraint">Named Constraint</a><a class="toc-link level-4" href="#drop-constraint">Drop Constraint</a></div></div></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#3-data-types-2">3. Data Types</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#datatypes">Datatypes</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#4-constraints-and-keys-2">4. Constraints and Keys</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#constraints">Constraints</a><a class="toc-link level-3" href="#key-column-vs-non-key-column">Key Column vs Non-Key Column</a><a class="toc-link level-3" href="#composite-key">Composite Key</a><div class="toc-subgroup"><button type="button" class="toc-toggle level-3" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#employee-table-task">Employee Table Task</a></button><div class="toc-children collapsed"><a class="toc-link level-4" href="#create-employees-table">Create Employees Table</a><a class="toc-link level-4" href="#important-keywords">Important Keywords</a><a class="toc-link level-4" href="#insert-employee-data">Insert Employee Data</a><a class="toc-link level-4" href="#read-employee-data">Read Employee Data</a></div></div></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#5-data-manipulation-language-dml-2">5. Data Manipulation Language (DML)</a></button><div class="toc-children collapsed"><div class="toc-subgroup"><button type="button" class="toc-toggle level-3" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#crud-operations">CRUD Operations</a></button><div class="toc-children collapsed"><a class="toc-link level-4" href="#create-insert-data">Create / Insert Data</a><a class="toc-link level-4" href="#read-data">Read Data</a><a class="toc-link level-4" href="#update-data">Update Data</a><a class="toc-link level-4" href="#delete-data">Delete Data</a><a class="toc-link level-4" href="#truncate-data">Truncate Data</a></div></div></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#6-basic-querying-2">6. Basic Querying</a></button><div class="toc-children collapsed"><div class="toc-subgroup"><button type="button" class="toc-toggle level-3" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#sql-clauses">SQL Clauses</a></button><div class="toc-children collapsed"><a class="toc-link level-4" href="#where-clause">WHERE Clause</a><a class="toc-link level-4" href="#relational-operators">Relational Operators</a><a class="toc-link level-4" href="#distinct">DISTINCT</a><a class="toc-link level-4" href="#order-by">ORDER BY</a><a class="toc-link level-4" href="#like">LIKE</a><a class="toc-link level-4" href="#top">TOP</a><a class="toc-link level-4" href="#logical-operators-and-or">Logical Operators: AND / OR</a><a class="toc-link level-4" href="#in-not-in-between">IN / NOT IN / BETWEEN</a><a class="toc-link level-4" href="#case">CASE</a><a class="toc-link level-4" href="#is-null">IS NULL</a><a class="toc-link level-4" href="#not-like">NOT LIKE</a></div></div></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#7-aggregate-and-grouping-queries-2">7. Aggregate and Grouping Queries</a></button><div class="toc-children collapsed"><div class="toc-subgroup"><button type="button" class="toc-toggle level-3" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#aggregate-functions">Aggregate Functions</a></button><div class="toc-children collapsed"><a class="toc-link level-4" href="#group-by">GROUP BY</a><a class="toc-link level-4" href="#rules-of-group-by">Rules of GROUP BY</a><a class="toc-link level-4" href="#multi-column-grouping">Multi-Column Grouping</a><a class="toc-link level-4" href="#having-clause">HAVING Clause</a><a class="toc-link level-4" href="#use-cases">Use Cases</a><a class="toc-link level-4" href="#where-vs-having">WHERE vs HAVING</a><a class="toc-link level-4" href="#group-by-rollup">GROUP BY ROLLUP</a></div></div></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#8-joins-and-relationships-2">8. Joins and Relationships</a></button><div class="toc-children collapsed"><div class="toc-subgroup"><button type="button" class="toc-toggle level-3" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#relationship">Relationship</a></button><div class="toc-children collapsed"><a class="toc-link level-4" href="#problems-without-relationship">Problems Without Relationship</a><a class="toc-link level-4" href="#types-of-relationship">Types of Relationship</a><a class="toc-link level-4" href="#one-to-one">One-to-One</a><a class="toc-link level-4" href="#one-to-many">One-to-Many</a><a class="toc-link level-4" href="#many-to-many">Many-to-Many</a></div></div><div class="toc-subgroup"><button type="button" class="toc-toggle level-3" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#store-database">Store Database</a></button><div class="toc-children collapsed"><a class="toc-link level-4" href="#create-database">Create Database</a><a class="toc-link level-4" href="#create-customers-table">Create Customers Table</a><a class="toc-link level-4" href="#create-orders-table">Create Orders Table</a><a class="toc-link level-4" href="#insert-customers">Insert Customers</a><a class="toc-link level-4" href="#insert-orders">Insert Orders</a><a class="toc-link level-4" href="#read-customers-and-orders">Read Customers and Orders</a><a class="toc-link level-4" href="#temporary-orders-table">Temporary Orders Table</a><a class="toc-link level-4" href="#insert-customer-and-order-without-customer-id">Insert Customer and Order Without Customer ID</a><a class="toc-link level-4" href="#cascade-on-delete">Cascade on Delete</a></div></div><div class="toc-subgroup"><button type="button" class="toc-toggle level-3" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#joins">Joins</a></button><div class="toc-children collapsed"><a class="toc-link level-4" href="#types-of-join">Types of Join</a><a class="toc-link level-4" href="#cross-join">CROSS JOIN</a><a class="toc-link level-4" href="#inner-join">INNER JOIN</a><a class="toc-link level-4" href="#practical-inner-join-example">Practical INNER JOIN Example</a><a class="toc-link level-4" href="#left-join">LEFT JOIN</a><a class="toc-link level-4" href="#right-join">RIGHT JOIN</a><a class="toc-link level-4" href="#full-outer-join">FULL OUTER JOIN</a><a class="toc-link level-4" href="#outer-apply">OUTER APPLY</a><a class="toc-link level-4" href="#cross-apply">CROSS APPLY</a><a class="toc-link level-4" href="#self-join">Self Join</a><a class="toc-link level-4" href="#employee-manager-self-join">Employee Manager Self Join</a><a class="toc-link level-4" href="#many-to-many-2">Many-to-Many</a><a class="toc-link level-4" href="#junction-table-example">Junction Table Example</a><a class="toc-link level-4" href="#read-many-to-many-data">Read Many-to-Many Data</a><a class="toc-link level-4" href="#count-students-per-course">Count Students Per Course</a></div></div></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#9-subqueries-and-ctes-2">9. Subqueries and CTEs</a></button><div class="toc-children collapsed"><div class="toc-subgroup"><button type="button" class="toc-toggle level-3" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#sub-queries">Sub Queries</a></button><div class="toc-children collapsed"><a class="toc-link level-4" href="#sub-query-types">Sub Query Types</a><a class="toc-link level-4" href="#use-cases-2">Use Cases</a><a class="toc-link level-4" href="#single-row-sub-query">Single-Row Sub Query</a><a class="toc-link level-4" href="#multiple-rows-sub-query">Multiple-Rows Sub Query</a><a class="toc-link level-4" href="#correlated-sub-query">Correlated Sub Query</a><a class="toc-link level-4" href="#inline-view-sub-query">Inline View Sub Query</a></div></div></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#10-sql-functions-2">10. SQL Functions</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#string-functions">String Functions</a><a class="toc-link level-3" href="#date-functions">Date Functions</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#11-set-operators-2">11. Set Operators</a></button><div class="toc-children collapsed"><a class="toc-link level-4" href="#union">UNION</a><a class="toc-link level-4" href="#requirements">Requirements</a><a class="toc-link level-4" href="#union-vs-union-all">UNION vs UNION ALL</a><a class="toc-link level-4" href="#except">EXCEPT</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#12-views-and-window-functions-2">12. Views and Window Functions</a></button><div class="toc-children collapsed"><div class="toc-subgroup"><button type="button" class="toc-toggle level-3" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#views">Views</a></button><div class="toc-children collapsed"><a class="toc-link level-4" href="#create-a-view">Create a View</a><a class="toc-link level-4" href="#read-data-from-a-view">Read Data from a View</a><a class="toc-link level-4" href="#check-existing-views">Check Existing Views</a><a class="toc-link level-4" href="#check-code-of-a-view">Check Code of a View</a></div></div></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#13-stored-procedures-and-programmability-2">13. Stored Procedures and Programmability</a></button><div class="toc-children collapsed"><div class="toc-subgroup"><button type="button" class="toc-toggle level-3" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#triggers">Triggers</a></button><div class="toc-children collapsed"><a class="toc-link level-4" href="#trigger-use-cases">Trigger Use Cases</a><a class="toc-link level-4" href="#basic-trigger-syntax">Basic Trigger Syntax</a><a class="toc-link level-4" href="#audit-salary-changes">Audit Salary Changes</a><a class="toc-link level-4" href="#inserted-and-deleted-tables">Inserted and Deleted Tables</a><a class="toc-link level-4" href="#see-triggers-on-a-table">See Triggers on a Table</a><a class="toc-link level-4" href="#prevent-accidental-removal">Prevent Accidental Removal</a></div></div></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#15-normalization-and-database-design-2">15. Normalization and Database Design</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#normalization">Normalization</a><a class="toc-link level-3" href="#first-normal-form-1nf">First Normal Form (1NF)</a><a class="toc-link level-3" href="#second-normal-form-2nf">Second Normal Form (2NF)</a><a class="toc-link level-3" href="#third-normal-form-3nf">Third Normal Form (3NF)</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#16-indexes-and-performance-tuning-2">16. Indexes and Performance Tuning</a></button><div class="toc-children collapsed"><div class="toc-subgroup"><button type="button" class="toc-toggle level-3" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#indexes">Indexes</a></button><div class="toc-children collapsed"><a class="toc-link level-4" href="#types-of-indexes">Types of Indexes</a><a class="toc-link level-4" href="#most-important-indexes">Most Important Indexes</a><a class="toc-link level-4" href="#pros-of-indexes">Pros of Indexes</a><a class="toc-link level-4" href="#cons-of-indexes">Cons of Indexes</a><a class="toc-link level-4" href="#enable-query-statistics">Enable Query Statistics</a><a class="toc-link level-4" href="#clear-data-cache">Clear Data Cache</a><a class="toc-link level-4" href="#how-to-add-index">How to Add Index</a><a class="toc-link level-4" href="#how-to-see-index">How to See Index</a><a class="toc-link level-4" href="#how-to-remove-index">How to Remove Index</a></div></div></div></div>
+      </nav>
+    </aside>
+    <main id="top">
+      <h1 id="sql-course-notes"><a class="heading-anchor" href="#sql-course-notes">SQL Course Notes</a></h1><h2 id="course-topics-overview"><a class="heading-anchor" href="#course-topics-overview">Course Topics Overview</a></h2><h3 id="1-sql-and-database-fundamentals"><a class="heading-anchor" href="#1-sql-and-database-fundamentals">1. SQL and Database Fundamentals</a></h3><ul><li>What is data, database, DBMS, and RDBMS</li><li>SQL vs T-SQL vs SQL Server</li><li>Relational database concepts</li><li>Tables, rows, columns, and schemas</li><li>SQL Server installation and tools</li></ul><h3 id="2-data-definition-language-ddl"><a class="heading-anchor" href="#2-data-definition-language-ddl">2. Data Definition Language (DDL)</a></h3><ul><li>CREATE DATABASE</li><li>CREATE TABLE</li><li>ALTER TABLE</li><li>DROP TABLE</li><li>TRUNCATE TABLE</li><li>Schema design basics</li></ul><h3 id="3-data-types"><a class="heading-anchor" href="#3-data-types">3. Data Types</a></h3><ul><li>Numeric data types</li><li>String data types</li><li>Date and time data types</li><li>Boolean/bit data type</li><li>Choosing the correct data type</li></ul><h3 id="4-constraints-and-keys"><a class="heading-anchor" href="#4-constraints-and-keys">4. Constraints and Keys</a></h3><ul><li>PRIMARY KEY</li><li>FOREIGN KEY</li><li>UNIQUE</li><li>NOT NULL</li><li>DEFAULT</li><li>CHECK</li><li>IDENTITY</li></ul><h3 id="5-data-manipulation-language-dml"><a class="heading-anchor" href="#5-data-manipulation-language-dml">5. Data Manipulation Language (DML)</a></h3><ul><li>INSERT</li><li>SELECT</li><li>UPDATE</li><li>DELETE</li><li>MERGE</li></ul><h3 id="6-basic-querying"><a class="heading-anchor" href="#6-basic-querying">6. Basic Querying</a></h3><ul><li>WHERE Clause</li><li>DISTINCT</li><li>ORDER BY</li><li>TOP</li><li>LIKE</li><li>Logical Operators</li><li>IN, NOT IN</li><li>BETWEEN</li><li>IS NULL</li><li>CASE</li></ul><h3 id="7-aggregate-and-grouping-queries"><a class="heading-anchor" href="#7-aggregate-and-grouping-queries">7. Aggregate and Grouping Queries</a></h3><ul><li>COUNT, SUM, AVG, MIN, MAX</li><li>GROUP BY</li><li>HAVING Clause</li><li>GROUP BY ROLLUP</li></ul><h3 id="8-joins-and-relationships"><a class="heading-anchor" href="#8-joins-and-relationships">8. Joins and Relationships</a></h3><ul><li>One-to-One relationship</li><li>One-to-Many relationship</li><li>Many-to-Many relationship</li><li>INNER JOIN</li><li>LEFT JOIN</li><li>RIGHT JOIN</li><li>FULL OUTER JOIN</li><li>CROSS JOIN</li><li>SELF JOIN</li></ul><h3 id="9-subqueries-and-ctes"><a class="heading-anchor" href="#9-subqueries-and-ctes">9. Subqueries and CTEs</a></h3><ul><li>Single-row subquery</li><li>Multiple-row subquery</li><li>Correlated subquery</li><li>Inline view subquery</li><li>Common Table Expressions (CTE)</li></ul><h3 id="10-sql-functions"><a class="heading-anchor" href="#10-sql-functions">10. SQL Functions</a></h3><ul><li>String functions</li><li>Date functions</li><li>Aggregate functions</li><li>Conversion functions</li><li>User-defined functions</li></ul><h3 id="11-set-operators"><a class="heading-anchor" href="#11-set-operators">11. Set Operators</a></h3><ul><li>UNION</li><li>UNION ALL</li><li>EXCEPT</li><li>INTERSECT</li></ul><h3 id="12-views-and-window-functions"><a class="heading-anchor" href="#12-views-and-window-functions">12. Views and Window Functions</a></h3><ul><li>Views</li><li>ROW_NUMBER</li><li>RANK</li><li>DENSE_RANK</li><li>LAG and LEAD</li><li>FIRST_VALUE and LAST_VALUE</li><li>NTILE</li></ul><h3 id="13-stored-procedures-and-programmability"><a class="heading-anchor" href="#13-stored-procedures-and-programmability">13. Stored Procedures and Programmability</a></h3><ul><li>Stored procedures</li><li>Input parameters</li><li>Output parameters</li><li>Procedural logic</li><li>Scalar functions</li><li>Table-valued functions</li><li>Triggers</li></ul><h3 id="14-transactions-and-error-handling"><a class="heading-anchor" href="#14-transactions-and-error-handling">14. Transactions and Error Handling</a></h3><ul><li>Transactions</li><li>COMMIT</li><li>ROLLBACK</li><li>TRY...CATCH</li><li>ACID properties</li></ul><h3 id="15-normalization-and-database-design"><a class="heading-anchor" href="#15-normalization-and-database-design">15. Normalization and Database Design</a></h3><ul><li>Normalization</li><li>Data redundancy</li><li>Relationship design</li><li>Practical database design</li></ul><h3 id="16-indexes-and-performance-tuning"><a class="heading-anchor" href="#16-indexes-and-performance-tuning">16. Indexes and Performance Tuning</a></h3><ul><li>Clustered indexes</li><li>Non-clustered indexes</li><li>Composite indexes</li><li>Query statistics</li><li>Execution performance</li></ul><h3 id="17-database-administration-basics"><a class="heading-anchor" href="#17-database-administration-basics">17. Database Administration Basics</a></h3><ul><li>Import and export data</li><li>Backup and restore basics</li><li>System databases</li><li>Generate test data</li><li>Database maintenance</li></ul><h3 id="18-advanced-sql-server-topics"><a class="heading-anchor" href="#18-advanced-sql-server-topics">18. Advanced SQL Server Topics</a></h3><ul><li>APPLY operators</li><li>Dynamic SQL</li><li>Temporary tables</li><li>Import data from CSV</li><li>Indexes</li></ul><h2 id="1-sql-and-database-fundamentals-2"><a class="heading-anchor" href="#1-sql-and-database-fundamentals-2">1. SQL and Database Fundamentals</a></h2><h3 id="what-is-data"><a class="heading-anchor" href="#what-is-data">What is Data?</a></h3><ul><li>Data is raw information stored in a database.</li><li>Example: student name, employee salary, order amount, city, email.</li></ul><h3 id="what-is-a-database"><a class="heading-anchor" href="#what-is-a-database">What is a Database?</a></h3><ul><li>A database is an organized collection of data.</li><li>It helps store, manage, retrieve, and update data easily.</li></ul><h3 id="what-is-dbms"><a class="heading-anchor" href="#what-is-dbms">What is DBMS?</a></h3><ul><li>DBMS stands for Database Management System.</li><li>It is software used to create, manage, and control databases.</li></ul><h3 id="what-is-rdbms"><a class="heading-anchor" href="#what-is-rdbms">What is RDBMS?</a></h3><ul><li>RDBMS stands for Relational Database Management System.</li><li>It stores data in tables with rows and columns.</li><li>Tables can be connected using relationships like primary key and foreign key.</li></ul><h3 id="sql-vs-t-sql-vs-sql-server"><a class="heading-anchor" href="#sql-vs-t-sql-vs-sql-server">SQL vs T-SQL vs SQL Server</a></h3><div class="table-wrap"><table><thead><tr><th>Term</th><th>What it is</th><th>Simple meaning</th><th>Example</th></tr></thead><tbody><tr><td><strong>SQL</strong></td><td>Query language</td><td>Standard language used to work with relational databases</td><td><code>SELECT * FROM Employees;</code></td></tr><tr><td><strong>T-SQL</strong></td><td>Microsoft&#x27;s extended version of SQL</td><td>SQL + extra features added by Microsoft</td><td><code>DECLARE</code>, <code>IF ELSE</code>, <code>TRY CATCH</code>, Stored Procedures</td></tr><tr><td><strong>SQL Server</strong></td><td>Database software/product</td><td>Microsoft database system where SQL/T-SQL runs</td><td>Microsoft SQL Server, SSMS</td></tr></tbody></table></div><h3 id="basic-database-structure"><a class="heading-anchor" href="#basic-database-structure">Basic Database Structure</a></h3><ul><li>Table: stores data in rows and columns.</li><li>Row: one record in a table.</li><li>Column: one field or attribute in a table.</li><li>Schema: logical container for database objects.</li></ul><h2 id="2-data-definition-language-ddl-2"><a class="heading-anchor" href="#2-data-definition-language-ddl-2">2. Data Definition Language (DDL)</a></h2><h3 id="database-queries"><a class="heading-anchor" href="#database-queries">Database Queries</a></h3><p>List Down Existing Databases</p><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">EXEC sp_databases;
+SELECT name FROM sys.databases;</code></pre></div><h4 id="create-a-database"><a class="heading-anchor" href="#create-a-database">Create a Database</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">CREATE DATABASE school_db;
+CREATE DATABASE demo;</code></pre></div><h4 id="select-a-database"><a class="heading-anchor" href="#select-a-database">Select a Database</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">USE school_db;
+SELECT DB_NAME();</code></pre></div><h4 id="delete-or-drop-a-database"><a class="heading-anchor" href="#delete-or-drop-a-database">Delete or Drop a Database</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">DROP DATABASE demo;</code></pre></div><h3 id="table-queries"><a class="heading-anchor" href="#table-queries">Table Queries</a></h3><h4 id="create-a-table"><a class="heading-anchor" href="#create-a-table">Create a Table</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">CREATE TABLE students (
+    student_id INT,
+    name VARCHAR(100),
+    age INT,
+    grade INT
+);</code></pre></div><h4 id="check-existing-table"><a class="heading-anchor" href="#check-existing-table">Check Existing Table</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">EXEC sp_help &#x27;students&#x27;;</code></pre></div><h3 id="alter-queries"><a class="heading-anchor" href="#alter-queries">ALTER Queries</a></h3><h4 id="select-data"><a class="heading-anchor" href="#select-data">Select Data</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT * FROM employees;</code></pre></div><h4 id="add-column"><a class="heading-anchor" href="#add-column">Add Column</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">ALTER TABLE employees ADD phone VARCHAR(15);</code></pre></div><h4 id="drop-column"><a class="heading-anchor" href="#drop-column">Drop Column</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">ALTER TABLE employees DROP COLUMN phone;</code></pre></div><h4 id="check-table-details"><a class="heading-anchor" href="#check-table-details">Check Table Details</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">EXEC sp_help &#x27;employees&#x27;;</code></pre></div><h4 id="alter-column"><a class="heading-anchor" href="#alter-column">Alter Column</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">ALTER TABLE employees ALTER COLUMN lname VARCHAR(100) NOT NULL;
+ALTER TABLE employees ALTER COLUMN email VARCHAR(100) NOT NULL;</code></pre></div><h4 id="rename-column"><a class="heading-anchor" href="#rename-column">Rename Column</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">EXEC sp_rename &#x27;employees.fname&#x27;, &#x27;first_name&#x27;, &#x27;column&#x27;;</code></pre></div><h4 id="rename-table"><a class="heading-anchor" href="#rename-table">Rename Table</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">EXEC sp_rename &#x27;employees&#x27;, &#x27;staff&#x27;;</code></pre></div><h4 id="add-or-drop-constraints"><a class="heading-anchor" href="#add-or-drop-constraints">Add or Drop Constraints</a></h4><h4 id="set-default-value-to-a-column"><a class="heading-anchor" href="#set-default-value-to-a-column">Set Default Value to a Column</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">ALTER TABLE employees
+ADD CONSTRAINT default_dept DEFAULT &#x27;Trainee&#x27;
+FOR department;</code></pre></div><h4 id="add-unique-constraint"><a class="heading-anchor" href="#add-unique-constraint">Add Unique Constraint</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">ALTER TABLE employees
+ADD UNIQUE (department);</code></pre></div><h4 id="check-constraint"><a class="heading-anchor" href="#check-constraint">CHECK Constraint</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">CREATE TABLE emp (
+    name VARCHAR(50),
+    salary DECIMAL(10,2) CHECK (salary &gt; 0)
+);</code></pre></div><h4 id="named-constraint"><a class="heading-anchor" href="#named-constraint">Named Constraint</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">CREATE TABLE contacts (
+    name VARCHAR(50),
+    salary DECIMAL(10,2),
+    CONSTRAINT chk_emp_positive_salary CHECK (salary &gt; 0)
+);
+
+ALTER TABLE employees
+ADD CONSTRAINT chk_emp_positive_salary CHECK (salary &gt; 0);
+
+ALTER TABLE employees
+ADD CONSTRAINT chk_valid_email CHECK (email LIKE &#x27;%@%.%&#x27;);</code></pre></div><h4 id="drop-constraint"><a class="heading-anchor" href="#drop-constraint">Drop Constraint</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">ALTER TABLE employees
+DROP CONSTRAINT chk_emp_positive_sal;</code></pre></div><h2 id="3-data-types-2"><a class="heading-anchor" href="#3-data-types-2">3. Data Types</a></h2><h3 id="datatypes"><a class="heading-anchor" href="#datatypes">Datatypes</a></h3><ul><li>Numeric: INT, BIGINT, FLOAT, DECIMAL, NUMERIC</li><li>String: VARCHAR, CHAR</li><li>Date: DATE</li><li>Date Time: DATETIME</li><li>Boolean: BIT(0/1)</li></ul><h2 id="4-constraints-and-keys-2"><a class="heading-anchor" href="#4-constraints-and-keys-2">4. Constraints and Keys</a></h2><h3 id="constraints"><a class="heading-anchor" href="#constraints">Constraints</a></h3><ul><li>PRIMARY KEY</li><li>NOT NULL</li><li>DEFAULT</li><li>IDENTITY auto increment</li><li>UNIQUE</li></ul><h3 id="key-column-vs-non-key-column"><a class="heading-anchor" href="#key-column-vs-non-key-column">Key Column vs Non-Key Column</a></h3><div class="table-wrap"><table><thead><tr><th>Type</th><th>Meaning</th><th>Example</th></tr></thead><tbody><tr><td><strong>Key column</strong></td><td>Column used to uniquely identify a record or create relationship</td><td><code>EmployeeId</code>, <code>DepartmentId</code></td></tr><tr><td><strong>Non-key column</strong></td><td>Normal data column, not used for uniqueness or relationship</td><td><code>Name</code>, <code>Salary</code>, <code>City</code></td></tr></tbody></table></div><h3 id="composite-key"><a class="heading-anchor" href="#composite-key">Composite Key</a></h3><p>A composite key is a primary key made using two or more columns.</p><p>Use it when one column alone cannot uniquely identify a row, but a combination of columns can.</p><p>Example:</p><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">CREATE TABLE Enrollment (
+    student_id INT,
+    course_id INT,
+    enrollment_date DATE,
+    PRIMARY KEY (student_id, course_id)
+);</code></pre></div><p>In this example:</p><ul><li><code>student_id</code> alone is not unique because one student can enroll in many courses.</li><li><code>course_id</code> alone is not unique because one course can have many students.</li><li><code>student_id + course_id</code> together uniquely identify each enrollment row.</li></ul><h3 id="employee-table-task"><a class="heading-anchor" href="#employee-table-task">Employee Table Task</a></h3><h4 id="create-employees-table"><a class="heading-anchor" href="#create-employees-table">Create Employees Table</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">CREATE TABLE employees (
+    emp_id INT IDENTITY(101,1) PRIMARY KEY,
+    fname VARCHAR(50) NOT NULL,
+    lname VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    job_title VARCHAR(50) NOT NULL,
+    department VARCHAR(50),
+    salary DECIMAL(10,2) DEFAULT 30000.00,
+    hire_date DATE NOT NULL DEFAULT CONVERT(DATE, GETDATE()),
+    city VARCHAR(50)
+);
+
+EXEC sp_help &#x27;employees&#x27;;</code></pre></div><h4 id="important-keywords"><a class="heading-anchor" href="#important-keywords">Important Keywords</a></h4><div class="table-wrap"><table><thead><tr><th>Keyword</th><th>Meaning</th></tr></thead><tbody><tr><td>IDENTITY(101,1)</td><td>Auto-generates number automatically</td></tr><tr><td>PRIMARY KEY</td><td>Makes column unique and not null</td></tr></tbody></table></div><h4 id="insert-employee-data"><a class="heading-anchor" href="#insert-employee-data">Insert Employee Data</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">INSERT INTO employees
+(fname, lname, email, job_title, department, salary, hire_date, city)
+VALUES
+(&#x27;Aarav&#x27;, &#x27;Sharma&#x27;, &#x27;aarav.sharma@example.com&#x27;, &#x27;Director&#x27;, &#x27;Management&#x27;, 180000, &#x27;2019-02-10&#x27;, &#x27;Mumbai&#x27;),
+(&#x27;Diya&#x27;, &#x27;Patel&#x27;, &#x27;diya.patel@example.com&#x27;, &#x27;Lead Engineer&#x27;, &#x27;Tech&#x27;, 120000, &#x27;2020-08-15&#x27;, &#x27;Bengaluru&#x27;),
+(&#x27;Rohan&#x27;, &#x27;Mehra&#x27;, &#x27;rohan.mehra@example.com&#x27;, &#x27;Software Engineer&#x27;, &#x27;Tech&#x27;, 85000, &#x27;2022-05-20&#x27;, &#x27;Bengaluru&#x27;),
+(&#x27;Priya&#x27;, &#x27;Singh&#x27;, &#x27;priya.singh@example.com&#x27;, &#x27;HR Manager&#x27;, &#x27;Human Resources&#x27;, 95000, &#x27;2019-11-05&#x27;, &#x27;Mumbai&#x27;),
+(&#x27;Arjun&#x27;, &#x27;Kumar&#x27;, &#x27;arjun.kumar@example.com&#x27;, &#x27;Data Scientist&#x27;, &#x27;Tech&#x27;, 110000, &#x27;2021-07-12&#x27;, &#x27;Hyderabad&#x27;),
+(&#x27;Ananya&#x27;, &#x27;Gupta&#x27;, &#x27;ananya.gupta@example.com&#x27;, &#x27;Marketing Lead&#x27;, &#x27;Marketing&#x27;, 90000, &#x27;2020-03-01&#x27;, &#x27;Delhi&#x27;),
+(&#x27;Vikram&#x27;, &#x27;Reddy&#x27;, &#x27;vikram.reddy@example.com&#x27;, &#x27;Sales Executive&#x27;, &#x27;Sales&#x27;, 75000, &#x27;2023-01-30&#x27;, &#x27;Mumbai&#x27;),
+(&#x27;Sameera&#x27;, &#x27;Rao&#x27;, &#x27;sameera.rao@example.com&#x27;, &#x27;Software Engineer&#x27;, &#x27;Tech&#x27;, 88000, &#x27;2023-06-25&#x27;, &#x27;Pune&#x27;),
+(&#x27;Ishaan&#x27;, &#x27;Verma&#x27;, &#x27;ishaan.verma@example.com&#x27;, &#x27;Recruiter&#x27;, &#x27;Human Resources&#x27;, 65000, &#x27;2022-09-01&#x27;, &#x27;Mumbai&#x27;),
+(&#x27;Kavya&#x27;, &#x27;Joshi&#x27;, &#x27;kavya.joshi@example.com&#x27;, &#x27;Product Designer&#x27;, &#x27;Design&#x27;, 92000, &#x27;2021-04-18&#x27;, &#x27;Bengaluru&#x27;),
+(&#x27;Zain&#x27;, &#x27;Khan&#x27;, &#x27;zain.khan@example.com&#x27;, &#x27;Sales Manager&#x27;, &#x27;Sales&#x27;, 115000, &#x27;2019-09-14&#x27;, &#x27;Delhi&#x27;),
+(&#x27;Nisha&#x27;, &#x27;Desai&#x27;, &#x27;nisha.desai@example.com&#x27;, &#x27;Jr. Data Analyst&#x27;, &#x27;Tech&#x27;, 70000, &#x27;2024-02-01&#x27;, &#x27;Hyderabad&#x27;),
+(&#x27;Aditya&#x27;, &#x27;Nair&#x27;, &#x27;aditya.nair@example.com&#x27;, &#x27;Marketing Analyst&#x27;, &#x27;Marketing&#x27;, 68000, &#x27;2022-10-10&#x27;, &#x27;Delhi&#x27;),
+(&#x27;Fatima&#x27;, &#x27;Ali&#x27;, &#x27;fatima.ali@example.com&#x27;, &#x27;Sales Executive&#x27;, &#x27;Sales&#x27;, 78000, &#x27;2022-11-22&#x27;, &#x27;Mumbai&#x27;),
+(&#x27;Kabir&#x27;, &#x27;Shah&#x27;, &#x27;kabir.shah@example.com&#x27;, &#x27;DevOps Engineer&#x27;, &#x27;Tech&#x27;, 105000, &#x27;2020-12-01&#x27;, &#x27;Pune&#x27;);</code></pre></div><h4 id="read-employee-data"><a class="heading-anchor" href="#read-employee-data">Read Employee Data</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT * FROM employees;</code></pre></div><h2 id="5-data-manipulation-language-dml-2"><a class="heading-anchor" href="#5-data-manipulation-language-dml-2">5. Data Manipulation Language (DML)</a></h2><h3 id="crud-operations"><a class="heading-anchor" href="#crud-operations">CRUD Operations</a></h3><h4 id="create-insert-data"><a class="heading-anchor" href="#create-insert-data">Create / Insert Data</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">INSERT INTO students (student_id, name, age, grade)
+VALUES (101, &#x27;raju&#x27;, 10, 5);
+
+INSERT INTO students (student_id, name, age, grade)
+VALUES
+    (102, &#x27;sham&#x27;, 12, 7),
+    (103, &#x27;baburao&#x27;, 41, 9);</code></pre></div><h4 id="read-data"><a class="heading-anchor" href="#read-data">Read Data</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT * FROM students;
+SELECT age FROM students;
+SELECT * FROM students WHERE student_id = 102;
+SELECT age FROM students WHERE student_id = 102;</code></pre></div><h4 id="update-data"><a class="heading-anchor" href="#update-data">Update Data</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">UPDATE students
+SET grade = 12
+WHERE student_id = 103;</code></pre></div><h4 id="delete-data"><a class="heading-anchor" href="#delete-data">Delete Data</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">DELETE FROM students
+WHERE student_id IN (101, 102);</code></pre></div><h4 id="truncate-data"><a class="heading-anchor" href="#truncate-data">Truncate Data</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">TRUNCATE TABLE students;</code></pre></div><h2 id="6-basic-querying-2"><a class="heading-anchor" href="#6-basic-querying-2">6. Basic Querying</a></h2><h3 id="sql-clauses"><a class="heading-anchor" href="#sql-clauses">SQL Clauses</a></h3><h4 id="where-clause"><a class="heading-anchor" href="#where-clause">WHERE Clause</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT * FROM employees
+WHERE department != &#x27;sales&#x27;
+  AND city != &#x27;pune&#x27;
+  AND city != &#x27;Mumbai&#x27;;
+
+SELECT * FROM employees WHERE salary &gt; 100000;
+SELECT * FROM employees WHERE hire_date &gt; &#x27;2020-12-31&#x27;;</code></pre></div><h4 id="relational-operators"><a class="heading-anchor" href="#relational-operators">Relational Operators</a></h4><ul><li><code>&lt;</code></li><li><code>&gt;</code></li><li><code>&lt;=</code></li><li><code>&gt;=</code></li><li><code>=</code></li><li><code>!=</code></li></ul><h4 id="distinct"><a class="heading-anchor" href="#distinct">DISTINCT</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT DISTINCT department FROM employees;
+SELECT COUNT(DISTINCT department) FROM employees;</code></pre></div><h4 id="order-by"><a class="heading-anchor" href="#order-by">ORDER BY</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT * FROM employees ORDER BY salary;
+SELECT * FROM employees ORDER BY salary DESC;
+SELECT department, fname FROM employees ORDER BY department, fname;</code></pre></div><h4 id="like"><a class="heading-anchor" href="#like">LIKE</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT * FROM employees WHERE department LIKE &#x27;%man%&#x27;;
+SELECT * FROM employees WHERE fname LIKE &#x27;a%&#x27;;
+SELECT * FROM employees WHERE fname LIKE &#x27;%a&#x27;;
+SELECT * FROM employees WHERE fname LIKE &#x27;[ABCDE]%&#x27;;
+SELECT * FROM employees WHERE fname LIKE &#x27;_a%&#x27;;
+SELECT * FROM employees WHERE fname LIKE &#x27;____&#x27;;</code></pre></div><h4 id="top"><a class="heading-anchor" href="#top">TOP</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT TOP 3 * FROM employees ORDER BY salary DESC;</code></pre></div><h4 id="logical-operators-and-or"><a class="heading-anchor" href="#logical-operators-and-or">Logical Operators: AND / OR</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT * FROM employees
+WHERE salary = 75000 AND department = &#x27;sales&#x27;;
+
+SELECT * FROM employees
+WHERE salary = 75000 OR department = &#x27;sales&#x27;;</code></pre></div><h4 id="in-not-in-between"><a class="heading-anchor" href="#in-not-in-between">IN / NOT IN / BETWEEN</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT * FROM employees
+WHERE department NOT IN (&#x27;Tech&#x27;, &#x27;Sales&#x27;, &#x27;Management&#x27;);
+
+SELECT * FROM employees
+WHERE salary BETWEEN 75000 AND 100000;</code></pre></div><h4 id="case"><a class="heading-anchor" href="#case">CASE</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT
+    fname,
+    lname,
+    salary,
+    CASE
+        WHEN salary &gt; 100000 THEN &#x27;High Earner&#x27;
+        WHEN salary &gt;= 80000 AND salary &lt;= 100000 THEN &#x27;Medium Earner&#x27;
+        ELSE &#x27;Standard Earner&#x27;
+    END AS salary_band
+FROM employees;
+
+SELECT
+    fname,
+    lname,
+    department,
+    salary,
+    CASE
+        WHEN department IN (&#x27;Sales&#x27;, &#x27;Marketing&#x27;) THEN salary * 0.10
+        WHEN department = &#x27;Tech&#x27; THEN salary * 0.12
+        ELSE salary * 0.05
+    END AS bonus
+FROM employees;</code></pre></div><h4 id="is-null"><a class="heading-anchor" href="#is-null">IS NULL</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT *
+FROM employees
+WHERE fname IS NULL;</code></pre></div><h4 id="not-like"><a class="heading-anchor" href="#not-like">NOT LIKE</a></h4><h2 id="7-aggregate-and-grouping-queries-2"><a class="heading-anchor" href="#7-aggregate-and-grouping-queries-2">7. Aggregate and Grouping Queries</a></h2><h3 id="aggregate-functions"><a class="heading-anchor" href="#aggregate-functions">Aggregate Functions</a></h3><ul><li>COUNT</li><li>SUM</li><li>AVG</li><li>MIN</li><li>MAX</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT COUNT(emp_id) FROM employees;
+SELECT MIN(salary) FROM employees;
+SELECT MAX(salary) FROM employees;
+SELECT AVG(salary) FROM employees;
+SELECT SUM(salary) FROM employees;</code></pre></div><h4 id="group-by"><a class="heading-anchor" href="#group-by">GROUP BY</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT department FROM employees GROUP BY department;
+
+SELECT department, COUNT(emp_id) AS Count
+FROM employees
+GROUP BY department;
+
+SELECT department, SUM(salary) AS Count
+FROM employees
+GROUP BY department;</code></pre></div><h4 id="rules-of-group-by"><a class="heading-anchor" href="#rules-of-group-by">Rules of GROUP BY</a></h4><ol><li>GROUP BY is used to group same values.</li><li>GROUP BY is mostly used with aggregate functions:</li></ol><ul><li>COUNT()</li><li>SUM()</li><li>AVG()</li><li>MIN()</li><li>MAX()</li></ul><ol><li>When GROUP BY is used, SELECT can contain only:</li></ol><ul><li>GROUP BY columns</li><li>Aggregate functions</li></ul><ol><li>You cannot use SELECT * with GROUP BY.</li><li>Every non-aggregate column in SELECT must be present in GROUP BY.</li><li>WHERE is used before GROUP BY.</li><li>HAVING is used after GROUP BY.</li><li>WHERE filters rows before grouping.</li><li>HAVING filters groups after grouping.</li><li>ORDER BY comes after GROUP BY and HAVING.</li><li>Correct order:</li></ol><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT
+FROM
+JOIN ON
+WHERE
+GROUP BY
+HAVING
+ORDER BY</code></pre></div><p>Example:</p><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT customer_id, COUNT(order_id)
+FROM Orders
+GROUP BY customer_id;</code></pre></div><p>Wrong:</p><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT customer_id, order_date, COUNT(order_id)
+FROM Orders
+GROUP BY customer_id;</code></pre></div><p>Why wrong:</p><ul><li>order_date is not inside GROUP BY.</li><li>order_date is not inside an aggregate function.</li></ul><p>Correct:</p><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT customer_id, MAX(order_date), COUNT(order_id)
+FROM Orders
+GROUP BY customer_id;</code></pre></div><h4 id="multi-column-grouping"><a class="heading-anchor" href="#multi-column-grouping">Multi-Column Grouping</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT department FROM employees GROUP BY department;
+
+SELECT department, city
+FROM employees
+GROUP BY department, city;
+
+SELECT department, city, COUNT(emp_id) AS count
+FROM employees
+GROUP BY department, city
+ORDER BY department;</code></pre></div><h4 id="having-clause"><a class="heading-anchor" href="#having-clause">HAVING Clause</a></h4><h4 id="use-cases"><a class="heading-anchor" href="#use-cases">Use Cases</a></h4><ul><li>Find Departments with More Than 2 Employees</li><li>Find Job Titles with an Average Salary Above 90000</li><li>Find department with Total Salary Above 300000</li></ul><h4 id="where-vs-having"><a class="heading-anchor" href="#where-vs-having">WHERE vs HAVING</a></h4><ul><li>WHERE: to filter individual rows</li><li>HAVING: to filter group/aggregate result</li><li>WHERE works with GROUP BY, but only for filtering rows before grouping.</li><li>WHERE does not work when you want to filter aggregate result like COUNT, SUM, AVG.</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT department, COUNT(emp_id) AS count
+FROM employees
+GROUP BY department
+HAVING COUNT(emp_id) &gt; 2;
+
+SELECT job_title
+FROM employees
+GROUP BY job_title;
+
+SELECT job_title, AVG(salary)
+FROM employees
+GROUP BY job_title
+HAVING AVG(salary) &gt; 90000;
+
+SELECT department, SUM(salary) AS total
+FROM employees
+GROUP BY department
+HAVING SUM(salary) &gt; 200000;</code></pre></div><h4 id="group-by-rollup"><a class="heading-anchor" href="#group-by-rollup">GROUP BY ROLLUP</a></h4><ul><li>GROUP BY ROLLUP is an extension of the GROUP BY clause.</li><li>It generates subtotals and a grand total for a set of columns.</li></ul><h2 id="8-joins-and-relationships-2"><a class="heading-anchor" href="#8-joins-and-relationships-2">8. Joins and Relationships</a></h2><h3 id="relationship"><a class="heading-anchor" href="#relationship">Relationship</a></h3><h4 id="problems-without-relationship"><a class="heading-anchor" href="#problems-without-relationship">Problems Without Relationship</a></h4><ul><li>Data Redundancy or Duplication</li><li>What if I want to add a Finance department and its related details?</li><li>What if Kayva leaves the company which was only one in Design department?</li><li>What if there is a typo in department column?</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT * FROM employees;</code></pre></div><h4 id="types-of-relationship"><a class="heading-anchor" href="#types-of-relationship">Types of Relationship</a></h4><h5 id="one-to-one"><a class="heading-anchor" href="#one-to-one">One-to-One</a></h5><ul><li>1 employee, 1 account</li></ul><h5 id="one-to-many"><a class="heading-anchor" href="#one-to-many">One-to-Many</a></h5><ul><li>1 department, many employees</li><li>1 employee, multiple tasks</li></ul><h5 id="many-to-many"><a class="heading-anchor" href="#many-to-many">Many-to-Many</a></h5><ul><li>Book and author</li><li>1 book, multiple authors</li><li>1 author, multiple books</li><li>1 employee, multiple projects</li><li>1 project, multiple employees</li></ul><h3 id="store-database"><a class="heading-anchor" href="#store-database">Store Database</a></h3><h4 id="create-database"><a class="heading-anchor" href="#create-database">Create Database</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">CREATE DATABASE store_db;
+USE store_db;</code></pre></div><h4 id="create-customers-table"><a class="heading-anchor" href="#create-customers-table">Create Customers Table</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">CREATE TABLE Customers (
+    customer_id INT IDENTITY(100,1) PRIMARY KEY,
+    customer_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE
+);</code></pre></div><h4 id="create-orders-table"><a class="heading-anchor" href="#create-orders-table">Create Orders Table</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">CREATE TABLE Orders (
+    order_id INT IDENTITY(500,1) PRIMARY KEY,
+    order_date DATE NOT NULL,
+    total_amount DECIMAL(10, 2),
+    customer_id INT,
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
+);
+
+EXEC sp_help Orders;</code></pre></div><h4 id="insert-customers"><a class="heading-anchor" href="#insert-customers">Insert Customers</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">INSERT INTO Customers (customer_name, email)
+VALUES
+(&#x27;Raju&#x27;, &#x27;raju@example.com&#x27;),
+(&#x27;Sham&#x27;, &#x27;sham@example.com&#x27;),
+(&#x27;Baburao&#x27;, &#x27;baburao@example.com&#x27;);</code></pre></div><h4 id="insert-orders"><a class="heading-anchor" href="#insert-orders">Insert Orders</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">INSERT INTO Orders (order_date, total_amount, customer_id)
+VALUES
+(&#x27;2025-09-15&#x27;, 1500.00, 100),
+(&#x27;2025-09-28&#x27;, 800.00, 101),
+(&#x27;2025-10-05&#x27;, 2200.00, 100),
+(&#x27;2025-10-12&#x27;, 500.00, 102),
+(&#x27;2025-10-17&#x27;, 1200.00, 101);</code></pre></div><h4 id="read-customers-and-orders"><a class="heading-anchor" href="#read-customers-and-orders">Read Customers and Orders</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT * FROM Customers;
+SELECT * FROM Orders;</code></pre></div><h4 id="temporary-orders-table"><a class="heading-anchor" href="#temporary-orders-table">Temporary Orders Table</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT
+    order_id,
+    CONVERT(VARCHAR(11), order_date, 106) AS order_date,
+    total_amount,
+    customer_id
+INTO #TempOrders
+FROM Orders;
+
+SELECT * FROM #TempOrders;</code></pre></div><h4 id="insert-customer-and-order-without-customer-id"><a class="heading-anchor" href="#insert-customer-and-order-without-customer-id">Insert Customer and Order Without Customer ID</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">INSERT INTO customers (customer_name, email)
+VALUES (&#x27;Paul&#x27;, &#x27;paul@example.com&#x27;);
+
+INSERT INTO orders (order_date, total_amount)
+VALUES (&#x27;2025-10-18&#x27;, &#x27;3500&#x27;);</code></pre></div><h4 id="cascade-on-delete"><a class="heading-anchor" href="#cascade-on-delete">Cascade on Delete</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">CREATE TABLE orderss (
+    ord_id INT IDENTITY(1,1) PRIMARY KEY,
+    date DATE,
+    amount DECIMAL(10, 2),
+    cust_id INT,
+    FOREIGN KEY (customerr_id) REFERENCES customers(customer_id) ON DELETE CASCADE
+);</code></pre></div><h3 id="joins"><a class="heading-anchor" href="#joins">Joins</a></h3><h4 id="types-of-join"><a class="heading-anchor" href="#types-of-join">Types of Join</a></h4><ul><li>Cross Join</li><li>Inner Join</li><li>Left Join</li><li>Right Join</li><li>Full Outer Join</li></ul><h4 id="cross-join"><a class="heading-anchor" href="#cross-join">CROSS JOIN</a></h4><ul><li>Every row from one table is combined with every row from another table.</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT ...
+FROM table1 t1
+CROSS JOIN table2 t2;</code></pre></div><h4 id="inner-join"><a class="heading-anchor" href="#inner-join">INNER JOIN</a></h4><ul><li>Returns only the rows where there is a match between specified columns in both tables.</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT ...
+FROM table1 t1
+INNER JOIN table2 t2
+ON t1.common_column = t2.common_column;
+
+SELECT *
+FROM Customers
+INNER JOIN Orders
+ON Customers.customer_id = Orders.customer_id;
+
+SELECT c.customer_name, COUNT(o.order_id), SUM(o.total_amount)
+FROM customers c
+INNER JOIN orders o
+ON c.customer_id = o.customer_id
+GROUP BY c.customer_name;</code></pre></div><h4 id="practical-inner-join-example"><a class="heading-anchor" href="#practical-inner-join-example">Practical INNER JOIN Example</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">CREATE DATABASE test;
+GO
+
+USE test;
+GO
+
+CREATE TABLE Customers
+(
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL
+);
+GO
+
+CREATE TABLE Orders
+(
+    order_id INT PRIMARY KEY,
+    order_date DATE NOT NULL,
+    total_amount DECIMAL(10,2) NOT NULL,
+    customer_id INT NULL,
+
+    CONSTRAINT FK_Orders_Customers
+    FOREIGN KEY (customer_id)
+    REFERENCES Customers(customer_id)
+);
+GO
+
+INSERT INTO Customers (customer_id, customer_name, email)
+VALUES
+(100, &#x27;Raju&#x27;, &#x27;raju@example.com&#x27;),
+(101, &#x27;Sham&#x27;, &#x27;sham@example.com&#x27;),
+(102, &#x27;Baburao&#x27;, &#x27;baburao@example.com&#x27;),
+(103, &#x27;Paul&#x27;, &#x27;paul@example.com&#x27;);
+GO
+
+INSERT INTO Orders (order_id, order_date, total_amount, customer_id)
+VALUES
+(500, &#x27;2025-09-15&#x27;, 1500.00, 100),
+(501, &#x27;2025-09-28&#x27;, 800.00, 101),
+(502, &#x27;2025-10-05&#x27;, 2200.00, 100),
+(503, &#x27;2025-10-12&#x27;, 500.00, 102),
+(504, &#x27;2025-10-17&#x27;, 1200.00, 101),
+(505, &#x27;2025-10-18&#x27;, 3500.00, NULL);
+GO
+
+-- Customers is the left table.
+-- Orders is the right table.
+SELECT *
+FROM Customers c
+INNER JOIN Orders o
+    ON c.customer_id = o.customer_id;
+
+SELECT
+    c.customer_id,
+    c.customer_name,
+    COUNT(o.order_id) AS TotalOrders,
+    SUM(o.total_amount) AS TotalAmount
+FROM Customers c
+INNER JOIN Orders o
+    ON c.customer_id = o.customer_id
+WHERE o.total_amount &gt; 500
+GROUP BY c.customer_id, c.customer_name
+HAVING COUNT(o.order_id) &gt; 1
+ORDER BY TotalAmount DESC;</code></pre></div><h4 id="left-join"><a class="heading-anchor" href="#left-join">LEFT JOIN</a></h4><ul><li>Returns all rows from the left table and matching rows from the right table.</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT ...
+FROM table1 t1
+LEFT JOIN table2 t2
+ON t1.common_column = t2.common_column;
+
+SELECT *
+FROM Customers
+LEFT JOIN Orders
+ON Customers.customer_id = Orders.customer_id;
+
+SELECT *
+FROM Orders
+LEFT JOIN Customers
+ON Customers.customer_id = Orders.customer_id;
+
+SELECT c.customer_name, COUNT(o.order_id), SUM(o.total_amount)
+FROM customers c
+LEFT JOIN orders o
+ON c.customer_id = o.customer_id
+GROUP BY c.customer_name;</code></pre></div><p>Practical meaning:</p><ul><li><code>Customers</code> is the left table.</li><li><code>Orders</code> is the right table.</li><li>All customers are returned.</li><li>If a customer has no order, order columns show <code>NULL</code>.</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT *
+FROM Customers
+LEFT JOIN Orders
+ON Customers.customer_id = Orders.customer_id;
+
+SELECT
+    c.customer_name,
+    COUNT(o.order_id) AS TotalOrders,
+    SUM(o.total_amount) AS TotalAmount
+FROM Customers c
+LEFT JOIN Orders o
+ON c.customer_id = o.customer_id
+GROUP BY c.customer_name;</code></pre></div><h4 id="right-join"><a class="heading-anchor" href="#right-join">RIGHT JOIN</a></h4><ul><li>Returns all rows from the right table and matching rows from the left table.</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT ...
+FROM table1 t1
+RIGHT JOIN table2 t2
+ON t1.common_column = t2.common_column;
+
+SELECT *
+FROM Customers
+RIGHT JOIN Orders
+ON Customers.customer_id = Orders.customer_id;</code></pre></div><p>Practical meaning:</p><ul><li><code>Customers</code> is the left table.</li><li><code>Orders</code> is the right table.</li><li>All orders are returned.</li><li>If an order has no matching customer, customer columns show <code>NULL</code>.</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT *
+FROM Customers
+RIGHT JOIN Orders
+ON Customers.customer_id = Orders.customer_id;</code></pre></div><h4 id="full-outer-join"><a class="heading-anchor" href="#full-outer-join">FULL OUTER JOIN</a></h4><ul><li>Returns all rows when there is a match in either the left or right table.</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT ...
+FROM table1 t1
+FULL OUTER JOIN table2 t2
+ON t1.common_column = t2.common_column;
+
+SELECT *
+FROM Customers
+FULL OUTER JOIN Orders
+ON Customers.customer_id = Orders.customer_id;</code></pre></div><p>Practical meaning:</p><ul><li>Returns all matching and non-matching rows from both tables.</li><li>Customers without orders are shown.</li><li>Orders without customers are also shown.</li><li>In the sample data, <code>Paul</code> appears with <code>NULL</code> order columns.</li><li>The order with <code>customer_id = NULL</code> appears with <code>NULL</code> customer columns.</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT *
+FROM Customers
+FULL OUTER JOIN Orders
+ON Customers.customer_id = Orders.customer_id;</code></pre></div><h4 id="outer-apply"><a class="heading-anchor" href="#outer-apply">OUTER APPLY</a></h4><ul><li><code>OUTER APPLY</code> is used to join each row from one table, the left table, to the result of a table-valued function or subquery on the right side.</li><li>Use case: For each customer, show their most recent order if they have one.</li><li>If they have no orders, still show the customer.</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT
+    c.customer_id,
+    c.customer_name,
+    o.order_id,
+    o.order_date,
+    o.total_amount
+FROM Customers AS c
+OUTER APPLY (
+    SELECT TOP 1 *
+    FROM Orders AS o
+    WHERE o.customer_id = c.customer_id
+    ORDER BY o.order_date DESC
+) AS o;</code></pre></div><h4 id="cross-apply"><a class="heading-anchor" href="#cross-apply">CROSS APPLY</a></h4><ul><li><code>CROSS APPLY</code> is used to join each row from one table, the left table, to the result of a table-valued function or subquery on the right side.</li><li>It behaves like an <code>INNER JOIN</code>, meaning it only returns rows where the right-side subquery produces a result.</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT
+    c.customer_id,
+    c.customer_name,
+    o.order_id,
+    o.order_date,
+    o.total_amount
+FROM Customers AS c
+CROSS APPLY (
+    SELECT TOP 1 *
+    FROM Orders AS o
+    WHERE o.customer_id = c.customer_id
+    ORDER BY o.order_date DESC
+) AS o;</code></pre></div><h4 id="self-join"><a class="heading-anchor" href="#self-join">Self Join</a></h4><ul><li>A self join is a standard SQL join where a table is joined to itself.</li><li>It is used when rows in a table are related to other rows in the same table.</li></ul><p>Use case:</p><ul><li>Employee and manager hierarchy.</li><li>The employee and manager both exist in the same table.</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">CREATE TABLE CompanyHierarchy (
+    EmployeeID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    ManagerID INT
+);
+
+INSERT INTO CompanyHierarchy (EmployeeID, Name, ManagerID)
+VALUES
+(1, &#x27;Sonia Verma&#x27;, NULL), -- The CEO
+(2, &#x27;Rohan Gupta&#x27;, 1),    -- Reports to Sonia
+(3, &#x27;Amit Sharma&#x27;, 2),    -- Reports to Rohan
+(4, &#x27;Priya Singh&#x27;, 1),    -- Reports to Sonia
+(5, &#x27;Kabir Shah&#x27;, 2);     -- Reports to Rohan</code></pre></div><h4 id="employee-manager-self-join"><a class="heading-anchor" href="#employee-manager-self-join">Employee Manager Self Join</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT
+    e.Name AS employee_name,
+    m.Name AS manager_name
+FROM CompanyHierarchy e
+LEFT JOIN CompanyHierarchy m
+ON e.ManagerID = m.EmployeeID;</code></pre></div><p>Result:</p><div class="table-wrap"><table><thead><tr><th>employee_name</th><th>manager_name</th></tr></thead><tbody><tr><td>Sonia Verma</td><td>NULL</td></tr><tr><td>Rohan Gupta</td><td>Sonia Verma</td></tr><tr><td>Amit Sharma</td><td>Rohan Gupta</td></tr><tr><td>Priya Singh</td><td>Sonia Verma</td></tr><tr><td>Kabir Shah</td><td>Rohan Gupta</td></tr></tbody></table></div><h4 id="many-to-many-2"><a class="heading-anchor" href="#many-to-many-2">Many-to-Many</a></h4><p>A many-to-many relationship happens when many records in one table can relate to many records in another table.</p><p>Example:</p><ul><li>One student can enroll in many courses.</li><li>One course can have many students.</li></ul><p>To handle this, we use a junction table.</p><h4 id="junction-table-example"><a class="heading-anchor" href="#junction-table-example">Junction Table Example</a></h4><p>Tables:</p><ul><li><code>students</code>: stores student details.</li><li><code>courses</code>: stores course details.</li><li><code>enrollment</code>: junction table that connects students and courses.</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">CREATE DATABASE institute;
+USE institute;
+
+CREATE TABLE courses (
+    course_id INT IDENTITY(1,1) PRIMARY KEY,
+    course_name VARCHAR(100) NOT NULL,
+    course_fee NUMERIC(10, 2) NOT NULL
+);
+
+INSERT INTO courses (course_name, course_fee)
+VALUES
+(&#x27;Mathematics&#x27;, 500.00),
+(&#x27;Physics&#x27;, 600.00),
+(&#x27;Chemistry&#x27;, 700.00);
+
+CREATE TABLE students (
+    student_id INT IDENTITY(1,1) PRIMARY KEY,
+    student_name VARCHAR(100) NOT NULL
+);
+
+INSERT INTO students (student_name)
+VALUES
+(&#x27;Raju&#x27;),
+(&#x27;Sham&#x27;),
+(&#x27;Baburao&#x27;),
+(&#x27;Alex&#x27;);
+
+CREATE TABLE enrollment (
+    enrollment_id INT IDENTITY(1,1) PRIMARY KEY,
+    student_id INT NOT NULL,
+    course_id INT NOT NULL,
+    enrollment_date DATE NOT NULL,
+
+    FOREIGN KEY (student_id) REFERENCES students(student_id),
+    FOREIGN KEY (course_id) REFERENCES courses(course_id)
+);
+
+INSERT INTO enrollment (student_id, course_id, enrollment_date)
+VALUES
+(1, 1, &#x27;2025-01-01&#x27;), -- Raju enrolled in Mathematics
+(1, 2, &#x27;2025-01-15&#x27;), -- Raju enrolled in Physics
+(2, 1, &#x27;2025-02-01&#x27;), -- Sham enrolled in Mathematics
+(2, 3, &#x27;2025-02-15&#x27;), -- Sham enrolled in Chemistry
+(3, 3, &#x27;2025-03-25&#x27;); -- Baburao enrolled in Chemistry</code></pre></div><h4 id="read-many-to-many-data"><a class="heading-anchor" href="#read-many-to-many-data">Read Many-to-Many Data</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT *
+FROM enrollment e
+INNER JOIN students s ON e.student_id = s.student_id
+INNER JOIN courses c ON e.course_id = c.course_id;</code></pre></div><h4 id="count-students-per-course"><a class="heading-anchor" href="#count-students-per-course">Count Students Per Course</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT
+    c.course_name,
+    COUNT(s.student_id) AS student_count,
+    SUM(c.course_fee) AS total_fee
+FROM enrollment e
+INNER JOIN students s ON e.student_id = s.student_id
+INNER JOIN courses c ON e.course_id = c.course_id
+GROUP BY c.course_name;</code></pre></div><p>Result:</p><div class="table-wrap"><table><thead><tr><th>course_name</th><th>student_count</th><th>total_fee</th></tr></thead><tbody><tr><td>Chemistry</td><td>2</td><td>1400.00</td></tr><tr><td>Mathematics</td><td>2</td><td>1000.00</td></tr><tr><td>Physics</td><td>1</td><td>600.00</td></tr></tbody></table></div><h2 id="9-subqueries-and-ctes-2"><a class="heading-anchor" href="#9-subqueries-and-ctes-2">9. Subqueries and CTEs</a></h2><h3 id="sub-queries"><a class="heading-anchor" href="#sub-queries">Sub Queries</a></h3><ul><li>A SubQuery is also called an inner query or nested query.</li><li>It is a query inside another query.</li><li>The subquery runs first and gives a result.</li><li>The main query, also called outer query, then uses that result.</li></ul><h4 id="sub-query-types"><a class="heading-anchor" href="#sub-query-types">Sub Query Types</a></h4><div class="table-wrap"><table><thead><tr><th>Type</th><th>Description</th><th>Usually used in</th><th>Returns</th></tr></thead><tbody><tr><td>Single-row</td><td>Returns one value</td><td>WHERE, HAVING</td><td>One row, one column</td></tr><tr><td>Multiple-row</td><td>Returns many rows, one column</td><td>IN, ANY, ALL</td><td>Multiple rows</td></tr><tr><td>Correlated</td><td>Depends on outer query</td><td>WHERE, SELECT</td><td>Varies</td></tr><tr><td>Inline View</td><td>Inside FROM, acts like temporary table</td><td>FROM</td><td>Table-like</td></tr></tbody></table></div><h4 id="use-cases-2"><a class="heading-anchor" href="#use-cases-2">Use Cases</a></h4><ul><li>Find Employees Earning More Than the Company Average</li><li>Find Employees Who Work in the Same City as a Specific Person, for example Aarav Sharma</li><li>Find the Highest-Paid Employee name</li><li>Find the Highest-Paid Employee in Each Department</li></ul><h4 id="single-row-sub-query"><a class="heading-anchor" href="#single-row-sub-query">Single-Row Sub Query</a></h4><ul><li>Returns one value.</li><li>Used with WHERE and HAVING.</li><li>One row, one column.</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT AVG(salary) FROM employees;
+
+SELECT * FROM employees
+WHERE salary &gt; 95733;
+
+SELECT * FROM employees
+WHERE salary &gt; (SELECT AVG(salary) FROM employees);</code></pre></div><h4 id="multiple-rows-sub-query"><a class="heading-anchor" href="#multiple-rows-sub-query">Multiple-Rows Sub Query</a></h4><ul><li>Returns many rows from one column.</li><li>Used with IN, ANY, ALL.</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT department FROM employees WHERE city = &#x27;Mumbai&#x27;;
+
+SELECT * FROM employees
+WHERE department IN (&#x27;Management&#x27;, &#x27;Human Resources&#x27;, &#x27;Sales&#x27;);
+
+SELECT * FROM employees
+WHERE department IN (
+    SELECT department
+    FROM employees
+    WHERE city = &#x27;Mumbai&#x27;
+);</code></pre></div><h4 id="correlated-sub-query"><a class="heading-anchor" href="#correlated-sub-query">Correlated Sub Query</a></h4><ul><li>Depends on outer query.</li><li>Used with WHERE and SELECT.</li><li>Result varies.</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT DISTINCT department FROM employees;
+
+SELECT MAX(salary) AS MAX_SALARY
+FROM employees
+WHERE department = &#x27;tech&#x27;;
+
+SELECT * FROM employees
+WHERE salary = 120000;
+
+SELECT emp_id, fname, lname, department, salary
+FROM employees e1
+WHERE salary = (
+    SELECT MAX(salary)
+    FROM employees e2
+    WHERE e2.department = e1.department
+);
+
+SELECT * FROM employees
+WHERE salary IN (
+    SELECT MAX(salary)
+    FROM employees
+    GROUP BY department
+);</code></pre></div><h4 id="inline-view-sub-query"><a class="heading-anchor" href="#inline-view-sub-query">Inline View Sub Query</a></h4><ul><li>Inside FROM.</li><li>Acts like a temporary table.</li><li>Table-like.</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT department, AVG(salary) AS avg
+FROM employees
+GROUP BY department;
+
+SELECT department, avg
+FROM (
+   SELECT department, AVG(salary) AS avg
+   FROM employees
+   GROUP BY department
+) AS dept_avg
+WHERE avg &gt; 90000;</code></pre></div><h2 id="10-sql-functions-2"><a class="heading-anchor" href="#10-sql-functions-2">10. SQL Functions</a></h2><h3 id="string-functions"><a class="heading-anchor" href="#string-functions">String Functions</a></h3><ul><li>CONCAT, CONCAT_WS</li><li>SUBSTRING</li><li>LEFT, RIGHT</li><li>LEN</li><li>UPPER, LOWER</li><li>TRIM, LTRIM, RTRIM</li><li>REPLACE</li><li>CHARINDEX</li></ul><h3 id="date-functions"><a class="heading-anchor" href="#date-functions">Date Functions</a></h3><ul><li>GETDATE()</li><li>DATEADD(interval, number, date)</li><li>DATEDIFF(interval, start_date, end_date)</li><li>DATEPART(interval, date)</li><li>YEAR(date), MONTH(date), DAY(date)</li><li>FORMAT(date, format_string)</li><li>Format examples: MM/DD/YYYY, DD-Mon-YYYY</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT GETDATE();
+SELECT DATEADD(day, 2, GETDATE());
+SELECT DATEDIFF(day, &#x27;2025-07-31&#x27;, GETDATE());
+
+SELECT FORMAT(GETDATE(), &#x27;yyyy-MM-dd&#x27;);
+SELECT FORMAT(GETDATE(), &#x27;yyyy-MMM-dd&#x27;);
+SELECT FORMAT(GETDATE(), &#x27;yyyy-MMMM-dd&#x27;);</code></pre></div><h2 id="11-set-operators-2"><a class="heading-anchor" href="#11-set-operators-2">11. Set Operators</a></h2><h4 id="union"><a class="heading-anchor" href="#union">UNION</a></h4><ul><li>UNION is used to combine the results of two or more SELECT statements into a single result set.</li><li>It combines data vertically by adding rows with the same structure.</li></ul><p>Syntax:</p><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT column_list FROM table1
+UNION
+SELECT column_list FROM table2;</code></pre></div><h4 id="requirements"><a class="heading-anchor" href="#requirements">Requirements</a></h4><ul><li>Each SELECT must have the same number of columns.</li><li>Corresponding columns must have compatible data types.</li><li>Column names are taken from the first SELECT.</li></ul><p>Example:</p><p>Mumbai employees:</p><div class="table-wrap"><table><thead><tr><th>EmployeeID</th><th>Name</th><th>Department</th></tr></thead><tbody><tr><td>101</td><td>Amit Sharma</td><td>Sales</td></tr><tr><td>102</td><td>Priya Singh</td><td>Marketing</td></tr><tr><td>103</td><td>Rohan Gupta</td><td>IT</td></tr></tbody></table></div><p>Delhi employees:</p><div class="table-wrap"><table><thead><tr><th>EmployeeID</th><th>Name</th><th>Department</th></tr></thead><tbody><tr><td>201</td><td>Sonia Verma</td><td>Sales</td></tr><tr><td>202</td><td>Karan Mehta</td><td>Finance</td></tr><tr><td>103</td><td>Rohan Gupta</td><td>IT</td></tr></tbody></table></div><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT EmployeeID, Name, Department FROM MumbaiEmployees
+UNION
+SELECT EmployeeID, Name, Department FROM DelhiEmployees;</code></pre></div><p>Result:</p><div class="table-wrap"><table><thead><tr><th>EmployeeID</th><th>Name</th><th>Department</th></tr></thead><tbody><tr><td>101</td><td>Amit Sharma</td><td>Sales</td></tr><tr><td>102</td><td>Priya Singh</td><td>Marketing</td></tr><tr><td>103</td><td>Rohan Gupta</td><td>IT</td></tr><tr><td>201</td><td>Sonia Verma</td><td>Sales</td></tr><tr><td>202</td><td>Karan Mehta</td><td>Finance</td></tr></tbody></table></div><h4 id="union-vs-union-all"><a class="heading-anchor" href="#union-vs-union-all">UNION vs UNION ALL</a></h4><ul><li>UNION removes duplicates from the combined result.</li><li>UNION ALL keeps duplicates in the combined result.</li></ul><h4 id="except"><a class="heading-anchor" href="#except">EXCEPT</a></h4><ul><li>EXCEPT returns rows from the first query that do not exist in the second query.</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT EmployeeID, Name, Department FROM MumbaiEmployees
+EXCEPT
+SELECT EmployeeID, Name, Department FROM DelhiEmployees;</code></pre></div><h2 id="12-views-and-window-functions-2"><a class="heading-anchor" href="#12-views-and-window-functions-2">12. Views and Window Functions</a></h2><h3 id="views"><a class="heading-anchor" href="#views">Views</a></h3><p>A view in MS SQL Server is a virtual table that shows data from a saved query.</p><p>It does not store data. It displays data from one or more underlying tables.</p><h4 id="create-a-view"><a class="heading-anchor" href="#create-a-view">Create a View</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">CREATE VIEW enrollment_details AS
+SELECT
+    s.student_name,
+    c.course_name,
+    e.enrollment_date,
+    c.course_fee
+FROM enrollment e
+INNER JOIN students s ON e.student_id = s.student_id
+INNER JOIN courses c ON e.course_id = c.course_id;</code></pre></div><h4 id="read-data-from-a-view"><a class="heading-anchor" href="#read-data-from-a-view">Read Data from a View</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT * FROM enrollment_details;</code></pre></div><h4 id="check-existing-views"><a class="heading-anchor" href="#check-existing-views">Check Existing Views</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SELECT
+    TABLE_SCHEMA,
+    TABLE_NAME
+FROM INFORMATION_SCHEMA.VIEWS;</code></pre></div><h4 id="check-code-of-a-view"><a class="heading-anchor" href="#check-code-of-a-view">Check Code of a View</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">sp_helptext &#x27;YourViewName&#x27;;</code></pre></div><p>Example:</p><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">sp_helptext &#x27;enrollment_details&#x27;;</code></pre></div><h2 id="13-stored-procedures-and-programmability-2"><a class="heading-anchor" href="#13-stored-procedures-and-programmability-2">13. Stored Procedures and Programmability</a></h2><h3 id="triggers"><a class="heading-anchor" href="#triggers">Triggers</a></h3><p>Triggers are special procedures in a database that automatically execute predefined actions in response to certain events on a specified table or view.</p><h4 id="trigger-use-cases"><a class="heading-anchor" href="#trigger-use-cases">Trigger Use Cases</a></h4><ul><li>Audit salary changes by tracking old and new values.</li><li>Prevent accidental removal of employees from a specific department.</li><li>Automatically run logic after <code>INSERT</code>, <code>UPDATE</code>, or <code>DELETE</code>.</li></ul><h4 id="basic-trigger-syntax"><a class="heading-anchor" href="#basic-trigger-syntax">Basic Trigger Syntax</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">CREATE TRIGGER trigger_name
+ON table_name
+AFTER INSERT, UPDATE, DELETE
+AS
+BEGIN
+    -- Trigger logic here
+END;</code></pre></div><p>You can also use <code>INSTEAD OF INSERT</code>, <code>INSTEAD OF UPDATE</code>, or <code>INSTEAD OF DELETE</code> when you want the trigger to run instead of the original action.</p><h4 id="audit-salary-changes"><a class="heading-anchor" href="#audit-salary-changes">Audit Salary Changes</a></h4><p>Use case: track old salary vs new salary when employee salary changes.</p><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">CREATE TABLE SalaryAudit (
+    AuditID INT IDENTITY PRIMARY KEY,
+    EmpID INT,
+    OldSalary DECIMAL(10,2),
+    NewSalary DECIMAL(10,2),
+    ChangedDate DATETIME DEFAULT GETDATE()
+);</code></pre></div><h4 id="inserted-and-deleted-tables"><a class="heading-anchor" href="#inserted-and-deleted-tables">Inserted and Deleted Tables</a></h4><ul><li><code>deleted</code> contains the old row values.</li><li><code>inserted</code> contains the new row values.</li><li>In an <code>UPDATE</code> trigger, SQL Server keeps old values in <code>deleted</code> and new values in <code>inserted</code>.</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">CREATE TRIGGER trg_AuditSalaryChange
+ON Employees
+AFTER UPDATE
+AS
+BEGIN
+    IF UPDATE(Salary)
+    BEGIN
+        INSERT INTO SalaryAudit (EmpID, OldSalary, NewSalary)
+        SELECT
+            d.EmpID,
+            d.Salary AS OldSalary,
+            i.Salary AS NewSalary
+        FROM deleted d
+        INNER JOIN inserted i ON d.EmpID = i.EmpID;
+    END
+END;</code></pre></div><h4 id="see-triggers-on-a-table"><a class="heading-anchor" href="#see-triggers-on-a-table">See Triggers on a Table</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">EXEC sp_helptrigger &#x27;Employees&#x27;;</code></pre></div><h4 id="prevent-accidental-removal"><a class="heading-anchor" href="#prevent-accidental-removal">Prevent Accidental Removal</a></h4><p>Use case: prevent accidental removal of employees from a specific department, for example <code>Management</code>.</p><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">CREATE TRIGGER trg_PreventManagementRemoval
+ON employees
+INSTEAD OF DELETE
+AS
+BEGIN
+    -- Check if employee is from management department.
+    IF EXISTS (
+        SELECT 1
+        FROM deleted
+        WHERE department = &#x27;Management&#x27;
+    )
+    BEGIN
+        RAISERROR(&#x27;Deletion not allowed for management employees&#x27;, 16, 1);
+        ROLLBACK TRANSACTION;
+        RETURN;
+    END
+
+    DELETE FROM employees
+    WHERE emp_id IN (
+        SELECT emp_id
+        FROM deleted
+    );
+END;</code></pre></div><h2 id="15-normalization-and-database-design-2"><a class="heading-anchor" href="#15-normalization-and-database-design-2">15. Normalization and Database Design</a></h2><h3 id="normalization"><a class="heading-anchor" href="#normalization">Normalization</a></h3><p>Normalization is the process of organizing data in a database efficiently.</p><p>Purpose:</p><ul><li>Reduce data redundancy.</li><li>Improve data integrity.</li><li>Avoid duplicate or repeated data.</li><li>Make updates, inserts, and deletes safer.</li></ul><h3 id="first-normal-form-1nf"><a class="heading-anchor" href="#first-normal-form-1nf">First Normal Form (1NF)</a></h3><p>Rules:</p><ul><li>Each column contains only atomic indivisible values.</li><li>No arrays, lists, or sets inside a single cell.</li><li>Each column stores values of a single data type.</li><li>Each record or row should be unique.</li><li>Usually uniqueness is ensured by a primary key.</li></ul><p>Bad example:</p><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">courses = &quot;Math, Physics&quot;</code></pre></div><p>This violates 1NF because multiple values are stored in one column.</p><h3 id="second-normal-form-2nf"><a class="heading-anchor" href="#second-normal-form-2nf">Second Normal Form (2NF)</a></h3><p>Rule:</p><ul><li>Table should be in 1NF.</li><li>Every non-key column should depend on the whole primary key.</li><li>Mainly applies when the table has a composite primary key.</li></ul><p>Example composite key:</p><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">CREATE TABLE Enrollment (
+    student_id INT,
+    course_id INT,
+    enrollment_date DATE,
+    PRIMARY KEY (student_id, course_id)
+);</code></pre></div><p>Bad example:</p><div class="table-wrap"><table><thead><tr><th>StudentID</th><th>Course</th><th>StudentName</th></tr></thead><tbody><tr><td>1</td><td>Math</td><td>Raju</td></tr><tr><td>1</td><td>Physics</td><td>Raju</td></tr><tr><td>2</td><td>Chemistry</td><td>Sham</td></tr></tbody></table></div><p>Problem:</p><ul><li><code>StudentName</code> depends only on <code>StudentID</code>.</li><li>It does not depend on the full key <code>StudentID + Course</code>.</li><li>This is called partial dependency.</li></ul><p>To follow 2NF, move student details into a separate <code>Students</code> table.</p><h3 id="third-normal-form-3nf"><a class="heading-anchor" href="#third-normal-form-3nf">Third Normal Form (3NF)</a></h3><p>Rule:</p><ul><li>Table should be in 2NF.</li><li>There should be no transitive dependency.</li><li>Non-key columns should not depend on other non-key columns.</li></ul><p>Question to check:</p><ul><li>Does any non-key attribute depend on another non-key attribute?</li></ul><p>Bad example:</p><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">employee(employee_id, city, zip, state)</code></pre></div><p>Problem:</p><ul><li><code>city</code> depends on <code>zip</code>.</li><li><code>state</code> depends on <code>zip</code>.</li><li><code>zip</code> depends on <code>employee_id</code>, where the employee lives.</li><li>So the dependency becomes <code>employee_id -&gt; zip -&gt; city</code>.</li><li>Also <code>employee_id -&gt; zip -&gt; state</code>.</li></ul><p>This violates 3NF because <code>city</code> and <code>state</code> depend on <code>zip</code>, which is a non-key attribute.</p><p>Better design:</p><ul><li>Move <code>zip</code>, <code>city</code>, and <code>state</code> into a separate <code>zip_codes</code> table.</li><li>Keep only the required key/reference in the employee table.</li></ul><h2 id="16-indexes-and-performance-tuning-2"><a class="heading-anchor" href="#16-indexes-and-performance-tuning-2">16. Indexes and Performance Tuning</a></h2><h3 id="indexes"><a class="heading-anchor" href="#indexes">Indexes</a></h3><p>Creating and using indexes in SQL Server is a powerful way to improve database performance.</p><h4 id="types-of-indexes"><a class="heading-anchor" href="#types-of-indexes">Types of Indexes</a></h4><div class="table-wrap"><table><thead><tr><th>Index Type</th><th>Meaning</th></tr></thead><tbody><tr><td>Clustered Index</td><td>Sorts and stores the actual table data based on the indexed column. A table can have only one clustered index.</td></tr><tr><td>Non-Clustered Index</td><td>Stores a separate structure with key values and pointers to the actual table rows. A table can have multiple non-clustered indexes.</td></tr><tr><td>Unique Index</td><td>Ensures that values in the indexed column are unique.</td></tr><tr><td>Composite Index</td><td>An index created on two or more columns.</td></tr><tr><td>Filtered Index</td><td>An index created on selected rows using a WHERE condition.</td></tr><tr><td>Full-Text Index</td><td>Used for searching words or phrases inside large text columns.</td></tr></tbody></table></div><h4 id="most-important-indexes"><a class="heading-anchor" href="#most-important-indexes">Most Important Indexes</a></h4><ul><li>Clustered Index is very important and is usually created on the Primary Key column.</li><li>Clustered Index stores the actual table data in sorted order.</li><li>A table can have only one clustered index.</li><li>Non-Clustered Index is most commonly used for improving query performance.</li><li>Non-Clustered Index is useful on columns used frequently in WHERE, JOIN, ORDER BY, and GROUP BY.</li><li>A table can have multiple non-clustered indexes.</li><li>Clustered Index means actual data is sorted.</li><li>Non-Clustered Index means separate lookup structure.</li></ul><h4 id="pros-of-indexes"><a class="heading-anchor" href="#pros-of-indexes">Pros of Indexes</a></h4><ul><li>Improves SELECT query performance.</li><li>Makes searching, filtering, sorting, and joining faster.</li><li>Helps enforce uniqueness when using unique indexes.</li><li>Useful for large tables with frequent read operations.</li></ul><h4 id="cons-of-indexes"><a class="heading-anchor" href="#cons-of-indexes">Cons of Indexes</a></h4><ul><li>Slows down INSERT, UPDATE, and DELETE operations because indexes also need to be updated.</li><li>Takes extra disk space.</li><li>Too many indexes can reduce overall database performance.</li><li>Indexes need maintenance when data changes frequently.</li></ul><h4 id="enable-query-statistics"><a class="heading-anchor" href="#enable-query-statistics">Enable Query Statistics</a></h4><p>Before running any queries, enable these options:</p><p>Purpose:</p><ul><li><code>SET STATISTICS TIME ON</code> shows CPU time and total execution time for the query.</li><li><code>SET STATISTICS IO ON</code> shows how many page reads SQL Server performs from memory or disk.</li><li>It helps compare query performance before and after adding an index.</li><li>It helps identify slow queries and high I/O queries.</li></ul><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">SET STATISTICS TIME ON;
+SET STATISTICS IO ON;
+GO</code></pre></div><h4 id="clear-data-cache"><a class="heading-anchor" href="#clear-data-cache">Clear Data Cache</a></h4><p><code>DBCC DROPCLEANBUFFERS</code> removes clean pages from memory, so SQL Server has to read data from disk again.</p><p>This is useful when testing query performance because cached data can make a query look faster than it really is.</p><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">DBCC DROPCLEANBUFFERS;</code></pre></div><h4 id="how-to-add-index"><a class="heading-anchor" href="#how-to-add-index">How to Add Index</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">CREATE INDEX i_name
+ON employees(salary, emp_id);</code></pre></div><h4 id="how-to-see-index"><a class="heading-anchor" href="#how-to-see-index">How to See Index</a></h4><p>This shows the index name, index description, and indexed columns.</p><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">EXEC sp_helpindex &#x27;employees&#x27;;</code></pre></div><p>Example output:</p><div class="table-wrap"><table><thead><tr><th>index_name</th><th>index_description</th><th>index_keys</th></tr></thead><tbody><tr><td>i_salary</td><td>nonclustered located on PRIMARY</td><td>Salary</td></tr><tr><td>PK__Employee__AD04FF1CD0990C9</td><td>clustered, unique, primary key located on PRIMARY</td><td>EmployeeID</td></tr></tbody></table></div><h4 id="how-to-remove-index"><a class="heading-anchor" href="#how-to-remove-index">How to Remove Index</a></h4><div class="code-block"><div class="code-toolbar"><span>sql</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-sql">DROP INDEX i_name ON employees;</code></pre></div>
+    </main>
+  </div>
+  <a class="top-link" href="#top">Top</a>
+  <script>
+    document.querySelectorAll('.toc-toggle').forEach((button) => {
+      button.addEventListener('click', (event) => {
+        if (event.target.closest('.toc-title')) return;
+        const children = button.nextElementSibling;
+        const expanded = button.getAttribute('aria-expanded') === 'true';
+        button.setAttribute('aria-expanded', String(!expanded));
+        children.classList.toggle('collapsed', expanded);
+      });
+    });
+
+    document.querySelectorAll('.copy-btn').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const code = button.closest('.code-block').querySelector('pre code').innerText;
+        await navigator.clipboard.writeText(code);
+        const old = button.innerText;
+        button.innerText = 'Copied';
+        setTimeout(() => button.innerText = old, 1200);
+      });
+    });
+  </script>
+</body>
+</html>

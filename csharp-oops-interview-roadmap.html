@@ -1,0 +1,222 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>C# OOP Learning Roadmap for Interview Preparation</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #111827;
+      --panel-2: #172033;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #38bdf8;
+      --accent-2: #a3e635;
+      --border: #263449;
+      --code-bg: #0f172a;
+      --table-stripe: #101a2d;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top left, #15203a 0, var(--bg) 36rem);
+      color: var(--text);
+      font-family: Segoe UI, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      line-height: 1.65;
+    }
+    .layout { display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: 100vh; }
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      padding: 10px 8px 12px;
+      background: rgba(17, 24, 39, 0.92);
+      border-right: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      font-size: 11px;
+      line-height: 1.2;
+    }
+    .home-link {
+      display: inline-block;
+      margin: 0 0 10px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .home-link:hover { text-decoration: underline; }
+    .brand { margin: 0 0 6px; color: white; font-size: 0.95rem; line-height: 1.15; font-weight: 700; }
+    .toc { display: flex; flex-direction: column; gap: 0; }
+    .toc-link {
+      color: var(--muted);
+      text-decoration: none;
+      border-radius: 4px;
+      padding: 1px 4px;
+      font-size: 0.68rem;
+      line-height: 1.2;
+      display: block;
+    }
+    .toc-link:hover { background: var(--panel-2); color: var(--accent); }
+    .toc-group, .toc-subgroup { display: flex; flex-direction: column; gap: 0; }
+    .toc-toggle {
+      display: flex;
+      align-items: flex-start;
+      gap: 3px;
+      width: 100%;
+      border: none;
+      background: transparent;
+      color: inherit;
+      text-align: left;
+      border-radius: 4px;
+      padding: 1px 4px;
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.68rem;
+      line-height: 1.2;
+    }
+    .toc-toggle:hover { background: var(--panel-2); }
+    .toc-toggle .arrow {
+      color: var(--accent);
+      font-size: 0.55rem;
+      width: 8px;
+      margin-top: 2px;
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+    .toc-toggle[aria-expanded="true"] .arrow { transform: rotate(90deg); }
+    .toc-toggle.level-2 { color: #dbeafe; font-weight: 600; font-size: 0.7rem; }
+    .toc-toggle.level-3 { color: var(--muted); font-weight: 500; padding-left: 8px; font-size: 0.66rem; }
+    .toc-title { color: inherit; text-decoration: none; line-height: 1.2; }
+    .toc-title:hover { color: var(--accent); text-decoration: underline; }
+    .toc-children {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      overflow: hidden;
+      transition: max-height 0.25s ease;
+    }
+    .toc-children.collapsed { display: none; }
+    .toc-children .toc-link.level-3 { margin-left: 8px; font-size: 0.66rem; }
+    .toc-children .toc-link.level-4 { margin-left: 14px; font-size: 0.62rem; }
+    .level-1 { color: #f8fafc; font-weight: 600; font-size: 0.72rem; }
+    main { max-width: 1120px; width: 100%; padding: 42px 52px 96px; }
+    h1, h2, h3, h4, h5, h6 { color: #f8fafc; line-height: 1.25; margin: 2.2rem 0 0.8rem; }
+    h1 { font-size: clamp(2.1rem, 4vw, 4rem); margin-top: 0; }
+    h2 { font-size: 2rem; border-top: 1px solid var(--border); padding-top: 1.6rem; }
+    h3 { font-size: 1.45rem; color: var(--accent-2); }
+    h4 { font-size: 1.15rem; color: var(--accent); }
+    .heading-anchor { color: inherit; text-decoration: none; }
+    .heading-anchor:hover { text-decoration: underline; text-decoration-color: var(--accent); }
+    p, li { color: var(--text); }
+    ul, ol { padding-left: 1.4rem; }
+    .section-divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+    .content-figure { margin: 1rem 0 1.35rem; }
+    .content-figure img { max-width: 100%; border-radius: 12px; border: 1px solid var(--border); }
+    .content-figure figcaption { margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem; }
+    code { background: #1f2937; color: #fde68a; padding: 0.12rem 0.32rem; border-radius: 5px; }
+    .code-block { margin: 1rem 0 1.35rem; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--code-bg); }
+    .code-toolbar { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #111827; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 0.82rem; }
+    .copy-btn { cursor: pointer; border: 1px solid var(--border); background: #1f2937; color: var(--text); border-radius: 8px; padding: 4px 10px; }
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+    pre { margin: 0; padding: 16px; overflow: auto; }
+    pre code { background: transparent; color: #e5e7eb; padding: 0; border-radius: 0; font-family: Consolas, Cascadia Code, monospace; font-size: 0.95rem; }
+    .table-wrap { overflow-x: auto; margin: 1rem 0 1.35rem; border: 1px solid var(--border); border-radius: 12px; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+    th { color: #f8fafc; background: #1f2937; }
+    tr:nth-child(even) td { background: var(--table-stripe); }
+    .top-link { position: fixed; right: 22px; bottom: 22px; color: var(--bg); background: var(--accent); padding: 8px 12px; border-radius: 999px; text-decoration: none; font-weight: 700; }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      aside { position: relative; height: auto; max-height: 420px; }
+      main { padding: 28px 20px 84px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <a class="home-link" href="index.html">← All Courses</a>
+      <h2 class="brand">Csharp Oops Interview Roadmap</h2>
+      <nav class="toc" aria-label="Table of contents">
+        <a class="toc-link level-1" href="#c-oop-learning-roadmap-for-interview-preparation">C# OOP Learning Roadmap for Interview Preparation</a><a class="toc-link level-2" href="#goal">Goal</a><a class="toc-link level-2" href="#topic-index">Topic Index</a><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#1-oop-basics">1. OOP Basics</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn">What to Learn</a><a class="toc-link level-3" href="#class-type-comparison">Class Type Comparison</a><a class="toc-link level-3" href="#common-use-cases">Common Use Cases</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#2-constructors">2. Constructors</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-2">What to Learn</a><a class="toc-link level-3" href="#constructor-type-comparison">Constructor Type Comparison</a><a class="toc-link level-3" href="#constructor-overloading">Constructor Overloading</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#3-encapsulation">3. Encapsulation</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-3">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#4-abstraction">4. Abstraction</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-4">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#5-inheritance">5. Inheritance</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-5">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#6-polymorphism">6. Polymorphism</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-6">What to Learn</a><a class="toc-link level-3" href="#compile-time-vs-runtime-polymorphism">Compile-Time vs Runtime Polymorphism</a><a class="toc-link level-3" href="#method-hiding">Method Hiding</a><a class="toc-link level-3" href="#early-binding-vs-late-binding">Early Binding vs Late Binding</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#7-interfaces">7. Interfaces</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-7">What to Learn</a><a class="toc-link level-3" href="#benefits-of-interfaces">Benefits of Interfaces</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#8-abstract-classes-vs-interfaces">8. Abstract Classes vs Interfaces</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-8">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#9-association-aggregation-and-composition">9. Association, Aggregation, and Composition</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-9">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#10-static-members-in-oop">10. Static Members in OOP</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-10">What to Learn</a></div></div>
+      </nav>
+    </aside>
+    <main id="top">
+      <h1 id="c-oop-learning-roadmap-for-interview-preparation"><a class="heading-anchor" href="#c-oop-learning-roadmap-for-interview-preparation">C# OOP Learning Roadmap for Interview Preparation</a></h1><h2 id="goal"><a class="heading-anchor" href="#goal">Goal</a></h2><p>This roadmap is focused only on object-oriented programming concepts in C#. Use it separately from the main C# fundamentals roadmap.</p><hr class="section-divider"><h2 id="topic-index"><a class="heading-anchor" href="#topic-index">Topic Index</a></h2><hr class="section-divider"><h2 id="1-oop-basics"><a class="heading-anchor" href="#1-oop-basics">1. OOP Basics</a></h2><h3 id="what-to-learn"><a class="heading-anchor" href="#what-to-learn">What to Learn</a></h3><ul><li>What is object-oriented programming?</li><li>Class</li><li>Object</li><li>State and behavior</li><li>Fields</li><li>Methods</li><li>Properties</li><li>Auto-implemented properties</li><li>Object initialization</li><li>Access modifiers</li><li><code>public</code></li><li><code>private</code></li><li><code>protected</code></li><li><code>internal</code></li><li><code>protected internal</code></li><li><code>private protected</code></li><li>Abstract class</li><li>Private class</li><li>Static class</li><li>Sealed class</li></ul><h3 id="class-type-comparison"><a class="heading-anchor" href="#class-type-comparison">Class Type Comparison</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Abstract Class</th><th>Private Class</th><th>Static Class</th><th>Sealed Class</th></tr></thead><tbody><tr><td>Instantiation</td><td>Cannot instantiate directly</td><td>Only inside outer class</td><td>Cannot instantiate</td><td>Can be instantiated</td></tr><tr><td>Inheritance</td><td>Can be inherited</td><td>Only within outer class</td><td>Cannot be inherited</td><td>Cannot be inherited</td></tr><tr><td>Object creation</td><td>Not allowed directly</td><td>Allowed inside outer class</td><td>Not allowed</td><td>Allowed</td></tr><tr><td>Methods support</td><td>Abstract and normal methods</td><td>All method types</td><td>Only static methods</td><td>All method types</td></tr><tr><td>Fields support</td><td>Instance and static fields</td><td>All fields</td><td>Only static fields</td><td>All fields</td></tr><tr><td>Constructor support</td><td>Yes</td><td>Yes</td><td>Only static constructor</td><td>Yes</td></tr><tr><td>Access modifier / keyword</td><td><code>abstract</code></td><td><code>private</code></td><td><code>static</code></td><td><code>sealed</code></td></tr><tr><td>Main purpose</td><td>Base blueprint for child classes</td><td>Restrict class visibility</td><td>Utility/helper methods</td><td>Prevent inheritance</td></tr><tr><td>Can contain abstract method</td><td>Yes</td><td>No</td><td>No</td><td>No</td></tr><tr><td>Example</td><td><code>abstract class Shape</code></td><td><code>private class Helper</code></td><td><code>static class MathHelper</code></td><td><code>sealed class Employee</code></td></tr></tbody></table></div><h3 id="common-use-cases"><a class="heading-anchor" href="#common-use-cases">Common Use Cases</a></h3><div class="table-wrap"><table><thead><tr><th>Type</th><th>Use Case</th></tr></thead><tbody><tr><td>Abstract class</td><td>Base class for shared and abstract logic</td></tr><tr><td>Private class</td><td>Helper class hidden inside another class; helps encapsulation</td></tr><tr><td>Static class</td><td>Utility/helper functions and constants</td></tr><tr><td>Sealed class</td><td>Final class where further inheritance should be prevented</td></tr></tbody></table></div><hr class="section-divider"><h2 id="2-constructors"><a class="heading-anchor" href="#2-constructors">2. Constructors</a></h2><h3 id="what-to-learn-2"><a class="heading-anchor" href="#what-to-learn-2">What to Learn</a></h3><ul><li>Default constructor</li><li>Parameterized constructor</li><li>Static constructor</li><li>Private constructor</li><li>Constructor overloading</li><li>Constructor chaining</li><li><code>this</code> keyword</li><li><code>base</code> keyword</li><li>Copy constructor concept</li></ul><h3 id="constructor-type-comparison"><a class="heading-anchor" href="#constructor-type-comparison">Constructor Type Comparison</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Private Constructor</th><th>Static Constructor</th><th>Copy Constructor</th></tr></thead><tbody><tr><td>Purpose</td><td>Restricts object creation from outside class</td><td>Initializes static members</td><td>Creates object by copying another object</td></tr><tr><td>Access modifier</td><td><code>private</code></td><td>No access modifier allowed</td><td>Usually <code>public</code></td></tr><tr><td>Parameters</td><td>Can have parameters</td><td>Cannot have parameters</td><td>Takes same class object as parameter</td></tr><tr><td>Object creation outside class</td><td>Not allowed</td><td>Cannot create object</td><td>Allowed</td></tr><tr><td>Called by</td><td>Inside same class only</td><td>Automatically by CLR</td><td>Explicitly by programmer</td></tr><tr><td>Invocation</td><td>Manual</td><td>Automatic</td><td>Manual</td></tr><tr><td>Runs how many times</td><td>Every object creation inside class</td><td>Only once per application lifetime</td><td>Every time constructor is called</td></tr><tr><td>Used in</td><td>Singleton pattern</td><td>Static initialization</td><td>Object cloning/copying</td></tr><tr><td>Supports instance members</td><td>Yes</td><td>No, only static members</td><td>Yes</td></tr><tr><td>Inheritance</td><td>Class cannot be inherited externally if only private constructor exists</td><td>Static class cannot inherit</td><td>Normal inheritance rules</td></tr><tr><td>Example</td><td><code>private Employee()</code></td><td><code>static Employee()</code></td><td><code>public Employee(Employee emp)</code></td></tr></tbody></table></div><h3 id="constructor-overloading"><a class="heading-anchor" href="#constructor-overloading">Constructor Overloading</a></h3><p>Constructor overloading means defining multiple constructors in the same class with different sets of parameters.</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public class Employee
+{
+    public Employee()
+    {
+    }
+
+    public Employee(string name)
+    {
+        Name = name;
+    }
+
+    public string Name { get; set; }
+}</code></pre></div><hr class="section-divider"><h2 id="3-encapsulation"><a class="heading-anchor" href="#3-encapsulation">3. Encapsulation</a></h2><h3 id="what-to-learn-3"><a class="heading-anchor" href="#what-to-learn-3">What to Learn</a></h3><ul><li>Data hiding</li><li>Private fields</li><li>Public properties</li><li>Getter and setter</li><li>Read-only properties</li><li>Init-only properties</li><li>Validation inside properties</li><li>Benefits of encapsulation</li></ul><p>Encapsulation is about binding data and methods into a single unit, usually a class.</p><ul><li>Data is important in encapsulation because encapsulation protects internal state.</li><li>Internal state is usually stored in fields or properties.</li><li>Access modifiers such as <code>private</code>, <code>public</code>, and <code>protected</code> control access.</li><li>Encapsulation helps maintain data integrity.</li><li>A common pattern is to keep fields private and expose controlled access through properties or methods.</li></ul><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public class BankAccount
+{
+    private decimal _balance;
+
+    public decimal Balance =&gt; _balance;
+
+    public void Deposit(decimal amount)
+    {
+        if (amount &lt;= 0)
+        {
+            throw new ArgumentException(&quot;Amount must be positive.&quot;);
+        }
+
+        _balance += amount;
+    }
+}</code></pre></div><hr class="section-divider"><h2 id="4-abstraction"><a class="heading-anchor" href="#4-abstraction">4. Abstraction</a></h2><figure class="content-figure"><img src="assets/patterns/top-5-design-patterns.jpg" alt="Interface vs abstraction comparison from .NET interview topics"><figcaption>Interface vs abstraction comparison from .NET interview topics</figcaption></figure><h3 id="what-to-learn-4"><a class="heading-anchor" href="#what-to-learn-4">What to Learn</a></h3><ul><li>What is abstraction?</li><li>Hiding implementation details</li><li>Abstract classes</li><li>Abstract methods</li><li>Abstract properties</li><li>Interfaces</li><li>Real-world abstraction examples</li></ul><p>Abstraction focuses on what a class or object should do, not how it does it.</p><ul><li>Data is not mandatory for abstraction.</li><li>Abstraction can define only behavior, such as methods in an interface or abstract class.</li><li>Abstract classes and interfaces are common ways to implement abstraction.</li><li>Abstraction hides complexity from the user.</li><li>Abstract class is one of the ways to implement abstraction.</li><li>Abstract classes and interfaces act as base types; direct object creation is not possible.</li><li>An abstract class cannot be sealed or static.</li><li>An abstract class does not support multiple class inheritance.</li></ul><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public abstract class Shape
+{
+    public abstract double GetArea();
+}</code></pre></div><hr class="section-divider"><h2 id="5-inheritance"><a class="heading-anchor" href="#5-inheritance">5. Inheritance</a></h2><h3 id="what-to-learn-5"><a class="heading-anchor" href="#what-to-learn-5">What to Learn</a></h3><ul><li>Base class</li><li>Derived class</li><li>Single inheritance</li><li>Multilevel inheritance</li><li>Interface-based multiple inheritance</li><li><code>base</code> keyword</li><li><code>protected</code> members</li><li>Constructor execution order in inheritance</li><li><code>sealed</code> class</li><li><code>sealed</code> method</li></ul><p>Inheritance allows a derived class to reuse and extend members from a base class.</p><ul><li>C# supports single class inheritance.</li><li>C# does not support multiple class inheritance.</li><li>Multiple inheritance-like behavior is achieved through interfaces.</li><li>A sealed class prevents further inheritance.</li><li>A sealed method prevents overriding further in derived classes.</li></ul><hr class="section-divider"><h2 id="6-polymorphism"><a class="heading-anchor" href="#6-polymorphism">6. Polymorphism</a></h2><h3 id="what-to-learn-6"><a class="heading-anchor" href="#what-to-learn-6">What to Learn</a></h3><ul><li>Compile-time polymorphism</li><li>Runtime polymorphism</li><li>Method overloading</li><li>Method overriding</li><li>Operator overloading basics</li><li><code>virtual</code> keyword</li><li><code>override</code> keyword</li><li><code>new</code> keyword for method hiding</li><li>Dynamic method dispatch</li><li>Early binding</li><li>Late binding</li></ul><p>Polymorphism is the ability of a variable, object, or function to take multiple forms.</p><h3 id="compile-time-vs-runtime-polymorphism"><a class="heading-anchor" href="#compile-time-vs-runtime-polymorphism">Compile-Time vs Runtime Polymorphism</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Compile-Time Polymorphism</th><th>Runtime Polymorphism</th></tr></thead><tbody><tr><td>Achieved by</td><td>Method overloading</td><td>Method overriding</td></tr><tr><td>Definition</td><td>Multiple methods with same name in same class</td><td>Same method name in parent and child classes</td></tr><tr><td>Inheritance required</td><td>No</td><td>Yes</td></tr><tr><td>Method signature</td><td>Different</td><td>Same</td></tr><tr><td>Parameters</td><td>Number, type, or order should differ</td><td>Must be same</td></tr><tr><td>Keywords used</td><td>No special keyword</td><td><code>virtual</code> and <code>override</code></td></tr><tr><td>Binding time</td><td>Compile time / early binding</td><td>Runtime / late binding</td></tr><tr><td>Purpose</td><td>Increase method flexibility</td><td>Modify inherited method behavior</td></tr><tr><td>Parent class method</td><td>Not required</td><td>Required</td></tr><tr><td>Child class method</td><td>Not required</td><td>Required</td></tr><tr><td>Overriding optional</td><td>Not applicable</td><td>Yes</td></tr><tr><td>Example</td><td><code>Add(int)</code> and <code>Add(int, int)</code></td><td><code>Display()</code> in parent and child</td></tr></tbody></table></div><h3 id="method-hiding"><a class="heading-anchor" href="#method-hiding">Method Hiding</a></h3><p>Method hiding means hiding the implementation of a base class method in a derived class using the <code>new</code> keyword.</p><ul><li>The derived class provides a new implementation.</li><li>The base method is still accessible through a base class reference.</li><li>Method hiding is different from overriding.</li></ul><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public class BaseClass
+{
+    public void Display()
+    {
+        Console.WriteLine(&quot;Base display&quot;);
+    }
+}
+
+public class ChildClass : BaseClass
+{
+    public new void Display()
+    {
+        Console.WriteLine(&quot;Child display&quot;);
+    }
+}</code></pre></div><h3 id="early-binding-vs-late-binding"><a class="heading-anchor" href="#early-binding-vs-late-binding">Early Binding vs Late Binding</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Early Binding</th><th>Late Binding</th></tr></thead><tbody><tr><td>Binding time</td><td>Compile time</td><td>Runtime</td></tr><tr><td>Performance</td><td>Faster</td><td>Slower</td></tr><tr><td>Type checking</td><td>Compile-time checking</td><td>Runtime checking</td></tr><tr><td>IntelliSense support</td><td>Yes</td><td>Limited or no</td></tr><tr><td>Error detection</td><td>Compile time</td><td>Runtime</td></tr><tr><td>Example</td><td>Normal object call</td><td>Reflection / <code>dynamic</code></td></tr></tbody></table></div><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">dynamic obj = new Customer();</code></pre></div><hr class="section-divider"><h2 id="7-interfaces"><a class="heading-anchor" href="#7-interfaces">7. Interfaces</a></h2><h3 id="what-to-learn-7"><a class="heading-anchor" href="#what-to-learn-7">What to Learn</a></h3><ul><li>Interface declaration</li><li>Interface implementation</li><li>Multiple interface implementation</li><li>Explicit interface implementation</li><li>Interface properties</li><li>Interface methods</li><li>Default interface methods</li><li>Interface segregation principle</li><li>Interface naming convention</li></ul><p>Interfaces define a contract for classes.</p><h3 id="benefits-of-interfaces"><a class="heading-anchor" href="#benefits-of-interfaces">Benefits of Interfaces</a></h3><ol><li>Help define the contract of the system.</li><li>Make unit testing easier.</li><li>Support dependency injection.</li><li>Help reduce tight coupling.</li><li>Support multiple interface inheritance.</li></ol><p>From C# 8.0, interfaces can contain default method implementations.</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public interface ILogger
+{
+    void Log(string message);
+}</code></pre></div><hr class="section-divider"><h2 id="8-abstract-classes-vs-interfaces"><a class="heading-anchor" href="#8-abstract-classes-vs-interfaces">8. Abstract Classes vs Interfaces</a></h2><figure class="content-figure"><img src="assets/solid/solid-principles-dotnet-examples.jpg" alt="SOLID Interface Segregation and Liskov examples"><figcaption>SOLID Interface Segregation and Liskov examples</figcaption></figure><h3 id="what-to-learn-8"><a class="heading-anchor" href="#what-to-learn-8">What to Learn</a></h3><ul><li>Abstract class use cases</li><li>Interface use cases</li><li>Shared behavior using abstract classes</li><li>Contracts using interfaces</li><li>Abstract members</li><li>Virtual members</li><li>When to choose abstract class</li><li>When to choose interface</li></ul><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Abstract Class</th><th>Interface</th></tr></thead><tbody><tr><td>Definition</td><td>Contains declaration and implementation of methods</td><td>Mostly contains declarations; C# 8.0+ allows default implementations</td></tr><tr><td>Keyword used</td><td><code>abstract</code></td><td><code>interface</code></td></tr><tr><td>Multiple inheritance</td><td>Does not support multiple class inheritance</td><td>Supports multiple interface inheritance</td></tr><tr><td>Constructors</td><td>Can have constructors</td><td>Cannot have constructors</td></tr><tr><td>Fields support</td><td>Can have fields</td><td>Cannot have instance fields</td></tr><tr><td>Access modifiers</td><td>Supports access modifiers</td><td>Members are public by default in older interface style</td></tr><tr><td>Method types</td><td>Abstract and normal methods</td><td>Abstract methods and default methods from C# 8.0</td></tr><tr><td>Object creation</td><td>Cannot instantiate directly</td><td>Cannot instantiate directly</td></tr><tr><td>Static members</td><td>Supported</td><td>Supported in modern C#</td></tr><tr><td>Purpose</td><td>Common base class with shared code</td><td>Contract for classes</td></tr><tr><td>Inheritance keyword</td><td><code>:</code></td><td><code>:</code></td></tr><tr><td>Example</td><td><code>abstract class Shape</code></td><td><code>interface IShape</code></td></tr></tbody></table></div><hr class="section-divider"><h2 id="9-association-aggregation-and-composition"><a class="heading-anchor" href="#9-association-aggregation-and-composition">9. Association, Aggregation, and Composition</a></h2><h3 id="what-to-learn-9"><a class="heading-anchor" href="#what-to-learn-9">What to Learn</a></h3><ul><li>Association</li><li>Aggregation</li><li>Composition</li><li>Has-a relationship</li><li>Uses-a relationship</li><li>Object lifetime ownership</li><li>Real-world examples</li></ul><p>Association, aggregation, and composition describe relationships between objects.</p><ul><li>Association means one object uses or communicates with another object.</li><li>Aggregation is a weak has-a relationship where the child can exist independently.</li><li>Composition is a strong has-a relationship where the child object lifetime depends on the parent.</li></ul><hr class="section-divider"><h2 id="10-static-members-in-oop"><a class="heading-anchor" href="#10-static-members-in-oop">10. Static Members in OOP</a></h2><h3 id="what-to-learn-10"><a class="heading-anchor" href="#what-to-learn-10">What to Learn</a></h3><ul><li>Static fields</li><li>Static methods</li><li>Static properties</li><li>Static classes</li><li>Static constructors</li><li>Shared state</li><li>Utility classes</li><li>Limitations of static classes</li></ul><p>Static members belong to the type itself, not to an object instance.</p><ul><li>Static classes are useful for utility/helper methods and constants.</li><li>Static classes cannot be instantiated.</li><li>Static classes cannot be inherited.</li><li>Static classes can contain only static members.</li><li>Static constructors initialize static members and run only once per application lifetime.</li></ul>
+    </main>
+  </div>
+  <a class="top-link" href="#top">Top</a>
+  <script>
+    document.querySelectorAll('.toc-toggle').forEach((button) => {
+      button.addEventListener('click', (event) => {
+        if (event.target.closest('.toc-title')) return;
+        const children = button.nextElementSibling;
+        const expanded = button.getAttribute('aria-expanded') === 'true';
+        button.setAttribute('aria-expanded', String(!expanded));
+        children.classList.toggle('collapsed', expanded);
+      });
+    });
+
+    document.querySelectorAll('.copy-btn').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const code = button.closest('.code-block').querySelector('pre code').innerText;
+        await navigator.clipboard.writeText(code);
+        const old = button.innerText;
+        button.innerText = 'Copied';
+        setTimeout(() => button.innerText = old, 1200);
+      });
+    });
+  </script>
+</body>
+</html>

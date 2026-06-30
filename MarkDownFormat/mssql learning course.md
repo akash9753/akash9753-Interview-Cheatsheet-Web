@@ -1,0 +1,1858 @@
+# SQL Course Notes
+
+## Course Topics Overview
+
+### 1. SQL and Database Fundamentals
+
+- What is data, database, DBMS, and RDBMS
+- SQL vs T-SQL vs SQL Server
+- Relational database concepts
+- Tables, rows, columns, and schemas
+- SQL Server installation and tools
+
+### 2. Data Definition Language (DDL)
+
+- CREATE DATABASE
+- CREATE TABLE
+- ALTER TABLE
+- DROP TABLE
+- TRUNCATE TABLE
+- Schema design basics
+
+### 3. Data Types
+
+- Numeric data types
+- String data types
+- Date and time data types
+- Boolean/bit data type
+- Choosing the correct data type
+
+### 4. Constraints and Keys
+
+- PRIMARY KEY
+- FOREIGN KEY
+- UNIQUE
+- NOT NULL
+- DEFAULT
+- CHECK
+- IDENTITY
+
+### 5. Data Manipulation Language (DML)
+
+- INSERT
+- SELECT
+- UPDATE
+- DELETE
+- MERGE
+
+### 6. Basic Querying
+
+- WHERE Clause
+- DISTINCT
+- ORDER BY
+- TOP
+- LIKE
+- Logical Operators
+- IN, NOT IN
+- BETWEEN
+- IS NULL
+- CASE
+
+### 7. Aggregate and Grouping Queries
+
+- COUNT, SUM, AVG, MIN, MAX
+- GROUP BY
+- HAVING Clause
+- GROUP BY ROLLUP
+
+### 8. Joins and Relationships
+
+- One-to-One relationship
+- One-to-Many relationship
+- Many-to-Many relationship
+- INNER JOIN
+- LEFT JOIN
+- RIGHT JOIN
+- FULL OUTER JOIN
+- CROSS JOIN
+- SELF JOIN
+
+### 9. Subqueries and CTEs
+
+- Single-row subquery
+- Multiple-row subquery
+- Correlated subquery
+- Inline view subquery
+- Common Table Expressions (CTE)
+
+### 10. SQL Functions
+
+- String functions
+- Date functions
+- Aggregate functions
+- Conversion functions
+- User-defined functions
+
+### 11. Set Operators
+
+- UNION
+- UNION ALL
+- EXCEPT
+- INTERSECT
+
+### 12. Views and Window Functions
+
+- Views
+- ROW_NUMBER
+- RANK
+- DENSE_RANK
+- LAG and LEAD
+- FIRST_VALUE and LAST_VALUE
+- NTILE
+
+### 13. Stored Procedures and Programmability
+
+- Stored procedures
+- Input parameters
+- Output parameters
+- Procedural logic
+- Scalar functions
+- Table-valued functions
+- Triggers
+
+### 14. Transactions and Error Handling
+
+- Transactions
+- COMMIT
+- ROLLBACK
+- TRY...CATCH
+- ACID properties
+
+### 15. Normalization and Database Design
+
+- Normalization
+- Data redundancy
+- Relationship design
+- Practical database design
+
+### 16. Indexes and Performance Tuning
+
+- Clustered indexes
+- Non-clustered indexes
+- Composite indexes
+- Query statistics
+- Execution performance
+
+### 17. Database Administration Basics
+
+- Import and export data
+- Backup and restore basics
+- System databases
+- Generate test data
+- Database maintenance
+
+### 18. Advanced SQL Server Topics
+
+- APPLY operators
+- Dynamic SQL
+- Temporary tables
+- Import data from CSV
+- Indexes
+
+## 1. SQL and Database Fundamentals
+
+### What is Data?
+
+- Data is raw information stored in a database.
+- Example: student name, employee salary, order amount, city, email.
+
+### What is a Database?
+
+- A database is an organized collection of data.
+- It helps store, manage, retrieve, and update data easily.
+
+### What is DBMS?
+
+- DBMS stands for Database Management System.
+- It is software used to create, manage, and control databases.
+
+### What is RDBMS?
+
+- RDBMS stands for Relational Database Management System.
+- It stores data in tables with rows and columns.
+- Tables can be connected using relationships like primary key and foreign key.
+
+### SQL vs T-SQL vs SQL Server
+
+| Term | What it is | Simple meaning | Example |
+| --- | --- | --- | --- |
+| **SQL** | Query language | Standard language used to work with relational databases | `SELECT * FROM Employees;` |
+| **T-SQL** | Microsoft's extended version of SQL | SQL + extra features added by Microsoft | `DECLARE`, `IF ELSE`, `TRY CATCH`, Stored Procedures |
+| **SQL Server** | Database software/product | Microsoft database system where SQL/T-SQL runs | Microsoft SQL Server, SSMS |
+
+### Basic Database Structure
+
+- Table: stores data in rows and columns.
+- Row: one record in a table.
+- Column: one field or attribute in a table.
+- Schema: logical container for database objects.
+
+## 2. Data Definition Language (DDL)
+
+### Database Queries
+
+List Down Existing Databases
+
+```sql
+EXEC sp_databases;
+SELECT name FROM sys.databases;
+```
+
+#### Create a Database
+
+```sql
+CREATE DATABASE school_db;
+CREATE DATABASE demo;
+```
+
+#### Select a Database
+
+```sql
+USE school_db;
+SELECT DB_NAME();
+```
+
+#### Delete or Drop a Database
+
+```sql
+DROP DATABASE demo;
+```
+
+### Table Queries
+
+#### Create a Table
+
+```sql
+CREATE TABLE students (
+    student_id INT,
+    name VARCHAR(100),
+    age INT,
+    grade INT
+);
+```
+
+#### Check Existing Table
+
+```sql
+EXEC sp_help 'students';
+```
+
+### ALTER Queries
+
+#### Select Data
+
+```sql
+SELECT * FROM employees;
+```
+
+#### Add Column
+
+```sql
+ALTER TABLE employees ADD phone VARCHAR(15);
+```
+
+#### Drop Column
+
+```sql
+ALTER TABLE employees DROP COLUMN phone;
+```
+
+#### Check Table Details
+
+```sql
+EXEC sp_help 'employees';
+```
+
+#### Alter Column
+
+```sql
+ALTER TABLE employees ALTER COLUMN lname VARCHAR(100) NOT NULL;
+ALTER TABLE employees ALTER COLUMN email VARCHAR(100) NOT NULL;
+```
+
+#### Rename Column
+
+```sql
+EXEC sp_rename 'employees.fname', 'first_name', 'column';
+```
+
+#### Rename Table
+
+```sql
+EXEC sp_rename 'employees', 'staff';
+```
+
+#### Add or Drop Constraints
+
+#### Set Default Value to a Column
+
+```sql
+ALTER TABLE employees
+ADD CONSTRAINT default_dept DEFAULT 'Trainee'
+FOR department;
+```
+
+#### Add Unique Constraint
+
+```sql
+ALTER TABLE employees
+ADD UNIQUE (department);
+```
+
+#### CHECK Constraint
+
+```sql
+CREATE TABLE emp (
+    name VARCHAR(50),
+    salary DECIMAL(10,2) CHECK (salary > 0)
+);
+```
+
+#### Named Constraint
+
+```sql
+CREATE TABLE contacts (
+    name VARCHAR(50),
+    salary DECIMAL(10,2),
+    CONSTRAINT chk_emp_positive_salary CHECK (salary > 0)
+);
+
+ALTER TABLE employees
+ADD CONSTRAINT chk_emp_positive_salary CHECK (salary > 0);
+
+ALTER TABLE employees
+ADD CONSTRAINT chk_valid_email CHECK (email LIKE '%@%.%');
+```
+
+#### Drop Constraint
+
+```sql
+ALTER TABLE employees
+DROP CONSTRAINT chk_emp_positive_sal;
+```
+
+## 3. Data Types
+
+### Datatypes
+
+- Numeric: INT, BIGINT, FLOAT, DECIMAL, NUMERIC
+- String: VARCHAR, CHAR
+- Date: DATE
+- Date Time: DATETIME
+- Boolean: BIT(0/1)
+
+## 4. Constraints and Keys
+
+### Constraints
+
+- PRIMARY KEY
+- NOT NULL
+- DEFAULT
+- IDENTITY auto increment
+- UNIQUE
+
+### Key Column vs Non-Key Column
+
+| Type | Meaning | Example |
+| --- | --- | --- |
+| **Key column** | Column used to uniquely identify a record or create relationship | `EmployeeId`, `DepartmentId` |
+| **Non-key column** | Normal data column, not used for uniqueness or relationship | `Name`, `Salary`, `City` |
+
+### Composite Key
+
+A composite key is a primary key made using two or more columns.
+
+Use it when one column alone cannot uniquely identify a row, but a combination of columns can.
+
+Example:
+
+```sql
+CREATE TABLE Enrollment (
+    student_id INT,
+    course_id INT,
+    enrollment_date DATE,
+    PRIMARY KEY (student_id, course_id)
+);
+```
+
+In this example:
+
+- `student_id` alone is not unique because one student can enroll in many courses.
+- `course_id` alone is not unique because one course can have many students.
+- `student_id + course_id` together uniquely identify each enrollment row.
+
+### Employee Table Task
+
+#### Create Employees Table
+
+```sql
+CREATE TABLE employees (
+    emp_id INT IDENTITY(101,1) PRIMARY KEY,
+    fname VARCHAR(50) NOT NULL,
+    lname VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    job_title VARCHAR(50) NOT NULL,
+    department VARCHAR(50),
+    salary DECIMAL(10,2) DEFAULT 30000.00,
+    hire_date DATE NOT NULL DEFAULT CONVERT(DATE, GETDATE()),
+    city VARCHAR(50)
+);
+
+EXEC sp_help 'employees';
+```
+
+#### Important Keywords
+
+| Keyword | Meaning |
+| --- | --- |
+| IDENTITY(101,1) | Auto-generates number automatically |
+| PRIMARY KEY | Makes column unique and not null |
+
+#### Insert Employee Data
+
+```sql
+INSERT INTO employees
+(fname, lname, email, job_title, department, salary, hire_date, city)
+VALUES
+('Aarav', 'Sharma', 'aarav.sharma@example.com', 'Director', 'Management', 180000, '2019-02-10', 'Mumbai'),
+('Diya', 'Patel', 'diya.patel@example.com', 'Lead Engineer', 'Tech', 120000, '2020-08-15', 'Bengaluru'),
+('Rohan', 'Mehra', 'rohan.mehra@example.com', 'Software Engineer', 'Tech', 85000, '2022-05-20', 'Bengaluru'),
+('Priya', 'Singh', 'priya.singh@example.com', 'HR Manager', 'Human Resources', 95000, '2019-11-05', 'Mumbai'),
+('Arjun', 'Kumar', 'arjun.kumar@example.com', 'Data Scientist', 'Tech', 110000, '2021-07-12', 'Hyderabad'),
+('Ananya', 'Gupta', 'ananya.gupta@example.com', 'Marketing Lead', 'Marketing', 90000, '2020-03-01', 'Delhi'),
+('Vikram', 'Reddy', 'vikram.reddy@example.com', 'Sales Executive', 'Sales', 75000, '2023-01-30', 'Mumbai'),
+('Sameera', 'Rao', 'sameera.rao@example.com', 'Software Engineer', 'Tech', 88000, '2023-06-25', 'Pune'),
+('Ishaan', 'Verma', 'ishaan.verma@example.com', 'Recruiter', 'Human Resources', 65000, '2022-09-01', 'Mumbai'),
+('Kavya', 'Joshi', 'kavya.joshi@example.com', 'Product Designer', 'Design', 92000, '2021-04-18', 'Bengaluru'),
+('Zain', 'Khan', 'zain.khan@example.com', 'Sales Manager', 'Sales', 115000, '2019-09-14', 'Delhi'),
+('Nisha', 'Desai', 'nisha.desai@example.com', 'Jr. Data Analyst', 'Tech', 70000, '2024-02-01', 'Hyderabad'),
+('Aditya', 'Nair', 'aditya.nair@example.com', 'Marketing Analyst', 'Marketing', 68000, '2022-10-10', 'Delhi'),
+('Fatima', 'Ali', 'fatima.ali@example.com', 'Sales Executive', 'Sales', 78000, '2022-11-22', 'Mumbai'),
+('Kabir', 'Shah', 'kabir.shah@example.com', 'DevOps Engineer', 'Tech', 105000, '2020-12-01', 'Pune');
+```
+
+#### Read Employee Data
+
+```sql
+SELECT * FROM employees;
+```
+
+## 5. Data Manipulation Language (DML)
+
+### CRUD Operations
+
+#### Create / Insert Data
+
+```sql
+INSERT INTO students (student_id, name, age, grade)
+VALUES (101, 'raju', 10, 5);
+
+INSERT INTO students (student_id, name, age, grade)
+VALUES
+    (102, 'sham', 12, 7),
+    (103, 'baburao', 41, 9);
+```
+
+#### Read Data
+
+```sql
+SELECT * FROM students;
+SELECT age FROM students;
+SELECT * FROM students WHERE student_id = 102;
+SELECT age FROM students WHERE student_id = 102;
+```
+
+#### Update Data
+
+```sql
+UPDATE students
+SET grade = 12
+WHERE student_id = 103;
+```
+
+#### Delete Data
+
+```sql
+DELETE FROM students
+WHERE student_id IN (101, 102);
+```
+
+#### Truncate Data
+
+```sql
+TRUNCATE TABLE students;
+```
+
+## 6. Basic Querying
+
+### SQL Clauses
+
+#### WHERE Clause
+
+```sql
+SELECT * FROM employees
+WHERE department != 'sales'
+  AND city != 'pune'
+  AND city != 'Mumbai';
+
+SELECT * FROM employees WHERE salary > 100000;
+SELECT * FROM employees WHERE hire_date > '2020-12-31';
+```
+
+#### Relational Operators
+
+- `<`
+- `>`
+- `<=`
+- `>=`
+- `=`
+- `!=`
+
+#### DISTINCT
+
+```sql
+SELECT DISTINCT department FROM employees;
+SELECT COUNT(DISTINCT department) FROM employees;
+```
+
+#### ORDER BY
+
+```sql
+SELECT * FROM employees ORDER BY salary;
+SELECT * FROM employees ORDER BY salary DESC;
+SELECT department, fname FROM employees ORDER BY department, fname;
+```
+
+#### LIKE
+
+```sql
+SELECT * FROM employees WHERE department LIKE '%man%';
+SELECT * FROM employees WHERE fname LIKE 'a%';
+SELECT * FROM employees WHERE fname LIKE '%a';
+SELECT * FROM employees WHERE fname LIKE '[ABCDE]%';
+SELECT * FROM employees WHERE fname LIKE '_a%';
+SELECT * FROM employees WHERE fname LIKE '____';
+```
+
+#### TOP
+
+```sql
+SELECT TOP 3 * FROM employees ORDER BY salary DESC;
+```
+
+#### Logical Operators: AND / OR
+
+```sql
+SELECT * FROM employees
+WHERE salary = 75000 AND department = 'sales';
+
+SELECT * FROM employees
+WHERE salary = 75000 OR department = 'sales';
+```
+
+#### IN / NOT IN / BETWEEN
+
+```sql
+SELECT * FROM employees
+WHERE department NOT IN ('Tech', 'Sales', 'Management');
+
+SELECT * FROM employees
+WHERE salary BETWEEN 75000 AND 100000;
+```
+
+#### CASE
+
+```sql
+SELECT
+    fname,
+    lname,
+    salary,
+    CASE
+        WHEN salary > 100000 THEN 'High Earner'
+        WHEN salary >= 80000 AND salary <= 100000 THEN 'Medium Earner'
+        ELSE 'Standard Earner'
+    END AS salary_band
+FROM employees;
+
+SELECT
+    fname,
+    lname,
+    department,
+    salary,
+    CASE
+        WHEN department IN ('Sales', 'Marketing') THEN salary * 0.10
+        WHEN department = 'Tech' THEN salary * 0.12
+        ELSE salary * 0.05
+    END AS bonus
+FROM employees;
+```
+
+#### IS NULL
+
+```sql
+SELECT *
+FROM employees
+WHERE fname IS NULL;
+```
+
+#### NOT LIKE
+
+## 7. Aggregate and Grouping Queries
+
+### Aggregate Functions
+
+- COUNT
+- SUM
+- AVG
+- MIN
+- MAX
+
+```sql
+SELECT COUNT(emp_id) FROM employees;
+SELECT MIN(salary) FROM employees;
+SELECT MAX(salary) FROM employees;
+SELECT AVG(salary) FROM employees;
+SELECT SUM(salary) FROM employees;
+```
+
+#### GROUP BY
+
+```sql
+SELECT department FROM employees GROUP BY department;
+
+SELECT department, COUNT(emp_id) AS Count
+FROM employees
+GROUP BY department;
+
+SELECT department, SUM(salary) AS Count
+FROM employees
+GROUP BY department;
+```
+
+#### Rules of GROUP BY
+
+1. GROUP BY is used to group same values.
+2. GROUP BY is mostly used with aggregate functions:
+   - COUNT()
+   - SUM()
+   - AVG()
+   - MIN()
+   - MAX()
+3. When GROUP BY is used, SELECT can contain only:
+   - GROUP BY columns
+   - Aggregate functions
+4. You cannot use SELECT * with GROUP BY.
+5. Every non-aggregate column in SELECT must be present in GROUP BY.
+6. WHERE is used before GROUP BY.
+7. HAVING is used after GROUP BY.
+8. WHERE filters rows before grouping.
+9. HAVING filters groups after grouping.
+10. ORDER BY comes after GROUP BY and HAVING.
+11. Correct order:
+
+```sql
+SELECT
+FROM
+JOIN ON
+WHERE
+GROUP BY
+HAVING
+ORDER BY
+```
+
+Example:
+
+```sql
+SELECT customer_id, COUNT(order_id)
+FROM Orders
+GROUP BY customer_id;
+```
+
+Wrong:
+
+```sql
+SELECT customer_id, order_date, COUNT(order_id)
+FROM Orders
+GROUP BY customer_id;
+```
+
+Why wrong:
+
+- order_date is not inside GROUP BY.
+- order_date is not inside an aggregate function.
+
+Correct:
+
+```sql
+SELECT customer_id, MAX(order_date), COUNT(order_id)
+FROM Orders
+GROUP BY customer_id;
+```
+
+#### Multi-Column Grouping
+
+```sql
+SELECT department FROM employees GROUP BY department;
+
+SELECT department, city
+FROM employees
+GROUP BY department, city;
+
+SELECT department, city, COUNT(emp_id) AS count
+FROM employees
+GROUP BY department, city
+ORDER BY department;
+```
+
+#### HAVING Clause
+
+#### Use Cases
+
+- Find Departments with More Than 2 Employees
+- Find Job Titles with an Average Salary Above 90000
+- Find department with Total Salary Above 300000
+
+#### WHERE vs HAVING
+
+- WHERE: to filter individual rows
+- HAVING: to filter group/aggregate result
+- WHERE works with GROUP BY, but only for filtering rows before grouping.
+- WHERE does not work when you want to filter aggregate result like COUNT, SUM, AVG.
+
+```sql
+SELECT department, COUNT(emp_id) AS count
+FROM employees
+GROUP BY department
+HAVING COUNT(emp_id) > 2;
+
+SELECT job_title
+FROM employees
+GROUP BY job_title;
+
+SELECT job_title, AVG(salary)
+FROM employees
+GROUP BY job_title
+HAVING AVG(salary) > 90000;
+
+SELECT department, SUM(salary) AS total
+FROM employees
+GROUP BY department
+HAVING SUM(salary) > 200000;
+```
+
+#### GROUP BY ROLLUP
+
+- GROUP BY ROLLUP is an extension of the GROUP BY clause.
+- It generates subtotals and a grand total for a set of columns.
+
+## 8. Joins and Relationships
+
+### Relationship
+
+#### Problems Without Relationship
+
+- Data Redundancy or Duplication
+- What if I want to add a Finance department and its related details?
+- What if Kayva leaves the company which was only one in Design department?
+- What if there is a typo in department column?
+
+```sql
+SELECT * FROM employees;
+```
+
+#### Types of Relationship
+
+##### One-to-One
+
+- 1 employee, 1 account
+
+##### One-to-Many
+
+- 1 department, many employees
+- 1 employee, multiple tasks
+
+##### Many-to-Many
+
+- Book and author
+- 1 book, multiple authors
+- 1 author, multiple books
+- 1 employee, multiple projects
+- 1 project, multiple employees
+
+### Store Database
+
+#### Create Database
+
+```sql
+CREATE DATABASE store_db;
+USE store_db;
+```
+
+#### Create Customers Table
+
+```sql
+CREATE TABLE Customers (
+    customer_id INT IDENTITY(100,1) PRIMARY KEY,
+    customer_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE
+);
+```
+
+#### Create Orders Table
+
+```sql
+CREATE TABLE Orders (
+    order_id INT IDENTITY(500,1) PRIMARY KEY,
+    order_date DATE NOT NULL,
+    total_amount DECIMAL(10, 2),
+    customer_id INT,
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
+);
+
+EXEC sp_help Orders;
+```
+
+#### Insert Customers
+
+```sql
+INSERT INTO Customers (customer_name, email)
+VALUES
+('Raju', 'raju@example.com'),
+('Sham', 'sham@example.com'),
+('Baburao', 'baburao@example.com');
+```
+
+#### Insert Orders
+
+```sql
+INSERT INTO Orders (order_date, total_amount, customer_id)
+VALUES
+('2025-09-15', 1500.00, 100),
+('2025-09-28', 800.00, 101),
+('2025-10-05', 2200.00, 100),
+('2025-10-12', 500.00, 102),
+('2025-10-17', 1200.00, 101);
+```
+
+#### Read Customers and Orders
+
+```sql
+SELECT * FROM Customers;
+SELECT * FROM Orders;
+```
+
+#### Temporary Orders Table
+
+```sql
+SELECT
+    order_id,
+    CONVERT(VARCHAR(11), order_date, 106) AS order_date,
+    total_amount,
+    customer_id
+INTO #TempOrders
+FROM Orders;
+
+SELECT * FROM #TempOrders;
+```
+
+#### Insert Customer and Order Without Customer ID
+
+```sql
+INSERT INTO customers (customer_name, email)
+VALUES ('Paul', 'paul@example.com');
+
+INSERT INTO orders (order_date, total_amount)
+VALUES ('2025-10-18', '3500');
+```
+
+#### Cascade on Delete
+
+```sql
+CREATE TABLE orderss (
+    ord_id INT IDENTITY(1,1) PRIMARY KEY,
+    date DATE,
+    amount DECIMAL(10, 2),
+    cust_id INT,
+    FOREIGN KEY (customerr_id) REFERENCES customers(customer_id) ON DELETE CASCADE
+);
+```
+
+### Joins
+
+#### Types of Join
+
+- Cross Join
+- Inner Join
+- Left Join
+- Right Join
+- Full Outer Join
+
+#### CROSS JOIN
+
+- Every row from one table is combined with every row from another table.
+
+```sql
+SELECT ...
+FROM table1 t1
+CROSS JOIN table2 t2;
+```
+
+#### INNER JOIN
+
+- Returns only the rows where there is a match between specified columns in both tables.
+
+```sql
+SELECT ...
+FROM table1 t1
+INNER JOIN table2 t2
+ON t1.common_column = t2.common_column;
+
+SELECT *
+FROM Customers
+INNER JOIN Orders
+ON Customers.customer_id = Orders.customer_id;
+
+SELECT c.customer_name, COUNT(o.order_id), SUM(o.total_amount)
+FROM customers c
+INNER JOIN orders o
+ON c.customer_id = o.customer_id
+GROUP BY c.customer_name;
+```
+
+#### Practical INNER JOIN Example
+
+```sql
+CREATE DATABASE test;
+GO
+
+USE test;
+GO
+
+CREATE TABLE Customers
+(
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL
+);
+GO
+
+CREATE TABLE Orders
+(
+    order_id INT PRIMARY KEY,
+    order_date DATE NOT NULL,
+    total_amount DECIMAL(10,2) NOT NULL,
+    customer_id INT NULL,
+
+    CONSTRAINT FK_Orders_Customers
+    FOREIGN KEY (customer_id)
+    REFERENCES Customers(customer_id)
+);
+GO
+
+INSERT INTO Customers (customer_id, customer_name, email)
+VALUES
+(100, 'Raju', 'raju@example.com'),
+(101, 'Sham', 'sham@example.com'),
+(102, 'Baburao', 'baburao@example.com'),
+(103, 'Paul', 'paul@example.com');
+GO
+
+INSERT INTO Orders (order_id, order_date, total_amount, customer_id)
+VALUES
+(500, '2025-09-15', 1500.00, 100),
+(501, '2025-09-28', 800.00, 101),
+(502, '2025-10-05', 2200.00, 100),
+(503, '2025-10-12', 500.00, 102),
+(504, '2025-10-17', 1200.00, 101),
+(505, '2025-10-18', 3500.00, NULL);
+GO
+
+-- Customers is the left table.
+-- Orders is the right table.
+SELECT *
+FROM Customers c
+INNER JOIN Orders o
+    ON c.customer_id = o.customer_id;
+
+SELECT
+    c.customer_id,
+    c.customer_name,
+    COUNT(o.order_id) AS TotalOrders,
+    SUM(o.total_amount) AS TotalAmount
+FROM Customers c
+INNER JOIN Orders o
+    ON c.customer_id = o.customer_id
+WHERE o.total_amount > 500
+GROUP BY c.customer_id, c.customer_name
+HAVING COUNT(o.order_id) > 1
+ORDER BY TotalAmount DESC;
+```
+
+#### LEFT JOIN
+
+- Returns all rows from the left table and matching rows from the right table.
+
+```sql
+SELECT ...
+FROM table1 t1
+LEFT JOIN table2 t2
+ON t1.common_column = t2.common_column;
+
+SELECT *
+FROM Customers
+LEFT JOIN Orders
+ON Customers.customer_id = Orders.customer_id;
+
+SELECT *
+FROM Orders
+LEFT JOIN Customers
+ON Customers.customer_id = Orders.customer_id;
+
+SELECT c.customer_name, COUNT(o.order_id), SUM(o.total_amount)
+FROM customers c
+LEFT JOIN orders o
+ON c.customer_id = o.customer_id
+GROUP BY c.customer_name;
+```
+
+Practical meaning:
+
+- `Customers` is the left table.
+- `Orders` is the right table.
+- All customers are returned.
+- If a customer has no order, order columns show `NULL`.
+
+```sql
+SELECT *
+FROM Customers
+LEFT JOIN Orders
+ON Customers.customer_id = Orders.customer_id;
+
+SELECT
+    c.customer_name,
+    COUNT(o.order_id) AS TotalOrders,
+    SUM(o.total_amount) AS TotalAmount
+FROM Customers c
+LEFT JOIN Orders o
+ON c.customer_id = o.customer_id
+GROUP BY c.customer_name;
+```
+
+#### RIGHT JOIN
+
+- Returns all rows from the right table and matching rows from the left table.
+
+```sql
+SELECT ...
+FROM table1 t1
+RIGHT JOIN table2 t2
+ON t1.common_column = t2.common_column;
+
+SELECT *
+FROM Customers
+RIGHT JOIN Orders
+ON Customers.customer_id = Orders.customer_id;
+```
+
+Practical meaning:
+
+- `Customers` is the left table.
+- `Orders` is the right table.
+- All orders are returned.
+- If an order has no matching customer, customer columns show `NULL`.
+
+```sql
+SELECT *
+FROM Customers
+RIGHT JOIN Orders
+ON Customers.customer_id = Orders.customer_id;
+```
+
+#### FULL OUTER JOIN
+
+- Returns all rows when there is a match in either the left or right table.
+
+```sql
+SELECT ...
+FROM table1 t1
+FULL OUTER JOIN table2 t2
+ON t1.common_column = t2.common_column;
+
+SELECT *
+FROM Customers
+FULL OUTER JOIN Orders
+ON Customers.customer_id = Orders.customer_id;
+```
+
+Practical meaning:
+
+- Returns all matching and non-matching rows from both tables.
+- Customers without orders are shown.
+- Orders without customers are also shown.
+- In the sample data, `Paul` appears with `NULL` order columns.
+- The order with `customer_id = NULL` appears with `NULL` customer columns.
+
+```sql
+SELECT *
+FROM Customers
+FULL OUTER JOIN Orders
+ON Customers.customer_id = Orders.customer_id;
+```
+
+#### OUTER APPLY
+
+- `OUTER APPLY` is used to join each row from one table, the left table, to the result of a table-valued function or subquery on the right side.
+- Use case: For each customer, show their most recent order if they have one.
+- If they have no orders, still show the customer.
+
+```sql
+SELECT
+    c.customer_id,
+    c.customer_name,
+    o.order_id,
+    o.order_date,
+    o.total_amount
+FROM Customers AS c
+OUTER APPLY (
+    SELECT TOP 1 *
+    FROM Orders AS o
+    WHERE o.customer_id = c.customer_id
+    ORDER BY o.order_date DESC
+) AS o;
+```
+
+#### CROSS APPLY
+
+- `CROSS APPLY` is used to join each row from one table, the left table, to the result of a table-valued function or subquery on the right side.
+- It behaves like an `INNER JOIN`, meaning it only returns rows where the right-side subquery produces a result.
+
+```sql
+SELECT
+    c.customer_id,
+    c.customer_name,
+    o.order_id,
+    o.order_date,
+    o.total_amount
+FROM Customers AS c
+CROSS APPLY (
+    SELECT TOP 1 *
+    FROM Orders AS o
+    WHERE o.customer_id = c.customer_id
+    ORDER BY o.order_date DESC
+) AS o;
+```
+
+#### Self Join
+
+- A self join is a standard SQL join where a table is joined to itself.
+- It is used when rows in a table are related to other rows in the same table.
+
+Use case:
+
+- Employee and manager hierarchy.
+- The employee and manager both exist in the same table.
+
+```sql
+CREATE TABLE CompanyHierarchy (
+    EmployeeID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    ManagerID INT
+);
+
+INSERT INTO CompanyHierarchy (EmployeeID, Name, ManagerID)
+VALUES
+(1, 'Sonia Verma', NULL), -- The CEO
+(2, 'Rohan Gupta', 1),    -- Reports to Sonia
+(3, 'Amit Sharma', 2),    -- Reports to Rohan
+(4, 'Priya Singh', 1),    -- Reports to Sonia
+(5, 'Kabir Shah', 2);     -- Reports to Rohan
+```
+
+#### Employee Manager Self Join
+
+```sql
+SELECT
+    e.Name AS employee_name,
+    m.Name AS manager_name
+FROM CompanyHierarchy e
+LEFT JOIN CompanyHierarchy m
+ON e.ManagerID = m.EmployeeID;
+```
+
+Result:
+
+| employee_name | manager_name |
+| --- | --- |
+| Sonia Verma | NULL |
+| Rohan Gupta | Sonia Verma |
+| Amit Sharma | Rohan Gupta |
+| Priya Singh | Sonia Verma |
+| Kabir Shah | Rohan Gupta |
+
+#### Many-to-Many
+
+A many-to-many relationship happens when many records in one table can relate to many records in another table.
+
+Example:
+
+- One student can enroll in many courses.
+- One course can have many students.
+
+To handle this, we use a junction table.
+
+#### Junction Table Example
+
+Tables:
+
+- `students`: stores student details.
+- `courses`: stores course details.
+- `enrollment`: junction table that connects students and courses.
+
+```sql
+CREATE DATABASE institute;
+USE institute;
+
+CREATE TABLE courses (
+    course_id INT IDENTITY(1,1) PRIMARY KEY,
+    course_name VARCHAR(100) NOT NULL,
+    course_fee NUMERIC(10, 2) NOT NULL
+);
+
+INSERT INTO courses (course_name, course_fee)
+VALUES
+('Mathematics', 500.00),
+('Physics', 600.00),
+('Chemistry', 700.00);
+
+CREATE TABLE students (
+    student_id INT IDENTITY(1,1) PRIMARY KEY,
+    student_name VARCHAR(100) NOT NULL
+);
+
+INSERT INTO students (student_name)
+VALUES
+('Raju'),
+('Sham'),
+('Baburao'),
+('Alex');
+
+CREATE TABLE enrollment (
+    enrollment_id INT IDENTITY(1,1) PRIMARY KEY,
+    student_id INT NOT NULL,
+    course_id INT NOT NULL,
+    enrollment_date DATE NOT NULL,
+
+    FOREIGN KEY (student_id) REFERENCES students(student_id),
+    FOREIGN KEY (course_id) REFERENCES courses(course_id)
+);
+
+INSERT INTO enrollment (student_id, course_id, enrollment_date)
+VALUES
+(1, 1, '2025-01-01'), -- Raju enrolled in Mathematics
+(1, 2, '2025-01-15'), -- Raju enrolled in Physics
+(2, 1, '2025-02-01'), -- Sham enrolled in Mathematics
+(2, 3, '2025-02-15'), -- Sham enrolled in Chemistry
+(3, 3, '2025-03-25'); -- Baburao enrolled in Chemistry
+```
+
+#### Read Many-to-Many Data
+
+```sql
+SELECT *
+FROM enrollment e
+INNER JOIN students s ON e.student_id = s.student_id
+INNER JOIN courses c ON e.course_id = c.course_id;
+```
+
+#### Count Students Per Course
+
+```sql
+SELECT
+    c.course_name,
+    COUNT(s.student_id) AS student_count,
+    SUM(c.course_fee) AS total_fee
+FROM enrollment e
+INNER JOIN students s ON e.student_id = s.student_id
+INNER JOIN courses c ON e.course_id = c.course_id
+GROUP BY c.course_name;
+```
+
+Result:
+
+| course_name | student_count | total_fee |
+| --- | --- | --- |
+| Chemistry | 2 | 1400.00 |
+| Mathematics | 2 | 1000.00 |
+| Physics | 1 | 600.00 |
+
+## 9. Subqueries and CTEs
+
+### Sub Queries
+
+- A SubQuery is also called an inner query or nested query.
+- It is a query inside another query.
+- The subquery runs first and gives a result.
+- The main query, also called outer query, then uses that result.
+
+#### Sub Query Types
+
+| Type | Description | Usually used in | Returns |
+| --- | --- | --- | --- |
+| Single-row | Returns one value | WHERE, HAVING | One row, one column |
+| Multiple-row | Returns many rows, one column | IN, ANY, ALL | Multiple rows |
+| Correlated | Depends on outer query | WHERE, SELECT | Varies |
+| Inline View | Inside FROM, acts like temporary table | FROM | Table-like |
+
+#### Use Cases
+
+- Find Employees Earning More Than the Company Average
+- Find Employees Who Work in the Same City as a Specific Person, for example Aarav Sharma
+- Find the Highest-Paid Employee name
+- Find the Highest-Paid Employee in Each Department
+
+#### Single-Row Sub Query
+
+- Returns one value.
+- Used with WHERE and HAVING.
+- One row, one column.
+
+```sql
+SELECT AVG(salary) FROM employees;
+
+SELECT * FROM employees
+WHERE salary > 95733;
+
+SELECT * FROM employees
+WHERE salary > (SELECT AVG(salary) FROM employees);
+```
+
+#### Multiple-Rows Sub Query
+
+- Returns many rows from one column.
+- Used with IN, ANY, ALL.
+
+```sql
+SELECT department FROM employees WHERE city = 'Mumbai';
+
+SELECT * FROM employees
+WHERE department IN ('Management', 'Human Resources', 'Sales');
+
+SELECT * FROM employees
+WHERE department IN (
+    SELECT department
+    FROM employees
+    WHERE city = 'Mumbai'
+);
+```
+
+#### Correlated Sub Query
+
+- Depends on outer query.
+- Used with WHERE and SELECT.
+- Result varies.
+
+```sql
+SELECT DISTINCT department FROM employees;
+
+SELECT MAX(salary) AS MAX_SALARY
+FROM employees
+WHERE department = 'tech';
+
+SELECT * FROM employees
+WHERE salary = 120000;
+
+SELECT emp_id, fname, lname, department, salary
+FROM employees e1
+WHERE salary = (
+    SELECT MAX(salary)
+    FROM employees e2
+    WHERE e2.department = e1.department
+);
+
+SELECT * FROM employees
+WHERE salary IN (
+    SELECT MAX(salary)
+    FROM employees
+    GROUP BY department
+);
+```
+
+#### Inline View Sub Query
+
+- Inside FROM.
+- Acts like a temporary table.
+- Table-like.
+
+```sql
+SELECT department, AVG(salary) AS avg
+FROM employees
+GROUP BY department;
+
+SELECT department, avg
+FROM (
+   SELECT department, AVG(salary) AS avg
+   FROM employees
+   GROUP BY department
+) AS dept_avg
+WHERE avg > 90000;
+```
+
+## 10. SQL Functions
+
+### String Functions
+
+- CONCAT, CONCAT_WS
+- SUBSTRING
+- LEFT, RIGHT
+- LEN
+- UPPER, LOWER
+- TRIM, LTRIM, RTRIM
+- REPLACE
+- CHARINDEX
+
+### Date Functions
+
+- GETDATE()
+- DATEADD(interval, number, date)
+- DATEDIFF(interval, start_date, end_date)
+- DATEPART(interval, date)
+- YEAR(date), MONTH(date), DAY(date)
+- FORMAT(date, format_string)
+- Format examples: MM/DD/YYYY, DD-Mon-YYYY
+
+```sql
+SELECT GETDATE();
+SELECT DATEADD(day, 2, GETDATE());
+SELECT DATEDIFF(day, '2025-07-31', GETDATE());
+
+SELECT FORMAT(GETDATE(), 'yyyy-MM-dd');
+SELECT FORMAT(GETDATE(), 'yyyy-MMM-dd');
+SELECT FORMAT(GETDATE(), 'yyyy-MMMM-dd');
+```
+
+## 11. Set Operators
+
+#### UNION
+
+- UNION is used to combine the results of two or more SELECT statements into a single result set.
+- It combines data vertically by adding rows with the same structure.
+
+Syntax:
+
+```sql
+SELECT column_list FROM table1
+UNION
+SELECT column_list FROM table2;
+```
+
+#### Requirements
+
+- Each SELECT must have the same number of columns.
+- Corresponding columns must have compatible data types.
+- Column names are taken from the first SELECT.
+
+Example:
+
+Mumbai employees:
+
+| EmployeeID | Name | Department |
+| --- | --- | --- |
+| 101 | Amit Sharma | Sales |
+| 102 | Priya Singh | Marketing |
+| 103 | Rohan Gupta | IT |
+
+Delhi employees:
+
+| EmployeeID | Name | Department |
+| --- | --- | --- |
+| 201 | Sonia Verma | Sales |
+| 202 | Karan Mehta | Finance |
+| 103 | Rohan Gupta | IT |
+
+```sql
+SELECT EmployeeID, Name, Department FROM MumbaiEmployees
+UNION
+SELECT EmployeeID, Name, Department FROM DelhiEmployees;
+```
+
+Result:
+
+| EmployeeID | Name | Department |
+| --- | --- | --- |
+| 101 | Amit Sharma | Sales |
+| 102 | Priya Singh | Marketing |
+| 103 | Rohan Gupta | IT |
+| 201 | Sonia Verma | Sales |
+| 202 | Karan Mehta | Finance |
+
+#### UNION vs UNION ALL
+
+- UNION removes duplicates from the combined result.
+- UNION ALL keeps duplicates in the combined result.
+
+#### EXCEPT
+
+- EXCEPT returns rows from the first query that do not exist in the second query.
+
+```sql
+SELECT EmployeeID, Name, Department FROM MumbaiEmployees
+EXCEPT
+SELECT EmployeeID, Name, Department FROM DelhiEmployees;
+```
+
+## 12. Views and Window Functions
+
+### Views
+
+A view in MS SQL Server is a virtual table that shows data from a saved query.
+
+It does not store data. It displays data from one or more underlying tables.
+
+#### Create a View
+
+```sql
+CREATE VIEW enrollment_details AS
+SELECT
+    s.student_name,
+    c.course_name,
+    e.enrollment_date,
+    c.course_fee
+FROM enrollment e
+INNER JOIN students s ON e.student_id = s.student_id
+INNER JOIN courses c ON e.course_id = c.course_id;
+```
+
+#### Read Data from a View
+
+```sql
+SELECT * FROM enrollment_details;
+```
+
+#### Check Existing Views
+
+```sql
+SELECT
+    TABLE_SCHEMA,
+    TABLE_NAME
+FROM INFORMATION_SCHEMA.VIEWS;
+```
+
+#### Check Code of a View
+
+```sql
+sp_helptext 'YourViewName';
+```
+
+Example:
+
+```sql
+sp_helptext 'enrollment_details';
+```
+
+## 13. Stored Procedures and Programmability
+
+### Triggers
+
+Triggers are special procedures in a database that automatically execute predefined actions in response to certain events on a specified table or view.
+
+#### Trigger Use Cases
+
+- Audit salary changes by tracking old and new values.
+- Prevent accidental removal of employees from a specific department.
+- Automatically run logic after `INSERT`, `UPDATE`, or `DELETE`.
+
+#### Basic Trigger Syntax
+
+```sql
+CREATE TRIGGER trigger_name
+ON table_name
+AFTER INSERT, UPDATE, DELETE
+AS
+BEGIN
+    -- Trigger logic here
+END;
+```
+
+You can also use `INSTEAD OF INSERT`, `INSTEAD OF UPDATE`, or `INSTEAD OF DELETE` when you want the trigger to run instead of the original action.
+
+#### Audit Salary Changes
+
+Use case: track old salary vs new salary when employee salary changes.
+
+```sql
+CREATE TABLE SalaryAudit (
+    AuditID INT IDENTITY PRIMARY KEY,
+    EmpID INT,
+    OldSalary DECIMAL(10,2),
+    NewSalary DECIMAL(10,2),
+    ChangedDate DATETIME DEFAULT GETDATE()
+);
+```
+
+#### Inserted and Deleted Tables
+
+- `deleted` contains the old row values.
+- `inserted` contains the new row values.
+- In an `UPDATE` trigger, SQL Server keeps old values in `deleted` and new values in `inserted`.
+
+```sql
+CREATE TRIGGER trg_AuditSalaryChange
+ON Employees
+AFTER UPDATE
+AS
+BEGIN
+    IF UPDATE(Salary)
+    BEGIN
+        INSERT INTO SalaryAudit (EmpID, OldSalary, NewSalary)
+        SELECT
+            d.EmpID,
+            d.Salary AS OldSalary,
+            i.Salary AS NewSalary
+        FROM deleted d
+        INNER JOIN inserted i ON d.EmpID = i.EmpID;
+    END
+END;
+```
+
+#### See Triggers on a Table
+
+```sql
+EXEC sp_helptrigger 'Employees';
+```
+
+#### Prevent Accidental Removal
+
+Use case: prevent accidental removal of employees from a specific department, for example `Management`.
+
+```sql
+CREATE TRIGGER trg_PreventManagementRemoval
+ON employees
+INSTEAD OF DELETE
+AS
+BEGIN
+    -- Check if employee is from management department.
+    IF EXISTS (
+        SELECT 1
+        FROM deleted
+        WHERE department = 'Management'
+    )
+    BEGIN
+        RAISERROR('Deletion not allowed for management employees', 16, 1);
+        ROLLBACK TRANSACTION;
+        RETURN;
+    END
+
+    DELETE FROM employees
+    WHERE emp_id IN (
+        SELECT emp_id
+        FROM deleted
+    );
+END;
+```
+
+## 15. Normalization and Database Design
+
+### Normalization
+
+Normalization is the process of organizing data in a database efficiently.
+
+Purpose:
+
+- Reduce data redundancy.
+- Improve data integrity.
+- Avoid duplicate or repeated data.
+- Make updates, inserts, and deletes safer.
+
+### First Normal Form (1NF)
+
+Rules:
+
+- Each column contains only atomic indivisible values.
+- No arrays, lists, or sets inside a single cell.
+- Each column stores values of a single data type.
+- Each record or row should be unique.
+- Usually uniqueness is ensured by a primary key.
+
+Bad example:
+
+```text
+courses = "Math, Physics"
+```
+
+This violates 1NF because multiple values are stored in one column.
+
+### Second Normal Form (2NF)
+
+Rule:
+
+- Table should be in 1NF.
+- Every non-key column should depend on the whole primary key.
+- Mainly applies when the table has a composite primary key.
+
+Example composite key:
+
+```sql
+CREATE TABLE Enrollment (
+    student_id INT,
+    course_id INT,
+    enrollment_date DATE,
+    PRIMARY KEY (student_id, course_id)
+);
+```
+
+Bad example:
+
+| StudentID | Course | StudentName |
+| --- | --- | --- |
+| 1 | Math | Raju |
+| 1 | Physics | Raju |
+| 2 | Chemistry | Sham |
+
+Problem:
+
+- `StudentName` depends only on `StudentID`.
+- It does not depend on the full key `StudentID + Course`.
+- This is called partial dependency.
+
+To follow 2NF, move student details into a separate `Students` table.
+
+### Third Normal Form (3NF)
+
+Rule:
+
+- Table should be in 2NF.
+- There should be no transitive dependency.
+- Non-key columns should not depend on other non-key columns.
+
+Question to check:
+
+- Does any non-key attribute depend on another non-key attribute?
+
+Bad example:
+
+```text
+employee(employee_id, city, zip, state)
+```
+
+Problem:
+
+- `city` depends on `zip`.
+- `state` depends on `zip`.
+- `zip` depends on `employee_id`, where the employee lives.
+- So the dependency becomes `employee_id -> zip -> city`.
+- Also `employee_id -> zip -> state`.
+
+This violates 3NF because `city` and `state` depend on `zip`, which is a non-key attribute.
+
+Better design:
+
+- Move `zip`, `city`, and `state` into a separate `zip_codes` table.
+- Keep only the required key/reference in the employee table.
+
+## 16. Indexes and Performance Tuning
+
+### Indexes
+
+Creating and using indexes in SQL Server is a powerful way to improve database performance.
+
+#### Types of Indexes
+
+| Index Type | Meaning |
+| --- | --- |
+| Clustered Index | Sorts and stores the actual table data based on the indexed column. A table can have only one clustered index. |
+| Non-Clustered Index | Stores a separate structure with key values and pointers to the actual table rows. A table can have multiple non-clustered indexes. |
+| Unique Index | Ensures that values in the indexed column are unique. |
+| Composite Index | An index created on two or more columns. |
+| Filtered Index | An index created on selected rows using a WHERE condition. |
+| Full-Text Index | Used for searching words or phrases inside large text columns. |
+
+#### Most Important Indexes
+
+- Clustered Index is very important and is usually created on the Primary Key column.
+- Clustered Index stores the actual table data in sorted order.
+- A table can have only one clustered index.
+- Non-Clustered Index is most commonly used for improving query performance.
+- Non-Clustered Index is useful on columns used frequently in WHERE, JOIN, ORDER BY, and GROUP BY.
+- A table can have multiple non-clustered indexes.
+- Clustered Index means actual data is sorted.
+- Non-Clustered Index means separate lookup structure.
+
+#### Pros of Indexes
+
+- Improves SELECT query performance.
+- Makes searching, filtering, sorting, and joining faster.
+- Helps enforce uniqueness when using unique indexes.
+- Useful for large tables with frequent read operations.
+
+#### Cons of Indexes
+
+- Slows down INSERT, UPDATE, and DELETE operations because indexes also need to be updated.
+- Takes extra disk space.
+- Too many indexes can reduce overall database performance.
+- Indexes need maintenance when data changes frequently.
+
+#### Enable Query Statistics
+
+Before running any queries, enable these options:
+
+Purpose:
+
+- `SET STATISTICS TIME ON` shows CPU time and total execution time for the query.
+- `SET STATISTICS IO ON` shows how many page reads SQL Server performs from memory or disk.
+- It helps compare query performance before and after adding an index.
+- It helps identify slow queries and high I/O queries.
+
+```sql
+SET STATISTICS TIME ON;
+SET STATISTICS IO ON;
+GO
+```
+
+#### Clear Data Cache
+
+`DBCC DROPCLEANBUFFERS` removes clean pages from memory, so SQL Server has to read data from disk again.
+
+This is useful when testing query performance because cached data can make a query look faster than it really is.
+
+```sql
+DBCC DROPCLEANBUFFERS;
+```
+
+#### How to Add Index
+
+```sql
+CREATE INDEX i_name
+ON employees(salary, emp_id);
+```
+
+#### How to See Index
+
+This shows the index name, index description, and indexed columns.
+
+```sql
+EXEC sp_helpindex 'employees';
+```
+
+Example output:
+
+| index_name | index_description | index_keys |
+| --- | --- | --- |
+| i_salary | nonclustered located on PRIMARY | Salary |
+| PK__Employee__AD04FF1CD0990C9 | clustered, unique, primary key located on PRIMARY | EmployeeID |
+
+#### How to Remove Index
+
+```sql
+DROP INDEX i_name ON employees;
+```
+

@@ -1,0 +1,435 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entity Framework Core Learning Roadmap for Interview Preparation</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #111827;
+      --panel-2: #172033;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #38bdf8;
+      --accent-2: #a3e635;
+      --border: #263449;
+      --code-bg: #0f172a;
+      --table-stripe: #101a2d;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top left, #15203a 0, var(--bg) 36rem);
+      color: var(--text);
+      font-family: Segoe UI, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      line-height: 1.65;
+    }
+    .layout { display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: 100vh; }
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      padding: 10px 8px 12px;
+      background: rgba(17, 24, 39, 0.92);
+      border-right: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      font-size: 11px;
+      line-height: 1.2;
+    }
+    .home-link {
+      display: inline-block;
+      margin: 0 0 10px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .home-link:hover { text-decoration: underline; }
+    .brand { margin: 0 0 6px; color: white; font-size: 0.95rem; line-height: 1.15; font-weight: 700; }
+    .toc { display: flex; flex-direction: column; gap: 0; }
+    .toc-link {
+      color: var(--muted);
+      text-decoration: none;
+      border-radius: 4px;
+      padding: 1px 4px;
+      font-size: 0.68rem;
+      line-height: 1.2;
+      display: block;
+    }
+    .toc-link:hover { background: var(--panel-2); color: var(--accent); }
+    .toc-group, .toc-subgroup { display: flex; flex-direction: column; gap: 0; }
+    .toc-toggle {
+      display: flex;
+      align-items: flex-start;
+      gap: 3px;
+      width: 100%;
+      border: none;
+      background: transparent;
+      color: inherit;
+      text-align: left;
+      border-radius: 4px;
+      padding: 1px 4px;
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.68rem;
+      line-height: 1.2;
+    }
+    .toc-toggle:hover { background: var(--panel-2); }
+    .toc-toggle .arrow {
+      color: var(--accent);
+      font-size: 0.55rem;
+      width: 8px;
+      margin-top: 2px;
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+    .toc-toggle[aria-expanded="true"] .arrow { transform: rotate(90deg); }
+    .toc-toggle.level-2 { color: #dbeafe; font-weight: 600; font-size: 0.7rem; }
+    .toc-toggle.level-3 { color: var(--muted); font-weight: 500; padding-left: 8px; font-size: 0.66rem; }
+    .toc-title { color: inherit; text-decoration: none; line-height: 1.2; }
+    .toc-title:hover { color: var(--accent); text-decoration: underline; }
+    .toc-children {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      overflow: hidden;
+      transition: max-height 0.25s ease;
+    }
+    .toc-children.collapsed { display: none; }
+    .toc-children .toc-link.level-3 { margin-left: 8px; font-size: 0.66rem; }
+    .toc-children .toc-link.level-4 { margin-left: 14px; font-size: 0.62rem; }
+    .level-1 { color: #f8fafc; font-weight: 600; font-size: 0.72rem; }
+    main { max-width: 1120px; width: 100%; padding: 42px 52px 96px; }
+    h1, h2, h3, h4, h5, h6 { color: #f8fafc; line-height: 1.25; margin: 2.2rem 0 0.8rem; }
+    h1 { font-size: clamp(2.1rem, 4vw, 4rem); margin-top: 0; }
+    h2 { font-size: 2rem; border-top: 1px solid var(--border); padding-top: 1.6rem; }
+    h3 { font-size: 1.45rem; color: var(--accent-2); }
+    h4 { font-size: 1.15rem; color: var(--accent); }
+    .heading-anchor { color: inherit; text-decoration: none; }
+    .heading-anchor:hover { text-decoration: underline; text-decoration-color: var(--accent); }
+    p, li { color: var(--text); }
+    ul, ol { padding-left: 1.4rem; }
+    .section-divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+    .content-figure { margin: 1rem 0 1.35rem; }
+    .content-figure img { max-width: 100%; border-radius: 12px; border: 1px solid var(--border); }
+    .content-figure figcaption { margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem; }
+    code { background: #1f2937; color: #fde68a; padding: 0.12rem 0.32rem; border-radius: 5px; }
+    .code-block { margin: 1rem 0 1.35rem; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--code-bg); }
+    .code-toolbar { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #111827; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 0.82rem; }
+    .copy-btn { cursor: pointer; border: 1px solid var(--border); background: #1f2937; color: var(--text); border-radius: 8px; padding: 4px 10px; }
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+    pre { margin: 0; padding: 16px; overflow: auto; }
+    pre code { background: transparent; color: #e5e7eb; padding: 0; border-radius: 0; font-family: Consolas, Cascadia Code, monospace; font-size: 0.95rem; }
+    .table-wrap { overflow-x: auto; margin: 1rem 0 1.35rem; border: 1px solid var(--border); border-radius: 12px; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+    th { color: #f8fafc; background: #1f2937; }
+    tr:nth-child(even) td { background: var(--table-stripe); }
+    .top-link { position: fixed; right: 22px; bottom: 22px; color: var(--bg); background: var(--accent); padding: 8px 12px; border-radius: 999px; text-decoration: none; font-weight: 700; }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      aside { position: relative; height: auto; max-height: 420px; }
+      main { padding: 28px 20px 84px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <a class="home-link" href="index.html">← All Courses</a>
+      <h2 class="brand">Entity Framework Core Interview Roadmap</h2>
+      <nav class="toc" aria-label="Table of contents">
+        <a class="toc-link level-1" href="#entity-framework-core-learning-roadmap-for-interview-preparation">Entity Framework Core Learning Roadmap for Interview Preparation</a><a class="toc-link level-2" href="#goal">Goal</a><a class="toc-link level-2" href="#topic-index">Topic Index</a><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#1-entity-framework-core-basics">1. Entity Framework Core Basics</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#2-dbcontext-and-dbset">2. DbContext and DbSet</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-2">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#3-entities-and-models">3. Entities and Models</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-3">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#4-relationships">4. Relationships</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-4">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#5-configuration">5. Configuration</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-5">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#6-migrations">6. Migrations</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-6">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#7-querying-data">7. Querying Data</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-7">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#8-loading-related-data">8. Loading Related Data</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-8">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#9-tracking-and-no-tracking">9. Tracking and No Tracking</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-9">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#10-crud-operations">10. CRUD Operations</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-10">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#11-transactions">11. Transactions</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-11">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#12-concurrency">12. Concurrency</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-12">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#13-performance-optimization">13. Performance Optimization</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-13">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#14-raw-sql-and-stored-procedures">14. Raw SQL and Stored Procedures</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-14">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#15-repository-and-unit-of-work">15. Repository and Unit of Work</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-15">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#16-ef-core-with-asp-net-core">16. EF Core with ASP.NET Core</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-16">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#17-testing-ef-core-code">17. Testing EF Core Code</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-17">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#18-advanced-ef-core-topics">18. Advanced EF Core Topics</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-18">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#19-security-diagnostics-and-best-practices">19. Security, Diagnostics, and Best Practices</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-19">What to Learn</a></div></div>
+      </nav>
+    </aside>
+    <main id="top">
+      <h1 id="entity-framework-core-learning-roadmap-for-interview-preparation"><a class="heading-anchor" href="#entity-framework-core-learning-roadmap-for-interview-preparation">Entity Framework Core Learning Roadmap for Interview Preparation</a></h1><h2 id="goal"><a class="heading-anchor" href="#goal">Goal</a></h2><p>This roadmap is focused on Entity Framework Core interview preparation.</p><hr class="section-divider"><h2 id="topic-index"><a class="heading-anchor" href="#topic-index">Topic Index</a></h2><ul><li>1. Entity Framework Core Basics</li><li>2. DbContext and DbSet</li><li>3. Entities and Models</li><li>4. Relationships</li><li>5. Configuration</li><li>6. Migrations</li><li>7. Querying Data</li><li>8. Loading Related Data</li><li>9. Tracking and No Tracking</li><li>10. CRUD Operations</li><li>11. Transactions</li><li>12. Concurrency</li><li>13. Performance Optimization</li><li>14. Raw SQL and Stored Procedures</li><li>15. Repository and Unit of Work</li><li>16. EF Core with ASP.NET Core</li><li>17. Testing EF Core Code</li><li>18. Advanced EF Core Topics</li><li>19. Security, Diagnostics, and Best Practices</li></ul><hr class="section-divider"><h2 id="1-entity-framework-core-basics"><a class="heading-anchor" href="#1-entity-framework-core-basics">1. Entity Framework Core Basics</a></h2><h3 id="what-to-learn"><a class="heading-anchor" href="#what-to-learn">What to Learn</a></h3><ul><li>What is EF Core?</li><li>ORM concept</li><li>EF vs EF Core vs ADO.NET</li><li>Code-first vs database-first</li><li>Entities, DbContext, DbSet</li></ul><p>EF Core is an ORM that maps C# classes to database tables so you work with objects instead of raw SQL for most operations.</p><div class="table-wrap"><table><thead><tr><th>Approach</th><th>Meaning</th></tr></thead><tbody><tr><td>Code-first</td><td>Create entity classes first, then generate database using migrations</td></tr><tr><td>Database-first</td><td>Generate entity classes from an existing database</td></tr><tr><td>ADO.NET</td><td>Manual SQL and connection handling</td></tr><tr><td>EF Core</td><td>Object-based data access with change tracking and LINQ</td></tr></tbody></table></div><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">// Code-first: entity + DbContext
+public class Book
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+}
+
+public class AppDbContext : DbContext
+{
+    public DbSet&lt;Book&gt; Books =&gt; Set&lt;Book&gt;();
+}</code></pre></div><hr class="section-divider"><h2 id="2-dbcontext-and-dbset"><a class="heading-anchor" href="#2-dbcontext-and-dbset">2. DbContext and DbSet</a></h2><h3 id="what-to-learn-2"><a class="heading-anchor" href="#what-to-learn-2">What to Learn</a></h3><ul><li>Role of <code>DbContext</code> and <code>DbSet</code></li><li><code>DbContextOptions</code>, connection string, DI registration</li><li><code>OnConfiguring</code>, <code>OnModelCreating</code></li><li>DbContext lifetime and thread safety</li></ul><p><code>DbContext</code> is the main session with the database. <code>DbSet&lt;T&gt;</code> represents a table/collection of entities.</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public class AppDbContext : DbContext
+{
+    public AppDbContext(DbContextOptions&lt;AppDbContext&gt; options) : base(options) { }
+
+    public DbSet&lt;Book&gt; Books { get; set; }
+    public DbSet&lt;Author&gt; Authors { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+    }
+}</code></pre></div><p>Register in ASP.NET Core:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">builder.Services.AddDbContext&lt;AppDbContext&gt;(options =&gt;
+    options.UseSqlServer(builder.Configuration.GetConnectionString(&quot;Default&quot;)));</code></pre></div><p><code>DbContext</code> is <strong>not thread-safe</strong>. Use one instance per request/operation, not shared across threads.</p><hr class="section-divider"><h2 id="3-entities-and-models"><a class="heading-anchor" href="#3-entities-and-models">3. Entities and Models</a></h2><h3 id="what-to-learn-3"><a class="heading-anchor" href="#what-to-learn-3">What to Learn</a></h3><ul><li>Entity classes, primary keys, foreign keys</li><li>Navigation properties, required/optional fields</li><li>Shadow properties, owned types, value objects</li></ul><p>EF Core detects primary keys by convention: <code>Id</code> or <code>{ClassName}Id</code>.</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public class Book
+{
+    public int Id { get; set; }              // PK by convention
+    public string Title { get; set; }
+    public decimal Price { get; set; }
+    public int AuthorId { get; set; }        // FK
+    public Author Author { get; set; }       // Navigation property
+}
+
+public class Author
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public List&lt;Book&gt; Books { get; set; }
+}</code></pre></div><p>Explicit key and required field:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public class Book
+{
+    [Key]
+    public int BookId { get; set; }
+
+    [Required, MaxLength(200)]
+    public string Title { get; set; }
+}</code></pre></div><p>Owned type example:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public class Order
+{
+    public int Id { get; set; }
+    public Address ShippingAddress { get; set; }
+}
+
+public class Address
+{
+    public string Street { get; set; }
+    public string City { get; set; }
+}
+
+// Fluent API
+modelBuilder.Entity&lt;Order&gt;().OwnsOne(o =&gt; o.ShippingAddress);</code></pre></div><hr class="section-divider"><h2 id="4-relationships"><a class="heading-anchor" href="#4-relationships">4. Relationships</a></h2><h3 id="what-to-learn-4"><a class="heading-anchor" href="#what-to-learn-4">What to Learn</a></h3><ul><li>One-to-one, one-to-many, many-to-many</li><li>Required vs optional relationships</li><li>Cascade delete, self-referencing</li></ul><div class="table-wrap"><table><thead><tr><th>Relationship</th><th>Example</th></tr></thead><tbody><tr><td>One-to-one</td><td>Book → BookDetail</td></tr><tr><td>One-to-many</td><td>Author → Books</td></tr><tr><td>Many-to-many</td><td>Students ↔ Courses</td></tr></tbody></table></div><p>One-to-many:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public class Author
+{
+    public int Id { get; set; }
+    public List&lt;Book&gt; Books { get; set; }
+}
+
+public class Book
+{
+    public int Id { get; set; }
+    public int AuthorId { get; set; }
+    public Author Author { get; set; }
+}</code></pre></div><p>Many-to-many (EF Core 5+):</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public class Student
+{
+    public int Id { get; set; }
+    public List&lt;Course&gt; Courses { get; set; }
+}
+
+public class Course
+{
+    public int Id { get; set; }
+    public List&lt;Student&gt; Students { get; set; }
+}</code></pre></div><p>Fluent API with cascade delete:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">modelBuilder.Entity&lt;Book&gt;()
+    .HasOne(b =&gt; b.Author)
+    .WithMany(a =&gt; a.Books)
+    .HasForeignKey(b =&gt; b.AuthorId)
+    .OnDelete(DeleteBehavior.Cascade);</code></pre></div><hr class="section-divider"><h2 id="5-configuration"><a class="heading-anchor" href="#5-configuration">5. Configuration</a></h2><h3 id="what-to-learn-5"><a class="heading-anchor" href="#what-to-learn-5">What to Learn</a></h3><ul><li>Data annotations vs Fluent API</li><li><code>IEntityTypeConfiguration&lt;T&gt;</code></li><li>Table/column mapping, indexes, defaults</li></ul><p>Data annotations:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">[Table(&quot;tb_books&quot;)]
+public class Book
+{
+    [Key]
+    public int Id { get; set; }
+
+    [Column(&quot;BookName&quot;), Required, MaxLength(100)]
+    public string Title { get; set; }
+}</code></pre></div><p>Fluent API (preferred for complex rules):</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public class BookConfiguration : IEntityTypeConfiguration&lt;Book&gt;
+{
+    public void Configure(EntityTypeBuilder&lt;Book&gt; builder)
+    {
+        builder.ToTable(&quot;tb_books&quot;);
+        builder.HasKey(b =&gt; b.Id);
+        builder.Property(b =&gt; b.Title).HasMaxLength(100).IsRequired();
+        builder.HasIndex(b =&gt; b.Title);
+        builder.Property(b =&gt; b.Price).HasDefaultValue(0);
+    }
+}</code></pre></div><div class="table-wrap"><table><thead><tr><th>Approach</th><th>Best for</th></tr></thead><tbody><tr><td>Data annotations</td><td>Simple rules on entity class</td></tr><tr><td>Fluent API</td><td>Complex mapping, indexes, relationships</td></tr></tbody></table></div><hr class="section-divider"><h2 id="6-migrations"><a class="heading-anchor" href="#6-migrations">6. Migrations</a></h2><h3 id="what-to-learn-6"><a class="heading-anchor" href="#what-to-learn-6">What to Learn</a></h3><ul><li>Create, apply, remove, rollback migrations</li><li>Migration history, SQL scripts, production updates</li></ul><p>Migrations track schema changes over time and apply them to the database.</p><div class="code-block"><div class="code-toolbar"><span>powershell</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-powershell"># Package Manager Console
+Add-Migration InitialCreate
+Update-Database
+Remove-Migration
+Update-Database AddBookToDb   # rollback/forward to specific migration</code></pre></div><p>CLI:</p><div class="code-block"><div class="code-toolbar"><span>bash</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-bash">dotnet ef migrations add InitialCreate
+dotnet ef database update
+dotnet ef migrations script     # generate SQL script</code></pre></div><p>Each migration creates <code>Up()</code> and <code>Down()</code> methods to apply or revert changes.</p><hr class="section-divider"><h2 id="7-querying-data"><a class="heading-anchor" href="#7-querying-data">7. Querying Data</a></h2><figure class="content-figure"><img src="assets/efcore/ienumerable-vs-iqueryable-comparison.jpg" alt="IEnumerable vs IQueryable key differences"><figcaption>IEnumerable vs IQueryable key differences</figcaption></figure><figure class="content-figure"><img src="assets/efcore/linq-where-first-vs-first-predicate.jpg" alt="Where().First() vs First(predicate) in EF Core"><figcaption>Where().First() vs First(predicate) in EF Core</figcaption></figure><figure class="content-figure"><img src="assets/efcore/firstordefault-vs-singleordefault.jpg" alt="FirstOrDefaultAsync vs SingleOrDefaultAsync in EF Core"><figcaption>FirstOrDefaultAsync vs SingleOrDefaultAsync in EF Core</figcaption></figure><figure class="content-figure"><img src="assets/efcore/client-side-filter-inefficiency.jpg" alt="Client-side filter inefficiency example"><figcaption>Client-side filter inefficiency example</figcaption></figure><figure class="content-figure"><img src="assets/efcore/sql-interview-cheatsheet.jpg" alt="SQL interview cheat sheet for query patterns"><figcaption>SQL interview cheat sheet for query patterns</figcaption></figure><figure class="content-figure"><img src="assets/efcore/sql-filter-early-join-later.jpg" alt="SQL optimization: filter early, join later"><figcaption>SQL optimization: filter early, join later</figcaption></figure><h3 id="what-to-learn-7"><a class="heading-anchor" href="#what-to-learn-7">What to Learn</a></h3><ul><li>LINQ to Entities, filtering, sorting, grouping, joins</li><li>Projection, paging, query execution flow</li></ul><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">// Filter + sort
+var books = context.Books
+    .Where(b =&gt; b.Price &gt; 10)
+    .OrderBy(b =&gt; b.Title)
+    .ToList();
+
+// Projection (fetch only needed columns)
+var names = context.Books
+    .Select(b =&gt; new { b.Id, b.Title })
+    .ToList();
+
+// Group
+var byAuthor = context.Books
+    .GroupBy(b =&gt; b.AuthorId)
+    .Select(g =&gt; new { AuthorId = g.Key, Count = g.Count() })
+    .ToList();
+
+// Pagination
+var page = context.Books
+    .OrderBy(b =&gt; b.Id)
+    .Skip(20)
+    .Take(10)
+    .ToList();</code></pre></div><p>Query execution flow:</p><ol><li>Open connection</li><li>Translate LINQ to SQL</li><li>Execute query</li><li>Map results to entities</li><li>Close connection</li></ol><p>Use <code>ToListAsync()</code> in async apps instead of <code>ToList()</code>.</p><hr class="section-divider"><h2 id="8-loading-related-data"><a class="heading-anchor" href="#8-loading-related-data">8. Loading Related Data</a></h2><figure class="content-figure"><img src="assets/efcore/include-vs-select.jpg" alt="Include vs Select in EF Core"><figcaption>Include vs Select in EF Core</figcaption></figure><figure class="content-figure"><img src="assets/efcore/split-query.jpg" alt="Split query to avoid cartesian explosion"><figcaption>Split query to avoid cartesian explosion</figcaption></figure><h3 id="what-to-learn-8"><a class="heading-anchor" href="#what-to-learn-8">What to Learn</a></h3><ul><li>Eager, lazy, explicit loading</li><li><code>Include</code>, <code>ThenInclude</code>, N+1 problem</li></ul><div class="table-wrap"><table><thead><tr><th>Strategy</th><th>When to use</th></tr></thead><tbody><tr><td>Eager loading</td><td>Related data needed immediately</td></tr><tr><td>Lazy loading</td><td>Related data needed later (requires proxies)</td></tr><tr><td>Explicit loading</td><td>Load related data on demand manually</td></tr></tbody></table></div><p>Eager loading:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var authors = context.Authors
+    .Include(a =&gt; a.Books)
+    .ToList();</code></pre></div><p>Nested include:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var orders = context.Orders
+    .Include(o =&gt; o.Customer)
+    .ThenInclude(c =&gt; c.Address)
+    .ToList();</code></pre></div><p>Explicit loading:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var author = context.Authors.First();
+context.Entry(author).Collection(a =&gt; a.Books).Load();</code></pre></div><p>N+1 problem: loading parent list then querying each child separately. Fix with <code>Include()</code> or projection.</p><hr class="section-divider"><h2 id="9-tracking-and-no-tracking"><a class="heading-anchor" href="#9-tracking-and-no-tracking">9. Tracking and No Tracking</a></h2><figure class="content-figure"><img src="assets/efcore/asnotracking-readonly-queries.jpg" alt="Use AsNoTracking for read-only queries"><figcaption>Use AsNoTracking for read-only queries</figcaption></figure><h3 id="what-to-learn-9"><a class="heading-anchor" href="#what-to-learn-9">What to Learn</a></h3><ul><li>Change tracking, entity states</li><li><code>AsNoTracking</code>, <code>AsTracking</code></li></ul><p>EF Core tracks entities by default and detects changes for <code>SaveChanges()</code>.</p><div class="table-wrap"><table><thead><tr><th>State</th><th>Meaning</th></tr></thead><tbody><tr><td>Added</td><td>Will be inserted</td></tr><tr><td>Modified</td><td>Will be updated</td></tr><tr><td>Deleted</td><td>Will be deleted</td></tr><tr><td>Unchanged</td><td>No changes</td></tr><tr><td>Detached</td><td>Not tracked</td></tr></tbody></table></div><p>Read-only query (faster, no tracking overhead):</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var books = context.Books
+    .AsNoTracking()
+    .Where(b =&gt; b.Price &gt; 10)
+    .ToList();</code></pre></div><p>Check entity state:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var state = context.Entry(book).State;  // Modified, Added, etc.</code></pre></div><p>Use tracking for updates; use <code>AsNoTracking()</code> for read-only APIs and reports.</p><hr class="section-divider"><h2 id="10-crud-operations"><a class="heading-anchor" href="#10-crud-operations">10. CRUD Operations</a></h2><figure class="content-figure"><img src="assets/efcore/execute-update-delete-bulk.jpg" alt="ExecuteUpdate and ExecuteDelete for bulk operations"><figcaption>ExecuteUpdate and ExecuteDelete for bulk operations</figcaption></figure><figure class="content-figure"><img src="assets/efcore/use-projections-dto.jpg" alt="Use projections with EF Core for performance"><figcaption>Use projections with EF Core for performance</figcaption></figure><figure class="content-figure"><img src="assets/efcore/projection-performance-comparison.jpg" alt="Projection vs full entity loading performance"><figcaption>Projection vs full entity loading performance</figcaption></figure><h3 id="what-to-learn-10"><a class="heading-anchor" href="#what-to-learn-10">What to Learn</a></h3><ul><li>Insert, read, update, delete</li><li><code>SaveChanges</code>, <code>SaveChangesAsync</code></li></ul><p>Create:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var book = new Book { Title = &quot;EF Core Guide&quot;, Price = 29.99m };
+context.Books.Add(book);
+await context.SaveChangesAsync();</code></pre></div><p>Read:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var book = await context.Books.FindAsync(1);
+var list = await context.Books.Where(b =&gt; b.Price &gt; 10).ToListAsync();</code></pre></div><p>Update:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var book = await context.Books.FindAsync(1);
+book.Price = 19.99m;
+await context.SaveChangesAsync();</code></pre></div><p>Delete:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var book = await context.Books.FindAsync(1);
+context.Books.Remove(book);
+await context.SaveChangesAsync();</code></pre></div><p>Bulk delete (EF Core 7+):</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">await context.Books.Where(b =&gt; b.Price == 0).ExecuteDeleteAsync();</code></pre></div><hr class="section-divider"><h2 id="11-transactions"><a class="heading-anchor" href="#11-transactions">11. Transactions</a></h2><figure class="content-figure"><img src="assets/efcore/transaction-isolation-levels.png" alt="Transaction isolation levels comparison"><figcaption>Transaction isolation levels comparison</figcaption></figure><h3 id="what-to-learn-11"><a class="heading-anchor" href="#what-to-learn-11">What to Learn</a></h3><ul><li>Default transaction, manual transactions</li><li><code>BeginTransaction</code>, commit, rollback</li></ul><p><code>SaveChanges()</code> runs inside a transaction by default.</p><p>Manual transaction:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">using var transaction = await context.Database.BeginTransactionAsync();
+try
+{
+    context.Books.Add(new Book { Title = &quot;A&quot; });
+    context.Authors.Add(new Author { Name = &quot;John&quot; });
+    await context.SaveChangesAsync();
+    await transaction.CommitAsync();
+}
+catch
+{
+    await transaction.RollbackAsync();
+    throw;
+}</code></pre></div><p><code>TransactionScope</code> for distributed transactions across multiple resources.</p><hr class="section-divider"><h2 id="12-concurrency"><a class="heading-anchor" href="#12-concurrency">12. Concurrency</a></h2><h3 id="what-to-learn-12"><a class="heading-anchor" href="#what-to-learn-12">What to Learn</a></h3><ul><li>Optimistic vs pessimistic concurrency</li><li>Row version, concurrency tokens</li><li><code>DbUpdateConcurrencyException</code></li></ul><p>Optimistic concurrency (default in EF Core):</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public class Product
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+
+    [Timestamp]
+    public byte[] RowVersion { get; set; }
+}</code></pre></div><p>Handle conflict:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">try
+{
+    await context.SaveChangesAsync();
+}
+catch (DbUpdateConcurrencyException)
+{
+    // Reload entity or ask user to retry
+}</code></pre></div><p>Pessimistic (raw SQL lock):</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var emp = context.Employees
+    .FromSqlRaw(&quot;SELECT * FROM Employees WITH (UPDLOCK) WHERE Id = {0}&quot;, id)
+    .FirstOrDefault();</code></pre></div><hr class="section-divider"><h2 id="13-performance-optimization"><a class="heading-anchor" href="#13-performance-optimization">13. Performance Optimization</a></h2><figure class="content-figure"><img src="assets/efcore/ef-core-performance-11-rules.jpg" alt="11 rules to optimize EF Core performance"><figcaption>11 rules to optimize EF Core performance</figcaption></figure><figure class="content-figure"><img src="assets/efcore/ef-core-performance-mistakes-8.jpg" alt="8 EF Core mistakes that hurt performance"><figcaption>8 EF Core mistakes that hurt performance</figcaption></figure><figure class="content-figure"><img src="assets/efcore/pagination-linq-to-sql.jpg" alt="Pagination in EF Core with LINQ to SQL"><figcaption>Pagination in EF Core with LINQ to SQL</figcaption></figure><figure class="content-figure"><img src="assets/efcore/compiled-queries.jpg" alt="Compiled queries in EF Core"><figcaption>Compiled queries in EF Core</figcaption></figure><h3 id="what-to-learn-13"><a class="heading-anchor" href="#what-to-learn-13">What to Learn</a></h3><ul><li><code>AsNoTracking</code>, projection, pagination</li><li>Compiled queries, split queries, indexes, N+1 avoidance</li></ul><p>Key tips:</p><ul><li>Use <code>AsNoTracking()</code> for read-only queries</li><li>Use <code>Select()</code> to fetch only needed columns</li><li>Use <code>Include()</code> only when related data is required</li><li>Add indexes on frequently filtered columns</li><li>Use pagination for large datasets</li></ul><p>Compiled query (reuses query plan):</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">private static readonly Func&lt;AppDbContext, int, Task&lt;Book?&gt;&gt; GetBookById =
+    EF.CompileAsyncQuery((AppDbContext ctx, int id) =&gt;
+        ctx.Books.FirstOrDefault(b =&gt; b.Id == id));</code></pre></div><p>Split query (avoids cartesian explosion with multiple includes):</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var authors = context.Authors
+    .Include(a =&gt; a.Books)
+    .AsSplitQuery()
+    .ToList();</code></pre></div><p>Connection resiliency:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">options.UseSqlServer(connectionString, sql =&gt;
+    sql.EnableRetryOnFailure(maxRetryCount: 3));</code></pre></div><hr class="section-divider"><h2 id="14-raw-sql-and-stored-procedures"><a class="heading-anchor" href="#14-raw-sql-and-stored-procedures">14. Raw SQL and Stored Procedures</a></h2><figure class="content-figure"><img src="assets/efcore/prevent-sql-injection-fromsql.jpg" alt="Prevent SQL injection using EF Core FromSql"><figcaption>Prevent SQL injection using EF Core FromSql</figcaption></figure><figure class="content-figure"><img src="assets/efcore/dapper-why-use.jpg" alt="Why use Dapper for lightweight data access"><figcaption>Why use Dapper for lightweight data access</figcaption></figure><h3 id="what-to-learn-14"><a class="heading-anchor" href="#what-to-learn-14">What to Learn</a></h3><ul><li><code>FromSqlRaw</code>, <code>FromSqlInterpolated</code></li><li>Stored procedures, SQL injection prevention</li></ul><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">// Parameterized (safe)
+var books = context.Books
+    .FromSqlInterpolated($&quot;SELECT * FROM Books WHERE Price &gt; {minPrice}&quot;)
+    .ToList();
+
+// Stored procedure
+var results = context.Books
+    .FromSqlRaw(&quot;EXEC GetBooksByAuthor @AuthorId = {0}&quot;, authorId)
+    .ToList();
+
+// Execute non-query
+await context.Database.ExecuteSqlRawAsync(
+    &quot;UPDATE Books SET Price = Price * 1.1 WHERE CategoryId = {0}&quot;, categoryId);</code></pre></div><p>Always use parameters. Never concatenate user input into SQL strings.</p><hr class="section-divider"><h2 id="15-repository-and-unit-of-work"><a class="heading-anchor" href="#15-repository-and-unit-of-work">15. Repository and Unit of Work</a></h2><h3 id="what-to-learn-15"><a class="heading-anchor" href="#what-to-learn-15">What to Learn</a></h3><ul><li>Repository pattern, Unit of Work</li><li>When it helps vs when it adds unnecessary abstraction</li></ul><p><code>DbContext</code> already acts as Unit of Work — it tracks changes and saves them together via <code>SaveChanges()</code>.</p><p>Simple repository:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public interface IBookRepository
+{
+    Task&lt;Book?&gt; GetByIdAsync(int id);
+    Task AddAsync(Book book);
+    Task SaveAsync();
+}
+
+public class BookRepository : IBookRepository
+{
+    private readonly AppDbContext _context;
+    public BookRepository(AppDbContext context) =&gt; _context = context;
+
+    public Task&lt;Book?&gt; GetByIdAsync(int id) =&gt; _context.Books.FindAsync(id);
+    public Task AddAsync(Book book) =&gt; _context.Books.AddAsync(book).AsTask();
+    public Task SaveAsync() =&gt; _context.SaveChangesAsync();
+}</code></pre></div><p>Use repository when you need testability or complex query abstraction. Skip it if it only wraps <code>DbSet</code> without adding value.</p><hr class="section-divider"><h2 id="16-ef-core-with-asp-net-core"><a class="heading-anchor" href="#16-ef-core-with-asp-net-core">16. EF Core with ASP.NET Core</a></h2><h3 id="what-to-learn-16"><a class="heading-anchor" href="#what-to-learn-16">What to Learn</a></h3><ul><li>DI registration, scoped lifetime</li><li>Using EF Core in services, seeding data</li></ul><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">// Program.cs
+builder.Services.AddDbContext&lt;AppDbContext&gt;(options =&gt;
+    options.UseSqlServer(builder.Configuration.GetConnectionString(&quot;Default&quot;)));
+
+// Service
+public class BookService
+{
+    private readonly AppDbContext _context;
+    public BookService(AppDbContext context) =&gt; _context = context;
+
+    public Task&lt;List&lt;Book&gt;&gt; GetAllAsync() =&gt;
+        _context.Books.AsNoTracking().ToListAsync();
+}</code></pre></div><p>DbContext is registered as <strong>Scoped</strong> — one instance per HTTP request.</p><p>Seed data:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+    modelBuilder.Entity&lt;Book&gt;().HasData(
+        new Book { Id = 1, Title = &quot;Sample&quot;, Price = 9.99m });
+}</code></pre></div><hr class="section-divider"><h2 id="17-testing-ef-core-code"><a class="heading-anchor" href="#17-testing-ef-core-code">17. Testing EF Core Code</a></h2><h3 id="what-to-learn-17"><a class="heading-anchor" href="#what-to-learn-17">What to Learn</a></h3><ul><li>In-memory provider, SQLite in-memory</li><li>Integration tests, mocking repositories</li></ul><p>SQLite in-memory (better relational behavior):</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var options = new DbContextOptionsBuilder&lt;AppDbContext&gt;()
+    .UseSqlite(&quot;DataSource=:memory:&quot;)
+    .Options;
+
+using var context = new AppDbContext(options);
+context.Database.OpenConnection();
+context.Database.EnsureCreated();
+
+context.Books.Add(new Book { Title = &quot;Test&quot; });
+await context.SaveChangesAsync();
+
+Assert.Equal(1, context.Books.Count());</code></pre></div><p>EF Core InMemory (simple unit tests, not full SQL behavior):</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var options = new DbContextOptionsBuilder&lt;AppDbContext&gt;()
+    .UseInMemoryDatabase(&quot;TestDb&quot;)
+    .Options;</code></pre></div><p>Prefer SQLite in-memory or a real test database for integration tests.</p><hr class="section-divider"><h2 id="18-advanced-ef-core-topics"><a class="heading-anchor" href="#18-advanced-ef-core-topics">18. Advanced EF Core Topics</a></h2><figure class="content-figure"><img src="assets/efcore/global-query-filters.jpg" alt="EF Core global query filters"><figcaption>EF Core global query filters</figcaption></figure><figure class="content-figure"><img src="assets/efcore/pgvector-semantic-search.jpg" alt="pgvector semantic search with PostgreSQL in .NET"><figcaption>pgvector semantic search with PostgreSQL in .NET</figcaption></figure><h3 id="what-to-learn-18"><a class="heading-anchor" href="#what-to-learn-18">What to Learn</a></h3><ul><li>Global query filters, soft delete</li><li>Interceptors, value converters</li><li>Inheritance mapping (TPH, TPT, TPC)</li></ul><p>Soft delete with global filter:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public class Book
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public bool IsDeleted { get; set; }
+}
+
+// OnModelCreating
+modelBuilder.Entity&lt;Book&gt;().HasQueryFilter(b =&gt; !b.IsDeleted);</code></pre></div><p>SaveChanges interceptor for audit:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public class AuditInterceptor : SaveChangesInterceptor
+{
+    public override InterceptionResult&lt;int&gt; SavingChanges(
+        DbContextEventData eventData, InterceptionResult&lt;int&gt; result)
+    {
+        // Set CreatedDate, ModifiedDate, etc.
+        return base.SavingChanges(eventData, result);
+    }
+}</code></pre></div><p>Inheritance — TPH (single table, discriminator column):</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">modelBuilder.Entity&lt;Payment&gt;()
+    .HasDiscriminator&lt;string&gt;(&quot;PaymentType&quot;)
+    .HasValue&lt;CreditCardPayment&gt;(&quot;Credit&quot;)
+    .HasValue&lt;PayPalPayment&gt;(&quot;PayPal&quot;);</code></pre></div><hr class="section-divider"><h2 id="19-security-diagnostics-and-best-practices"><a class="heading-anchor" href="#19-security-diagnostics-and-best-practices">19. Security, Diagnostics, and Best Practices</a></h2><h3 id="what-to-learn-19"><a class="heading-anchor" href="#what-to-learn-19">What to Learn</a></h3><ul><li>SQL injection prevention</li><li>Sensitive data logging, detailed errors</li><li>Async queries, least privilege, input validation</li></ul><p>Never enable sensitive logging in production:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">// Development only
+options.UseSqlServer(connectionString)
+    .EnableDetailedErrors()
+    .EnableSensitiveDataLogging();  // shows parameter values — dev only</code></pre></div><p>Best practices:</p><ul><li>Use parameterized queries (<code>FromSqlInterpolated</code>, LINQ)</li><li>Use <code>AsNoTracking()</code> for read-only endpoints</li><li>Use pagination for large result sets</li><li>Keep DbContext scoped per request</li><li>Use concurrency tokens for shared data updates</li><li>Validate input before saving to prevent over-posting</li><li>Use least-privilege database accounts in production</li><li>Prefer <code>SaveChangesAsync()</code> and async LINQ methods</li></ul><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">// Safe async read
+var books = await context.Books
+    .AsNoTracking()
+    .Where(b =&gt; b.Title.Contains(search))
+    .Take(50)
+    .ToListAsync();</code></pre></div>
+    </main>
+  </div>
+  <a class="top-link" href="#top">Top</a>
+  <script>
+    document.querySelectorAll('.toc-toggle').forEach((button) => {
+      button.addEventListener('click', (event) => {
+        if (event.target.closest('.toc-title')) return;
+        const children = button.nextElementSibling;
+        const expanded = button.getAttribute('aria-expanded') === 'true';
+        button.setAttribute('aria-expanded', String(!expanded));
+        children.classList.toggle('collapsed', expanded);
+      });
+    });
+
+    document.querySelectorAll('.copy-btn').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const code = button.closest('.code-block').querySelector('pre code').innerText;
+        await navigator.clipboard.writeText(code);
+        const old = button.innerText;
+        button.innerText = 'Copied';
+        setTimeout(() => button.innerText = old, 1200);
+      });
+    });
+  </script>
+</body>
+</html>
