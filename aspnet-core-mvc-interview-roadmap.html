@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -134,6 +134,7 @@
       aside { position: relative; height: auto; max-height: 420px; }
       main { padding: 28px 20px 84px; }
     }
+  
   </style>
 </head>
 <body>
@@ -142,27 +143,172 @@
       <a class="home-link" href="index.html">← All Courses</a>
       <h2 class="brand">Aspnet Core Mvc Interview Roadmap</h2>
       <nav class="toc" aria-label="Table of contents">
-        <a class="toc-link level-1" href="#asp-net-core-learning-roadmap-for-interview-preparation">ASP.NET Core Learning Roadmap for Interview Preparation</a><a class="toc-link level-2" href="#goal">Goal</a><a class="toc-link level-2" href="#topic-index">Topic Index</a><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#1-asp-net-core-basics">1. ASP.NET Core Basics</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn">What to Learn</a><a class="toc-link level-3" href="#web-forms-vs-asp-net-mvc-5-vs-asp-net-core-mvc">Web Forms vs ASP.NET MVC 5 vs ASP.NET Core MVC</a><a class="toc-link level-3" href="#wwwroot-folder"><code>wwwroot</code> Folder</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#2-hosting-kestrel-and-iis">2. Hosting, Kestrel, and IIS</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-2">What to Learn</a><a class="toc-link level-3" href="#kestrel-flow">Kestrel Flow</a><a class="toc-link level-3" href="#kestrel-features">Kestrel Features</a><a class="toc-link level-3" href="#why-kestrel-when-iis-exists">Why Kestrel When IIS Exists?</a><a class="toc-link level-3" href="#in-process-vs-out-of-process-hosting">In-Process vs Out-of-Process Hosting</a><a class="toc-link level-3" href="#iis-vs-kestrel">IIS vs Kestrel</a><a class="toc-link level-3" href="#does-kestrel-replace-iis">Does Kestrel Replace IIS?</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#3-mvc-architecture">3. MVC Architecture</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-3">What to Learn</a><a class="toc-link level-3" href="#mvc-flow">MVC Flow</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#4-request-pipeline-and-middleware">4. Request Pipeline and Middleware</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-4">What to Learn</a><a class="toc-link level-3" href="#middleware-flow">Middleware Flow</a><a class="toc-link level-3" href="#app-run-app-use-and-app-map"><code>app.Run()</code>, <code>app.Use()</code>, and <code>app.Map()</code></a><a class="toc-link level-3" href="#request-delegate">Request Delegate</a><a class="toc-link level-3" href="#common-built-in-middleware">Common Built-In Middleware</a><a class="toc-link level-3" href="#custom-middleware-example">Custom Middleware Example</a><a class="toc-link level-3" href="#startup-cs-configureservices-and-configure"><code>Startup.cs</code>, <code>ConfigureServices</code>, and <code>Configure</code></a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#5-routing">5. Routing</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-5">What to Learn</a><a class="toc-link level-3" href="#conventional-routing">Conventional Routing</a><a class="toc-link level-3" href="#attribute-routing">Attribute Routing</a><a class="toc-link level-3" href="#routing-types">Routing Types</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#6-controllers-and-actions">6. Controllers and Actions</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-6">What to Learn</a><a class="toc-link level-3" href="#controller-vs-controllerbase"><code>Controller</code> vs <code>ControllerBase</code></a><a class="toc-link level-3" href="#iactionresult-vs-actionresult"><code>IActionResult</code> vs <code>ActionResult&lt;T&gt;</code></a><a class="toc-link level-3" href="#common-http-status-code-helpers">Common HTTP Status Code Helpers</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#7-mvc-views-and-data-passing">7. MVC Views and Data Passing</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-7">What to Learn</a><a class="toc-link level-3" href="#passing-model-to-view">Passing Model to View</a><a class="toc-link level-3" href="#strongly-typed-views">Strongly Typed Views</a><a class="toc-link level-3" href="#asp-net-mvc-data-passing-types">ASP.NET MVC Data Passing Types</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#8-web-api-fundamentals">8. Web API Fundamentals</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-8">What to Learn</a><a class="toc-link level-3" href="#web-api-advantages">Web API Advantages</a><a class="toc-link level-3" href="#rest-constraints">REST Constraints</a><a class="toc-link level-3" href="#common-http-methods">Common HTTP Methods</a><a class="toc-link level-3" href="#example-web-api-controller">Example Web API Controller</a><a class="toc-link level-3" href="#web-api-vs-mvc-controller">Web API vs MVC Controller</a><a class="toc-link level-3" href="#content-negotiation">Content Negotiation</a><a class="toc-link level-3" href="#web-api-vs-wcf">Web API vs WCF</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#9-model-binding-and-validation">9. Model Binding and Validation</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-9">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#10-dependency-injection">10. Dependency Injection</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-10">What to Learn</a><a class="toc-link level-3" href="#problems-without-di">Problems Without DI</a><a class="toc-link level-3" href="#why-use-di-in-net">Why Use DI in .NET?</a><a class="toc-link level-3" href="#di-types">DI Types</a><a class="toc-link level-3" href="#di-implementation-steps">DI Implementation Steps</a><a class="toc-link level-3" href="#service-lifetimes">Service Lifetimes</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#11-configuration-and-options-pattern">11. Configuration and Options Pattern</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-11">What to Learn</a><a class="toc-link level-3" href="#example-appsettings-json">Example <code>appsettings.json</code></a><a class="toc-link level-3" href="#reading-configuration-using-iconfiguration">Reading Configuration Using <code>IConfiguration</code></a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#12-logging-and-error-handling">12. Logging and Error Handling</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-12">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#13-filters">13. Filters</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-13">What to Learn</a><a class="toc-link level-3" href="#middleware-vs-filter">Middleware vs Filter</a><a class="toc-link level-3" href="#middleware-and-filter-types">Middleware and Filter Types</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#14-authentication-authorization-and-jwt">14. Authentication, Authorization, and JWT</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-14">What to Learn</a><a class="toc-link level-3" href="#authentication-vs-authorization">Authentication vs Authorization</a><a class="toc-link level-3" href="#token-based-authentication-flow">Token-Based Authentication Flow</a><a class="toc-link level-3" href="#jwt-token">JWT Token</a><a class="toc-link level-3" href="#claims-roles-identity-and-principal">Claims, Roles, Identity, and Principal</a><a class="toc-link level-3" href="#sensitive-data-in-jwt">Sensitive Data in JWT</a><a class="toc-link level-3" href="#creating-jwt-token-example">Creating JWT Token Example</a><a class="toc-link level-3" href="#authorize-attribute">Authorize Attribute</a><a class="toc-link level-3" href="#sending-token-from-client">Sending Token From Client</a><a class="toc-link level-3" href="#access-token-vs-refresh-token">Access Token vs Refresh Token</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#15-oauth-openid-connect-and-sso">15. OAuth, OpenID Connect, and SSO</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-15">What to Learn</a><a class="toc-link level-3" href="#main-difference">Main Difference</a><a class="toc-link level-3" href="#oauth">OAuth</a><a class="toc-link level-3" href="#openid-connect">OpenID Connect</a><a class="toc-link level-3" href="#real-login-flow">Real Login Flow</a><a class="toc-link level-3" href="#oauth-vs-openid-vs-openid-connect-vs-jwt">OAuth vs OpenID vs OpenID Connect vs JWT</a><a class="toc-link level-3" href="#microsoft-identity-platform-and-entra-id">Microsoft Identity Platform and Entra ID</a><a class="toc-link level-3" href="#identityserver4-and-microsoft-entra-id">IdentityServer4 and Microsoft Entra ID</a><a class="toc-link level-3" href="#sso">SSO</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#16-cookies-session-tempdata-viewdata-and-viewbag">16. Cookies, Session, TempData, ViewData, and ViewBag</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-16">What to Learn</a><a class="toc-link level-3" href="#cookies">Cookies</a><a class="toc-link level-3" href="#session-management">Session Management</a><a class="toc-link level-3" href="#session-vs-cookie">Session vs Cookie</a><a class="toc-link level-3" href="#session-management-techniques">Session Management Techniques</a><a class="toc-link level-3" href="#tempdata">TempData</a><a class="toc-link level-3" href="#keep-vs-peek"><code>Keep()</code> vs <code>Peek()</code></a><a class="toc-link level-3" href="#tempdata-vs-viewdata">TempData vs ViewData</a><a class="toc-link level-3" href="#tempdata-vs-session">TempData vs Session</a><a class="toc-link level-3" href="#httpcontext">HttpContext</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#17-minimal-apis">17. Minimal APIs</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-17">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#18-file-upload-and-download">18. File Upload and Download</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-18">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#19-background-services">19. Background Services</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-19">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#20-caching">20. Caching</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-20">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#21-security-best-practices">21. Security Best Practices</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-21">What to Learn</a><a class="toc-link level-3" href="#securing-web-apis">Securing Web APIs</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#22-testing-asp-net-core-applications">22. Testing ASP.NET Core Applications</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-22">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#23-deployment-and-hosting">23. Deployment and Hosting</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-23">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#24-performance-and-best-practices">24. Performance and Best Practices</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-24">What to Learn</a><a class="toc-link level-3" href="#async-threads-concurrency-and-parallelism">Async, Threads, Concurrency, and Parallelism</a></div></div><a class="toc-link level-2" href="#suggested-learning-order">Suggested Learning Order</a><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#weekly-study-plan">Weekly Study Plan</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#week-1-asp-net-core-foundation">Week 1: ASP.NET Core Foundation</a><a class="toc-link level-3" href="#week-2-mvc-and-web-api">Week 2: MVC and Web API</a><a class="toc-link level-3" href="#week-3-application-services">Week 3: Application Services</a><a class="toc-link level-3" href="#week-4-state-and-security">Week 4: State and Security</a><a class="toc-link level-3" href="#week-5-advanced-and-practical-topics">Week 5: Advanced and Practical Topics</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#practical-project-preparation">Practical Project Preparation</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-build">What to Build</a></div></div><a class="toc-link level-2" href="#final-preparation-checklist">Final Preparation Checklist</a>
+        <a class="toc-link level-1" href="#asp-net-core-learning-roadmap-for-interview-preparation">ASP.NET Core Learning Roadmap for Interview Preparation</a><a class="toc-link level-2" href="#goal">Goal</a><a class="toc-link level-2" href="#topic-index">Topic Index</a><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#1-asp-net-core-basics">1. ASP.NET Core Basics</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn">What to Learn</a><a class="toc-link level-3" href="#web-forms-vs-asp-net-mvc-5-vs-asp-net-core-mvc">Web Forms vs ASP.NET MVC 5 vs ASP.NET Core MVC</a><a class="toc-link level-3" href="#wwwroot-folder">`wwwroot` Folder</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#2-hosting-kestrel-and-iis">2. Hosting, Kestrel, and IIS</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-2">What to Learn</a><a class="toc-link level-3" href="#kestrel-flow">Kestrel Flow</a><a class="toc-link level-3" href="#kestrel-features">Kestrel Features</a><a class="toc-link level-3" href="#why-kestrel-when-iis-exists">Why Kestrel When IIS Exists?</a><a class="toc-link level-3" href="#in-process-vs-out-of-process-hosting">In-Process vs Out-of-Process Hosting</a><a class="toc-link level-3" href="#iis-vs-kestrel">IIS vs Kestrel</a><a class="toc-link level-3" href="#does-kestrel-replace-iis">Does Kestrel Replace IIS?</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#3-mvc-architecture">3. MVC Architecture</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-3">What to Learn</a><a class="toc-link level-3" href="#mvc-flow">MVC Flow</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#4-request-pipeline-and-middleware">4. Request Pipeline and Middleware</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-4">What to Learn</a><a class="toc-link level-3" href="#middleware-flow">Middleware Flow</a><a class="toc-link level-3" href="#app-run-app-use-and-app-map">`app.Run()`, `app.Use()`, and `app.Map()`</a><a class="toc-link level-3" href="#request-delegate">Request Delegate</a><a class="toc-link level-3" href="#common-built-in-middleware">Common Built-In Middleware</a><a class="toc-link level-3" href="#custom-middleware-example">Custom Middleware Example</a><a class="toc-link level-3" href="#startup-cs-configureservices-and-configure">`Startup.cs`, `ConfigureServices`, and `Configure`</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#5-routing">5. Routing</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-5">What to Learn</a><a class="toc-link level-3" href="#conventional-routing">Conventional Routing</a><a class="toc-link level-3" href="#attribute-routing">Attribute Routing</a><a class="toc-link level-3" href="#routing-types">Routing Types</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#6-controllers-and-actions">6. Controllers and Actions</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-6">What to Learn</a><a class="toc-link level-3" href="#controller-vs-controllerbase">`Controller` vs `ControllerBase`</a><a class="toc-link level-3" href="#iactionresult-vs-actionresult">`IActionResult` vs `ActionResult<T>`</a><a class="toc-link level-3" href="#common-http-status-code-helpers">Common HTTP Status Code Helpers</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#7-mvc-views-and-data-passing">7. MVC Views and Data Passing</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-7">What to Learn</a><a class="toc-link level-3" href="#passing-model-to-view">Passing Model to View</a><a class="toc-link level-3" href="#strongly-typed-views">Strongly Typed Views</a><a class="toc-link level-3" href="#asp-net-mvc-data-passing-types">ASP.NET MVC Data Passing Types</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#8-web-api-fundamentals">8. Web API Fundamentals</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-8">What to Learn</a><a class="toc-link level-3" href="#web-api-advantages">Web API Advantages</a><a class="toc-link level-3" href="#rest-constraints">REST Constraints</a><a class="toc-link level-3" href="#common-http-methods">Common HTTP Methods</a><a class="toc-link level-3" href="#example-web-api-controller">Example Web API Controller</a><a class="toc-link level-3" href="#web-api-vs-mvc-controller">Web API vs MVC Controller</a><a class="toc-link level-3" href="#content-negotiation">Content Negotiation</a><a class="toc-link level-3" href="#web-api-vs-wcf">Web API vs WCF</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#9-model-binding-and-validation">9. Model Binding and Validation</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-9">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#10-dependency-injection">10. Dependency Injection</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-10">What to Learn</a><a class="toc-link level-3" href="#problems-without-di">Problems Without DI</a><a class="toc-link level-3" href="#why-use-di-in-net">Why Use DI in .NET?</a><a class="toc-link level-3" href="#di-types">DI Types</a><a class="toc-link level-3" href="#di-implementation-steps">DI Implementation Steps</a><a class="toc-link level-3" href="#service-lifetimes">Service Lifetimes</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#11-configuration-and-options-pattern">11. Configuration and Options Pattern</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-11">What to Learn</a><a class="toc-link level-3" href="#example-appsettings-json">Example `appsettings.json`</a><a class="toc-link level-3" href="#reading-configuration-using-iconfiguration">Reading Configuration Using `IConfiguration`</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#12-logging-and-error-handling">12. Logging and Error Handling</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-12">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#13-filters">13. Filters</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-13">What to Learn</a><a class="toc-link level-3" href="#middleware-vs-filter">Middleware vs Filter</a><a class="toc-link level-3" href="#middleware-and-filter-types">Middleware and Filter Types</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#14-authentication-authorization-and-jwt">14. Authentication, Authorization, and JWT</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-14">What to Learn</a><a class="toc-link level-3" href="#authentication-vs-authorization">Authentication vs Authorization</a><a class="toc-link level-3" href="#token-based-authentication-flow">Token-Based Authentication Flow</a><a class="toc-link level-3" href="#jwt-token">JWT Token</a><a class="toc-link level-3" href="#claims-roles-identity-and-principal">Claims, Roles, Identity, and Principal</a><a class="toc-link level-3" href="#sensitive-data-in-jwt">Sensitive Data in JWT</a><a class="toc-link level-3" href="#creating-jwt-token-example">Creating JWT Token Example</a><a class="toc-link level-3" href="#authorize-attribute">Authorize Attribute</a><a class="toc-link level-3" href="#sending-token-from-client">Sending Token From Client</a><a class="toc-link level-3" href="#access-token-vs-refresh-token">Access Token vs Refresh Token</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#15-oauth-openid-connect-and-sso">15. OAuth, OpenID Connect, and SSO</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-15">What to Learn</a><a class="toc-link level-3" href="#main-difference">Main Difference</a><a class="toc-link level-3" href="#oauth">OAuth</a><a class="toc-link level-3" href="#openid-connect">OpenID Connect</a><a class="toc-link level-3" href="#real-login-flow">Real Login Flow</a><a class="toc-link level-3" href="#oauth-vs-openid-vs-openid-connect-vs-jwt">OAuth vs OpenID vs OpenID Connect vs JWT</a><a class="toc-link level-3" href="#microsoft-identity-platform-and-entra-id">Microsoft Identity Platform and Entra ID</a><a class="toc-link level-3" href="#identityserver4-and-microsoft-entra-id">IdentityServer4 and Microsoft Entra ID</a><a class="toc-link level-3" href="#sso">SSO</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#16-cookies-session-tempdata-viewdata-and-viewbag">16. Cookies, Session, TempData, ViewData, and ViewBag</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-16">What to Learn</a><a class="toc-link level-3" href="#cookies">Cookies</a><a class="toc-link level-3" href="#session-management">Session Management</a><a class="toc-link level-3" href="#session-vs-cookie">Session vs Cookie</a><a class="toc-link level-3" href="#session-management-techniques">Session Management Techniques</a><a class="toc-link level-3" href="#tempdata">TempData</a><a class="toc-link level-3" href="#keep-vs-peek">`Keep()` vs `Peek()`</a><a class="toc-link level-3" href="#tempdata-vs-viewdata">TempData vs ViewData</a><a class="toc-link level-3" href="#tempdata-vs-session">TempData vs Session</a><a class="toc-link level-3" href="#httpcontext">HttpContext</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#17-minimal-apis">17. Minimal APIs</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-17">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#18-file-upload-and-download">18. File Upload and Download</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-18">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#19-background-services">19. Background Services</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-19">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#20-caching">20. Caching</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-20">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#21-security-best-practices">21. Security Best Practices</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-21">What to Learn</a><a class="toc-link level-3" href="#securing-web-apis">Securing Web APIs</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#22-testing-asp-net-core-applications">22. Testing ASP.NET Core Applications</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-22">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#23-deployment-and-hosting">23. Deployment and Hosting</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-23">What to Learn</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#24-performance-and-best-practices">24. Performance and Best Practices</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-learn-24">What to Learn</a><a class="toc-link level-3" href="#async-threads-concurrency-and-parallelism">Async, Threads, Concurrency, and Parallelism</a></div></div><a class="toc-link level-2" href="#suggested-learning-order">Suggested Learning Order</a><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#weekly-study-plan">Weekly Study Plan</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#week-1-asp-net-core-foundation">Week 1: ASP.NET Core Foundation</a><a class="toc-link level-3" href="#week-2-mvc-and-web-api">Week 2: MVC and Web API</a><a class="toc-link level-3" href="#week-3-application-services">Week 3: Application Services</a><a class="toc-link level-3" href="#week-4-state-and-security">Week 4: State and Security</a><a class="toc-link level-3" href="#week-5-advanced-and-practical-topics">Week 5: Advanced and Practical Topics</a></div></div><div class="toc-group"><button type="button" class="toc-toggle level-2" aria-expanded="false"><span class="arrow">▶</span><a class="toc-title" href="#practical-project-preparation">Practical Project Preparation</a></button><div class="toc-children collapsed"><a class="toc-link level-3" href="#what-to-build">What to Build</a></div></div><a class="toc-link level-2" href="#final-preparation-checklist">Final Preparation Checklist</a>
       </nav>
     </aside>
     <main id="top">
-      <h1 id="asp-net-core-learning-roadmap-for-interview-preparation"><a class="heading-anchor" href="#asp-net-core-learning-roadmap-for-interview-preparation">ASP.NET Core Learning Roadmap for Interview Preparation</a></h1><h2 id="goal"><a class="heading-anchor" href="#goal">Goal</a></h2><p>&lt;p style=&quot;color:#374151;&quot;&gt; This roadmap is focused on &lt;strong style=&quot;color:#16a34a;&quot;&gt;ASP.NET Core interview preparation&lt;/strong&gt;. &lt;/p&gt;</p><hr class="section-divider"><h2 id="topic-index"><a class="heading-anchor" href="#topic-index">Topic Index</a></h2><hr class="section-divider"><h2 id="1-asp-net-core-basics"><a class="heading-anchor" href="#1-asp-net-core-basics">1. ASP.NET Core Basics</a></h2><h3 id="what-to-learn"><a class="heading-anchor" href="#what-to-learn">What to Learn</a></h3><ul><li>What is ASP.NET Core?</li><li>Difference between Web Forms, ASP.NET MVC 5, and ASP.NET Core MVC</li><li>Difference between ASP.NET MVC, ASP.NET Web API, and ASP.NET Core</li><li>Cross-platform nature of ASP.NET Core</li><li>Hosting model</li><li>Project structure</li><li><code>Program.cs</code></li><li><code>Startup.cs</code> concept in older ASP.NET Core projects</li><li><code>wwwroot</code> folder</li><li><code>appsettings.json</code></li><li>Environment-specific configuration</li></ul><p>ASP.NET Core is a modern, cross-platform framework for building web applications, MVC applications, Razor Pages, and HTTP APIs.</p><h3 id="web-forms-vs-asp-net-mvc-5-vs-asp-net-core-mvc"><a class="heading-anchor" href="#web-forms-vs-asp-net-mvc-5-vs-asp-net-core-mvc">Web Forms vs ASP.NET MVC 5 vs ASP.NET Core MVC</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Web Forms</th><th>ASP.NET MVC 5</th><th>ASP.NET Core MVC</th></tr></thead><tbody><tr><td>Cross platform</td><td>No</td><td>No</td><td>Yes</td></tr><tr><td>Performance</td><td>Lower due to view state and page lifecycle</td><td>Better than Web Forms</td><td>Best among these options</td></tr><tr><td>Simplicity</td><td>More complicated</td><td>Medium</td><td>Simplified</td></tr><tr><td>Cloud ready</td><td>No</td><td>Partial</td><td>Yes</td></tr><tr><td>HTML control</td><td>Less control</td><td>Good control with Razor</td><td>Good control with Razor</td></tr><tr><td>Configuration</td><td><code>web.config</code></td><td><code>web.config</code></td><td><code>appsettings.json</code></td></tr><tr><td>Dependency injection</td><td>Third-party needed</td><td>Third-party needed</td><td>Built-in</td></tr><tr><td>Self hosting</td><td>No</td><td>No</td><td>Yes</td></tr><tr><td>Static content</td><td>No <code>wwwroot</code> convention</td><td>No <code>wwwroot</code> convention</td><td>Uses <code>wwwroot</code></td></tr><tr><td>Development OS</td><td>Windows only</td><td>Windows only</td><td>Windows, Mac, Linux</td></tr></tbody></table></div><h3 id="wwwroot-folder"><a class="heading-anchor" href="#wwwroot-folder"><code>wwwroot</code> Folder</a></h3><p><code>wwwroot</code> is used to store static files in ASP.NET Core.</p><p>Common static files:</p><ul><li>CSS files</li><li>JavaScript files</li><li>Images</li><li>Fonts</li><li>Static HTML files</li></ul><hr class="section-divider"><h2 id="2-hosting-kestrel-and-iis"><a class="heading-anchor" href="#2-hosting-kestrel-and-iis">2. Hosting, Kestrel, and IIS</a></h2><h3 id="what-to-learn-2"><a class="heading-anchor" href="#what-to-learn-2">What to Learn</a></h3><ul><li>Kestrel web server</li><li>IIS integration</li><li>In-process hosting</li><li>Out-of-process hosting</li><li>Reverse proxy</li><li>IIS vs Kestrel</li><li>Production hosting patterns</li></ul><p>Kestrel is the default cross-platform web server used in ASP.NET Core applications.</p><h3 id="kestrel-flow"><a class="heading-anchor" href="#kestrel-flow">Kestrel Flow</a></h3><figure class="content-figure"><img src="assets/aspnet/kestrel-mvc-request-flow.png" alt="Kestrel and MVC request flow diagram"><figcaption>Kestrel and MVC request flow diagram</figcaption></figure><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">Browser Request
+      <div><p>﻿</p><h1 style="color:#2563eb;" id="asp-net-core-learning-roadmap-for-interview-preparation"><a class="heading-anchor" href="#asp-net-core-learning-roadmap-for-interview-preparation">ASP.NET Core Learning Roadmap for Interview Preparation</a></h1><p></p>
+<h2 id="goal"><a class="heading-anchor" href="#goal">Goal</a></h2><p style="color:#374151;">
+This roadmap is focused on <strong style="color:#16a34a;">ASP.NET Core interview preparation</strong>.
+</p>
+
+<hr class="section-divider"><h2 id="topic-index"><a class="heading-anchor" href="#topic-index">Topic Index</a></h2><ul style="line-height:1.8;">
+  <li><a href="#topic-1"><span style="color:#2563eb;font-weight:700;">1.</span> <span style="color:#111827;">ASP.NET Core Basics</span></a></li>
+  <li><a href="#topic-2"><span style="color:#2563eb;font-weight:700;">2.</span> <span style="color:#111827;">Hosting, Kestrel, and IIS</span></a></li>
+  <li><a href="#topic-3"><span style="color:#2563eb;font-weight:700;">3.</span> <span style="color:#111827;">MVC Architecture</span></a></li>
+  <li><a href="#topic-4"><span style="color:#16a34a;font-weight:700;">4.</span> <span style="color:#111827;">Request Pipeline and Middleware</span></a></li>
+  <li><a href="#topic-5"><span style="color:#16a34a;font-weight:700;">5.</span> <span style="color:#111827;">Routing</span></a></li>
+  <li><a href="#topic-6"><span style="color:#16a34a;font-weight:700;">6.</span> <span style="color:#111827;">Controllers and Actions</span></a></li>
+  <li><a href="#topic-7"><span style="color:#16a34a;font-weight:700;">7.</span> <span style="color:#111827;">MVC Views and Data Passing</span></a></li>
+  <li><a href="#topic-8"><span style="color:#7c3aed;font-weight:700;">8.</span> <span style="color:#111827;">Web API Fundamentals</span></a></li>
+  <li><a href="#topic-9"><span style="color:#7c3aed;font-weight:700;">9.</span> <span style="color:#111827;">Model Binding and Validation</span></a></li>
+  <li><a href="#topic-10"><span style="color:#7c3aed;font-weight:700;">10.</span> <span style="color:#111827;">Dependency Injection</span></a></li>
+  <li><a href="#topic-11"><span style="color:#7c3aed;font-weight:700;">11.</span> <span style="color:#111827;">Configuration and Options Pattern</span></a></li>
+  <li><a href="#topic-12"><span style="color:#dc2626;font-weight:700;">12.</span> <span style="color:#111827;">Logging and Error Handling</span></a></li>
+  <li><a href="#topic-13"><span style="color:#dc2626;font-weight:700;">13.</span> <span style="color:#111827;">Filters</span></a></li>
+  <li><a href="#topic-14"><span style="color:#dc2626;font-weight:700;">14.</span> <span style="color:#111827;">Authentication, Authorization, and JWT</span></a></li>
+  <li><a href="#topic-15"><span style="color:#dc2626;font-weight:700;">15.</span> <span style="color:#111827;">OAuth, OpenID Connect, and SSO</span></a></li>
+  <li><a href="#topic-16"><span style="color:#ea580c;font-weight:700;">16.</span> <span style="color:#111827;">Cookies, Session, TempData, ViewData, and ViewBag</span></a></li>
+  <li><a href="#topic-17"><span style="color:#ea580c;font-weight:700;">17.</span> <span style="color:#111827;">Minimal APIs</span></a></li>
+  <li><a href="#topic-18"><span style="color:#ea580c;font-weight:700;">18.</span> <span style="color:#111827;">File Upload and Download</span></a></li>
+  <li><a href="#topic-19"><span style="color:#ea580c;font-weight:700;">19.</span> <span style="color:#111827;">Background Services</span></a></li>
+  <li><a href="#topic-20"><span style="color:#0891b2;font-weight:700;">20.</span> <span style="color:#111827;">Caching</span></a></li>
+  <li><a href="#topic-21"><span style="color:#0891b2;font-weight:700;">21.</span> <span style="color:#111827;">Security Best Practices</span></a></li>
+  <li><a href="#topic-22"><span style="color:#0891b2;font-weight:700;">22.</span> <span style="color:#111827;">Testing ASP.NET Core Applications</span></a></li>
+  <li><a href="#topic-23"><span style="color:#0891b2;font-weight:700;">23.</span> <span style="color:#111827;">Deployment and Hosting</span></a></li>
+  <li><a href="#topic-24"><span style="color:#0891b2;font-weight:700;">24.</span> <span style="color:#111827;">Performance and Best Practices</span></a></li>
+  <li><a href="#suggested-learning-order"><span style="color:#9333ea;font-weight:700;">Guide:</span> <span style="color:#111827;">Suggested Learning Order</span></a></li>
+  <li><a href="#weekly-study-plan"><span style="color:#9333ea;font-weight:700;">Guide:</span> <span style="color:#111827;">Weekly Study Plan</span></a></li>
+  <li><a href="#practical-project-preparation"><span style="color:#9333ea;font-weight:700;">Guide:</span> <span style="color:#111827;">Practical Project Preparation</span></a></li>
+  <li><a href="#final-preparation-checklist"><span style="color:#9333ea;font-weight:700;">Guide:</span> <span style="color:#111827;">Final Preparation Checklist</span></a></li>
+</ul>
+
+<hr class="section-divider"><p><a id="topic-1"></a></p>
+<h2 id="1-asp-net-core-basics"><a class="heading-anchor" href="#1-asp-net-core-basics">1. ASP.NET Core Basics</a></h2><h3 id="what-to-learn"><a class="heading-anchor" href="#what-to-learn">What to Learn</a></h3><ul>
+<li>What is ASP.NET Core?</li>
+<li>Difference between Web Forms, ASP.NET MVC 5, and ASP.NET Core MVC</li>
+<li>Difference between ASP.NET MVC, ASP.NET Web API, and ASP.NET Core</li>
+<li>Cross-platform nature of ASP.NET Core</li>
+<li>Hosting model</li>
+<li>Project structure</li>
+<li><code>Program.cs</code></li>
+<li><code>Startup.cs</code> concept in older ASP.NET Core projects</li>
+<li><code>wwwroot</code> folder</li>
+<li><code>appsettings.json</code></li>
+<li>Environment-specific configuration</li>
+</ul>
+<p>ASP.NET Core is a modern, cross-platform framework for building web applications, MVC applications, Razor Pages, and HTTP APIs.</p>
+<h3 id="web-forms-vs-asp-net-mvc-5-vs-asp-net-core-mvc"><a class="heading-anchor" href="#web-forms-vs-asp-net-mvc-5-vs-asp-net-core-mvc">Web Forms vs ASP.NET MVC 5 vs ASP.NET Core MVC</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Web Forms</th><th>ASP.NET MVC 5</th><th>ASP.NET Core MVC</th></tr></thead><tbody><tr><td>Cross platform</td><td>No</td><td>No</td><td>Yes</td></tr><tr><td>Performance</td><td>Lower due to view state and page lifecycle</td><td>Better than Web Forms</td><td>Best among these options</td></tr><tr><td>Simplicity</td><td>More complicated</td><td>Medium</td><td>Simplified</td></tr><tr><td>Cloud ready</td><td>No</td><td>Partial</td><td>Yes</td></tr><tr><td>HTML control</td><td>Less control</td><td>Good control with Razor</td><td>Good control with Razor</td></tr><tr><td>Configuration</td><td>`web.config`</td><td>`web.config`</td><td>`appsettings.json`</td></tr><tr><td>Dependency injection</td><td>Third-party needed</td><td>Third-party needed</td><td>Built-in</td></tr><tr><td>Self hosting</td><td>No</td><td>No</td><td>Yes</td></tr><tr><td>Static content</td><td>No `wwwroot` convention</td><td>No `wwwroot` convention</td><td>Uses `wwwroot`</td></tr><tr><td>Development OS</td><td>Windows only</td><td>Windows only</td><td>Windows, Mac, Linux</td></tr></tbody></table></div><h3 id="wwwroot-folder"><a class="heading-anchor" href="#wwwroot-folder">`wwwroot` Folder</a></h3><p><code>wwwroot</code> is used to store static files in ASP.NET Core.</p>
+<p>Common static files:</p>
+<ul>
+<li>CSS files</li>
+<li>JavaScript files</li>
+<li>Images</li>
+<li>Fonts</li>
+<li>Static HTML files</li>
+</ul>
+<hr class="section-divider"><p><a id="topic-2"></a></p>
+<h2 id="2-hosting-kestrel-and-iis"><a class="heading-anchor" href="#2-hosting-kestrel-and-iis">2. Hosting, Kestrel, and IIS</a></h2><h3 id="what-to-learn-2"><a class="heading-anchor" href="#what-to-learn-2">What to Learn</a></h3><ul>
+<li>Kestrel web server</li>
+<li>IIS integration</li>
+<li>In-process hosting</li>
+<li>Out-of-process hosting</li>
+<li>Reverse proxy</li>
+<li>IIS vs Kestrel</li>
+<li>Production hosting patterns</li>
+</ul>
+<p>Kestrel is the default cross-platform web server used in ASP.NET Core applications.</p>
+<h3 id="kestrel-flow"><a class="heading-anchor" href="#kestrel-flow">Kestrel Flow</a></h3><p></p><figure class="content-figure"><img src="assets/aspnet/kestrel-mvc-request-flow.png" alt="Kestrel and MVC request flow diagram"><figcaption>Kestrel and MVC request flow diagram</figcaption></figure><p></p>
+<div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">Browser Request
     -&gt; Kestrel Server
     -&gt; Middleware Pipeline
     -&gt; Controller / Endpoint
     -&gt; Response
-    -&gt; Browser</code></pre></div><h3 id="kestrel-features"><a class="heading-anchor" href="#kestrel-features">Kestrel Features</a></h3><ul><li>Cross-platform</li><li>High performance</li><li>Lightweight</li><li>Asynchronous processing</li><li>Supports HTTP/1.1 and HTTP/2</li><li>Default server in ASP.NET Core</li><li>Often used behind IIS, Nginx, or Apache in production</li></ul><h3 id="why-kestrel-when-iis-exists"><a class="heading-anchor" href="#why-kestrel-when-iis-exists">Why Kestrel When IIS Exists?</a></h3><p>Kestrel was introduced because ASP.NET Core needed a fast, lightweight, cross-platform, and high-performance web server.</p><p>IIS limitations:</p><ul><li>Windows only</li><li>Heavier server model</li><li>Less flexible for cross-platform hosting</li></ul><p>Kestrel advantages:</p><ul><li>Runs on Windows, Linux, and Mac</li><li>High performance</li><li>Lightweight</li><li>Built for ASP.NET Core</li><li>Cloud and container friendly</li><li>Can self-host without IIS</li></ul><h3 id="in-process-vs-out-of-process-hosting"><a class="heading-anchor" href="#in-process-vs-out-of-process-hosting">In-Process vs Out-of-Process Hosting</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>In-Process Hosting</th><th>Out-of-Process Hosting</th></tr></thead><tbody><tr><td>Process</td><td>Runs inside IIS worker process <code>w3wp.exe</code></td><td>Runs outside IIS in <code>dotnet.exe</code></td></tr><tr><td>Performance</td><td>Faster and lower latency</td><td>Slightly slower due to proxy communication</td></tr><tr><td>Platform</td><td>Windows only</td><td>Cross-platform application process</td></tr><tr><td>IIS role</td><td>Hosts the app directly</td><td>Acts as reverse proxy to Kestrel</td></tr></tbody></table></div><h3 id="iis-vs-kestrel"><a class="heading-anchor" href="#iis-vs-kestrel">IIS vs Kestrel</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>IIS</th><th>Kestrel</th></tr></thead><tbody><tr><td>Full form / type</td><td>Internet Information Services</td><td>Cross-platform web server</td></tr><tr><td>Platform</td><td>Windows only</td><td>Windows, Linux, Mac</td></tr><tr><td>Type</td><td>Traditional web server</td><td>Lightweight web server</td></tr><tr><td>Performance</td><td>Good</td><td>Very high</td></tr><tr><td>Cross-platform</td><td>No</td><td>Yes</td></tr><tr><td>ASP.NET Core support</td><td>Through hosting module / reverse proxy</td><td>Native support</td></tr><tr><td>Self hosting</td><td>No</td><td>Yes</td></tr><tr><td>Cloud ready</td><td>Limited</td><td>Yes</td></tr><tr><td>Docker support</td><td>Limited</td><td>Excellent</td></tr><tr><td>Default in ASP.NET Core</td><td>No</td><td>Yes</td></tr><tr><td>Production usage</td><td>IIS + Kestrel</td><td>Usually behind IIS/Nginx/Apache</td></tr></tbody></table></div><h3 id="does-kestrel-replace-iis"><a class="heading-anchor" href="#does-kestrel-replace-iis">Does Kestrel Replace IIS?</a></h3><p>No. In production, IIS, Nginx, or Apache often works as a reverse proxy, and Kestrel does the ASP.NET Core request processing.</p><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">Client Request
+    -&gt; Browser</code></pre></div><h3 id="kestrel-features"><a class="heading-anchor" href="#kestrel-features">Kestrel Features</a></h3><ul>
+<li>Cross-platform</li>
+<li>High performance</li>
+<li>Lightweight</li>
+<li>Asynchronous processing</li>
+<li>Supports HTTP/1.1 and HTTP/2</li>
+<li>Default server in ASP.NET Core</li>
+<li>Often used behind IIS, Nginx, or Apache in production</li>
+</ul>
+<h3 id="why-kestrel-when-iis-exists"><a class="heading-anchor" href="#why-kestrel-when-iis-exists">Why Kestrel When IIS Exists?</a></h3><p>Kestrel was introduced because ASP.NET Core needed a fast, lightweight, cross-platform, and high-performance web server.</p>
+<p>IIS limitations:</p>
+<ul>
+<li>Windows only</li>
+<li>Heavier server model</li>
+<li>Less flexible for cross-platform hosting</li>
+</ul>
+<p>Kestrel advantages:</p>
+<ul>
+<li>Runs on Windows, Linux, and Mac</li>
+<li>High performance</li>
+<li>Lightweight</li>
+<li>Built for ASP.NET Core</li>
+<li>Cloud and container friendly</li>
+<li>Can self-host without IIS</li>
+</ul>
+<h3 id="in-process-vs-out-of-process-hosting"><a class="heading-anchor" href="#in-process-vs-out-of-process-hosting">In-Process vs Out-of-Process Hosting</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>In-Process Hosting</th><th>Out-of-Process Hosting</th></tr></thead><tbody><tr><td>Process</td><td>Runs inside IIS worker process `w3wp.exe`</td><td>Runs outside IIS in `dotnet.exe`</td></tr><tr><td>Performance</td><td>Faster and lower latency</td><td>Slightly slower due to proxy communication</td></tr><tr><td>Platform</td><td>Windows only</td><td>Cross-platform application process</td></tr><tr><td>IIS role</td><td>Hosts the app directly</td><td>Acts as reverse proxy to Kestrel</td></tr></tbody></table></div><h3 id="iis-vs-kestrel"><a class="heading-anchor" href="#iis-vs-kestrel">IIS vs Kestrel</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>IIS</th><th>Kestrel</th></tr></thead><tbody><tr><td>Full form / type</td><td>Internet Information Services</td><td>Cross-platform web server</td></tr><tr><td>Platform</td><td>Windows only</td><td>Windows, Linux, Mac</td></tr><tr><td>Type</td><td>Traditional web server</td><td>Lightweight web server</td></tr><tr><td>Performance</td><td>Good</td><td>Very high</td></tr><tr><td>Cross-platform</td><td>No</td><td>Yes</td></tr><tr><td>ASP.NET Core support</td><td>Through hosting module / reverse proxy</td><td>Native support</td></tr><tr><td>Self hosting</td><td>No</td><td>Yes</td></tr><tr><td>Cloud ready</td><td>Limited</td><td>Yes</td></tr><tr><td>Docker support</td><td>Limited</td><td>Excellent</td></tr><tr><td>Default in ASP.NET Core</td><td>No</td><td>Yes</td></tr><tr><td>Production usage</td><td>IIS + Kestrel</td><td>Usually behind IIS/Nginx/Apache</td></tr></tbody></table></div><h3 id="does-kestrel-replace-iis"><a class="heading-anchor" href="#does-kestrel-replace-iis">Does Kestrel Replace IIS?</a></h3><p>No. In production, IIS, Nginx, or Apache often works as a reverse proxy, and Kestrel does the ASP.NET Core request processing.</p>
+<div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">Client Request
     -&gt; IIS / Nginx / Apache Reverse Proxy
     -&gt; Kestrel Server
     -&gt; ASP.NET Core App
     -&gt; Kestrel
     -&gt; Reverse Proxy
-    -&gt; Client</code></pre></div><p>Reverse proxy benefits:</p><ul><li>SSL handling</li><li>Security</li><li>Load balancing</li><li>Static file handling</li><li>Request filtering</li><li>Process management</li></ul><hr class="section-divider"><h2 id="3-mvc-architecture"><a class="heading-anchor" href="#3-mvc-architecture">3. MVC Architecture</a></h2><h3 id="what-to-learn-3"><a class="heading-anchor" href="#what-to-learn-3">What to Learn</a></h3><ul><li>MVC pattern</li><li>Model</li><li>View</li><li>Controller</li><li>Razor views</li><li>Controller to view flow</li><li>Strongly typed views</li></ul><p>MVC separates an application into Model, View, and Controller.</p><div class="table-wrap"><table><thead><tr><th>Part</th><th>Responsibility</th></tr></thead><tbody><tr><td>Model</td><td>Handles application data and business logic</td></tr><tr><td>View</td><td>Handles UI and display logic</td></tr><tr><td>Controller</td><td>Handles user requests and connects Model with View</td></tr></tbody></table></div><h3 id="mvc-flow"><a class="heading-anchor" href="#mvc-flow">MVC Flow</a></h3><figure class="content-figure"><img src="assets/aspnet/http-stateless-controller-example.png" alt="HTTP stateless behavior with controller example"><figcaption>HTTP stateless behavior with controller example</figcaption></figure><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">User Request
+    -&gt; Client</code></pre></div><p>Reverse proxy benefits:</p>
+<ul>
+<li>SSL handling</li>
+<li>Security</li>
+<li>Load balancing</li>
+<li>Static file handling</li>
+<li>Request filtering</li>
+<li>Process management</li>
+</ul>
+<hr class="section-divider"><p><a id="topic-3"></a></p>
+<h2 id="3-mvc-architecture"><a class="heading-anchor" href="#3-mvc-architecture">3. MVC Architecture</a></h2><h3 id="what-to-learn-3"><a class="heading-anchor" href="#what-to-learn-3">What to Learn</a></h3><ul>
+<li>MVC pattern</li>
+<li>Model</li>
+<li>View</li>
+<li>Controller</li>
+<li>Razor views</li>
+<li>Controller to view flow</li>
+<li>Strongly typed views</li>
+</ul>
+<p>MVC separates an application into Model, View, and Controller.</p>
+<div class="table-wrap"><table><thead><tr><th>Part</th><th>Responsibility</th></tr></thead><tbody><tr><td>Model</td><td>Handles application data and business logic</td></tr><tr><td>View</td><td>Handles UI and display logic</td></tr><tr><td>Controller</td><td>Handles user requests and connects Model with View</td></tr></tbody></table></div><h3 id="mvc-flow"><a class="heading-anchor" href="#mvc-flow">MVC Flow</a></h3><p></p><figure class="content-figure"><img src="assets/aspnet/http-stateless-controller-example.png" alt="HTTP stateless behavior with controller example"><figcaption>HTTP stateless behavior with controller example</figcaption></figure><p></p>
+<div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">User Request
     -&gt; Controller
     -&gt; Model / Service
     -&gt; Controller
     -&gt; View
-    -&gt; HTML Response</code></pre></div><hr class="section-divider"><h2 id="4-request-pipeline-and-middleware"><a class="heading-anchor" href="#4-request-pipeline-and-middleware">4. Request Pipeline and Middleware</a></h2><h3 id="what-to-learn-4"><a class="heading-anchor" href="#what-to-learn-4">What to Learn</a></h3><ul><li>Request pipeline</li><li>Middleware</li><li>Built-in middleware</li><li>Custom middleware</li><li>Middleware order</li><li>Request delegate</li><li><code>Use</code></li><li><code>Run</code></li><li><code>Map</code></li><li><code>UseMiddleware&lt;T&gt;()</code></li><li>Exception handling middleware</li><li>Static files middleware</li><li>Routing middleware</li></ul><p>Middleware is a software component executed during the request-response pipeline in ASP.NET Core.</p><p>Middleware can:</p><ul><li>Intercept HTTP requests</li><li>Modify the request</li><li>Execute processing logic</li><li>Pass control to the next middleware</li><li>Generate a response directly</li><li>Execute logic before and after controller execution</li></ul><h3 id="middleware-flow"><a class="heading-anchor" href="#middleware-flow">Middleware Flow</a></h3><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">Client Request
+    -&gt; HTML Response</code></pre></div><hr class="section-divider"><p><a id="topic-4"></a></p>
+<h2 id="4-request-pipeline-and-middleware"><a class="heading-anchor" href="#4-request-pipeline-and-middleware">4. Request Pipeline and Middleware</a></h2><h3 id="what-to-learn-4"><a class="heading-anchor" href="#what-to-learn-4">What to Learn</a></h3><ul>
+<li>Request pipeline</li>
+<li>Middleware</li>
+<li>Built-in middleware</li>
+<li>Custom middleware</li>
+<li>Middleware order</li>
+<li>Request delegate</li>
+<li><code>Use</code></li>
+<li><code>Run</code></li>
+<li><code>Map</code></li>
+<li><code>UseMiddleware&lt;T&gt;()</code></li>
+<li>Exception handling middleware</li>
+<li>Static files middleware</li>
+<li>Routing middleware</li>
+</ul>
+<p>Middleware is a software component executed during the request-response pipeline in ASP.NET Core.</p>
+<p>Middleware can:</p>
+<ul>
+<li>Intercept HTTP requests</li>
+<li>Modify the request</li>
+<li>Execute processing logic</li>
+<li>Pass control to the next middleware</li>
+<li>Generate a response directly</li>
+<li>Execute logic before and after controller execution</li>
+</ul>
+<h3 id="middleware-flow"><a class="heading-anchor" href="#middleware-flow">Middleware Flow</a></h3><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">Client Request
     -&gt; Middleware 1
     -&gt; Middleware 2
     -&gt; Middleware 3
@@ -170,7 +316,18 @@
     -&gt; Middleware 3
     -&gt; Middleware 2
     -&gt; Middleware 1
-    -&gt; Client Response</code></pre></div><h3 id="app-run-app-use-and-app-map"><a class="heading-anchor" href="#app-run-app-use-and-app-map"><code>app.Run()</code>, <code>app.Use()</code>, and <code>app.Map()</code></a></h3><div class="table-wrap"><table><thead><tr><th>Method</th><th>Purpose</th></tr></thead><tbody><tr><td><code>app.Run()</code></td><td>Terminal middleware. Handles final processing and ends the pipeline. No next middleware runs after it.</td></tr><tr><td><code>app.Use()</code></td><td>Adds middleware that can run before and after the next middleware by calling <code>next()</code>.</td></tr><tr><td><code>app.Map()</code></td><td>Creates a branch in the middleware pipeline based on a URL path segment.</td></tr></tbody></table></div><h3 id="request-delegate"><a class="heading-anchor" href="#request-delegate">Request Delegate</a></h3><p>Request delegates are used to build the request pipeline. They are configured using <code>Run</code>, <code>Map</code>, and <code>Use</code> extension methods.</p><h3 id="common-built-in-middleware"><a class="heading-anchor" href="#common-built-in-middleware">Common Built-In Middleware</a></h3><figure class="content-figure"><img src="assets/aspnet/middleware-pipeline-order.jpg" alt="ASP.NET Core middleware pipeline order"><figcaption>ASP.NET Core middleware pipeline order</figcaption></figure><figure class="content-figure"><img src="assets/aspnet/aspnet-core-2026-cheat-sheet.jpg" alt="Complete ASP.NET Core 2026 cheat sheet"><figcaption>Complete ASP.NET Core 2026 cheat sheet</figcaption></figure><ul><li><code>UseAuthentication()</code></li><li><code>UseAuthorization()</code></li><li><code>UseStaticFiles()</code></li><li><code>UseExceptionHandler()</code></li><li><code>UseRouting()</code></li><li><code>UseEndpoints()</code></li></ul><h3 id="custom-middleware-example"><a class="heading-anchor" href="#custom-middleware-example">Custom Middleware Example</a></h3><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public class LoggingMiddleware
+    -&gt; Client Response</code></pre></div><h3 id="app-run-app-use-and-app-map"><a class="heading-anchor" href="#app-run-app-use-and-app-map">`app.Run()`, `app.Use()`, and `app.Map()`</a></h3><div class="table-wrap"><table><thead><tr><th>Method</th><th>Purpose</th></tr></thead><tbody><tr><td>`app.Run()`</td><td>Terminal middleware. Handles final processing and ends the pipeline. No next middleware runs after it.</td></tr><tr><td>`app.Use()`</td><td>Adds middleware that can run before and after the next middleware by calling `next()`.</td></tr><tr><td>`app.Map()`</td><td>Creates a branch in the middleware pipeline based on a URL path segment.</td></tr></tbody></table></div><h3 id="request-delegate"><a class="heading-anchor" href="#request-delegate">Request Delegate</a></h3><p>Request delegates are used to build the request pipeline. They are configured using <code>Run</code>, <code>Map</code>, and <code>Use</code> extension methods.</p>
+<h3 id="common-built-in-middleware"><a class="heading-anchor" href="#common-built-in-middleware">Common Built-In Middleware</a></h3><p></p><figure class="content-figure"><img src="assets/aspnet/middleware-pipeline-order.jpg" alt="ASP.NET Core middleware pipeline order"><figcaption>ASP.NET Core middleware pipeline order</figcaption></figure><p></p>
+<p></p><figure class="content-figure"><img src="assets/aspnet/aspnet-core-2026-cheat-sheet.jpg" alt="Complete ASP.NET Core 2026 cheat sheet"><figcaption>Complete ASP.NET Core 2026 cheat sheet</figcaption></figure><p></p>
+<ul>
+<li><code>UseAuthentication()</code></li>
+<li><code>UseAuthorization()</code></li>
+<li><code>UseStaticFiles()</code></li>
+<li><code>UseExceptionHandler()</code></li>
+<li><code>UseRouting()</code></li>
+<li><code>UseEndpoints()</code></li>
+</ul>
+<h3 id="custom-middleware-example"><a class="heading-anchor" href="#custom-middleware-example">Custom Middleware Example</a></h3><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public class LoggingMiddleware
 {
     private readonly RequestDelegate _next;
 
@@ -181,35 +338,79 @@
 
     public async Task InvokeAsync(HttpContext context)
     {
-        Console.WriteLine(&quot;Before Request&quot;);
+        Console.WriteLine("Before Request");
         await _next(context);
-        Console.WriteLine(&quot;After Response&quot;);
+        Console.WriteLine("After Response");
     }
-}</code></pre></div><p>Register middleware:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var builder = WebApplication.CreateBuilder(args);
+}</code></pre></div><p>Register middleware:</p>
+<div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
 app.UseMiddleware&lt;LoggingMiddleware&gt;();
 
-app.Run();</code></pre></div><h3 id="startup-cs-configureservices-and-configure"><a class="heading-anchor" href="#startup-cs-configureservices-and-configure"><code>Startup.cs</code>, <code>ConfigureServices</code>, and <code>Configure</code></a></h3><p>Older ASP.NET Core projects commonly used <code>Startup.cs</code>.</p><div class="table-wrap"><table><thead><tr><th>Method</th><th>Purpose</th></tr></thead><tbody><tr><td><code>ConfigureServices()</code></td><td>Registers services into the dependency injection container</td></tr><tr><td><code>Configure()</code></td><td>Configures middleware in the HTTP request pipeline</td></tr></tbody></table></div><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">Application Start
+app.Run();</code></pre></div><h3 id="startup-cs-configureservices-and-configure"><a class="heading-anchor" href="#startup-cs-configureservices-and-configure">`Startup.cs`, `ConfigureServices`, and `Configure`</a></h3><p>Older ASP.NET Core projects commonly used <code>Startup.cs</code>.</p>
+<div class="table-wrap"><table><thead><tr><th>Method</th><th>Purpose</th></tr></thead><tbody><tr><td>`ConfigureServices()`</td><td>Registers services into the dependency injection container</td></tr><tr><td>`Configure()`</td><td>Configures middleware in the HTTP request pipeline</td></tr></tbody></table></div><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">Application Start
     -&gt; ConfigureServices()
     -&gt; Services Registered
     -&gt; Configure()
     -&gt; Middleware Pipeline Created
-    -&gt; Application Ready</code></pre></div><hr class="section-divider"><h2 id="5-routing"><a class="heading-anchor" href="#5-routing">5. Routing</a></h2><h3 id="what-to-learn-5"><a class="heading-anchor" href="#what-to-learn-5">What to Learn</a></h3><ul><li>Conventional routing</li><li>Attribute routing</li><li>Endpoint routing</li><li>Area routing</li><li>Route parameters</li><li>Optional route parameters</li><li>Route constraints</li><li>Route templates</li><li>Route names</li></ul><p>Routing maps incoming requests to controllers, actions, Razor Pages, or endpoints.</p><h3 id="conventional-routing"><a class="heading-anchor" href="#conventional-routing">Conventional Routing</a></h3><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">app.UseRouting();
+    -&gt; Application Ready</code></pre></div><hr class="section-divider"><p><a id="topic-5"></a></p>
+<h2 id="5-routing"><a class="heading-anchor" href="#5-routing">5. Routing</a></h2><h3 id="what-to-learn-5"><a class="heading-anchor" href="#what-to-learn-5">What to Learn</a></h3><ul>
+<li>Conventional routing</li>
+<li>Attribute routing</li>
+<li>Endpoint routing</li>
+<li>Area routing</li>
+<li>Route parameters</li>
+<li>Optional route parameters</li>
+<li>Route constraints</li>
+<li>Route templates</li>
+<li>Route names</li>
+</ul>
+<p>Routing maps incoming requests to controllers, actions, Razor Pages, or endpoints.</p>
+<h3 id="conventional-routing"><a class="heading-anchor" href="#conventional-routing">Conventional Routing</a></h3><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">app.UseRouting();
 
 app.UseEndpoints(endpoints =&gt;
 {
     endpoints.MapControllerRoute(
-        name: &quot;default&quot;,
-        pattern: &quot;{controller=Home}/{action=Index}/{id?}&quot;);
-});</code></pre></div><h3 id="attribute-routing"><a class="heading-anchor" href="#attribute-routing">Attribute Routing</a></h3><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">[Route(&quot;api/products&quot;)]
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+});</code></pre></div><h3 id="attribute-routing"><a class="heading-anchor" href="#attribute-routing">Attribute Routing</a></h3><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">[Route("api/products")]
 public class ProductsController : ControllerBase
 {
-}</code></pre></div><h3 id="routing-types"><a class="heading-anchor" href="#routing-types">Routing Types</a></h3><div class="table-wrap"><table><thead><tr><th>Type</th><th>Meaning</th></tr></thead><tbody><tr><td>Conventional routing</td><td>Route pattern defined globally in <code>Program.cs</code> or <code>Startup.cs</code></td></tr><tr><td>Attribute routing</td><td>Route defined using attributes on controllers/actions</td></tr><tr><td>Endpoint routing</td><td>Modern endpoint-based routing introduced in ASP.NET Core 3.0</td></tr><tr><td>Area routing</td><td>Used to organize large MVC applications into areas</td></tr></tbody></table></div><hr class="section-divider"><h2 id="6-controllers-and-actions"><a class="heading-anchor" href="#6-controllers-and-actions">6. Controllers and Actions</a></h2><h3 id="what-to-learn-6"><a class="heading-anchor" href="#what-to-learn-6">What to Learn</a></h3><ul><li>Controller basics</li><li>Action methods</li><li>Action results</li><li><code>IActionResult</code></li><li><code>ActionResult&lt;T&gt;</code></li><li><code>Controller</code></li><li><code>ControllerBase</code></li><li>Status code results</li><li>Content results</li><li>File results</li><li>Redirect results</li><li>Controller base classes</li></ul><p>Controllers handle incoming requests and return responses.</p><h3 id="controller-vs-controllerbase"><a class="heading-anchor" href="#controller-vs-controllerbase"><code>Controller</code> vs <code>ControllerBase</code></a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th><code>Controller</code></th><th><code>ControllerBase</code></th></tr></thead><tbody><tr><td>Namespace</td><td><code>Microsoft.AspNetCore.Mvc</code></td><td><code>Microsoft.AspNetCore.Mvc</code></td></tr><tr><td>Used in</td><td>MVC applications</td><td>Web API</td></tr><tr><td>Supports views</td><td>Yes</td><td>No</td></tr><tr><td>Returns HTML</td><td>Yes</td><td>No</td></tr><tr><td>Returns JSON</td><td>Yes</td><td>Yes</td></tr><tr><td>View support</td><td><code>View()</code> available</td><td>Not available</td></tr><tr><td>Razor support</td><td>Yes</td><td>No</td></tr><tr><td>TempData/ViewBag/ViewData</td><td>Yes</td><td>No</td></tr><tr><td>API support</td><td>Yes</td><td>Yes</td></tr><tr><td>Lightweight</td><td>No</td><td>Yes</td></tr><tr><td>Best for</td><td>MVC + Razor views</td><td>REST APIs</td></tr><tr><td>Base class</td><td>Inherits from <code>ControllerBase</code></td><td>Base API class</td></tr></tbody></table></div><h3 id="iactionresult-vs-actionresult"><a class="heading-anchor" href="#iactionresult-vs-actionresult"><code>IActionResult</code> vs <code>ActionResult&lt;T&gt;</code></a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th><code>IActionResult</code></th><th><code>ActionResult&lt;T&gt;</code></th></tr></thead><tbody><tr><td>Type</td><td>Interface</td><td>Generic class</td></tr><tr><td>Returns</td><td>HTTP response</td><td>HTTP response plus typed data</td></tr><tr><td>Strongly typed</td><td>No</td><td>Yes</td></tr><tr><td>Swagger documentation</td><td>Less detailed</td><td>Better detailed</td></tr><tr><td>Compile-time type checking</td><td>No</td><td>Yes</td></tr><tr><td>Flexibility</td><td>High</td><td>High</td></tr><tr><td>Supports <code>Ok()</code>, <code>NotFound()</code></td><td>Yes</td><td>Yes</td></tr><tr><td>API response type known</td><td>No</td><td>Yes</td></tr><tr><td>Best use case</td><td>Multiple different response types</td><td>Returning specific model/data</td></tr><tr><td>Example</td><td><code>Task&lt;IActionResult&gt;</code></td><td><code>Task&lt;ActionResult&lt;List&lt;Employee&gt;&gt;&gt;</code></td></tr></tbody></table></div><h3 id="common-http-status-code-helpers"><a class="heading-anchor" href="#common-http-status-code-helpers">Common HTTP Status Code Helpers</a></h3><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">return Ok();
+}</code></pre></div><h3 id="routing-types"><a class="heading-anchor" href="#routing-types">Routing Types</a></h3><div class="table-wrap"><table><thead><tr><th>Type</th><th>Meaning</th></tr></thead><tbody><tr><td>Conventional routing</td><td>Route pattern defined globally in `Program.cs` or `Startup.cs`</td></tr><tr><td>Attribute routing</td><td>Route defined using attributes on controllers/actions</td></tr><tr><td>Endpoint routing</td><td>Modern endpoint-based routing introduced in ASP.NET Core 3.0</td></tr><tr><td>Area routing</td><td>Used to organize large MVC applications into areas</td></tr></tbody></table></div><hr class="section-divider"><p><a id="topic-6"></a></p>
+<h2 id="6-controllers-and-actions"><a class="heading-anchor" href="#6-controllers-and-actions">6. Controllers and Actions</a></h2><h3 id="what-to-learn-6"><a class="heading-anchor" href="#what-to-learn-6">What to Learn</a></h3><ul>
+<li>Controller basics</li>
+<li>Action methods</li>
+<li>Action results</li>
+<li><code>IActionResult</code></li>
+<li><code>ActionResult&lt;T&gt;</code></li>
+<li><code>Controller</code></li>
+<li><code>ControllerBase</code></li>
+<li>Status code results</li>
+<li>Content results</li>
+<li>File results</li>
+<li>Redirect results</li>
+<li>Controller base classes</li>
+</ul>
+<p>Controllers handle incoming requests and return responses.</p>
+<h3 id="controller-vs-controllerbase"><a class="heading-anchor" href="#controller-vs-controllerbase">`Controller` vs `ControllerBase`</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>`Controller`</th><th>`ControllerBase`</th></tr></thead><tbody><tr><td>Namespace</td><td>`Microsoft.AspNetCore.Mvc`</td><td>`Microsoft.AspNetCore.Mvc`</td></tr><tr><td>Used in</td><td>MVC applications</td><td>Web API</td></tr><tr><td>Supports views</td><td>Yes</td><td>No</td></tr><tr><td>Returns HTML</td><td>Yes</td><td>No</td></tr><tr><td>Returns JSON</td><td>Yes</td><td>Yes</td></tr><tr><td>View support</td><td>`View()` available</td><td>Not available</td></tr><tr><td>Razor support</td><td>Yes</td><td>No</td></tr><tr><td>TempData/ViewBag/ViewData</td><td>Yes</td><td>No</td></tr><tr><td>API support</td><td>Yes</td><td>Yes</td></tr><tr><td>Lightweight</td><td>No</td><td>Yes</td></tr><tr><td>Best for</td><td>MVC + Razor views</td><td>REST APIs</td></tr><tr><td>Base class</td><td>Inherits from `ControllerBase`</td><td>Base API class</td></tr></tbody></table></div><h3 id="iactionresult-vs-actionresult"><a class="heading-anchor" href="#iactionresult-vs-actionresult">`IActionResult` vs `ActionResult<t>`</t></a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>`IActionResult`</th><th>`ActionResult<t>`</t></th></tr></thead><tbody><tr><td>Type</td><td>Interface</td><td>Generic class</td></tr><tr><td>Returns</td><td>HTTP response</td><td>HTTP response plus typed data</td></tr><tr><td>Strongly typed</td><td>No</td><td>Yes</td></tr><tr><td>Swagger documentation</td><td>Less detailed</td><td>Better detailed</td></tr><tr><td>Compile-time type checking</td><td>No</td><td>Yes</td></tr><tr><td>Flexibility</td><td>High</td><td>High</td></tr><tr><td>Supports `Ok()`, `NotFound()`</td><td>Yes</td><td>Yes</td></tr><tr><td>API response type known</td><td>No</td><td>Yes</td></tr><tr><td>Best use case</td><td>Multiple different response types</td><td>Returning specific model/data</td></tr><tr><td>Example</td><td>`Task<iactionresult>`</iactionresult></td><td>`Task<actionresult<list<employee>&gt;&gt;`</actionresult<list<employee></td></tr></tbody></table></div><h3 id="common-http-status-code-helpers"><a class="heading-anchor" href="#common-http-status-code-helpers">Common HTTP Status Code Helpers</a></h3><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">return Ok();
 return NotFound();
 return BadRequest();
 return Unauthorized();
-return StatusCode(500);</code></pre></div><p>Common error status codes:</p><div class="table-wrap"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>400</td><td>Bad Request</td></tr><tr><td>401</td><td>Unauthorized</td></tr><tr><td>403</td><td>Forbidden</td></tr><tr><td>404</td><td>Not Found</td></tr><tr><td>500</td><td>Internal Server Error</td></tr></tbody></table></div><hr class="section-divider"><h2 id="7-mvc-views-and-data-passing"><a class="heading-anchor" href="#7-mvc-views-and-data-passing">7. MVC Views and Data Passing</a></h2><h3 id="what-to-learn-7"><a class="heading-anchor" href="#what-to-learn-7">What to Learn</a></h3><ul><li>Passing model to view</li><li>Strongly typed views</li><li><code>@model</code></li><li><code>ViewData</code></li><li><code>ViewBag</code></li><li><code>TempData</code></li><li>ViewModel</li><li>Razor view basics</li></ul><p>A model is passed from Controller to View using the <code>View()</code> method in ASP.NET MVC/Core.</p><h3 id="passing-model-to-view"><a class="heading-anchor" href="#passing-model-to-view">Passing Model to View</a></h3><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public class Employee
+return StatusCode(500);</code></pre></div><p>Common error status codes:</p>
+<div class="table-wrap"><table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td>400</td><td>Bad Request</td></tr><tr><td>401</td><td>Unauthorized</td></tr><tr><td>403</td><td>Forbidden</td></tr><tr><td>404</td><td>Not Found</td></tr><tr><td>500</td><td>Internal Server Error</td></tr></tbody></table></div><hr class="section-divider"><p><a id="topic-7"></a></p>
+<h2 id="7-mvc-views-and-data-passing"><a class="heading-anchor" href="#7-mvc-views-and-data-passing">7. MVC Views and Data Passing</a></h2><h3 id="what-to-learn-7"><a class="heading-anchor" href="#what-to-learn-7">What to Learn</a></h3><ul>
+<li>Passing model to view</li>
+<li>Strongly typed views</li>
+<li><code>@model</code></li>
+<li><code>ViewData</code></li>
+<li><code>ViewBag</code></li>
+<li><code>TempData</code></li>
+<li>ViewModel</li>
+<li>Razor view basics</li>
+</ul>
+<p>A model is passed from Controller to View using the <code>View()</code> method in ASP.NET MVC/Core.</p>
+<h3 id="passing-model-to-view"><a class="heading-anchor" href="#passing-model-to-view">Passing Model to View</a></h3><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public class Employee
 {
     public int Id { get; set; }
     public string Name { get; set; }
@@ -222,16 +423,69 @@ public class EmployeeController : Controller
         Employee emp = new Employee
         {
             Id = 1,
-            Name = &quot;Akash&quot;
+            Name = "Akash"
         };
 
         return View(emp);
     }
-}</code></pre></div><p>View:</p><div class="code-block"><div class="code-toolbar"><span>cshtml</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-cshtml">@model Employee
+}</code></pre></div><p>View:</p>
+<div class="code-block"><div class="code-toolbar"><span>cshtml</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-cshtml">@model Employee
 
 &lt;h1&gt;@Model.Id&lt;/h1&gt;
-&lt;h1&gt;@Model.Name&lt;/h1&gt;</code></pre></div><h3 id="strongly-typed-views"><a class="heading-anchor" href="#strongly-typed-views">Strongly Typed Views</a></h3><p>A strongly typed view is bound to a specific model class using the <code>@model</code> directive.</p><p>Benefits:</p><ul><li>Compile-time checking</li><li>IntelliSense support</li><li>Type safety</li><li>Fewer runtime errors</li><li>Better maintainability</li></ul><h3 id="asp-net-mvc-data-passing-types"><a class="heading-anchor" href="#asp-net-mvc-data-passing-types">ASP.NET MVC Data Passing Types</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>ViewData</th><th>ViewBag</th><th>TempData</th><th>Session Variable</th><th>ViewModel</th></tr></thead><tbody><tr><td>Type</td><td>Dictionary</td><td>Dynamic object</td><td>Dictionary</td><td>Session object</td><td>Strongly typed class</td></tr><tr><td>Syntax</td><td><code>ViewData[&quot;Key&quot;]</code></td><td><code>ViewBag.Name</code></td><td><code>TempData[&quot;Key&quot;]</code></td><td><code>HttpContext.Session</code></td><td>Custom model class</td></tr><tr><td>Data transfer</td><td>Controller to View</td><td>Controller to View</td><td>Controller to View / Redirect</td><td>Across user session</td><td>Controller to View</td></tr><tr><td>Lifetime</td><td>Current request</td><td>Current request</td><td>Next request</td><td>User session</td><td>Current request</td></tr><tr><td>Redirect support</td><td>No</td><td>No</td><td>Yes</td><td>Yes</td><td>No</td></tr><tr><td>Type safety</td><td>No</td><td>No</td><td>No</td><td>No</td><td>Yes</td></tr><tr><td>Compile-time checking</td><td>No</td><td>No</td><td>No</td><td>No</td><td>Yes</td></tr><tr><td>Need type casting</td><td>Yes</td><td>No</td><td>Yes</td><td>Yes</td><td>No</td></tr><tr><td>Recommended use</td><td>Less preferred</td><td>Less preferred</td><td>Redirect messages</td><td>User/login data</td><td>Preferred</td></tr></tbody></table></div><hr class="section-divider"><h2 id="8-web-api-fundamentals"><a class="heading-anchor" href="#8-web-api-fundamentals">8. Web API Fundamentals</a></h2><h3 id="what-to-learn-8"><a class="heading-anchor" href="#what-to-learn-8">What to Learn</a></h3><ul><li>What is Web API?</li><li>REST basics</li><li>REST constraints</li><li>HTTP methods</li><li>GET</li><li>POST</li><li>PUT</li><li>PATCH</li><li>DELETE</li><li>HTTP status codes</li><li>Request body</li><li>Response body</li><li>JSON/XML responses</li><li>DTOs</li><li>API versioning basics</li><li>Swagger/OpenAPI</li><li>Content negotiation</li><li>Web API vs MVC controller</li><li>Web API vs WCF</li></ul><p>Web API is used to build HTTP services. It allows communication between applications over HTTP and commonly returns data in JSON or XML format.</p><p>Common clients:</p><ul><li>Web applications</li><li>Mobile applications</li><li>Angular, React, Vue applications</li><li>Desktop applications</li><li>Third-party integrations</li></ul><h3 id="web-api-advantages"><a class="heading-anchor" href="#web-api-advantages">Web API Advantages</a></h3><figure class="content-figure"><img src="assets/aspnet/api-versioning-maptoapiversion.jpg" alt="Web API versioning with MapToApiVersion"><figcaption>Web API versioning with MapToApiVersion</figcaption></figure><ul><li>Supports multiple clients</li><li>Supports JSON and XML responses</li><li>Lightweight and faster than SOAP services</li><li>Easy integration with frontend frameworks</li><li>Uses standard HTTP methods</li><li>Supports REST architecture</li><li>Platform-independent communication</li></ul><h3 id="rest-constraints"><a class="heading-anchor" href="#rest-constraints">REST Constraints</a></h3><figure class="content-figure"><img src="assets/aspnet/rest-architecture.png" alt="REST architecture diagram"><figcaption>REST architecture diagram</figcaption></figure><figure class="content-figure"><img src="assets/aspnet/http-status-codes.gif" alt="Common HTTP status codes reference"><figcaption>Common HTTP status codes reference</figcaption></figure><div class="table-wrap"><table><thead><tr><th>Constraint</th><th>Meaning</th></tr></thead><tbody><tr><td>Client-server</td><td>Client and server are separate</td></tr><tr><td>Stateless</td><td>Server does not store client state between requests</td></tr><tr><td>Cacheable</td><td>Responses can be cached</td></tr><tr><td>Uniform interface</td><td>Standard URL and HTTP method usage</td></tr><tr><td>Layered system</td><td>Multiple layers are allowed</td></tr><tr><td>Code on demand</td><td>Optional executable code can be sent by server</td></tr></tbody></table></div><h3 id="common-http-methods"><a class="heading-anchor" href="#common-http-methods">Common HTTP Methods</a></h3><div class="table-wrap"><table><thead><tr><th>Method</th><th>Purpose</th></tr></thead><tbody><tr><td>GET</td><td>Fetch data</td></tr><tr><td>POST</td><td>Insert data</td></tr><tr><td>PUT</td><td>Update complete data</td></tr><tr><td>PATCH</td><td>Update partial data</td></tr><tr><td>DELETE</td><td>Delete data</td></tr></tbody></table></div><h3 id="example-web-api-controller"><a class="heading-anchor" href="#example-web-api-controller">Example Web API Controller</a></h3><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">[ApiController]
-[Route(&quot;api/[controller]&quot;)]
+&lt;h1&gt;@Model.Name&lt;/h1&gt;</code></pre></div><h3 id="strongly-typed-views"><a class="heading-anchor" href="#strongly-typed-views">Strongly Typed Views</a></h3><p>A strongly typed view is bound to a specific model class using the <code>@model</code> directive.</p>
+<p>Benefits:</p>
+<ul>
+<li>Compile-time checking</li>
+<li>IntelliSense support</li>
+<li>Type safety</li>
+<li>Fewer runtime errors</li>
+<li>Better maintainability</li>
+</ul>
+<h3 id="asp-net-mvc-data-passing-types"><a class="heading-anchor" href="#asp-net-mvc-data-passing-types">ASP.NET MVC Data Passing Types</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>ViewData</th><th>ViewBag</th><th>TempData</th><th>Session Variable</th><th>ViewModel</th></tr></thead><tbody><tr><td>Type</td><td>Dictionary</td><td>Dynamic object</td><td>Dictionary</td><td>Session object</td><td>Strongly typed class</td></tr><tr><td>Syntax</td><td>`ViewData["Key"]`</td><td>`ViewBag.Name`</td><td>`TempData["Key"]`</td><td>`HttpContext.Session`</td><td>Custom model class</td></tr><tr><td>Data transfer</td><td>Controller to View</td><td>Controller to View</td><td>Controller to View / Redirect</td><td>Across user session</td><td>Controller to View</td></tr><tr><td>Lifetime</td><td>Current request</td><td>Current request</td><td>Next request</td><td>User session</td><td>Current request</td></tr><tr><td>Redirect support</td><td>No</td><td>No</td><td>Yes</td><td>Yes</td><td>No</td></tr><tr><td>Type safety</td><td>No</td><td>No</td><td>No</td><td>No</td><td>Yes</td></tr><tr><td>Compile-time checking</td><td>No</td><td>No</td><td>No</td><td>No</td><td>Yes</td></tr><tr><td>Need type casting</td><td>Yes</td><td>No</td><td>Yes</td><td>Yes</td><td>No</td></tr><tr><td>Recommended use</td><td>Less preferred</td><td>Less preferred</td><td>Redirect messages</td><td>User/login data</td><td>Preferred</td></tr></tbody></table></div><hr class="section-divider"><p><a id="topic-8"></a></p>
+<h2 id="8-web-api-fundamentals"><a class="heading-anchor" href="#8-web-api-fundamentals">8. Web API Fundamentals</a></h2><h3 id="what-to-learn-8"><a class="heading-anchor" href="#what-to-learn-8">What to Learn</a></h3><ul>
+<li>What is Web API?</li>
+<li>REST basics</li>
+<li>REST constraints</li>
+<li>HTTP methods</li>
+<li>GET</li>
+<li>POST</li>
+<li>PUT</li>
+<li>PATCH</li>
+<li>DELETE</li>
+<li>HTTP status codes</li>
+<li>Request body</li>
+<li>Response body</li>
+<li>JSON/XML responses</li>
+<li>DTOs</li>
+<li>API versioning basics</li>
+<li>Swagger/OpenAPI</li>
+<li>Content negotiation</li>
+<li>Web API vs MVC controller</li>
+<li>Web API vs WCF</li>
+</ul>
+<p>Web API is used to build HTTP services. It allows communication between applications over HTTP and commonly returns data in JSON or XML format.</p>
+<p>Common clients:</p>
+<ul>
+<li>Web applications</li>
+<li>Mobile applications</li>
+<li>Angular, React, Vue applications</li>
+<li>Desktop applications</li>
+<li>Third-party integrations</li>
+</ul>
+<h3 id="web-api-advantages"><a class="heading-anchor" href="#web-api-advantages">Web API Advantages</a></h3><p></p><figure class="content-figure"><img src="assets/aspnet/api-versioning-maptoapiversion.jpg" alt="Web API versioning with MapToApiVersion"><figcaption>Web API versioning with MapToApiVersion</figcaption></figure><p></p>
+<ul>
+<li>Supports multiple clients</li>
+<li>Supports JSON and XML responses</li>
+<li>Lightweight and faster than SOAP services</li>
+<li>Easy integration with frontend frameworks</li>
+<li>Uses standard HTTP methods</li>
+<li>Supports REST architecture</li>
+<li>Platform-independent communication</li>
+</ul>
+<h3 id="rest-constraints"><a class="heading-anchor" href="#rest-constraints">REST Constraints</a></h3><p></p><figure class="content-figure"><img src="assets/aspnet/rest-architecture.png" alt="REST architecture diagram"><figcaption>REST architecture diagram</figcaption></figure><p></p>
+<p></p><figure class="content-figure"><img src="assets/aspnet/http-status-codes.gif" alt="Common HTTP status codes reference"><figcaption>Common HTTP status codes reference</figcaption></figure><p></p>
+<div class="table-wrap"><table><thead><tr><th>Constraint</th><th>Meaning</th></tr></thead><tbody><tr><td>Client-server</td><td>Client and server are separate</td></tr><tr><td>Stateless</td><td>Server does not store client state between requests</td></tr><tr><td>Cacheable</td><td>Responses can be cached</td></tr><tr><td>Uniform interface</td><td>Standard URL and HTTP method usage</td></tr><tr><td>Layered system</td><td>Multiple layers are allowed</td></tr><tr><td>Code on demand</td><td>Optional executable code can be sent by server</td></tr></tbody></table></div><h3 id="common-http-methods"><a class="heading-anchor" href="#common-http-methods">Common HTTP Methods</a></h3><div class="table-wrap"><table><thead><tr><th>Method</th><th>Purpose</th></tr></thead><tbody><tr><td>GET</td><td>Fetch data</td></tr><tr><td>POST</td><td>Insert data</td></tr><tr><td>PUT</td><td>Update complete data</td></tr><tr><td>PATCH</td><td>Update partial data</td></tr><tr><td>DELETE</td><td>Delete data</td></tr></tbody></table></div><h3 id="example-web-api-controller"><a class="heading-anchor" href="#example-web-api-controller">Example Web API Controller</a></h3><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">[ApiController]
+[Route("api/[controller]")]
 public class EmployeeController : ControllerBase
 {
     [HttpGet]
@@ -245,8 +499,75 @@ public class EmployeeController : ControllerBase
     {
         return Ok();
     }
-}</code></pre></div><h3 id="web-api-vs-mvc-controller"><a class="heading-anchor" href="#web-api-vs-mvc-controller">Web API vs MVC Controller</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Web API</th><th>MVC Controller</th></tr></thead><tbody><tr><td>Main output</td><td>JSON/XML data</td><td>Views / HTML pages</td></tr><tr><td>Used for</td><td>Services/APIs</td><td>Server-side web applications</td></tr><tr><td>Common clients</td><td>Mobile apps and frontend frameworks</td><td>Browser rendering Razor views</td></tr><tr><td>Base class</td><td><code>ControllerBase</code></td><td><code>Controller</code></td></tr></tbody></table></div><h3 id="content-negotiation"><a class="heading-anchor" href="#content-negotiation">Content Negotiation</a></h3><figure class="content-figure"><img src="assets/aspnet/content-negotiation-json-xml.png" alt="Content negotiation with Accept JSON and XML"><figcaption>Content negotiation with Accept JSON and XML</figcaption></figure><figure class="content-figure"><img src="assets/aspnet/client-webapi-http-json-flow.png" alt="Client to Web API HTTP JSON flow"><figcaption>Client to Web API HTTP JSON flow</figcaption></figure><p>Content negotiation decides the response format based on the <code>Accept</code> header.</p><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">Accept: application/json -&gt; JSON response
-Accept: application/xml  -&gt; XML response</code></pre></div><h3 id="web-api-vs-wcf"><a class="heading-anchor" href="#web-api-vs-wcf">Web API vs WCF</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Web API</th><th>WCF</th></tr></thead><tbody><tr><td>Style</td><td>REST based</td><td>SOAP and REST</td></tr><tr><td>Weight</td><td>Lightweight</td><td>Heavier framework</td></tr><tr><td>Protocol</td><td>HTTP</td><td>Multiple protocols</td></tr><tr><td>Best for</td><td>Web/mobile HTTP services</td><td>Enterprise services</td></tr><tr><td>JSON support</td><td>Easy</td><td>More configuration</td></tr></tbody></table></div><hr class="section-divider"><h2 id="9-model-binding-and-validation"><a class="heading-anchor" href="#9-model-binding-and-validation">9. Model Binding and Validation</a></h2><h3 id="what-to-learn-9"><a class="heading-anchor" href="#what-to-learn-9">What to Learn</a></h3><ul><li>Model binding</li><li>Binding from route</li><li>Binding from query string</li><li>Binding from request body</li><li>Binding from headers</li><li>Data annotations</li><li>Model validation</li><li><code>ModelState</code></li><li>Custom validation attributes</li><li>FluentValidation basics</li></ul><p>Model binding maps HTTP request data to action method parameters or model objects.</p><p>Common binding sources:</p><ul><li>Route values</li><li>Query string</li><li>Request body</li><li>Headers</li><li>Form data</li></ul><hr class="section-divider"><h2 id="10-dependency-injection"><a class="heading-anchor" href="#10-dependency-injection">10. Dependency Injection</a></h2><h3 id="what-to-learn-10"><a class="heading-anchor" href="#what-to-learn-10">What to Learn</a></h3><ul><li>What is dependency injection?</li><li>Why use dependency injection?</li><li>Problems without dependency injection</li><li>Constructor injection</li><li>Property injection</li><li>Method injection</li><li>Built-in dependency injection container</li><li>Service registration</li><li>Service lifetimes</li><li>Transient</li><li>Scoped</li><li>Singleton</li><li><code>IServiceCollection</code></li><li><code>IServiceProvider</code></li><li>Common lifetime mistakes</li></ul><p>Dependency Injection is a design pattern used to provide dependencies to a class instead of creating them inside the class.</p><h3 id="problems-without-di"><a class="heading-anchor" href="#problems-without-di">Problems Without DI</a></h3><ul><li>Tight coupling</li><li>Difficult testing</li><li>Harder maintenance</li><li>Code duplication</li><li>Violation of SOLID principles</li><li>Complex object graphs become hard to manage manually</li></ul><h3 id="why-use-di-in-net"><a class="heading-anchor" href="#why-use-di-in-net">Why Use DI in .NET?</a></h3><ul><li>Loose coupling</li><li>Improved testability</li><li>Better maintainability</li><li>Code reusability</li><li>Centralized configuration</li><li>Lifecycle management</li><li>Follows Dependency Inversion Principle</li></ul><h3 id="di-types"><a class="heading-anchor" href="#di-types">DI Types</a></h3><div class="table-wrap"><table><thead><tr><th>Type</th><th>Meaning</th></tr></thead><tbody><tr><td>Constructor injection</td><td>Dependency injected through constructor; most common</td></tr><tr><td>Property injection</td><td>Dependency injected through property</td></tr><tr><td>Method injection</td><td>Dependency injected through method parameter</td></tr></tbody></table></div><h3 id="di-implementation-steps"><a class="heading-anchor" href="#di-implementation-steps">DI Implementation Steps</a></h3><ol><li>Create an interface.</li><li>Create a service class.</li><li>Register the service in <code>Program.cs</code>.</li><li>Inject the service through constructor.</li></ol><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public interface IMessageService
+}</code></pre></div><h3 id="web-api-vs-mvc-controller"><a class="heading-anchor" href="#web-api-vs-mvc-controller">Web API vs MVC Controller</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Web API</th><th>MVC Controller</th></tr></thead><tbody><tr><td>Main output</td><td>JSON/XML data</td><td>Views / HTML pages</td></tr><tr><td>Used for</td><td>Services/APIs</td><td>Server-side web applications</td></tr><tr><td>Common clients</td><td>Mobile apps and frontend frameworks</td><td>Browser rendering Razor views</td></tr><tr><td>Base class</td><td>`ControllerBase`</td><td>`Controller`</td></tr></tbody></table></div><h3 id="content-negotiation"><a class="heading-anchor" href="#content-negotiation">Content Negotiation</a></h3><p></p><figure class="content-figure"><img src="assets/aspnet/content-negotiation-json-xml.png" alt="Content negotiation with Accept JSON and XML"><figcaption>Content negotiation with Accept JSON and XML</figcaption></figure><p></p>
+<p></p><figure class="content-figure"><img src="assets/aspnet/client-webapi-http-json-flow.png" alt="Client to Web API HTTP JSON flow"><figcaption>Client to Web API HTTP JSON flow</figcaption></figure><p></p>
+<p>Content negotiation decides the response format based on the <code>Accept</code> header.</p>
+<div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">Accept: application/json -&gt; JSON response
+Accept: application/xml  -&gt; XML response</code></pre></div><h3 id="web-api-vs-wcf"><a class="heading-anchor" href="#web-api-vs-wcf">Web API vs WCF</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Web API</th><th>WCF</th></tr></thead><tbody><tr><td>Style</td><td>REST based</td><td>SOAP and REST</td></tr><tr><td>Weight</td><td>Lightweight</td><td>Heavier framework</td></tr><tr><td>Protocol</td><td>HTTP</td><td>Multiple protocols</td></tr><tr><td>Best for</td><td>Web/mobile HTTP services</td><td>Enterprise services</td></tr><tr><td>JSON support</td><td>Easy</td><td>More configuration</td></tr></tbody></table></div><hr class="section-divider"><p><a id="topic-9"></a></p>
+<h2 id="9-model-binding-and-validation"><a class="heading-anchor" href="#9-model-binding-and-validation">9. Model Binding and Validation</a></h2><h3 id="what-to-learn-9"><a class="heading-anchor" href="#what-to-learn-9">What to Learn</a></h3><ul>
+<li>Model binding</li>
+<li>Binding from route</li>
+<li>Binding from query string</li>
+<li>Binding from request body</li>
+<li>Binding from headers</li>
+<li>Data annotations</li>
+<li>Model validation</li>
+<li><code>ModelState</code></li>
+<li>Custom validation attributes</li>
+<li>FluentValidation basics</li>
+</ul>
+<p>Model binding maps HTTP request data to action method parameters or model objects.</p>
+<p>Common binding sources:</p>
+<ul>
+<li>Route values</li>
+<li>Query string</li>
+<li>Request body</li>
+<li>Headers</li>
+<li>Form data</li>
+</ul>
+<hr class="section-divider"><p><a id="topic-10"></a></p>
+<h2 id="10-dependency-injection"><a class="heading-anchor" href="#10-dependency-injection">10. Dependency Injection</a></h2><h3 id="what-to-learn-10"><a class="heading-anchor" href="#what-to-learn-10">What to Learn</a></h3><ul>
+<li>What is dependency injection?</li>
+<li>Why use dependency injection?</li>
+<li>Problems without dependency injection</li>
+<li>Constructor injection</li>
+<li>Property injection</li>
+<li>Method injection</li>
+<li>Built-in dependency injection container</li>
+<li>Service registration</li>
+<li>Service lifetimes</li>
+<li>Transient</li>
+<li>Scoped</li>
+<li>Singleton</li>
+<li><code>IServiceCollection</code></li>
+<li><code>IServiceProvider</code></li>
+<li>Common lifetime mistakes</li>
+</ul>
+<p>Dependency Injection is a design pattern used to provide dependencies to a class instead of creating them inside the class.</p>
+<h3 id="problems-without-di"><a class="heading-anchor" href="#problems-without-di">Problems Without DI</a></h3><ul>
+<li>Tight coupling</li>
+<li>Difficult testing</li>
+<li>Harder maintenance</li>
+<li>Code duplication</li>
+<li>Violation of SOLID principles</li>
+<li>Complex object graphs become hard to manage manually</li>
+</ul>
+<h3 id="why-use-di-in-net"><a class="heading-anchor" href="#why-use-di-in-net">Why Use DI in .NET?</a></h3><ul>
+<li>Loose coupling</li>
+<li>Improved testability</li>
+<li>Better maintainability</li>
+<li>Code reusability</li>
+<li>Centralized configuration</li>
+<li>Lifecycle management</li>
+<li>Follows Dependency Inversion Principle</li>
+</ul>
+<h3 id="di-types"><a class="heading-anchor" href="#di-types">DI Types</a></h3><div class="table-wrap"><table><thead><tr><th>Type</th><th>Meaning</th></tr></thead><tbody><tr><td>Constructor injection</td><td>Dependency injected through constructor; most common</td></tr><tr><td>Property injection</td><td>Dependency injected through property</td></tr><tr><td>Method injection</td><td>Dependency injected through method parameter</td></tr></tbody></table></div><h3 id="di-implementation-steps"><a class="heading-anchor" href="#di-implementation-steps">DI Implementation Steps</a></h3><ol>
+<li>Create an interface.</li>
+<li>Create a service class.</li>
+<li>Register the service in <code>Program.cs</code>.</li>
+<li>Inject the service through constructor.</li>
+</ol>
+<div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public interface IMessageService
 {
     void SendMessage();
 }
@@ -255,11 +576,12 @@ public class EmailService : IMessageService
 {
     public void SendMessage()
     {
-        Console.WriteLine(&quot;Email Sent&quot;);
+        Console.WriteLine("Email Sent");
     }
 }
 
-builder.Services.AddScoped&lt;IMessageService, EmailService&gt;();</code></pre></div><p>Inject in controller:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public class EmployeeController : Controller
+builder.Services.AddScoped&lt;IMessageService, EmailService&gt;();</code></pre></div><p>Inject in controller:</p>
+<div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public class EmployeeController : Controller
 {
     private readonly IMessageService _messageService;
 
@@ -272,16 +594,47 @@ builder.Services.AddScoped&lt;IMessageService, EmailService&gt;();</code></pre><
     {
         _messageService.SendMessage();
     }
-}</code></pre></div><h3 id="service-lifetimes"><a class="heading-anchor" href="#service-lifetimes">Service Lifetimes</a></h3><figure class="content-figure"><img src="assets/aspnet/di-service-lifetimes.jpg" alt="ASP.NET Core DI service lifetimes simplified"><figcaption>ASP.NET Core DI service lifetimes simplified</figcaption></figure><div class="table-wrap"><table><thead><tr><th>Lifetime</th><th>Meaning</th><th>Common Use</th></tr></thead><tbody><tr><td><code>AddTransient</code></td><td>Creates a new object every time requested</td><td>Temporary calculation service</td></tr><tr><td><code>AddScoped</code></td><td>Creates one object per HTTP request</td><td>Request-specific services</td></tr><tr><td><code>AddSingleton</code></td><td>Creates one object for entire application lifetime</td><td>Cache service, logger service</td></tr></tbody></table></div><p>Important points:</p><ul><li>Constructor injection is most recommended.</li><li>Scoped is commonly used in ASP.NET Core web applications.</li><li>Singleton services should be thread-safe.</li></ul><hr class="section-divider"><h2 id="11-configuration-and-options-pattern"><a class="heading-anchor" href="#11-configuration-and-options-pattern">11. Configuration and Options Pattern</a></h2><figure class="content-figure"><img src="assets/aspnet/options-interfaces-comparison.png" alt="IOptions vs IOptionsSnapshot vs IOptionsMonitor"><figcaption>IOptions vs IOptionsSnapshot vs IOptionsMonitor</figcaption></figure><h3 id="what-to-learn-11"><a class="heading-anchor" href="#what-to-learn-11">What to Learn</a></h3><ul><li><code>appsettings.json</code></li><li>Environment-specific settings</li><li>Environment variables</li><li>User secrets</li><li>Configuration providers</li><li><code>IConfiguration</code></li><li>Options pattern</li><li><code>IOptions&lt;T&gt;</code></li><li><code>IOptionsSnapshot&lt;T&gt;</code></li><li><code>IOptionsMonitor&lt;T&gt;</code></li></ul><p><code>appsettings.json</code> stores application configuration settings in ASP.NET Core.</p><p>Common configurations:</p><ul><li>Connection strings</li><li>API keys</li><li>Logging settings</li><li>JWT settings</li><li>Application settings</li><li>Environment configurations</li></ul><h3 id="example-appsettings-json"><a class="heading-anchor" href="#example-appsettings-json">Example <code>appsettings.json</code></a></h3><div class="code-block"><div class="code-toolbar"><span>json</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-json">{
-  &quot;MySettings&quot;: {
-    &quot;AppName&quot;: &quot;Orion180&quot;
+}</code></pre></div><h3 id="service-lifetimes"><a class="heading-anchor" href="#service-lifetimes">Service Lifetimes</a></h3><p></p><figure class="content-figure"><img src="assets/aspnet/di-service-lifetimes.jpg" alt="ASP.NET Core DI service lifetimes simplified"><figcaption>ASP.NET Core DI service lifetimes simplified</figcaption></figure><p></p>
+<div class="table-wrap"><table><thead><tr><th>Lifetime</th><th>Meaning</th><th>Common Use</th></tr></thead><tbody><tr><td>`AddTransient`</td><td>Creates a new object every time requested</td><td>Temporary calculation service</td></tr><tr><td>`AddScoped`</td><td>Creates one object per HTTP request</td><td>Request-specific services</td></tr><tr><td>`AddSingleton`</td><td>Creates one object for entire application lifetime</td><td>Cache service, logger service</td></tr></tbody></table></div><p>Important points:</p>
+<ul>
+<li>Constructor injection is most recommended.</li>
+<li>Scoped is commonly used in ASP.NET Core web applications.</li>
+<li>Singleton services should be thread-safe.</li>
+</ul>
+<hr class="section-divider"><p><a id="topic-11"></a></p>
+<h2 id="11-configuration-and-options-pattern"><a class="heading-anchor" href="#11-configuration-and-options-pattern">11. Configuration and Options Pattern</a></h2><p></p><figure class="content-figure"><img src="assets/aspnet/options-interfaces-comparison.png" alt="IOptions vs IOptionsSnapshot vs IOptionsMonitor"><figcaption>IOptions vs IOptionsSnapshot vs IOptionsMonitor</figcaption></figure><p></p>
+<h3 id="what-to-learn-11"><a class="heading-anchor" href="#what-to-learn-11">What to Learn</a></h3><ul>
+<li><code>appsettings.json</code></li>
+<li>Environment-specific settings</li>
+<li>Environment variables</li>
+<li>User secrets</li>
+<li>Configuration providers</li>
+<li><code>IConfiguration</code></li>
+<li>Options pattern</li>
+<li><code>IOptions&lt;T&gt;</code></li>
+<li><code>IOptionsSnapshot&lt;T&gt;</code></li>
+<li><code>IOptionsMonitor&lt;T&gt;</code></li>
+</ul>
+<p><code>appsettings.json</code> stores application configuration settings in ASP.NET Core.</p>
+<p>Common configurations:</p>
+<ul>
+<li>Connection strings</li>
+<li>API keys</li>
+<li>Logging settings</li>
+<li>JWT settings</li>
+<li>Application settings</li>
+<li>Environment configurations</li>
+</ul>
+<h3 id="example-appsettings-json"><a class="heading-anchor" href="#example-appsettings-json">Example `appsettings.json`</a></h3><div class="code-block"><div class="code-toolbar"><span>json</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-json">{
+  "MySettings": {
+    "AppName": "Orion180"
   },
-  &quot;Logging&quot;: {
-    &quot;LogLevel&quot;: {
-      &quot;Default&quot;: &quot;Information&quot;
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information"
     }
   }
-}</code></pre></div><h3 id="reading-configuration-using-iconfiguration"><a class="heading-anchor" href="#reading-configuration-using-iconfiguration">Reading Configuration Using <code>IConfiguration</code></a></h3><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public class EmployeeController : Controller
+}</code></pre></div><h3 id="reading-configuration-using-iconfiguration"><a class="heading-anchor" href="#reading-configuration-using-iconfiguration">Reading Configuration Using `IConfiguration`</a></h3><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public class EmployeeController : Controller
 {
     private readonly IConfiguration _configuration;
 
@@ -292,23 +645,110 @@ builder.Services.AddScoped&lt;IMessageService, EmailService&gt;();</code></pre><
 
     public void GetData()
     {
-        string appName = _configuration[&quot;MySettings:AppName&quot;];
+        string appName = _configuration["MySettings:AppName"];
         Console.WriteLine(appName);
     }
-}</code></pre></div><p>Benefits:</p><ul><li>Centralized configuration management</li><li>Avoids hardcoded values</li><li>Easy environment-based configuration</li><li>Better maintainability</li><li>Supports strongly typed settings using options pattern</li></ul><hr class="section-divider"><h2 id="12-logging-and-error-handling"><a class="heading-anchor" href="#12-logging-and-error-handling">12. Logging and Error Handling</a></h2><figure class="content-figure"><img src="assets/aspnet/serilog-structured-logging.jpg" alt="Serilog structured logging vs plain text logging"><figcaption>Serilog structured logging vs plain text logging</figcaption></figure><figure class="content-figure"><img src="assets/aspnet/global-error-handling-problemdetails.jpg" alt="Global error handling with ProblemDetails"><figcaption>Global error handling with ProblemDetails</figcaption></figure><figure class="content-figure"><img src="assets/aspnet/opentelemetry-tracing-metrics.jpg" alt="OpenTelemetry tracing and metrics setup"><figcaption>OpenTelemetry tracing and metrics setup</figcaption></figure><h3 id="what-to-learn-12"><a class="heading-anchor" href="#what-to-learn-12">What to Learn</a></h3><ul><li>Built-in logging</li><li>Log levels</li><li>Structured logging</li><li>Exception handling middleware</li><li>Developer exception page</li><li>Global exception handling</li><li>Problem Details</li><li>Custom error response</li><li>Correlation ID basics</li></ul><p>Common use cases:</p><ul><li>Log request and response details</li><li>Log exceptions</li><li>Centralize error handling</li><li>Return consistent error responses</li></ul><hr class="section-divider"><h2 id="13-filters"><a class="heading-anchor" href="#13-filters">13. Filters</a></h2><h3 id="what-to-learn-13"><a class="heading-anchor" href="#what-to-learn-13">What to Learn</a></h3><ul><li>Authorization filters</li><li>Resource filters</li><li>Action filters</li><li>Exception filters</li><li>Result filters</li><li>Endpoint filters</li><li>Filter execution order</li><li>Custom filters</li><li>Service filters</li><li>Type filters</li><li>Middleware vs filters</li></ul><p>Filters run inside the MVC/controller pipeline. Middleware runs in the full HTTP pipeline.</p><h3 id="middleware-vs-filter"><a class="heading-anchor" href="#middleware-vs-filter">Middleware vs Filter</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Middleware</th><th>Filter</th></tr></thead><tbody><tr><td>Works on</td><td>Entire HTTP pipeline</td><td>MVC / Controller pipeline</td></tr><tr><td>Executes before routing</td><td>Yes</td><td>No</td></tr><tr><td>Access to <code>HttpContext</code></td><td>Yes</td><td>Yes</td></tr><tr><td>Access to controller/action</td><td>No</td><td>Yes</td></tr><tr><td>Used for</td><td>Logging, auth, exception handling</td><td>Validation, action logic</td></tr><tr><td>Runs for static files</td><td>Yes</td><td>No</td></tr><tr><td>Scope</td><td>Global</td><td>Controller / action</td></tr><tr><td>Order</td><td>Pipeline order</td><td>Filter order</td></tr></tbody></table></div><h3 id="middleware-and-filter-types"><a class="heading-anchor" href="#middleware-and-filter-types">Middleware and Filter Types</a></h3><div class="table-wrap"><table><thead><tr><th>Category</th><th>Type</th><th>Purpose</th><th>Example</th></tr></thead><tbody><tr><td>Middleware</td><td>Built-in middleware</td><td>Provided by ASP.NET Core</td><td><code>UseAuthentication()</code></td></tr><tr><td>Middleware</td><td>Custom middleware</td><td>User-created middleware</td><td><code>UseMiddleware&lt;LoggingMiddleware&gt;()</code></td></tr><tr><td>Filter</td><td>Authorization filter</td><td>Checks authorization before action</td><td><code>[Authorize]</code></td></tr><tr><td>Filter</td><td>Resource filter</td><td>Runs before/after model binding</td><td><code>IResourceFilter</code></td></tr><tr><td>Filter</td><td>Action filter</td><td>Runs before/after action method</td><td><code>ActionFilterAttribute</code></td></tr><tr><td>Filter</td><td>Exception filter</td><td>Handles exceptions</td><td><code>IExceptionFilter</code></td></tr><tr><td>Filter</td><td>Result filter</td><td>Runs before/after result execution</td><td><code>IResultFilter</code></td></tr><tr><td>Filter</td><td>Endpoint filter</td><td>Used with Minimal APIs</td><td><code>IEndpointFilter</code></td></tr></tbody></table></div><hr class="section-divider"><h2 id="14-authentication-authorization-and-jwt"><a class="heading-anchor" href="#14-authentication-authorization-and-jwt">14. Authentication, Authorization, and JWT</a></h2><h3 id="what-to-learn-14"><a class="heading-anchor" href="#what-to-learn-14">What to Learn</a></h3><ul><li>Authentication vs authorization</li><li>Claims</li><li>Roles</li><li>Principal</li><li>Identity</li><li>JWT authentication</li><li>JWT structure</li><li>Access token</li><li>Refresh token</li><li>Cookie authentication</li><li>ASP.NET Core Identity basics</li><li><code>[Authorize]</code></li><li><code>[AllowAnonymous]</code></li><li>Authorization header</li></ul><p>Authentication verifies who the user is. Authorization verifies what the user can access.</p><h3 id="authentication-vs-authorization"><a class="heading-anchor" href="#authentication-vs-authorization">Authentication vs Authorization</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Authentication</th><th>Authorization</th></tr></thead><tbody><tr><td>Meaning</td><td>Verifies who the user is</td><td>Verifies what the user can access</td></tr><tr><td>Process</td><td>Login process</td><td>Permission process</td></tr><tr><td>Example</td><td>Username and password</td><td>Admin can access dashboard</td></tr></tbody></table></div><h3 id="token-based-authentication-flow"><a class="heading-anchor" href="#token-based-authentication-flow">Token-Based Authentication Flow</a></h3><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">Client Login
+}</code></pre></div><p>Benefits:</p>
+<ul>
+<li>Centralized configuration management</li>
+<li>Avoids hardcoded values</li>
+<li>Easy environment-based configuration</li>
+<li>Better maintainability</li>
+<li>Supports strongly typed settings using options pattern</li>
+</ul>
+<hr class="section-divider"><p><a id="topic-12"></a></p>
+<h2 id="12-logging-and-error-handling"><a class="heading-anchor" href="#12-logging-and-error-handling">12. Logging and Error Handling</a></h2><p></p><figure class="content-figure"><img src="assets/aspnet/serilog-structured-logging.jpg" alt="Serilog structured logging vs plain text logging"><figcaption>Serilog structured logging vs plain text logging</figcaption></figure><p></p>
+<p></p><figure class="content-figure"><img src="assets/aspnet/global-error-handling-problemdetails.jpg" alt="Global error handling with ProblemDetails"><figcaption>Global error handling with ProblemDetails</figcaption></figure><p></p>
+<p></p><figure class="content-figure"><img src="assets/aspnet/opentelemetry-tracing-metrics.jpg" alt="OpenTelemetry tracing and metrics setup"><figcaption>OpenTelemetry tracing and metrics setup</figcaption></figure><p></p>
+<h3 id="what-to-learn-12"><a class="heading-anchor" href="#what-to-learn-12">What to Learn</a></h3><ul>
+<li>Built-in logging</li>
+<li>Log levels</li>
+<li>Structured logging</li>
+<li>Exception handling middleware</li>
+<li>Developer exception page</li>
+<li>Global exception handling</li>
+<li>Problem Details</li>
+<li>Custom error response</li>
+<li>Correlation ID basics</li>
+</ul>
+<p>Common use cases:</p>
+<ul>
+<li>Log request and response details</li>
+<li>Log exceptions</li>
+<li>Centralize error handling</li>
+<li>Return consistent error responses</li>
+</ul>
+<hr class="section-divider"><p><a id="topic-13"></a></p>
+<h2 id="13-filters"><a class="heading-anchor" href="#13-filters">13. Filters</a></h2><h3 id="what-to-learn-13"><a class="heading-anchor" href="#what-to-learn-13">What to Learn</a></h3><ul>
+<li>Authorization filters</li>
+<li>Resource filters</li>
+<li>Action filters</li>
+<li>Exception filters</li>
+<li>Result filters</li>
+<li>Endpoint filters</li>
+<li>Filter execution order</li>
+<li>Custom filters</li>
+<li>Service filters</li>
+<li>Type filters</li>
+<li>Middleware vs filters</li>
+</ul>
+<p>Filters run inside the MVC/controller pipeline. Middleware runs in the full HTTP pipeline.</p>
+<h3 id="middleware-vs-filter"><a class="heading-anchor" href="#middleware-vs-filter">Middleware vs Filter</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Middleware</th><th>Filter</th></tr></thead><tbody><tr><td>Works on</td><td>Entire HTTP pipeline</td><td>MVC / Controller pipeline</td></tr><tr><td>Executes before routing</td><td>Yes</td><td>No</td></tr><tr><td>Access to `HttpContext`</td><td>Yes</td><td>Yes</td></tr><tr><td>Access to controller/action</td><td>No</td><td>Yes</td></tr><tr><td>Used for</td><td>Logging, auth, exception handling</td><td>Validation, action logic</td></tr><tr><td>Runs for static files</td><td>Yes</td><td>No</td></tr><tr><td>Scope</td><td>Global</td><td>Controller / action</td></tr><tr><td>Order</td><td>Pipeline order</td><td>Filter order</td></tr></tbody></table></div><h3 id="middleware-and-filter-types"><a class="heading-anchor" href="#middleware-and-filter-types">Middleware and Filter Types</a></h3><div class="table-wrap"><table><thead><tr><th>Category</th><th>Type</th><th>Purpose</th><th>Example</th></tr></thead><tbody><tr><td>Middleware</td><td>Built-in middleware</td><td>Provided by ASP.NET Core</td><td>`UseAuthentication()`</td></tr><tr><td>Middleware</td><td>Custom middleware</td><td>User-created middleware</td><td>`UseMiddleware<loggingmiddleware>()`</loggingmiddleware></td></tr><tr><td>Filter</td><td>Authorization filter</td><td>Checks authorization before action</td><td>`[Authorize]`</td></tr><tr><td>Filter</td><td>Resource filter</td><td>Runs before/after model binding</td><td>`IResourceFilter`</td></tr><tr><td>Filter</td><td>Action filter</td><td>Runs before/after action method</td><td>`ActionFilterAttribute`</td></tr><tr><td>Filter</td><td>Exception filter</td><td>Handles exceptions</td><td>`IExceptionFilter`</td></tr><tr><td>Filter</td><td>Result filter</td><td>Runs before/after result execution</td><td>`IResultFilter`</td></tr><tr><td>Filter</td><td>Endpoint filter</td><td>Used with Minimal APIs</td><td>`IEndpointFilter`</td></tr></tbody></table></div><hr class="section-divider"><p><a id="topic-14"></a></p>
+<h2 id="14-authentication-authorization-and-jwt"><a class="heading-anchor" href="#14-authentication-authorization-and-jwt">14. Authentication, Authorization, and JWT</a></h2><h3 id="what-to-learn-14"><a class="heading-anchor" href="#what-to-learn-14">What to Learn</a></h3><ul>
+<li>Authentication vs authorization</li>
+<li>Claims</li>
+<li>Roles</li>
+<li>Principal</li>
+<li>Identity</li>
+<li>JWT authentication</li>
+<li>JWT structure</li>
+<li>Access token</li>
+<li>Refresh token</li>
+<li>Cookie authentication</li>
+<li>ASP.NET Core Identity basics</li>
+<li><code>[Authorize]</code></li>
+<li><code>[AllowAnonymous]</code></li>
+<li>Authorization header</li>
+</ul>
+<p>Authentication verifies who the user is. Authorization verifies what the user can access.</p>
+<h3 id="authentication-vs-authorization"><a class="heading-anchor" href="#authentication-vs-authorization">Authentication vs Authorization</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Authentication</th><th>Authorization</th></tr></thead><tbody><tr><td>Meaning</td><td>Verifies who the user is</td><td>Verifies what the user can access</td></tr><tr><td>Process</td><td>Login process</td><td>Permission process</td></tr><tr><td>Example</td><td>Username and password</td><td>Admin can access dashboard</td></tr></tbody></table></div><h3 id="token-based-authentication-flow"><a class="heading-anchor" href="#token-based-authentication-flow">Token-Based Authentication Flow</a></h3><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">Client Login
     -&gt; Server Validates User
     -&gt; Generate JWT Token
     -&gt; Send Token To Client
     -&gt; Client Sends Token In Header
     -&gt; Server Validates Token
-    -&gt; Access Granted</code></pre></div><h3 id="jwt-token"><a class="heading-anchor" href="#jwt-token">JWT Token</a></h3><figure class="content-figure"><img src="assets/aspnet/jwt-authentication-flow.jpg" alt="How JWT authentication works in ASP.NET Core"><figcaption>How JWT authentication works in ASP.NET Core</figcaption></figure><figure class="content-figure"><img src="assets/aspnet/tfa-totp-implementation.jpg" alt="Two-factor authentication with TOTP in ASP.NET Core"><figcaption>Two-factor authentication with TOTP in ASP.NET Core</figcaption></figure><p>JWT stands for JSON Web Token.</p><ul><li>JSON because data is stored in JSON format.</li><li>Web because it is mainly used in web communication.</li><li>Token because it is used for authentication and authorization.</li></ul><p>JWT has three parts:</p><div class="table-wrap"><table><thead><tr><th>Part</th><th>Purpose</th></tr></thead><tbody><tr><td>Header</td><td>Contains algorithm and token type</td></tr><tr><td>Payload</td><td>Contains user data and claims</td></tr><tr><td>Signature</td><td>Verifies token integrity</td></tr></tbody></table></div><p>Structure:</p><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">Header.Payload.Signature</code></pre></div><h3 id="claims-roles-identity-and-principal"><a class="heading-anchor" href="#claims-roles-identity-and-principal">Claims, Roles, Identity, and Principal</a></h3><figure class="content-figure"><img src="assets/aspnet/roles-vs-claims.png" alt="Roles vs Claims comparison"><figcaption>Roles vs Claims comparison</figcaption></figure><div class="table-wrap"><table><thead><tr><th>Concept</th><th>Meaning</th></tr></thead><tbody><tr><td>Identity</td><td>Represents authenticated user information</td></tr><tr><td>Claim</td><td>Additional information about user, such as email, role, department</td></tr><tr><td>Role</td><td>Permission group such as Admin, User, Manager</td></tr><tr><td>Principal</td><td>Security context containing identity plus roles/claims</td></tr></tbody></table></div><h3 id="sensitive-data-in-jwt"><a class="heading-anchor" href="#sensitive-data-in-jwt">Sensitive Data in JWT</a></h3><p>Do not store critical information in JWT payload because it is Base64 encoded, not encrypted.</p><p>Do not store:</p><ul><li>Password</li><li>Bank details</li><li>Sensitive personal information</li></ul><p>Store only minimal data such as:</p><ul><li>User ID</li><li>Email</li><li>Role</li></ul><h3 id="creating-jwt-token-example"><a class="heading-anchor" href="#creating-jwt-token-example">Creating JWT Token Example</a></h3><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var claims = new[]
+    -&gt; Access Granted</code></pre></div><h3 id="jwt-token"><a class="heading-anchor" href="#jwt-token">JWT Token</a></h3><p></p><figure class="content-figure"><img src="assets/aspnet/jwt-authentication-flow.jpg" alt="How JWT authentication works in ASP.NET Core"><figcaption>How JWT authentication works in ASP.NET Core</figcaption></figure><p></p>
+<p></p><figure class="content-figure"><img src="assets/aspnet/tfa-totp-implementation.jpg" alt="Two-factor authentication with TOTP in ASP.NET Core"><figcaption>Two-factor authentication with TOTP in ASP.NET Core</figcaption></figure><p></p>
+<p>JWT stands for JSON Web Token.</p>
+<ul>
+<li>JSON because data is stored in JSON format.</li>
+<li>Web because it is mainly used in web communication.</li>
+<li>Token because it is used for authentication and authorization.</li>
+</ul>
+<p>JWT has three parts:</p>
+<div class="table-wrap"><table><thead><tr><th>Part</th><th>Purpose</th></tr></thead><tbody><tr><td>Header</td><td>Contains algorithm and token type</td></tr><tr><td>Payload</td><td>Contains user data and claims</td></tr><tr><td>Signature</td><td>Verifies token integrity</td></tr></tbody></table></div><p>Structure:</p>
+<div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">Header.Payload.Signature</code></pre></div><h3 id="claims-roles-identity-and-principal"><a class="heading-anchor" href="#claims-roles-identity-and-principal">Claims, Roles, Identity, and Principal</a></h3><p></p><figure class="content-figure"><img src="assets/aspnet/roles-vs-claims.png" alt="Roles vs Claims comparison"><figcaption>Roles vs Claims comparison</figcaption></figure><p></p>
+<div class="table-wrap"><table><thead><tr><th>Concept</th><th>Meaning</th></tr></thead><tbody><tr><td>Identity</td><td>Represents authenticated user information</td></tr><tr><td>Claim</td><td>Additional information about user, such as email, role, department</td></tr><tr><td>Role</td><td>Permission group such as Admin, User, Manager</td></tr><tr><td>Principal</td><td>Security context containing identity plus roles/claims</td></tr></tbody></table></div><h3 id="sensitive-data-in-jwt"><a class="heading-anchor" href="#sensitive-data-in-jwt">Sensitive Data in JWT</a></h3><p>Do not store critical information in JWT payload because it is Base64 encoded, not encrypted.</p>
+<p>Do not store:</p>
+<ul>
+<li>Password</li>
+<li>Bank details</li>
+<li>Sensitive personal information</li>
+</ul>
+<p>Store only minimal data such as:</p>
+<ul>
+<li>User ID</li>
+<li>Email</li>
+<li>Role</li>
+</ul>
+<h3 id="creating-jwt-token-example"><a class="heading-anchor" href="#creating-jwt-token-example">Creating JWT Token Example</a></h3><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var claims = new[]
 {
-    new Claim(ClaimTypes.Name, &quot;Akash&quot;),
-    new Claim(ClaimTypes.Role, &quot;Admin&quot;)
+    new Claim(ClaimTypes.Name, "Akash"),
+    new Claim(ClaimTypes.Role, "Admin")
 };
 
 var key = new SymmetricSecurityKey(
-    Encoding.UTF8.GetBytes(&quot;SecretKey&quot;));
+    Encoding.UTF8.GetBytes("SecretKey"));
 
 var creds = new SigningCredentials(
     key,
@@ -319,59 +759,418 @@ var token = new JwtSecurityToken(
     expires: DateTime.Now.AddMinutes(30),
     signingCredentials: creds);
 
-var jwt = new JwtSecurityTokenHandler().WriteToken(token);</code></pre></div><h3 id="authorize-attribute"><a class="heading-anchor" href="#authorize-attribute">Authorize Attribute</a></h3><p><code>[Authorize]</code> restricts unauthorized users. Only authenticated users can access the controller or action.</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">[Authorize]
+var jwt = new JwtSecurityTokenHandler().WriteToken(token);</code></pre></div><h3 id="authorize-attribute"><a class="heading-anchor" href="#authorize-attribute">Authorize Attribute</a></h3><p><code>[Authorize]</code> restricts unauthorized users. Only authenticated users can access the controller or action.</p>
+<div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">[Authorize]
 public class EmployeeController : ControllerBase
 {
 }
 
-[Authorize(Roles = &quot;Admin&quot;)]
+[Authorize(Roles = "Admin")]
 public IActionResult AdminOnly()
 {
     return Ok();
-}</code></pre></div><h3 id="sending-token-from-client"><a class="heading-anchor" href="#sending-token-from-client">Sending Token From Client</a></h3><p>Tokens are sent using the Authorization header.</p><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">Authorization: Bearer TokenValue</code></pre></div><p>JavaScript example:</p><div class="code-block"><div class="code-toolbar"><span>javascript</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-javascript">fetch(url, {
+}</code></pre></div><h3 id="sending-token-from-client"><a class="heading-anchor" href="#sending-token-from-client">Sending Token From Client</a></h3><p>Tokens are sent using the Authorization header.</p>
+<div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">Authorization: Bearer TokenValue</code></pre></div><p>JavaScript example:</p>
+<div class="code-block"><div class="code-toolbar"><span>javascript</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-javascript">fetch(url, {
   headers: {
-    &quot;Authorization&quot;: &quot;Bearer &quot; + token
+    "Authorization": "Bearer " + token
   }
-});</code></pre></div><h3 id="access-token-vs-refresh-token"><a class="heading-anchor" href="#access-token-vs-refresh-token">Access Token vs Refresh Token</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Access Token</th><th>Refresh Token</th></tr></thead><tbody><tr><td>Expiry</td><td>Short expiry</td><td>Long expiry</td></tr><tr><td>Purpose</td><td>Used for API access</td><td>Used to generate new access tokens</td></tr><tr><td>Sent in every request</td><td>Yes</td><td>No, used occasionally</td></tr><tr><td>Example lifetime</td><td>15 minutes to 1 hour</td><td>7 days to 90 days</td></tr></tbody></table></div><p>Refresh token flow:</p><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">Login
+});</code></pre></div><h3 id="access-token-vs-refresh-token"><a class="heading-anchor" href="#access-token-vs-refresh-token">Access Token vs Refresh Token</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Access Token</th><th>Refresh Token</th></tr></thead><tbody><tr><td>Expiry</td><td>Short expiry</td><td>Long expiry</td></tr><tr><td>Purpose</td><td>Used for API access</td><td>Used to generate new access tokens</td></tr><tr><td>Sent in every request</td><td>Yes</td><td>No, used occasionally</td></tr><tr><td>Example lifetime</td><td>15 minutes to 1 hour</td><td>7 days to 90 days</td></tr></tbody></table></div><p>Refresh token flow:</p>
+<div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">Login
     -&gt; Access Token + Refresh Token
     -&gt; Access Token Expired
     -&gt; Client Sends Refresh Token
     -&gt; Server Validates Refresh Token
-    -&gt; New Access Token Generated</code></pre></div><hr class="section-divider"><h2 id="15-oauth-openid-connect-and-sso"><a class="heading-anchor" href="#15-oauth-openid-connect-and-sso">15. OAuth, OpenID Connect, and SSO</a></h2><h3 id="what-to-learn-15"><a class="heading-anchor" href="#what-to-learn-15">What to Learn</a></h3><ul><li>OAuth</li><li>OpenID</li><li>OpenID Connect</li><li>JWT token format</li><li>Microsoft Identity Platform</li><li>Microsoft Entra ID</li><li>IdentityServer4</li><li>Duende IdentityServer</li><li>Single Sign-On</li></ul><p>OAuth, OpenID, and OpenID Connect are protocols. JWT is a token format.</p><h3 id="main-difference"><a class="heading-anchor" href="#main-difference">Main Difference</a></h3><div class="table-wrap"><table><thead><tr><th>Concept</th><th>Meaning</th></tr></thead><tbody><tr><td>OAuth</td><td>Authorization framework. Answers: what can the application access?</td></tr><tr><td>OpenID</td><td>Authentication protocol. Answers: who is the user?</td></tr><tr><td>OpenID Connect</td><td>Authentication layer over OAuth 2.0. Handles login and identity.</td></tr><tr><td>JWT</td><td>Token format that carries claims/data.</td></tr></tbody></table></div><h3 id="oauth"><a class="heading-anchor" href="#oauth">OAuth</a></h3><p>OAuth allows third-party applications to access resources securely.</p><p>Examples:</p><ul><li>Login with Google</li><li>Allow another app to access photos or profile data</li></ul><h3 id="openid-connect"><a class="heading-anchor" href="#openid-connect">OpenID Connect</a></h3><p>OpenID Connect is built on top of OAuth 2.0 and adds authentication support.</p><p>Commonly used in:</p><ul><li>Google Login</li><li>Microsoft Login</li><li>Azure AD / Microsoft Entra ID</li><li>Okta</li><li>Auth0</li></ul><h3 id="real-login-flow"><a class="heading-anchor" href="#real-login-flow">Real Login Flow</a></h3><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">User Clicks Login with Google
+    -&gt; New Access Token Generated</code></pre></div><hr class="section-divider"><p><a id="topic-15"></a></p>
+<h2 id="15-oauth-openid-connect-and-sso"><a class="heading-anchor" href="#15-oauth-openid-connect-and-sso">15. OAuth, OpenID Connect, and SSO</a></h2><h3 id="what-to-learn-15"><a class="heading-anchor" href="#what-to-learn-15">What to Learn</a></h3><ul>
+<li>OAuth</li>
+<li>OpenID</li>
+<li>OpenID Connect</li>
+<li>JWT token format</li>
+<li>Microsoft Identity Platform</li>
+<li>Microsoft Entra ID</li>
+<li>IdentityServer4</li>
+<li>Duende IdentityServer</li>
+<li>Single Sign-On</li>
+</ul>
+<p>OAuth, OpenID, and OpenID Connect are protocols. JWT is a token format.</p>
+<h3 id="main-difference"><a class="heading-anchor" href="#main-difference">Main Difference</a></h3><div class="table-wrap"><table><thead><tr><th>Concept</th><th>Meaning</th></tr></thead><tbody><tr><td>OAuth</td><td>Authorization framework. Answers: what can the application access?</td></tr><tr><td>OpenID</td><td>Authentication protocol. Answers: who is the user?</td></tr><tr><td>OpenID Connect</td><td>Authentication layer over OAuth 2.0. Handles login and identity.</td></tr><tr><td>JWT</td><td>Token format that carries claims/data.</td></tr></tbody></table></div><h3 id="oauth"><a class="heading-anchor" href="#oauth">OAuth</a></h3><p>OAuth allows third-party applications to access resources securely.</p>
+<p>Examples:</p>
+<ul>
+<li>Login with Google</li>
+<li>Allow another app to access photos or profile data</li>
+</ul>
+<h3 id="openid-connect"><a class="heading-anchor" href="#openid-connect">OpenID Connect</a></h3><p>OpenID Connect is built on top of OAuth 2.0 and adds authentication support.</p>
+<p>Commonly used in:</p>
+<ul>
+<li>Google Login</li>
+<li>Microsoft Login</li>
+<li>Azure AD / Microsoft Entra ID</li>
+<li>Okta</li>
+<li>Auth0</li>
+</ul>
+<h3 id="real-login-flow"><a class="heading-anchor" href="#real-login-flow">Real Login Flow</a></h3><div class="code-block"><div class="code-toolbar"><span>text</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-text">User Clicks Login with Google
     -&gt; OpenID Connect
     -&gt; Uses OAuth 2.0
     -&gt; Generates JWT Token
-    -&gt; Application Gets User Info</code></pre></div><h3 id="oauth-vs-openid-vs-openid-connect-vs-jwt"><a class="heading-anchor" href="#oauth-vs-openid-vs-openid-connect-vs-jwt">OAuth vs OpenID vs OpenID Connect vs JWT</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>OAuth</th><th>OpenID</th><th>OpenID Connect</th><th>JWT</th></tr></thead><tbody><tr><td>Purpose</td><td>Authorization</td><td>Authentication</td><td>Authentication + authorization</td><td>Token format</td></tr><tr><td>Checks</td><td>Access</td><td>Identity</td><td>Identity + access</td><td>Carries data</td></tr><tr><td>Protocol/format</td><td>Framework</td><td>Protocol</td><td>Protocol</td><td>Token</td></tr><tr><td>Uses JWT</td><td>Sometimes</td><td>No</td><td>Yes</td><td>Itself JWT</td></tr><tr><td>Login support</td><td>No</td><td>Yes</td><td>Yes</td><td>No</td></tr><tr><td>Permission handling</td><td>Yes</td><td>No</td><td>Yes</td><td>No</td></tr><tr><td>Common use</td><td>API access</td><td>User identity</td><td>Social login</td><td>Secure data transfer</td></tr></tbody></table></div><h3 id="microsoft-identity-platform-and-entra-id"><a class="heading-anchor" href="#microsoft-identity-platform-and-entra-id">Microsoft Identity Platform and Entra ID</a></h3><ul><li>Microsoft supports OpenID Connect through Microsoft Identity Platform and Microsoft Entra ID.</li><li>Azure Active Directory is now Microsoft Entra ID.</li><li>OIDC defines how authentication works.</li><li>Microsoft Entra ID performs authentication as a managed identity provider.</li></ul><h3 id="identityserver4-and-microsoft-entra-id"><a class="heading-anchor" href="#identityserver4-and-microsoft-entra-id">IdentityServer4 and Microsoft Entra ID</a></h3><p>IdentityServer4 is an OpenID Connect and OAuth 2.0 framework for ASP.NET Core applications. It is outdated for newer .NET versions; Duende IdentityServer is the newer commercial successor.</p><div class="table-wrap"><table><thead><tr><th>Feature</th><th>IdentityServer4</th><th>Microsoft Entra ID</th></tr></thead><tbody><tr><td>Hosted by</td><td>Self-hosted</td><td>Microsoft Cloud</td></tr><tr><td>Control</td><td>Full control</td><td>Managed by Microsoft</td></tr><tr><td>Cost</td><td>Free old version</td><td>Subscription based</td></tr><tr><td>Best for</td><td>Custom auth systems</td><td>Enterprise login</td></tr><tr><td>OIDC support</td><td>Yes</td><td>Yes</td></tr><tr><td>OAuth support</td><td>Yes</td><td>Yes</td></tr></tbody></table></div><h3 id="sso"><a class="heading-anchor" href="#sso">SSO</a></h3><p>Single Sign-On is an authentication mechanism where a user logs in once and can access multiple applications without logging in again.</p><p>Common technologies:</p><ul><li>OpenID Connect</li><li>OAuth 2.0</li><li>SAML</li><li>JWT tokens</li></ul><hr class="section-divider"><h2 id="16-cookies-session-tempdata-viewdata-and-viewbag"><a class="heading-anchor" href="#16-cookies-session-tempdata-viewdata-and-viewbag">16. Cookies, Session, TempData, ViewData, and ViewBag</a></h2><figure class="content-figure"><img src="assets/aspnet/web-session-lifecycle.png" alt="Web session lifecycle from browser open to close"><figcaption>Web session lifecycle from browser open to close</figcaption></figure><h3 id="what-to-learn-16"><a class="heading-anchor" href="#what-to-learn-16">What to Learn</a></h3><ul><li>Cookies</li><li>Session management</li><li>Session variables</li><li>TempData</li><li>ViewData</li><li>ViewBag</li><li>Query string</li><li>Hidden fields</li><li>HTTP context</li><li>ViewModel</li></ul><p>HTTP is stateless by default. Session management techniques help maintain user state/data between multiple HTTP requests.</p><h3 id="cookies"><a class="heading-anchor" href="#cookies">Cookies</a></h3><p>Cookies are small pieces of data stored in the user&#x27;s browser by a website.</p><p>Common uses:</p><ul><li>Store user data</li><li>Maintain login session</li><li>Remember user preferences</li><li>Shopping cart</li><li>Analytics/tracking</li></ul><p>Cookie operations:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">Response.Cookies.Append(&quot;UserName&quot;, &quot;Akash&quot;);
+    -&gt; Application Gets User Info</code></pre></div><h3 id="oauth-vs-openid-vs-openid-connect-vs-jwt"><a class="heading-anchor" href="#oauth-vs-openid-vs-openid-connect-vs-jwt">OAuth vs OpenID vs OpenID Connect vs JWT</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>OAuth</th><th>OpenID</th><th>OpenID Connect</th><th>JWT</th></tr></thead><tbody><tr><td>Purpose</td><td>Authorization</td><td>Authentication</td><td>Authentication + authorization</td><td>Token format</td></tr><tr><td>Checks</td><td>Access</td><td>Identity</td><td>Identity + access</td><td>Carries data</td></tr><tr><td>Protocol/format</td><td>Framework</td><td>Protocol</td><td>Protocol</td><td>Token</td></tr><tr><td>Uses JWT</td><td>Sometimes</td><td>No</td><td>Yes</td><td>Itself JWT</td></tr><tr><td>Login support</td><td>No</td><td>Yes</td><td>Yes</td><td>No</td></tr><tr><td>Permission handling</td><td>Yes</td><td>No</td><td>Yes</td><td>No</td></tr><tr><td>Common use</td><td>API access</td><td>User identity</td><td>Social login</td><td>Secure data transfer</td></tr></tbody></table></div><h3 id="microsoft-identity-platform-and-entra-id"><a class="heading-anchor" href="#microsoft-identity-platform-and-entra-id">Microsoft Identity Platform and Entra ID</a></h3><ul>
+<li>Microsoft supports OpenID Connect through Microsoft Identity Platform and Microsoft Entra ID.</li>
+<li>Azure Active Directory is now Microsoft Entra ID.</li>
+<li>OIDC defines how authentication works.</li>
+<li>Microsoft Entra ID performs authentication as a managed identity provider.</li>
+</ul>
+<h3 id="identityserver4-and-microsoft-entra-id"><a class="heading-anchor" href="#identityserver4-and-microsoft-entra-id">IdentityServer4 and Microsoft Entra ID</a></h3><p>IdentityServer4 is an OpenID Connect and OAuth 2.0 framework for ASP.NET Core applications. It is outdated for newer .NET versions; Duende IdentityServer is the newer commercial successor.</p>
+<div class="table-wrap"><table><thead><tr><th>Feature</th><th>IdentityServer4</th><th>Microsoft Entra ID</th></tr></thead><tbody><tr><td>Hosted by</td><td>Self-hosted</td><td>Microsoft Cloud</td></tr><tr><td>Control</td><td>Full control</td><td>Managed by Microsoft</td></tr><tr><td>Cost</td><td>Free old version</td><td>Subscription based</td></tr><tr><td>Best for</td><td>Custom auth systems</td><td>Enterprise login</td></tr><tr><td>OIDC support</td><td>Yes</td><td>Yes</td></tr><tr><td>OAuth support</td><td>Yes</td><td>Yes</td></tr></tbody></table></div><h3 id="sso"><a class="heading-anchor" href="#sso">SSO</a></h3><p>Single Sign-On is an authentication mechanism where a user logs in once and can access multiple applications without logging in again.</p>
+<p>Common technologies:</p>
+<ul>
+<li>OpenID Connect</li>
+<li>OAuth 2.0</li>
+<li>SAML</li>
+<li>JWT tokens</li>
+</ul>
+<hr class="section-divider"><p><a id="topic-16"></a></p>
+<h2 id="16-cookies-session-tempdata-viewdata-and-viewbag"><a class="heading-anchor" href="#16-cookies-session-tempdata-viewdata-and-viewbag">16. Cookies, Session, TempData, ViewData, and ViewBag</a></h2><p></p><figure class="content-figure"><img src="assets/aspnet/web-session-lifecycle.png" alt="Web session lifecycle from browser open to close"><figcaption>Web session lifecycle from browser open to close</figcaption></figure><p></p>
+<h3 id="what-to-learn-16"><a class="heading-anchor" href="#what-to-learn-16">What to Learn</a></h3><ul>
+<li>Cookies</li>
+<li>Session management</li>
+<li>Session variables</li>
+<li>TempData</li>
+<li>ViewData</li>
+<li>ViewBag</li>
+<li>Query string</li>
+<li>Hidden fields</li>
+<li>HTTP context</li>
+<li>ViewModel</li>
+</ul>
+<p>HTTP is stateless by default. Session management techniques help maintain user state/data between multiple HTTP requests.</p>
+<h3 id="cookies"><a class="heading-anchor" href="#cookies">Cookies</a></h3><p>Cookies are small pieces of data stored in the user's browser by a website.</p>
+<p>Common uses:</p>
+<ul>
+<li>Store user data</li>
+<li>Maintain login session</li>
+<li>Remember user preferences</li>
+<li>Shopping cart</li>
+<li>Analytics/tracking</li>
+</ul>
+<p>Cookie operations:</p>
+<div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">Response.Cookies.Append("UserName", "Akash");
 
-string user = Request.Cookies[&quot;UserName&quot;];
+string user = Request.Cookies["UserName"];
 
-Response.Cookies.Delete(&quot;UserName&quot;);</code></pre></div><h3 id="session-management"><a class="heading-anchor" href="#session-management">Session Management</a></h3><p>Session data is stored on the server. A session ID is stored in a browser cookie.</p><p>Common uses:</p><ul><li>User login</li><li>Shopping cart</li><li>User preferences</li><li>Temporary data</li><li>Authentication</li></ul><p>Configure session:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">builder.Services.AddSession();
-app.UseSession();</code></pre></div><p>Store and read session data:</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">HttpContext.Session.SetString(&quot;UserName&quot;, &quot;Akash&quot;);
-HttpContext.Session.SetInt32(&quot;UserId&quot;, 101);
+Response.Cookies.Delete("UserName");</code></pre></div><h3 id="session-management"><a class="heading-anchor" href="#session-management">Session Management</a></h3><p>Session data is stored on the server. A session ID is stored in a browser cookie.</p>
+<p>Common uses:</p>
+<ul>
+<li>User login</li>
+<li>Shopping cart</li>
+<li>User preferences</li>
+<li>Temporary data</li>
+<li>Authentication</li>
+</ul>
+<p>Configure session:</p>
+<div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">builder.Services.AddSession();
+app.UseSession();</code></pre></div><p>Store and read session data:</p>
+<div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">HttpContext.Session.SetString("UserName", "Akash");
+HttpContext.Session.SetInt32("UserId", 101);
 
-string userName = HttpContext.Session.GetString(&quot;UserName&quot;);
-int? userId = HttpContext.Session.GetInt32(&quot;UserId&quot;);
+string userName = HttpContext.Session.GetString("UserName");
+int? userId = HttpContext.Session.GetInt32("UserId");
 
-HttpContext.Session.Remove(&quot;UserName&quot;);
-HttpContext.Session.Clear();</code></pre></div><p>Important points:</p><ul><li>Session is not enabled by default in ASP.NET Core.</li><li>Session variables are user-specific.</li><li>Session variables are not global.</li><li>Session data is not shared between users.</li><li>Session expires after timeout.</li><li>Session variables internally use cookies to store only the session ID.</li></ul><h3 id="session-vs-cookie"><a class="heading-anchor" href="#session-vs-cookie">Session vs Cookie</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Session</th><th>Cookie</th></tr></thead><tbody><tr><td>Storage location</td><td>Server</td><td>Browser</td></tr><tr><td>Security</td><td>More secure</td><td>Less secure</td></tr><tr><td>Data size</td><td>Larger</td><td>Small, around 4 KB</td></tr><tr><td>Lifetime</td><td>Until session timeout</td><td>Until expiry date</td></tr><tr><td>Speed</td><td>Slightly slower</td><td>Faster</td></tr><tr><td>Sensitive data</td><td>Can store more safely</td><td>Not recommended</td></tr><tr><td>Server memory required</td><td>Yes</td><td>No</td></tr><tr><td>Automatically sent with request</td><td>Session ID only</td><td>Entire cookie</td></tr><tr><td>Main usage</td><td>User state/login</td><td>Preferences/tracking</td></tr></tbody></table></div><h3 id="session-management-techniques"><a class="heading-anchor" href="#session-management-techniques">Session Management Techniques</a></h3><div class="table-wrap"><table><thead><tr><th>Technique</th><th>Storage Location</th><th>Lifetime</th><th>Usage</th></tr></thead><tbody><tr><td>Cookies</td><td>Browser</td><td>Until expiry</td><td>Remember user/preferences</td></tr><tr><td>Session</td><td>Server</td><td>Until timeout</td><td>User login/state</td></tr><tr><td>TempData</td><td>Server/session-backed</td><td>Next request only</td><td>Redirect messages</td></tr><tr><td>ViewData</td><td>Server memory</td><td>Current request</td><td>Controller to View</td></tr><tr><td>ViewBag</td><td>Server memory</td><td>Current request</td><td>Controller to View</td></tr><tr><td>Query string</td><td>URL</td><td>Until URL changes</td><td>Small public data</td></tr><tr><td>Hidden fields</td><td>Web page</td><td>Form submission</td><td>Hidden form values</td></tr><tr><td>ViewState</td><td>Page</td><td>Postback</td><td>Web Forms page state</td></tr></tbody></table></div><h3 id="tempdata"><a class="heading-anchor" href="#tempdata">TempData</a></h3><p>TempData transfers data from one request to another request. It is mostly used after <code>RedirectToAction()</code>.</p><p>Important points:</p><ul><li>TempData survives one redirect/request.</li><li>TempData is user-specific.</li><li>TempData is tied to session.</li><li>Data exists until it is read.</li><li>After reading, TempData is removed unless <code>Keep()</code> or <code>Peek()</code> is used.</li></ul><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">TempData[&quot;Message&quot;] = &quot;Saved Successfully&quot;;</code></pre></div><h3 id="keep-vs-peek"><a class="heading-anchor" href="#keep-vs-peek"><code>Keep()</code> vs <code>Peek()</code></a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th><code>Keep()</code></th><th><code>Peek()</code></th></tr></thead><tbody><tr><td>Purpose</td><td>Preserves TempData after it is read</td><td>Reads TempData without deleting it</td></tr><tr><td>When used</td><td>After accessing TempData</td><td>When reading TempData</td></tr><tr><td>Need extra call after read</td><td>Yes</td><td>No</td></tr></tbody></table></div><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var data = TempData[&quot;Message&quot;];
-TempData.Keep(&quot;Message&quot;);
+HttpContext.Session.Remove("UserName");
+HttpContext.Session.Clear();</code></pre></div><p>Important points:</p>
+<ul>
+<li>Session is not enabled by default in ASP.NET Core.</li>
+<li>Session variables are user-specific.</li>
+<li>Session variables are not global.</li>
+<li>Session data is not shared between users.</li>
+<li>Session expires after timeout.</li>
+<li>Session variables internally use cookies to store only the session ID.</li>
+</ul>
+<h3 id="session-vs-cookie"><a class="heading-anchor" href="#session-vs-cookie">Session vs Cookie</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Session</th><th>Cookie</th></tr></thead><tbody><tr><td>Storage location</td><td>Server</td><td>Browser</td></tr><tr><td>Security</td><td>More secure</td><td>Less secure</td></tr><tr><td>Data size</td><td>Larger</td><td>Small, around 4 KB</td></tr><tr><td>Lifetime</td><td>Until session timeout</td><td>Until expiry date</td></tr><tr><td>Speed</td><td>Slightly slower</td><td>Faster</td></tr><tr><td>Sensitive data</td><td>Can store more safely</td><td>Not recommended</td></tr><tr><td>Server memory required</td><td>Yes</td><td>No</td></tr><tr><td>Automatically sent with request</td><td>Session ID only</td><td>Entire cookie</td></tr><tr><td>Main usage</td><td>User state/login</td><td>Preferences/tracking</td></tr></tbody></table></div><h3 id="session-management-techniques"><a class="heading-anchor" href="#session-management-techniques">Session Management Techniques</a></h3><div class="table-wrap"><table><thead><tr><th>Technique</th><th>Storage Location</th><th>Lifetime</th><th>Usage</th></tr></thead><tbody><tr><td>Cookies</td><td>Browser</td><td>Until expiry</td><td>Remember user/preferences</td></tr><tr><td>Session</td><td>Server</td><td>Until timeout</td><td>User login/state</td></tr><tr><td>TempData</td><td>Server/session-backed</td><td>Next request only</td><td>Redirect messages</td></tr><tr><td>ViewData</td><td>Server memory</td><td>Current request</td><td>Controller to View</td></tr><tr><td>ViewBag</td><td>Server memory</td><td>Current request</td><td>Controller to View</td></tr><tr><td>Query string</td><td>URL</td><td>Until URL changes</td><td>Small public data</td></tr><tr><td>Hidden fields</td><td>Web page</td><td>Form submission</td><td>Hidden form values</td></tr><tr><td>ViewState</td><td>Page</td><td>Postback</td><td>Web Forms page state</td></tr></tbody></table></div><h3 id="tempdata"><a class="heading-anchor" href="#tempdata">TempData</a></h3><p>TempData transfers data from one request to another request. It is mostly used after <code>RedirectToAction()</code>.</p>
+<p>Important points:</p>
+<ul>
+<li>TempData survives one redirect/request.</li>
+<li>TempData is user-specific.</li>
+<li>TempData is tied to session.</li>
+<li>Data exists until it is read.</li>
+<li>After reading, TempData is removed unless <code>Keep()</code> or <code>Peek()</code> is used.</li>
+</ul>
+<div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">TempData["Message"] = "Saved Successfully";</code></pre></div><h3 id="keep-vs-peek"><a class="heading-anchor" href="#keep-vs-peek">`Keep()` vs `Peek()`</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>`Keep()`</th><th>`Peek()`</th></tr></thead><tbody><tr><td>Purpose</td><td>Preserves TempData after it is read</td><td>Reads TempData without deleting it</td></tr><tr><td>When used</td><td>After accessing TempData</td><td>When reading TempData</td></tr><tr><td>Need extra call after read</td><td>Yes</td><td>No</td></tr></tbody></table></div><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var data = TempData["Message"];
+TempData.Keep("Message");
 
-var value = TempData.Peek(&quot;Message&quot;);</code></pre></div><h3 id="tempdata-vs-viewdata"><a class="heading-anchor" href="#tempdata-vs-viewdata">TempData vs ViewData</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>TempData</th><th>ViewData</th></tr></thead><tbody><tr><td>Lifetime</td><td>Available for next request</td><td>Current request only</td></tr><tr><td>Redirect support</td><td>Yes</td><td>No</td></tr><tr><td>Internal storage</td><td>Session/provider-backed</td><td><code>ViewDataDictionary</code></td></tr><tr><td>Removal</td><td>Removed after read</td><td>Available during current request only</td></tr></tbody></table></div><h3 id="tempdata-vs-session"><a class="heading-anchor" href="#tempdata-vs-session">TempData vs Session</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>TempData</th><th>Session</th></tr></thead><tbody><tr><td>Lifetime</td><td>One request/redirect</td><td>Entire user session</td></tr><tr><td>Removal</td><td>Auto removes after read</td><td>Until timeout or manual removal</td></tr><tr><td>Best use</td><td>Redirect messages</td><td>User/login data</td></tr><tr><td>User specific</td><td>Yes</td><td>Yes</td></tr></tbody></table></div><h3 id="httpcontext"><a class="heading-anchor" href="#httpcontext">HttpContext</a></h3><p><code>HttpContext</code> represents all information related to a single HTTP request and response.</p><p>It contains:</p><ul><li>Request</li><li>Response</li><li>Session</li><li>User</li><li>Cookies</li><li>Items</li></ul><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public IActionResult Index()
+var value = TempData.Peek("Message");</code></pre></div><h3 id="tempdata-vs-viewdata"><a class="heading-anchor" href="#tempdata-vs-viewdata">TempData vs ViewData</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>TempData</th><th>ViewData</th></tr></thead><tbody><tr><td>Lifetime</td><td>Available for next request</td><td>Current request only</td></tr><tr><td>Redirect support</td><td>Yes</td><td>No</td></tr><tr><td>Internal storage</td><td>Session/provider-backed</td><td>`ViewDataDictionary`</td></tr><tr><td>Removal</td><td>Removed after read</td><td>Available during current request only</td></tr></tbody></table></div><h3 id="tempdata-vs-session"><a class="heading-anchor" href="#tempdata-vs-session">TempData vs Session</a></h3><div class="table-wrap"><table><thead><tr><th>Feature</th><th>TempData</th><th>Session</th></tr></thead><tbody><tr><td>Lifetime</td><td>One request/redirect</td><td>Entire user session</td></tr><tr><td>Removal</td><td>Auto removes after read</td><td>Until timeout or manual removal</td></tr><tr><td>Best use</td><td>Redirect messages</td><td>User/login data</td></tr><tr><td>User specific</td><td>Yes</td><td>Yes</td></tr></tbody></table></div><h3 id="httpcontext"><a class="heading-anchor" href="#httpcontext">HttpContext</a></h3><p><code>HttpContext</code> represents all information related to a single HTTP request and response.</p>
+<p>It contains:</p>
+<ul>
+<li>Request</li>
+<li>Response</li>
+<li>Session</li>
+<li>User</li>
+<li>Cookies</li>
+<li>Items</li>
+</ul>
+<div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">public IActionResult Index()
 {
-    string browser = HttpContext.Request.Headers[&quot;User-Agent&quot;];
+    string browser = HttpContext.Request.Headers["User-Agent"];
 
-    HttpContext.Response.Cookies.Append(&quot;UserName&quot;, &quot;Akash&quot;);
+    HttpContext.Response.Cookies.Append("UserName", "Akash");
 
     return View();
-}</code></pre></div><hr class="section-divider"><h2 id="17-minimal-apis"><a class="heading-anchor" href="#17-minimal-apis">17. Minimal APIs</a></h2><figure class="content-figure"><img src="assets/aspnet/controllers-vs-minimal-apis.jpg" alt="Controllers vs Minimal APIs comparison"><figcaption>Controllers vs Minimal APIs comparison</figcaption></figure><figure class="content-figure"><img src="assets/aspnet/primary-constructor-controller.jpg" alt="Primary constructor in ASP.NET Core controller"><figcaption>Primary constructor in ASP.NET Core controller</figcaption></figure><figure class="content-figure"><img src="assets/aspnet/dto-request-response-naming.jpg" alt="DTO request/response naming for Web APIs"><figcaption>DTO request/response naming for Web APIs</figcaption></figure><figure class="content-figure"><img src="assets/aspnet/minimal-api-dto-overposting-security.jpg" alt="Avoid binding directly to entities in Minimal APIs"><figcaption>Avoid binding directly to entities in Minimal APIs</figcaption></figure><h3 id="what-to-learn-17"><a class="heading-anchor" href="#what-to-learn-17">What to Learn</a></h3><ul><li>Minimal API basics</li><li>Route handlers</li><li>Parameter binding</li><li>Dependency injection in route handlers</li><li>Returning results</li><li>Endpoint filters</li><li>Grouping endpoints</li><li>Minimal API vs controller-based API</li></ul><p>Minimal APIs are a lightweight way to build HTTP APIs with less ceremony than controller-based APIs.</p><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var builder = WebApplication.CreateBuilder(args);
+}</code></pre></div><hr class="section-divider"><p><a id="topic-17"></a></p>
+<h2 id="17-minimal-apis"><a class="heading-anchor" href="#17-minimal-apis">17. Minimal APIs</a></h2><p></p><figure class="content-figure"><img src="assets/aspnet/controllers-vs-minimal-apis.jpg" alt="Controllers vs Minimal APIs comparison"><figcaption>Controllers vs Minimal APIs comparison</figcaption></figure><p></p>
+<p></p><figure class="content-figure"><img src="assets/aspnet/primary-constructor-controller.jpg" alt="Primary constructor in ASP.NET Core controller"><figcaption>Primary constructor in ASP.NET Core controller</figcaption></figure><p></p>
+<p></p><figure class="content-figure"><img src="assets/aspnet/dto-request-response-naming.jpg" alt="DTO request/response naming for Web APIs"><figcaption>DTO request/response naming for Web APIs</figcaption></figure><p></p>
+<p></p><figure class="content-figure"><img src="assets/aspnet/minimal-api-dto-overposting-security.jpg" alt="Avoid binding directly to entities in Minimal APIs"><figcaption>Avoid binding directly to entities in Minimal APIs</figcaption></figure><p></p>
+<h3 id="what-to-learn-17"><a class="heading-anchor" href="#what-to-learn-17">What to Learn</a></h3><ul>
+<li>Minimal API basics</li>
+<li>Route handlers</li>
+<li>Parameter binding</li>
+<li>Dependency injection in route handlers</li>
+<li>Returning results</li>
+<li>Endpoint filters</li>
+<li>Grouping endpoints</li>
+<li>Minimal API vs controller-based API</li>
+</ul>
+<p>Minimal APIs are a lightweight way to build HTTP APIs with less ceremony than controller-based APIs.</p>
+<div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
-app.MapGet(&quot;/&quot;, () =&gt; &quot;Hello World&quot;);
+app.MapGet("/", () =&gt; "Hello World");
 
-app.Run();</code></pre></div><hr class="section-divider"><h2 id="18-file-upload-and-download"><a class="heading-anchor" href="#18-file-upload-and-download">18. File Upload and Download</a></h2><h3 id="what-to-learn-18"><a class="heading-anchor" href="#what-to-learn-18">What to Learn</a></h3><ul><li><code>IFormFile</code></li><li>Multipart form data</li><li>File size limits</li><li>File validation</li><li>Saving files</li><li>Streaming files</li><li>Returning files from APIs</li><li>Security risks in file upload</li></ul><hr class="section-divider"><h2 id="19-background-services"><a class="heading-anchor" href="#19-background-services">19. Background Services</a></h2><h3 id="what-to-learn-19"><a class="heading-anchor" href="#what-to-learn-19">What to Learn</a></h3><ul><li>Hosted services</li><li><code>IHostedService</code></li><li><code>BackgroundService</code></li><li>Worker service</li><li>Timed background tasks</li><li>Queued background tasks</li><li>Cancellation tokens</li><li>Logging in background services</li></ul><hr class="section-divider"><h2 id="20-caching"><a class="heading-anchor" href="#20-caching">20. Caching</a></h2><figure class="content-figure"><img src="assets/aspnet/caching-strategies-response-output-hybrid.jpg" alt="Response caching vs output caching vs HybridCache"><figcaption>Response caching vs output caching vs HybridCache</figcaption></figure><h3 id="what-to-learn-20"><a class="heading-anchor" href="#what-to-learn-20">What to Learn</a></h3><ul><li>In-memory caching</li><li>Distributed caching</li><li>Response caching</li><li>Output caching</li><li>Cache expiration</li><li>Cache invalidation</li><li>Redis basics</li></ul><hr class="section-divider"><h2 id="21-security-best-practices"><a class="heading-anchor" href="#21-security-best-practices">21. Security Best Practices</a></h2><figure class="content-figure"><img src="assets/aspnet/rate-limiting-fixed-sliding-window.jpg" alt="Fixed and sliding window rate limiting in ASP.NET Core"><figcaption>Fixed and sliding window rate limiting in ASP.NET Core</figcaption></figure><figure class="content-figure"><img src="assets/aspnet/yarp-reverse-proxy.jpg" alt="YARP reverse proxy setup in .NET"><figcaption>YARP reverse proxy setup in .NET</figcaption></figure><figure class="content-figure"><img src="assets/aspnet/ocelot-api-gateway.jpg" alt="Ocelot API gateway setup in .NET"><figcaption>Ocelot API gateway setup in .NET</figcaption></figure><h3 id="what-to-learn-21"><a class="heading-anchor" href="#what-to-learn-21">What to Learn</a></h3><ul><li>HTTPS</li><li>CORS</li><li>CSRF</li><li>XSS basics</li><li>SQL injection prevention</li><li>Secure headers</li><li>Secrets management</li><li>Input validation</li><li>Rate limiting</li><li>Avoiding sensitive data in logs</li><li>Securing APIs</li></ul><h3 id="securing-web-apis"><a class="heading-anchor" href="#securing-web-apis">Securing Web APIs</a></h3><p>Common practices:</p><ul><li>Use JWT authentication</li><li>Use HTTPS</li><li>Implement authorization</li><li>Use role-based or policy-based access</li><li>Validate user input</li><li>Use exception handling and logging</li><li>Configure CORS correctly</li><li>Protect sensitive APIs</li></ul><div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">[Authorize]
+app.Run();</code></pre></div><hr class="section-divider"><p><a id="topic-18"></a></p>
+<h2 id="18-file-upload-and-download"><a class="heading-anchor" href="#18-file-upload-and-download">18. File Upload and Download</a></h2><h3 id="what-to-learn-18"><a class="heading-anchor" href="#what-to-learn-18">What to Learn</a></h3><ul>
+<li><code>IFormFile</code></li>
+<li>Multipart form data</li>
+<li>File size limits</li>
+<li>File validation</li>
+<li>Saving files</li>
+<li>Streaming files</li>
+<li>Returning files from APIs</li>
+<li>Security risks in file upload</li>
+</ul>
+<hr class="section-divider"><p><a id="topic-19"></a></p>
+<h2 id="19-background-services"><a class="heading-anchor" href="#19-background-services">19. Background Services</a></h2><h3 id="what-to-learn-19"><a class="heading-anchor" href="#what-to-learn-19">What to Learn</a></h3><ul>
+<li>Hosted services</li>
+<li><code>IHostedService</code></li>
+<li><code>BackgroundService</code></li>
+<li>Worker service</li>
+<li>Timed background tasks</li>
+<li>Queued background tasks</li>
+<li>Cancellation tokens</li>
+<li>Logging in background services</li>
+</ul>
+<hr class="section-divider"><p><a id="topic-20"></a></p>
+<h2 id="20-caching"><a class="heading-anchor" href="#20-caching">20. Caching</a></h2><p></p><figure class="content-figure"><img src="assets/aspnet/caching-strategies-response-output-hybrid.jpg" alt="Response caching vs output caching vs HybridCache"><figcaption>Response caching vs output caching vs HybridCache</figcaption></figure><p></p>
+<h3 id="what-to-learn-20"><a class="heading-anchor" href="#what-to-learn-20">What to Learn</a></h3><ul>
+<li>In-memory caching</li>
+<li>Distributed caching</li>
+<li>Response caching</li>
+<li>Output caching</li>
+<li>Cache expiration</li>
+<li>Cache invalidation</li>
+<li>Redis basics</li>
+</ul>
+<hr class="section-divider"><p><a id="topic-21"></a></p>
+<h2 id="21-security-best-practices"><a class="heading-anchor" href="#21-security-best-practices">21. Security Best Practices</a></h2><p></p><figure class="content-figure"><img src="assets/aspnet/rate-limiting-fixed-sliding-window.jpg" alt="Fixed and sliding window rate limiting in ASP.NET Core"><figcaption>Fixed and sliding window rate limiting in ASP.NET Core</figcaption></figure><p></p>
+<p></p><figure class="content-figure"><img src="assets/aspnet/yarp-reverse-proxy.jpg" alt="YARP reverse proxy setup in .NET"><figcaption>YARP reverse proxy setup in .NET</figcaption></figure><p></p>
+<p></p><figure class="content-figure"><img src="assets/aspnet/ocelot-api-gateway.jpg" alt="Ocelot API gateway setup in .NET"><figcaption>Ocelot API gateway setup in .NET</figcaption></figure><p></p>
+<h3 id="what-to-learn-21"><a class="heading-anchor" href="#what-to-learn-21">What to Learn</a></h3><ul>
+<li>HTTPS</li>
+<li>CORS</li>
+<li>CSRF</li>
+<li>XSS basics</li>
+<li>SQL injection prevention</li>
+<li>Secure headers</li>
+<li>Secrets management</li>
+<li>Input validation</li>
+<li>Rate limiting</li>
+<li>Avoiding sensitive data in logs</li>
+<li>Securing APIs</li>
+</ul>
+<h3 id="securing-web-apis"><a class="heading-anchor" href="#securing-web-apis">Securing Web APIs</a></h3><p>Common practices:</p>
+<ul>
+<li>Use JWT authentication</li>
+<li>Use HTTPS</li>
+<li>Implement authorization</li>
+<li>Use role-based or policy-based access</li>
+<li>Validate user input</li>
+<li>Use exception handling and logging</li>
+<li>Configure CORS correctly</li>
+<li>Protect sensitive APIs</li>
+</ul>
+<div class="code-block"><div class="code-toolbar"><span>csharp</span><button type="button" class="copy-btn">Copy</button></div><pre><code class="language-csharp">[Authorize]
 public class PolicyController : ControllerBase
 {
-}</code></pre></div><hr class="section-divider"><h2 id="22-testing-asp-net-core-applications"><a class="heading-anchor" href="#22-testing-asp-net-core-applications">22. Testing ASP.NET Core Applications</a></h2><h3 id="what-to-learn-22"><a class="heading-anchor" href="#what-to-learn-22">What to Learn</a></h3><ul><li>Unit testing controllers</li><li>Unit testing services</li><li>Integration testing</li><li><code>WebApplicationFactory</code></li><li>Test server</li><li>Mocking dependencies</li><li>Testing middleware</li><li>Testing APIs</li></ul><hr class="section-divider"><h2 id="23-deployment-and-hosting"><a class="heading-anchor" href="#23-deployment-and-hosting">23. Deployment and Hosting</a></h2><h3 id="what-to-learn-23"><a class="heading-anchor" href="#what-to-learn-23">What to Learn</a></h3><ul><li>Development, staging, and production environments</li><li>Publishing an application</li><li>IIS hosting</li><li>Linux hosting</li><li>Docker basics</li><li>Reverse proxy basics</li><li>Health checks</li><li>Configuration in production</li></ul><p>Production hosting examples:</p><ul><li>Windows Server: IIS + Kestrel</li><li>Linux Server: Nginx + Kestrel</li><li>Apache + Kestrel</li></ul><hr class="section-divider"><h2 id="24-performance-and-best-practices"><a class="heading-anchor" href="#24-performance-and-best-practices">24. Performance and Best Practices</a></h2><figure class="content-figure"><img src="assets/aspnet/signalr-redis-backplane.jpg" alt="Scaling SignalR with a Redis backplane"><figcaption>Scaling SignalR with a Redis backplane</figcaption></figure><h3 id="what-to-learn-24"><a class="heading-anchor" href="#what-to-learn-24">What to Learn</a></h3><ul><li>Async APIs</li><li>Avoiding blocking calls</li><li>Efficient logging</li><li>Response compression</li><li>Caching</li><li>Pagination</li><li>Avoiding over-fetching data</li><li>Proper status codes</li><li>API response consistency</li><li>Monitoring basics</li></ul><h3 id="async-threads-concurrency-and-parallelism"><a class="heading-anchor" href="#async-threads-concurrency-and-parallelism">Async, Threads, Concurrency, and Parallelism</a></h3><p>Asynchronous code does not automatically create a new thread in the background.</p><p>Async is mainly about:</p><ul><li>Making the application usable/responsive</li><li>Non-blocking main thread</li><li>Improving scalability for I/O-bound work</li></ul><p>Async is not mainly about:</p><ul><li>Creating new threads</li><li>Automatically improving CPU performance</li></ul><p>Important differences:</p><ul><li>Async enables concurrency, especially for I/O-bound work.</li><li>Concurrency means multiple tasks are in progress at the same time.</li><li>Parallelism means multiple tasks execute at the same time on multiple CPU cores.</li><li>TPL can use multiple cores for parallel work.</li><li>Threading uses time slicing and context switching.</li><li>Synchronization context connects callbacks back to the original context when needed.</li></ul><hr class="section-divider"><h2 id="suggested-learning-order"><a class="heading-anchor" href="#suggested-learning-order">Suggested Learning Order</a></h2><ol><li>ASP.NET Core basics</li><li>Hosting, Kestrel, and IIS</li><li>MVC architecture</li><li>Request pipeline and middleware</li><li>Routing</li><li>Controllers and actions</li><li>MVC views and data passing</li><li>Web API fundamentals</li><li>Model binding and validation</li><li>Dependency injection</li><li>Configuration and options pattern</li><li>Logging and error handling</li><li>Filters</li><li>Authentication, authorization, and JWT</li><li>OAuth, OpenID Connect, and SSO</li><li>Cookies, session, TempData, ViewData, and ViewBag</li><li>Minimal APIs</li><li>File upload and download</li><li>Background services</li><li>Caching</li><li>Security best practices</li><li>Testing ASP.NET Core applications</li><li>Deployment and hosting</li><li>Performance and best practices</li></ol><hr class="section-divider"><h2 id="weekly-study-plan"><a class="heading-anchor" href="#weekly-study-plan">Weekly Study Plan</a></h2><h3 id="week-1-asp-net-core-foundation"><a class="heading-anchor" href="#week-1-asp-net-core-foundation">Week 1: ASP.NET Core Foundation</a></h3><ul><li>ASP.NET Core basics</li><li>Hosting and Kestrel</li><li>MVC architecture</li><li>Project structure</li><li><code>wwwroot</code></li><li>Request pipeline</li><li>Middleware</li><li>Routing</li></ul><h3 id="week-2-mvc-and-web-api"><a class="heading-anchor" href="#week-2-mvc-and-web-api">Week 2: MVC and Web API</a></h3><ul><li>Controllers and actions</li><li>MVC views</li><li>Strongly typed views</li><li>ViewData, ViewBag, TempData</li><li>REST fundamentals</li><li>HTTP methods and status codes</li><li>Web API controllers</li><li>Swagger/OpenAPI</li></ul><h3 id="week-3-application-services"><a class="heading-anchor" href="#week-3-application-services">Week 3: Application Services</a></h3><ul><li>Dependency injection</li><li>Service lifetimes</li><li>Configuration</li><li>Options pattern</li><li>Logging</li><li>Error handling</li><li>Filters</li></ul><h3 id="week-4-state-and-security"><a class="heading-anchor" href="#week-4-state-and-security">Week 4: State and Security</a></h3><ul><li>Cookies</li><li>Session</li><li>TempData</li><li>Authentication</li><li>Authorization</li><li>JWT</li><li>OAuth</li><li>OpenID Connect</li><li>SSO</li></ul><h3 id="week-5-advanced-and-practical-topics"><a class="heading-anchor" href="#week-5-advanced-and-practical-topics">Week 5: Advanced and Practical Topics</a></h3><ul><li>Minimal APIs</li><li>File upload and download</li><li>Background services</li><li>Caching</li><li>Testing</li><li>Deployment</li><li>Performance</li></ul><hr class="section-divider"><h2 id="practical-project-preparation"><a class="heading-anchor" href="#practical-project-preparation">Practical Project Preparation</a></h2><h3 id="what-to-build"><a class="heading-anchor" href="#what-to-build">What to Build</a></h3><ul><li>MVC application with strongly typed views</li><li>CRUD Web API using ASP.NET Core</li><li>Authentication-based Web API with JWT</li><li>API with middleware logging</li><li>File upload and download API</li><li>Background worker service</li><li>API with validation and global exception handling</li><li>App using cookies, session, and TempData</li></ul><hr class="section-divider"><h2 id="final-preparation-checklist"><a class="heading-anchor" href="#final-preparation-checklist">Final Preparation Checklist</a></h2><ul><li>Can explain ASP.NET Core request pipeline.</li><li>Can explain middleware and middleware order.</li><li>Can explain Kestrel, IIS, and reverse proxy hosting.</li><li>Can explain MVC architecture.</li><li>Can pass model data from controller to view.</li><li>Can explain strongly typed views.</li><li>Can explain ViewData, ViewBag, TempData, Session, and Cookies.</li><li>Can create controller-based Web APIs.</li><li>Can explain routing and model binding.</li><li>Can explain dependency injection and service lifetimes.</li><li>Can explain configuration and options pattern.</li><li>Can implement global exception handling.</li><li>Can explain middleware vs filters.</li><li>Can explain JWT authentication and authorization.</li><li>Can explain OAuth, OpenID Connect, and SSO basics.</li><li>Can explain Minimal APIs.</li><li>Can explain file upload, caching, testing, and deployment basics.</li></ul>
+}</code></pre></div><hr class="section-divider"><p><a id="topic-22"></a></p>
+<h2 id="22-testing-asp-net-core-applications"><a class="heading-anchor" href="#22-testing-asp-net-core-applications">22. Testing ASP.NET Core Applications</a></h2><h3 id="what-to-learn-22"><a class="heading-anchor" href="#what-to-learn-22">What to Learn</a></h3><ul>
+<li>Unit testing controllers</li>
+<li>Unit testing services</li>
+<li>Integration testing</li>
+<li><code>WebApplicationFactory</code></li>
+<li>Test server</li>
+<li>Mocking dependencies</li>
+<li>Testing middleware</li>
+<li>Testing APIs</li>
+</ul>
+<hr class="section-divider"><p><a id="topic-23"></a></p>
+<h2 id="23-deployment-and-hosting"><a class="heading-anchor" href="#23-deployment-and-hosting">23. Deployment and Hosting</a></h2><h3 id="what-to-learn-23"><a class="heading-anchor" href="#what-to-learn-23">What to Learn</a></h3><ul>
+<li>Development, staging, and production environments</li>
+<li>Publishing an application</li>
+<li>IIS hosting</li>
+<li>Linux hosting</li>
+<li>Docker basics</li>
+<li>Reverse proxy basics</li>
+<li>Health checks</li>
+<li>Configuration in production</li>
+</ul>
+<p>Production hosting examples:</p>
+<ul>
+<li>Windows Server: IIS + Kestrel</li>
+<li>Linux Server: Nginx + Kestrel</li>
+<li>Apache + Kestrel</li>
+</ul>
+<hr class="section-divider"><p><a id="topic-24"></a></p>
+<h2 id="24-performance-and-best-practices"><a class="heading-anchor" href="#24-performance-and-best-practices">24. Performance and Best Practices</a></h2><p></p><figure class="content-figure"><img src="assets/aspnet/signalr-redis-backplane.jpg" alt="Scaling SignalR with a Redis backplane"><figcaption>Scaling SignalR with a Redis backplane</figcaption></figure><p></p>
+<h3 id="what-to-learn-24"><a class="heading-anchor" href="#what-to-learn-24">What to Learn</a></h3><ul>
+<li>Async APIs</li>
+<li>Avoiding blocking calls</li>
+<li>Efficient logging</li>
+<li>Response compression</li>
+<li>Caching</li>
+<li>Pagination</li>
+<li>Avoiding over-fetching data</li>
+<li>Proper status codes</li>
+<li>API response consistency</li>
+<li>Monitoring basics</li>
+</ul>
+<h3 id="async-threads-concurrency-and-parallelism"><a class="heading-anchor" href="#async-threads-concurrency-and-parallelism">Async, Threads, Concurrency, and Parallelism</a></h3><p>Asynchronous code does not automatically create a new thread in the background.</p>
+<p>Async is mainly about:</p>
+<ul>
+<li>Making the application usable/responsive</li>
+<li>Non-blocking main thread</li>
+<li>Improving scalability for I/O-bound work</li>
+</ul>
+<p>Async is not mainly about:</p>
+<ul>
+<li>Creating new threads</li>
+<li>Automatically improving CPU performance</li>
+</ul>
+<p>Important differences:</p>
+<ul>
+<li>Async enables concurrency, especially for I/O-bound work.</li>
+<li>Concurrency means multiple tasks are in progress at the same time.</li>
+<li>Parallelism means multiple tasks execute at the same time on multiple CPU cores.</li>
+<li>TPL can use multiple cores for parallel work.</li>
+<li>Threading uses time slicing and context switching.</li>
+<li>Synchronization context connects callbacks back to the original context when needed.</li>
+</ul>
+<hr class="section-divider"><p><a id="suggested-learning-order"></a></p>
+<h2 id="suggested-learning-order"><a class="heading-anchor" href="#suggested-learning-order">Suggested Learning Order</a></h2><ol>
+<li>ASP.NET Core basics</li>
+<li>Hosting, Kestrel, and IIS</li>
+<li>MVC architecture</li>
+<li>Request pipeline and middleware</li>
+<li>Routing</li>
+<li>Controllers and actions</li>
+<li>MVC views and data passing</li>
+<li>Web API fundamentals</li>
+<li>Model binding and validation</li>
+<li>Dependency injection</li>
+<li>Configuration and options pattern</li>
+<li>Logging and error handling</li>
+<li>Filters</li>
+<li>Authentication, authorization, and JWT</li>
+<li>OAuth, OpenID Connect, and SSO</li>
+<li>Cookies, session, TempData, ViewData, and ViewBag</li>
+<li>Minimal APIs</li>
+<li>File upload and download</li>
+<li>Background services</li>
+<li>Caching</li>
+<li>Security best practices</li>
+<li>Testing ASP.NET Core applications</li>
+<li>Deployment and hosting</li>
+<li>Performance and best practices</li>
+</ol>
+<hr class="section-divider"><p><a id="weekly-study-plan"></a></p>
+<h2 id="weekly-study-plan"><a class="heading-anchor" href="#weekly-study-plan">Weekly Study Plan</a></h2><h3 id="week-1-asp-net-core-foundation"><a class="heading-anchor" href="#week-1-asp-net-core-foundation">Week 1: ASP.NET Core Foundation</a></h3><ul>
+<li>ASP.NET Core basics</li>
+<li>Hosting and Kestrel</li>
+<li>MVC architecture</li>
+<li>Project structure</li>
+<li><code>wwwroot</code></li>
+<li>Request pipeline</li>
+<li>Middleware</li>
+<li>Routing</li>
+</ul>
+<h3 id="week-2-mvc-and-web-api"><a class="heading-anchor" href="#week-2-mvc-and-web-api">Week 2: MVC and Web API</a></h3><ul>
+<li>Controllers and actions</li>
+<li>MVC views</li>
+<li>Strongly typed views</li>
+<li>ViewData, ViewBag, TempData</li>
+<li>REST fundamentals</li>
+<li>HTTP methods and status codes</li>
+<li>Web API controllers</li>
+<li>Swagger/OpenAPI</li>
+</ul>
+<h3 id="week-3-application-services"><a class="heading-anchor" href="#week-3-application-services">Week 3: Application Services</a></h3><ul>
+<li>Dependency injection</li>
+<li>Service lifetimes</li>
+<li>Configuration</li>
+<li>Options pattern</li>
+<li>Logging</li>
+<li>Error handling</li>
+<li>Filters</li>
+</ul>
+<h3 id="week-4-state-and-security"><a class="heading-anchor" href="#week-4-state-and-security">Week 4: State and Security</a></h3><ul>
+<li>Cookies</li>
+<li>Session</li>
+<li>TempData</li>
+<li>Authentication</li>
+<li>Authorization</li>
+<li>JWT</li>
+<li>OAuth</li>
+<li>OpenID Connect</li>
+<li>SSO</li>
+</ul>
+<h3 id="week-5-advanced-and-practical-topics"><a class="heading-anchor" href="#week-5-advanced-and-practical-topics">Week 5: Advanced and Practical Topics</a></h3><ul>
+<li>Minimal APIs</li>
+<li>File upload and download</li>
+<li>Background services</li>
+<li>Caching</li>
+<li>Testing</li>
+<li>Deployment</li>
+<li>Performance</li>
+</ul>
+<hr class="section-divider"><p><a id="practical-project-preparation"></a></p>
+<h2 id="practical-project-preparation"><a class="heading-anchor" href="#practical-project-preparation">Practical Project Preparation</a></h2><h3 id="what-to-build"><a class="heading-anchor" href="#what-to-build">What to Build</a></h3><ul>
+<li>MVC application with strongly typed views</li>
+<li>CRUD Web API using ASP.NET Core</li>
+<li>Authentication-based Web API with JWT</li>
+<li>API with middleware logging</li>
+<li>File upload and download API</li>
+<li>Background worker service</li>
+<li>API with validation and global exception handling</li>
+<li>App using cookies, session, and TempData</li>
+</ul>
+<hr class="section-divider"><p><a id="final-preparation-checklist"></a></p>
+<h2 id="final-preparation-checklist"><a class="heading-anchor" href="#final-preparation-checklist">Final Preparation Checklist</a></h2><ul>
+<li>Can explain ASP.NET Core request pipeline.</li>
+<li>Can explain middleware and middleware order.</li>
+<li>Can explain Kestrel, IIS, and reverse proxy hosting.</li>
+<li>Can explain MVC architecture.</li>
+<li>Can pass model data from controller to view.</li>
+<li>Can explain strongly typed views.</li>
+<li>Can explain ViewData, ViewBag, TempData, Session, and Cookies.</li>
+<li>Can create controller-based Web APIs.</li>
+<li>Can explain routing and model binding.</li>
+<li>Can explain dependency injection and service lifetimes.</li>
+<li>Can explain configuration and options pattern.</li>
+<li>Can implement global exception handling.</li>
+<li>Can explain middleware vs filters.</li>
+<li>Can explain JWT authentication and authorization.</li>
+<li>Can explain OAuth, OpenID Connect, and SSO basics.</li>
+<li>Can explain Minimal APIs.</li>
+<li>Can explain file upload, caching, testing, and deployment basics.</li>
+</ul>
+</div>
     </main>
   </div>
   <a class="top-link" href="#top">Top</a>
