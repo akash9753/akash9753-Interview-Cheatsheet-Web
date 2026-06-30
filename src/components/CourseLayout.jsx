@@ -9,10 +9,12 @@ export function CourseLayout({ brand, markdown }) {
 
   useEffect(() => {
     function handleToggle(event) {
-      const button = event.target.closest('.toc-toggle');
-      if (!button || event.target.closest('.toc-title')) return;
+      const button = event.target.closest('.toc-arrow-btn');
+      if (!button) return;
 
-      const children = button.nextElementSibling;
+      const children = button.closest('.toc-toggle')?.nextElementSibling;
+      if (!children) return;
+
       const expanded = button.getAttribute('aria-expanded') === 'true';
       button.setAttribute('aria-expanded', String(!expanded));
       children.classList.toggle('collapsed', expanded);

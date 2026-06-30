@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "github-slugger": "^2.0.0",
     "mdast-util-to-string": "^4.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
