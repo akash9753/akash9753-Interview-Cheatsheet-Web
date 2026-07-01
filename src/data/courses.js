@@ -71,6 +71,14 @@ export const courses = [
     cardDesc: 'Components, hooks, routing, state management, performance, and React 18 interview topics.',
     brand: 'React Interview Roadmap',
   },
+  {
+    slug: 'dotnet-senior-interview-qa',
+    mdFile: 'dotnet-senior-interview-qa.md',
+    num: '10',
+    cardTitle: '.NET Senior Interview Q&A',
+    cardDesc: '215 senior-level Q&A — C#, ASP.NET Core, EF Core, security, messaging, and system design.',
+    brand: '.NET Senior Interview Q&A',
+  },
 ];
 
 const markdownModules = import.meta.glob('../../MarkDownFormat/*.md', {
