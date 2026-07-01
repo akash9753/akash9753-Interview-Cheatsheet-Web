@@ -359,7 +359,7 @@ Request delegates are used to build the request pipeline. They are configured us
 
 ### ASP.NET Core Request Pipeline — Complete Flow & Architecture
 
-![ASP.NET Core Request Pipeline — Complete Flow and Architecture](/assets/aspnet/aspnet-core-request-pipeline-complete-flow.jpg)
+![ASP.NET Core Request Pipeline — Complete Flow and Architecture](/assets/aspnet/aspnet-core-request-workflow.svg)
 
 ### ASP.NET Core Quick Reference
 
