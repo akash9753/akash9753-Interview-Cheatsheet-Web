@@ -357,9 +357,9 @@ Request delegates are used to build the request pipeline. They are configured us
 | 7 | Authorization (`UseAuthorization`) | Enforce permissions |
 | 8 | Endpoints (`MapControllers`, `MapGet`, etc.) | Execute controller action or minimal API |
 
-### ASP.NET Core Request Pipeline — Complete Flow & Architecture
+### ASP.NET Core — Full Lifecycle (Build → Runtime → Request)
 
-![ASP.NET Core Request Pipeline — Complete Flow and Architecture](/assets/aspnet/aspnet-core-request-workflow.svg)
+![ASP.NET Core — Full Lifecycle from Source Code to Served Request](/assets/aspnet/aspnet-core-full-lifecycle.svg)
 
 ### Middleware vs Filter
 
