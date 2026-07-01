@@ -47,6 +47,22 @@ export const courses = [
     cardDesc: 'MVC pipeline, routing, middleware, dependency injection, and web concepts.',
     brand: 'Aspnet Core Mvc Interview Roadmap',
   },
+  {
+    slug: 'azure',
+    mdFile: 'azure-interview-roadmap.md',
+    num: '07',
+    cardTitle: 'Azure',
+    cardDesc: 'Azure compute, storage, networking, identity, monitoring, and cloud architecture.',
+    brand: 'Azure Interview Roadmap',
+  },
+  {
+    slug: 'microservices',
+    mdFile: 'microservices-interview-roadmap.md',
+    num: '08',
+    cardTitle: 'Microservices',
+    cardDesc: 'Service design, messaging, sagas, resilience patterns, and distributed systems.',
+    brand: 'Microservices Interview Roadmap',
+  },
 ];
 
 const markdownModules = import.meta.glob('../../MarkDownFormat/*.md', {
