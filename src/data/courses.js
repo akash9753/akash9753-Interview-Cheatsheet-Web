@@ -68,7 +68,7 @@ export const courses = [
     mdFile: 'react-interview-roadmap.md',
     num: '09',
     cardTitle: 'React',
-    cardDesc: 'Components, hooks, lifecycle, state, and frontend interview essentials.',
+    cardDesc: 'Components, hooks, routing, state management, performance, and React 18 interview topics.',
     brand: 'React Interview Roadmap',
   },
 ];
