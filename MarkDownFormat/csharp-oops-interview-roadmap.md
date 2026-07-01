@@ -829,3 +829,64 @@ public class Counter
 - Static fields are **shared** — one copy for all instances
 - Avoid static mutable global state in web apps (lifetime / testability issues)
 - `static class` = container for helpers (`Console`, `Math`, extension method holders)
+
+---
+
+<a id="interview-quick-answers"></a>
+
+## Interview Quick Answers
+
+### OOP Concepts — Four Pillars
+
+| Pillar | Meaning | C# Example |
+| --- | --- | --- |
+| Encapsulation | Hide data, expose via methods/properties | `private` fields + public properties |
+| Abstraction | Show what, hide how | `abstract class`, `interface` |
+| Inheritance | Reuse base behavior | `class Dog : Animal` |
+| Polymorphism | One interface, many forms | Overloading, `virtual`/`override` |
+
+> **One-liner:** OOP bundles data and behavior, hides complexity, reuses code, and supports multiple implementations.
+
+### What is Polymorphism?
+
+| Type | Mechanism | When Resolved |
+| --- | --- | --- |
+| Compile-time | Method overloading — same name, different params | Compile time |
+| Runtime | Method overriding — `virtual`/`override` | Runtime via vtable |
+| Interface | Class implements multiple interfaces | Runtime dispatch |
+| Benefit | Open/Closed — extend without changing callers | Design flexibility |
+
+> **One-liner:** Polymorphism lets one reference call different implementations — overloading at compile time, overriding at runtime.
+
+### Abstract Class vs Interface
+
+| Point | Abstract Class | Interface |
+| --- | --- | --- |
+| Inheritance | Single class inheritance | Multiple interfaces |
+| Implementation | Can have concrete + abstract members | Contract only (C# 8+ default methods) |
+| State | Can have fields and constructors | No instance fields (traditionally) |
+| Best for | Shared IS-A hierarchy with common code | CAN-DO capability across unrelated types |
+
+> **One-liner:** Abstract class shares code in a hierarchy; interface defines a contract any class can implement.
+
+### Method Overloading vs Method Overriding
+
+| Point | Overloading | Overriding |
+| --- | --- | --- |
+| Same class / hierarchy | Same class | Child replaces parent method |
+| Signature | Different parameters | Same signature |
+| Keywords | None required | `virtual` / `override` |
+| Binding | Compile-time | Runtime |
+
+> **One-liner:** Overloading = multiple methods, same name, different params; overriding = child replaces parent behavior.
+
+### Partial Class vs Sealed Class
+
+| Point | Partial Class | Sealed Class |
+| --- | --- | --- |
+| Purpose | Split one class across multiple files | Prevent further inheritance |
+| Keyword | `partial` | `sealed` |
+| Use case | Designer-generated + hand-written code | Security, performance, final behavior |
+| Can inherit from? | Normal inheritance rules apply | Others can use it; cannot extend it |
+
+> **One-liner:** `partial` splits a class across files; `sealed` blocks anyone from inheriting it.

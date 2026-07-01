@@ -882,3 +882,86 @@ Identity (Entra ID, MFA)
 - Can describe HA/DR concepts (RTO, RPO, availability zones).
 - Can explain Well-Architected Framework pillars.
 - Can discuss cost optimization strategies.
+
+---
+
+<a id="interview-quick-answers"></a>
+
+## Interview Quick Answers
+
+### How Do You Deploy an Application in Azure?
+
+| Method | Steps |
+| --- | --- |
+| App Service | Build app → publish from VS/`az webapp up` → configure app settings |
+| Containers | Build image → push to ACR → deploy to App Service or AKS |
+| CI/CD | Azure DevOps / GitHub Actions pipeline → build → deploy on push |
+| IaC | Bicep/Terraform to provision resources repeatably |
+
+> **One-liner:** Build → publish artifact or container → deploy via portal, CLI, or CI/CD pipeline.
+
+### What is a Resource Group?
+
+| Aspect | Detail |
+| --- | --- |
+| Definition | Logical container for related Azure resources |
+| Lifecycle | Deleting RG deletes all resources inside |
+| Scope | RBAC, tags, and billing can apply at RG level |
+| Example | `rg-ecommerce-prod` holds App Service, SQL, Storage |
+
+> **One-liner:** Resource Group groups related resources — deploy, manage, and delete them together.
+
+### What are Availability Zones?
+
+| Aspect | Detail |
+| --- | --- |
+| Definition | Physically separate datacenters within an Azure region |
+| Purpose | Protect against datacenter-level failure |
+| SLA | Higher when services span multiple zones |
+| Use | Deploy VMs, App Service, SQL across zones for HA |
+
+> **One-liner:** Availability Zones are isolated DCs in one region — spread workloads for fault tolerance.
+
+### Azure App Services
+
+| Aspect | Detail |
+| --- | --- |
+| Type | PaaS for web apps, APIs, and containers |
+| Features | Auto-scale, deployment slots, custom domains, SSL |
+| Runtimes | .NET, Node, Python, Java, PHP |
+| Tiers | Free → Basic → Standard → Premium |
+
+> **One-liner:** App Service is managed PaaS hosting — deploy code, Azure handles infra and scaling.
+
+### Azure Key Vault
+
+| Aspect | Detail |
+| --- | --- |
+| Stores | Secrets, keys, certificates |
+| Access | RBAC + Managed Identity (no keys in code) |
+| Integration | App Service references, `IConfiguration` provider |
+| Security | Soft delete, purge protection, audit logging |
+
+> **One-liner:** Key Vault centralizes secrets — apps access via Managed Identity, never hardcoded.
+
+### Azure Blob Storage
+
+| Aspect | Detail |
+| --- | --- |
+| Type | Object storage for unstructured data |
+| Tiers | Hot, Cool, Archive — cost vs access frequency |
+| Use cases | Images, backups, logs, static websites |
+| Access | SAS tokens, RBAC, Private Endpoints |
+
+> **One-liner:** Blob Storage holds files at scale — pick tier by how often you read the data.
+
+### CI/CD Pipeline Implementation
+
+| Stage | Action |
+| --- | --- |
+| Source | Git push triggers pipeline |
+| Build | `dotnet build`, `npm build`, run tests |
+| Package | Publish artifact or Docker image to ACR |
+| Deploy | Release to App Service / AKS with approvals |
+
+> **One-liner:** Automate build-test-deploy on every merge — manual releases cause drift and errors.

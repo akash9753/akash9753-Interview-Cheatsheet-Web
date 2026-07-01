@@ -2095,3 +2095,95 @@ DROP INDEX i_name ON employees;
 - Leading wildcard `LIKE '%x'` and functions on indexed columns cause **scans**
 - `STATISTICS IO` shows logical reads — lower is better
 - Drop unused indexes — each index must be maintained on every data change
+
+---
+
+<a id="interview-quick-answers"></a>
+
+## Interview Quick Answers
+
+### Clustered Index vs Non-Clustered Index
+
+| Point | Clustered Index | Non-Clustered Index |
+| --- | --- | --- |
+| Data storage | Sorts and stores table rows physically | Separate structure with pointer to row |
+| Per table | Only one allowed | Many allowed |
+| Default | Usually on PRIMARY KEY | Created manually on lookup columns |
+| Best for | Range scans on key, primary lookups | `WHERE`, `JOIN`, `ORDER BY` on non-key columns |
+
+> **One-liner:** Clustered = table row order (one per table); non-clustered = extra lookup index for faster searches.
+
+### What is the N+1 Query Problem?
+
+| Aspect | Detail |
+| --- | --- |
+| Problem | 1 query for parent rows + N queries for each child's related data |
+| Cause | Lazy loading or loop with query inside |
+| Symptom | Hundreds of small queries instead of one |
+| Fix | `JOIN`, `Include()`, or single query with projection |
+
+> **One-liner:** N+1 is one query plus one per row — batch with JOIN or eager load to fix.
+
+### How Do You Optimize a Stored Procedure?
+
+| Technique | Action |
+| --- | --- |
+| Indexes | Add indexes on `WHERE`, `JOIN`, `ORDER BY` columns |
+| Avoid `SELECT *` | Return only needed columns |
+| Reduce loops | Set-based SQL over cursors where possible |
+| Analyze plan | Check execution plan for scans vs seeks |
+
+> **One-liner:** Index filter columns, avoid cursors, return only needed data, and read the execution plan.
+
+### What is a Query Execution Plan?
+
+| Aspect | Detail |
+| --- | --- |
+| Definition | Visual/text map of how SQL Server executes a query |
+| Shows | Index seek vs scan, joins, estimated cost, row counts |
+| How to view | `SET SHOWPLAN_ALL ON` or "Display Estimated Plan" in SSMS |
+| Use | Find missing indexes, table scans, bad joins |
+
+> **One-liner:** Execution plan reveals how SQL runs your query — look for scans, high cost, and bad estimates.
+
+### CTE vs Temp Table
+
+| Point | CTE | Temp Table |
+| --- | --- | --- |
+| Scope | Single statement (unless recursive) | Session-scoped (`#temp`) |
+| Storage | In-memory or spool | `tempdb` — can have indexes |
+| Reuse | Referenced multiple times in same query | Persists across batches in session |
+| Best for | Readable subqueries, recursion | Large intermediate results, multiple steps |
+
+> **One-liner:** CTE improves readability in one query; temp tables persist and support indexes for heavy work.
+
+### Query to Find Third Highest Salary
+
+```sql
+SELECT DISTINCT salary
+FROM employees e1
+WHERE 3 = (
+    SELECT COUNT(DISTINCT e2.salary)
+    FROM employees e2
+    WHERE e2.salary >= e1.salary
+);
+```
+
+| Approach | Method |
+| --- | --- |
+| Subquery + COUNT | Count distinct salaries greater than or equal |
+| `DENSE_RANK()` | `SELECT salary FROM (SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) rn ...) WHERE rn = 3` |
+| `OFFSET/FETCH` | `ORDER BY salary DESC OFFSET 2 ROWS FETCH NEXT 1 ROW ONLY` (with DISTINCT) |
+
+> **One-liner:** Use `DENSE_RANK()` or distinct-count subquery — `TOP 3` alone fails when salaries tie.
+
+### Stored Procedures vs Functions
+
+| Point | Stored Procedure | Function |
+| --- | --- | --- |
+| Return | Result sets, output params, status | Single scalar or table value |
+| DML | Can INSERT/UPDATE/DELETE | Cannot modify data (except table-valued quirks) |
+| Use in SELECT | No | Scalar/table functions yes |
+| Transaction | Can contain full logic | Limited side effects |
+
+> **One-liner:** Procedures orchestrate business logic and DML; functions compute and return values for queries.

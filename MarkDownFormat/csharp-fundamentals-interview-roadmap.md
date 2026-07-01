@@ -2309,3 +2309,141 @@ Concurrency Control
 - Measure first — **BenchmarkDotNet** / dotMemory / Visual Studio profiler
 - Avoid premature optimization — optimize proven bottlenecks
 - `struct` for small immutable value types can reduce heap pressure
+
+---
+
+<a id="interview-quick-answers"></a>
+
+## Interview Quick Answers
+
+### What is C#?
+
+| Aspect | Detail |
+| --- | --- |
+| Definition | Modern, type-safe, object-oriented language by Microsoft |
+| Runs on | .NET runtime (CLR) |
+| Use cases | Web, desktop, mobile, cloud, games |
+| Key strength | Rich ecosystem, strong typing, LINQ, async/await |
+
+> **One-liner:** C# is a versatile .NET language for building type-safe apps from web APIs to desktop tools.
+
+### .NET Framework vs .NET Core / .NET
+
+| Point | .NET Framework | .NET Core / .NET 5+ |
+| --- | --- | --- |
+| Platform | Windows only | Cross-platform (Win, Linux, Mac) |
+| Status | Maintenance mode | Active development (.NET 8, 9…) |
+| Deployment | Machine-wide GAC possible | Self-contained or framework-dependent |
+| Performance | Older runtime | Faster, modular, cloud-optimized |
+
+> **One-liner:** Use modern **.NET** for new projects; Framework remains for legacy Windows apps.
+
+### Managed Code vs Unmanaged Code
+
+| Point | Managed Code | Unmanaged Code |
+| --- | --- | --- |
+| Runtime | Runs under CLR with GC | Runs outside CLR (native C/C++) |
+| Memory | GC handles allocation/cleanup | Manual `malloc`/`free` |
+| Safety | Type-safe, bounds-checked | Pointer-based, developer-managed |
+| Interop | P/Invoke, `unsafe` blocks call unmanaged | DLLs, COM, native libraries |
+
+> **One-liner:** C# is managed by default; unmanaged code is native code you call via interop.
+
+### Array vs ArrayList
+
+| Point | Array | ArrayList |
+| --- | --- | --- |
+| Type safety | Fixed type (`int[]`) | Stores `object` — not type-safe |
+| Size | Fixed at creation | Dynamically grows |
+| Performance | Faster, no boxing | Slower, boxing for value types |
+| Modern alternative | `T[]` or `List<T>` | Prefer `List<T>` in new code |
+
+> **One-liner:** Use typed arrays or `List<T>` — avoid legacy `ArrayList`.
+
+### IEnumerable vs ICollection vs IList
+
+| Point | IEnumerable | ICollection | IList |
+| --- | --- | --- | --- |
+| Purpose | Forward-only iteration | Iterate + count + add/remove | Index-based list access |
+| Count | No (`Count()` extension) | Yes (`Count` property) | Yes |
+| Modify collection | No | Yes (`Add`, `Remove`) | Yes + `Insert`, indexer |
+| Index access | No | No | Yes — `list[i]` |
+
+> **One-liner:** IEnumerable reads; ICollection modifies; IList adds index-based access.
+
+### Value Type vs Reference Type
+
+| Point | Value Type | Reference Type |
+| --- | --- | --- |
+| Storage | Stack (or inline in object) | Heap — variable holds reference |
+| Copy behavior | Copies the value | Copies the reference (same object) |
+| Examples | `int`, `struct`, `enum` | `class`, `string`, arrays |
+| Null | Cannot be null (except `Nullable<T>`) | Can be null |
+
+> **One-liner:** Value types copy data; reference types copy pointers to shared heap objects.
+
+### What are Generics (`<T>`)?
+
+| Aspect | Detail |
+| --- | --- |
+| Purpose | Write reusable, type-safe code for any type |
+| Syntax | `List<T>`, `Dictionary<TKey,TValue>`, `void Method<T>(T item)` |
+| Benefit | Compile-time type checking, no boxing |
+| Constraints | `where T : class`, `struct`, `new()`, interface |
+
+> **One-liner:** Generics let one implementation work for many types without casting or boxing.
+
+### What is Reflection?
+
+| Aspect | Detail |
+| --- | --- |
+| Definition | Inspect and invoke types, methods, properties at runtime |
+| Namespace | `System.Reflection` |
+| Use cases | Serialization, DI containers, ORM mapping, plugins |
+| Trade-off | Powerful but slower than compile-time code |
+
+> **One-liner:** Reflection reads type metadata at runtime — use sparingly due to performance cost.
+
+### IEnumerable vs IQueryable
+
+| Point | IEnumerable | IQueryable |
+| --- | --- | --- |
+| Execution | In-memory (client) | Deferred — can translate to SQL |
+| Best for | LINQ-to-Objects, collections | LINQ-to-Entities / EF Core |
+| Expression tree | No | Yes — provider builds remote query |
+| When queried | `foreach` / terminal operator | Provider executes (e.g. SQL to DB) |
+
+> **One-liner:** Use `IQueryable` with EF so filtering runs on the database, not in memory.
+
+### First vs FirstOrDefault
+
+| Point | First() | FirstOrDefault() |
+| --- | --- | --- |
+| No match | Throws `InvalidOperationException` | Returns default (`null`, `0`) |
+| Use when | You expect exactly one item | Match may not exist |
+| With predicate | `First(x => x.Id == 1)` | `FirstOrDefault(x => x.Id == 1)` |
+| Empty sequence | Throws | Returns default |
+
+> **One-liner:** Prefer `FirstOrDefault` unless absence of a match should be an error.
+
+### Single vs SingleOrDefault
+
+| Point | Single() | SingleOrDefault() |
+| --- | --- | --- |
+| No match | Throws | Returns default |
+| More than one match | Throws | Throws |
+| Use when | Exactly one item required | Zero or one expected |
+| Typical use | Unique key lookup | Optional unique record |
+
+> **One-liner:** `Single` enforces uniqueness; `SingleOrDefault` allows zero or one result only.
+
+### Delegates and Events
+
+| Concept | Meaning | Example |
+| --- | --- | --- |
+| Delegate | Type-safe function pointer | `Func<int,int>`, `Action` |
+| Multicast | Delegate holds multiple methods | `del += MethodB` |
+| Event | Restricted delegate — only publisher invokes | `public event EventHandler Click` |
+| Pattern | Observer / pub-sub within a class | WinForms, WPF, custom notifications |
+
+> **One-liner:** Delegates reference methods; events wrap delegates so only the owner can raise them.

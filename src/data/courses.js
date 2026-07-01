@@ -63,6 +63,14 @@ export const courses = [
     cardDesc: 'Service design, messaging, sagas, resilience patterns, and distributed systems.',
     brand: 'Microservices Interview Roadmap',
   },
+  {
+    slug: 'react',
+    mdFile: 'react-interview-roadmap.md',
+    num: '09',
+    cardTitle: 'React',
+    cardDesc: 'Components, hooks, lifecycle, state, and frontend interview essentials.',
+    brand: 'React Interview Roadmap',
+  },
 ];
 
 const markdownModules = import.meta.glob('../../MarkDownFormat/*.md', {

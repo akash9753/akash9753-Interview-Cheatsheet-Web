@@ -435,3 +435,88 @@ Architectural Patterns → High-level application structure design patterns.
 - **Event-driven** decouples producers/consumers — good for audit, integrations, async workflows
 - MediatR in ASP.NET Core is a popular CQRS/command dispatcher
 - Microservices trade operational complexity for team autonomy and independent deployment
+
+---
+
+<a id="interview-quick-answers"></a>
+
+## Interview Quick Answers
+
+### What are SOLID Principles?
+
+| Letter | Principle | One-Line Rule |
+| --- | --- | --- |
+| S | Single Responsibility | One class, one reason to change |
+| O | Open/Closed | Open for extension, closed for modification |
+| L | Liskov Substitution | Subtypes must replace base types safely |
+| I | Interface Segregation | No fat interfaces — split by client need |
+| D | Dependency Inversion | Depend on abstractions, not concretions |
+
+> **One-liner:** SOLID keeps code maintainable, testable, and easy to extend without breaking existing behavior.
+
+### SOLID — Examples
+
+| Principle | Bad | Good |
+| --- | --- | --- |
+| SRP | `OrderService` saves DB + sends email + prints PDF | `OrderService`, `OrderRepository`, `EmailService` |
+| OCP | `if (type == "Credit")` in payment method | `IPaymentProcessor` + strategy classes |
+| LSP | `Square` breaks `Rectangle.SetWidth` | Design shapes so substitutability holds |
+| ISP | `IMachine` with `Print`, `Scan`, `Fax` for all | `IPrinter`, `IScanner` separately |
+| DIP | `new SqlOrderRepository()` inside service | Inject `IOrderRepository` via constructor |
+
+> **One-liner:** Each principle fixes a specific design smell — tie answers to a real refactor story.
+
+### Factory Pattern
+
+| Aspect | Detail |
+| --- | --- |
+| Type | Creational |
+| Purpose | Centralize object creation — caller uses interface |
+| Hide | Concrete class selection logic |
+| Example | `IPaymentGateway gateway = PaymentFactory.Create("Stripe")` |
+
+> **One-liner:** Factory encapsulates `new` — callers ask for a product type, not a concrete class.
+
+### Repository Pattern
+
+| Aspect | Detail |
+| --- | --- |
+| Purpose | Abstract data access behind an interface |
+| Benefit | Business layer independent of EF/SQL |
+| Common API | `GetById`, `Add`, `Update`, `Delete`, `GetAll` |
+| Example | `IRepository<Order>` implemented by `OrderRepository` using `DbContext` |
+
+> **One-liner:** Repository hides persistence details so services depend on `IRepository`, not `DbContext`.
+
+### Which Design Patterns Have You Used?
+
+| Pattern | Where Used | Why |
+| --- | --- | --- |
+| Repository | Data layer | Decouple EF from business logic |
+| Factory | Payment / notification creation | Switch providers without `if/else` chains |
+| Singleton | Config / logging (careful) | Single shared instance |
+| Strategy | Discount / tax calculation | Swap algorithms at runtime |
+| Dependency Injection | ASP.NET Core built-in | Implements DIP across the app |
+
+> **One-liner:** Name patterns you actually used in production and explain the problem each solved.
+
+### Monolithic vs Microservices Architecture
+
+| Point | Monolith | Microservices |
+| --- | --- | --- |
+| Deployment | Single unit | Independent per service |
+| Scaling | Scale entire app | Scale individual services |
+| Complexity | Simpler ops | Distributed system challenges |
+| Best for | Small teams, early products | Clear boundaries, multiple teams |
+
+> **One-liner:** Start monolith until boundaries are clear — extract microservices when independent scale/deploy pays off.
+
+### Explain MVC Architecture
+
+| Layer | Role | ASP.NET Core Example |
+| --- | --- | --- |
+| Model | Data + business rules | Entity, ViewModel, service |
+| View | UI presentation | `.cshtml` Razor views |
+| Controller | Handles request, returns view/JSON | `HomeController` |
+
+> **One-liner:** MVC separates UI, logic, and data — controller orchestrates, view renders, model holds state.

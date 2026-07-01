@@ -1011,3 +1011,41 @@ Product Service   → Pipeline C → Deploy independently
 - Can explain contract testing and testing pyramid.
 - Can describe blue-green, canary, and rolling deployments.
 - Can identify anti-patterns and when NOT to use microservices.
+
+---
+
+<a id="interview-quick-answers"></a>
+
+## Interview Quick Answers
+
+### How Do Microservices Communicate?
+
+| Style | Protocol | Use Case |
+| --- | --- | --- |
+| Synchronous | HTTP/REST, gRPC | Immediate response needed |
+| Asynchronous | RabbitMQ, Kafka, Service Bus | Fire-and-forget, fan-out workflows |
+| Hybrid | API + events | Command via REST, notify via events |
+
+> **One-liner:** Microservices talk via sync APIs for queries and async messaging for decoupled workflows.
+
+### Synchronous Communication in Microservices
+
+| Point | Detail |
+| --- | --- |
+| Protocol | REST (JSON) or gRPC (Protobuf) |
+| Pattern | Request/response — caller waits |
+| Pros | Simple, immediate result |
+| Cons | Tight coupling, cascading failures if downstream is slow |
+
+> **One-liner:** Sync calls are direct HTTP/gRPC — simple but creates dependency and latency chains.
+
+### Asynchronous Communication in Microservices
+
+| Point | Detail |
+| --- | --- |
+| Protocol | Message broker (RabbitMQ, Kafka, Azure Service Bus) |
+| Pattern | Pub/sub or queue — producer does not wait |
+| Pros | Loose coupling, resilience, scalability |
+| Cons | Eventual consistency, harder to debug |
+
+> **One-liner:** Async messaging decouples services — publish events, consumers process independently.

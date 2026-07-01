@@ -2344,3 +2344,277 @@ Important differences:
 - Can explain OAuth, OpenID Connect, and SSO basics.
 - Can explain Minimal APIs.
 - Can explain file upload, caching, testing, and deployment basics.
+
+---
+
+<a id="interview-quick-answers"></a>
+
+## Interview Quick Answers
+
+### .NET Framework vs .NET Core / .NET
+
+| Point | .NET Framework | .NET Core / .NET 5+ |
+| --- | --- | --- |
+| Platform | Windows only | Cross-platform |
+| Hosting | IIS-centric | Kestrel, IIS, Docker, Linux |
+| Configuration | `web.config` | `appsettings.json` + env vars |
+| DI | Third-party (older) | Built-in DI container |
+
+> **One-liner:** ASP.NET Core runs on modern cross-platform .NET with built-in DI and middleware pipeline.
+
+### ConfigureServices() vs Configure()
+
+| Point | ConfigureServices() | Configure() |
+| --- | --- | --- |
+| Purpose | Register DI services | Build HTTP middleware pipeline |
+| Called | Once at startup | Once at startup |
+| Modern equivalent | `builder.Services` in `Program.cs` | `app.Use*` middleware calls |
+| Example | `services.AddControllers()` | `app.UseRouting(); app.UseAuthorization()` |
+
+> **One-liner:** Services = what the app uses; Configure/pipeline = how requests flow through middleware.
+
+### ASP.NET Core Request Lifecycle
+
+| Step | Component | Action |
+| --- | --- | --- |
+| 1 | Kestrel / reverse proxy | Receives HTTP request |
+| 2 | Middleware pipeline | Routing, auth, CORS, etc. |
+| 3 | Endpoint | Controller action or Minimal API |
+| 4 | Response | Serializes result, returns through pipeline |
+
+> **One-liner:** Request enters Kestrel → passes middleware chain → hits endpoint → response flows back out.
+
+### ASP.NET Core Application Lifecycle
+
+| Phase | What Happens |
+| --- | --- |
+| Build | `WebApplication.CreateBuilder()` — register services |
+| Configure pipeline | `app.Use*()` middleware order |
+| Run | `app.Run()` — listen for requests |
+| Shutdown | Graceful stop — `IHostApplicationLifetime`, cancellation |
+
+> **One-liner:** Build services → configure middleware → run host until shutdown signal.
+
+### What is Nginx?
+
+| Aspect | Detail |
+| --- | --- |
+| Type | High-performance web server and reverse proxy |
+| Role in ASP.NET | Sits in front of Kestrel on Linux production |
+| Benefits | SSL termination, load balancing, static files, rate limiting |
+| Flow | Client → Nginx → Kestrel (ASP.NET Core app) |
+
+> **One-liner:** Nginx is a reverse proxy that handles TLS and routing before forwarding to Kestrel.
+
+### What is Custom Middleware?
+
+| Aspect | Detail |
+| --- | --- |
+| Definition | Component in the pipeline that processes `HttpContext` |
+| Signature | `RequestDelegate _next` — call `_next(context)` to continue |
+| Order | Registration order in `Program.cs` matters |
+| Use cases | Logging, correlation ID, exception handling, auth |
+
+```csharp
+public class RequestLoggingMiddleware
+{
+    private readonly RequestDelegate _next;
+    public RequestLoggingMiddleware(RequestDelegate next) => _next = next;
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        Console.WriteLine($"Request: {context.Request.Path}");
+        await _next(context);
+        Console.WriteLine($"Response: {context.Response.StatusCode}");
+    }
+}
+
+// Program.cs
+app.UseMiddleware<RequestLoggingMiddleware>();
+```
+
+> **One-liner:** Middleware wraps each request — do work before/after `_next`, or short-circuit the pipeline.
+
+### What is IConfiguration?
+
+| Aspect | Detail |
+| --- | --- |
+| Purpose | Unified access to app settings from multiple sources |
+| Sources | `appsettings.json`, env vars, Key Vault, command line |
+| Injection | `IOptions<T>`, `IConfiguration` in constructors |
+| Hierarchy | Later sources override earlier (env vars win over JSON) |
+
+> **One-liner:** `IConfiguration` merges all config sources — inject settings instead of hardcoding.
+
+### What is Web API?
+
+| Aspect | Detail |
+| --- | --- |
+| Definition | HTTP API returning data (usually JSON), not HTML views |
+| Base class | `ControllerBase` (not `Controller` with views) |
+| Attributes | `[ApiController]`, `[Route("api/[controller]")]` |
+| Use case | Mobile apps, SPAs, microservices, integrations |
+
+> **One-liner:** Web API exposes HTTP endpoints that return data — the backend for modern frontends.
+
+### Explain REST APIs
+
+| Principle | Meaning |
+| --- | --- |
+| Resources | Nouns in URLs — `/api/orders/5` |
+| HTTP verbs | GET read, POST create, PUT/PATCH update, DELETE remove |
+| Stateless | Each request carries all needed context (e.g. JWT) |
+| Status codes | 2xx success, 4xx client error, 5xx server error |
+
+> **One-liner:** REST maps resources to URLs and uses standard HTTP verbs and status codes.
+
+### HTTP Status Codes Used in APIs
+
+| Code | Meaning | When to Use |
+| --- | --- | --- |
+| 200 | OK | Successful GET/PUT/PATCH |
+| 201 | Created | Successful POST with new resource |
+| 400 | Bad Request | Validation failed |
+| 401 | Unauthorized | Not authenticated |
+| 403 | Forbidden | Authenticated but not allowed |
+| 404 | Not Found | Resource does not exist |
+| 500 | Internal Server Error | Unhandled exception |
+
+> **One-liner:** Use precise status codes — 401 for missing auth, 403 for missing permission, 400 for bad input.
+
+### How Do You Secure an API?
+
+| Layer | Technique |
+| --- | --- |
+| Authentication | JWT, OAuth 2.0, API keys |
+| Authorization | `[Authorize]`, role/policy-based access |
+| Transport | HTTPS only in production |
+| Input | Validation, rate limiting, CORS policy |
+
+> **One-liner:** Authenticate identity, authorize actions, encrypt in transit, validate all input.
+
+### What is JWT? How JWT Authentication Works
+
+| Step | Action |
+| --- | --- |
+| 1 | User logs in with credentials |
+| 2 | Server validates and signs JWT (header + payload + signature) |
+| 3 | Client sends `Authorization: Bearer {token}` on each request |
+| 4 | Server validates signature and claims — grants access |
+
+| JWT Part | Contains |
+| --- | --- |
+| Header | Algorithm (`HS256`, `RS256`) |
+| Payload | Claims (`sub`, `role`, `exp`) |
+| Signature | Integrity verification |
+
+> **One-liner:** JWT is a signed token carrying claims — stateless auth without server-side sessions.
+
+### What is an API Gateway?
+
+| Aspect | Detail |
+| --- | --- |
+| Role | Single entry point for all client requests |
+| Handles | Routing, auth, rate limiting, SSL, aggregation |
+| Examples | Ocelot, YARP, Azure APIM, Kong |
+| Benefit | Clients don't call individual microservices directly |
+
+> **One-liner:** API Gateway is the front door — routing, security, and cross-cutting concerns in one place.
+
+### Dependency Injection and Service Lifetimes
+
+| Lifetime | Scope | Example |
+| --- | --- | --- |
+| Transient | New instance every injection | Lightweight stateless helpers |
+| Scoped | One per HTTP request | `DbContext`, unit of work |
+| Singleton | One for app lifetime | Config, caching services |
+
+> **One-liner:** Transient = new each time; Scoped = per request; Singleton = shared app-wide.
+
+### Authentication vs Authorization
+
+| Point | Authentication | Authorization |
+| --- | --- | --- |
+| Question | Who are you? | What can you do? |
+| Mechanism | Login, JWT, cookies | Roles, policies, claims |
+| Middleware | `UseAuthentication()` | `UseAuthorization()` |
+| Attribute | — | `[Authorize(Roles = "Admin")]` |
+
+> **One-liner:** Authentication proves identity; authorization checks permissions.
+
+### Middleware in ASP.NET Core
+
+| Aspect | Detail |
+| --- | --- |
+| Definition | Pipeline components processing `HttpContext` |
+| Order | Request flows down, response flows back up |
+| Built-in | Routing, Auth, CORS, Static Files, Exception Handler |
+| Custom | `app.UseMiddleware<T>()` or extension method |
+
+> **One-liner:** Middleware is a chain of request handlers — order matters, especially auth before endpoints.
+
+### Routing in ASP.NET Core
+
+| Type | Example |
+| --- | --- |
+| Conventional | `{controller=Home}/{action=Index}/{id?}` |
+| Attribute | `[Route("api/[controller]")]` on controller |
+| Minimal API | `app.MapGet("/users", () => ...)` |
+| Constraints | `{id:int}`, `{name:alpha}` |
+
+> **One-liner:** Routing maps URLs to endpoints — attribute routing is standard for Web APIs.
+
+### Explain Kestrel Server
+
+| Aspect | Detail |
+| --- | --- |
+| Role | Cross-platform web server built into ASP.NET Core |
+| Default | Handles HTTP directly in development and production |
+| Production | Often behind IIS, Nginx, or Apache as reverse proxy |
+| Benefit | High performance, async I/O |
+
+> **One-liner:** Kestrel is the built-in web server — fast, cross-platform, usually behind a reverse proxy in prod.
+
+### appsettings.json
+
+| Aspect | Detail |
+| --- | --- |
+| Purpose | Default configuration file (JSON) |
+| Environments | `appsettings.Development.json` overrides base |
+| Access | `IConfiguration`, `IOptions<T>` |
+| Secrets | Use User Secrets (dev) or Key Vault (prod) — not committed |
+
+> **One-liner:** `appsettings.json` holds default config — environment files and env vars override it.
+
+### Global Exception Handling
+
+| Approach | How |
+| --- | --- |
+| Middleware | `app.UseExceptionHandler("/error")` |
+| Filter | `IExceptionFilter` on MVC controllers |
+| Problem Details | Return RFC 7807 `ProblemDetails` JSON for APIs |
+| Dev vs Prod | Show details in dev; generic message in production |
+
+```csharp
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsJsonAsync(new { error = "An error occurred." });
+    });
+});
+```
+
+> **One-liner:** Catch unhandled exceptions centrally — return safe JSON in prod, log full details server-side.
+
+### Explain MVC Architecture
+
+| Layer | Role |
+| --- | --- |
+| Model | Data and business logic |
+| View | UI (Razor `.cshtml`) |
+| Controller | Processes request, selects view or redirect |
+
+> **One-liner:** Controller receives request, model holds data/logic, view renders the response.

@@ -1574,3 +1574,42 @@ var books = await context.Books
 | How to prevent mass assignment? | DTO + `Select` projection — don't expose entity to API |
 | Async in EF Core? | Always `ToListAsync`, `SaveChangesAsync` — frees threads |
 | Connection resiliency? | `EnableRetryOnFailure()` for transient SQL errors |
+
+---
+
+<a id="interview-quick-answers"></a>
+
+## Interview Quick Answers
+
+### Code First vs Database First
+
+| Point | Code First | Database First |
+| --- | --- | --- |
+| Start from | C# entity classes | Existing database schema |
+| Workflow | Define models → migrations → DB | Scaffold `DbContext` from DB |
+| Control | Developer owns schema evolution | DBA owns schema |
+| Best for | Greenfield apps, agile teams | Legacy DB, DBA-managed schemas |
+
+> **One-liner:** Code First builds the DB from classes; Database First scaffolds classes from an existing DB.
+
+### Migrations in EF Core
+
+| Aspect | Detail |
+| --- | --- |
+| Purpose | Version-control schema changes over time |
+| Commands | `dotnet ef migrations add`, `dotnet ef database update` |
+| Files | Migration class + snapshot of current model |
+| Production | Apply via CI/CD or `dotnet ef database update` |
+
+> **One-liner:** Migrations track schema changes as code — add, review, and apply incrementally.
+
+### Lazy Loading vs Eager Loading
+
+| Point | Lazy Loading | Eager Loading |
+| --- | --- | --- |
+| When data loads | On first access to navigation property | Up front with main query |
+| Mechanism | Proxy or `ILazyLoader` | `.Include()` / `.ThenInclude()` |
+| Risk | N+1 query problem | May over-fetch unused data |
+| Best for | Rare navigation access | Known needed relationships |
+
+> **One-liner:** Lazy loads on access (N+1 risk); eager loads related data in one query with `Include()`.
