@@ -79,6 +79,14 @@ export const courses = [
     cardDesc: '215 senior-level Q&A — C#, ASP.NET Core, EF Core, security, messaging, and system design.',
     brand: '.NET Senior Interview Q&A',
   },
+  {
+    slug: 'scenario-based-interview-qa',
+    mdFile: 'scenario-based-interview-qa.md',
+    num: '11',
+    cardTitle: 'Scenario-Based Interview Q&A',
+    cardDesc: '50 real-world scenarios — API, Angular, microservices, security, and architecture with concise answers.',
+    brand: 'Scenario-Based Interview Q&A',
+  },
 ];
 
 const markdownModules = import.meta.glob('../../MarkDownFormat/*.md', {
