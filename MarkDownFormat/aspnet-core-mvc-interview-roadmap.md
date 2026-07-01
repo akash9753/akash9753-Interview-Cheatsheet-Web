@@ -361,6 +361,17 @@ Request delegates are used to build the request pipeline. They are configured us
 
 ![ASP.NET Core Request Pipeline — Complete Flow and Architecture](/assets/aspnet/aspnet-core-request-workflow.svg)
 
+### Middleware vs Filter
+
+| Point | Middleware | Filter |
+| --- | --- | --- |
+| Scope | Entire HTTP pipeline — all requests | MVC controller / Minimal API endpoint only |
+| Static files & routing | Runs before and after routing; applies to static files | Runs only after endpoint is matched — not for static files |
+| Context | `HttpContext` only — no action/model info | Access to controller, action, model binding, and result |
+| Best for | Logging, CORS, auth pipeline, global exception handler | `[Authorize]`, validation, action logging, per-controller exceptions |
+
+> **One-liner:** Middleware wraps the whole app; filters run inside the MVC/endpoint pipeline with full action context.
+
 ### ASP.NET Core Quick Reference
 
 | Area | Key API / concept |
