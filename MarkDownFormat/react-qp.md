@@ -353,7 +353,53 @@ const [count, setCount] = useState(0);
 const [user, setUser] = useState({ name: '', age: 0 });
 ```
 
-Calling `setState` triggers re-render.
+Calling the setter triggers a re-render.
+
+#### Direct update vs `prev =>` (functional update)
+
+**Direct update** — pass the new value directly:
+
+```jsx
+setCount(count + 1);
+setUser({ ...user, name: 'Akash' });
+```
+
+**Functional update** — pass a function; React calls it with the **latest previous state**:
+
+```jsx
+setCount(prev => prev + 1);
+setUser(prev => ({ ...prev, name: 'Akash' }));
+```
+
+Here `prev` is the most recent state value React has — not necessarily the `count` variable from the current render closure.
+
+#### Why use `prev =>`?
+
+| Situation | Problem with direct update | Fix with `prev =>` |
+| --- | --- | --- |
+| Multiple updates in one event | `setCount(count + 1)` twice may only add 1 (same stale `count`) | `setCount(prev => prev + 1)` twice adds 2 |
+| Async / delayed update | Closure may hold old state | `prev` is always latest when React applies the update |
+| Object/array updates | Easy to overwrite with stale copy | `prev => ({ ...prev, field: value })` merges safely |
+
+**Example — stale closure:**
+
+```jsx
+// Click once — count may become 1, not 2
+setCount(count + 1);
+setCount(count + 1);
+
+// Click once — count becomes 2
+setCount(prev => prev + 1);
+setCount(prev => prev + 1);
+```
+
+**Example — toggle:**
+
+```jsx
+setIsOpen(prev => !prev);
+```
+
+**Interview one-liner:** `setState(prev => newValue)` uses the latest state from React; use it when the new state depends on the previous state, especially for multiple or async updates.
 
 ### Props vs State
 
@@ -988,6 +1034,7 @@ Wrap `<App />` in `main.jsx`:
 | JSX / Fragments | Single root required; Fragment avoids extra DOM node |
 | StrictMode | Dev-only warnings for deprecated/unsafe code |
 | Props vs State | Props from parent (read-only); state owned by component |
+| useState `prev =>` | Functional update — `setCount(prev => prev + 1)` uses latest state; avoids stale closure |
 | One-way vs Two-way binding | One-way: state → UI; two-way: `value` + `onChange` |
 | Controlled vs Uncontrolled | React state vs DOM refs |
 | useEffect vs lifecycle | `[]` = mount; `[deps]` = update; cleanup = unmount; no array = every render |
