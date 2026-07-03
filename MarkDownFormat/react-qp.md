@@ -22,7 +22,7 @@ Day-wise notes from the <strong style="color:#16a34a;">Questpond ReactJS</strong
   <li><a href="#day-1"><span style="color:#2563eb;font-weight:700;">Day 1</span> — JavaScript, Node.js, React Intro, var/let, Hoisting</a></li>
   <li><a href="#day-2"><span style="color:#2563eb;font-weight:700;">Day 2</span> — arguments, reduce, ES Modules, Vite, Webpack, NPM</a></li>
   <li><a href="#day-3"><span style="color:#16a34a;font-weight:700;">Day 3</span> — JSX, Fragments, Data Binding, useState, Virtual DOM, Fiber, Components</a></li>
-  <li><a href="#day-4"><span style="color:#16a34a;font-weight:700;">Day 4</span> — useRef, useEffect</a></li>
+  <li><a href="#day-4"><span style="color:#16a34a;font-weight:700;">Day 4</span> — useRef, useEffect vs Class Lifecycle</a></li>
   <li><a href="#day-5"><span style="color:#16a34a;font-weight:700;">Day 5</span> — Bootstrap, Props, Parent–Child Data, React Router</a></li>
   <li><a href="#day-6"><span style="color:#7c3aed;font-weight:700;">Day 6</span> — useParams, useNavigate, useLocation, Lazy Loading</a></li>
   <li><a href="#day-7"><span style="color:#7c3aed;font-weight:700;">Day 7</span> — Immutability, Controlled vs Uncontrolled Forms</a></li>
@@ -560,15 +560,103 @@ React Hook that lets you reference a value or DOM element.
 
 Refs are used for getting reference to a DOM node or component instance.
 
-### useEffect
+### useEffect vs Class Component Lifecycle
 
-Runs code at a specific time based on dependencies. Automatically triggers when state changes.
+`useEffect()` combines the behavior of multiple class lifecycle methods.
+
+#### 1. Component Did Mount
+
+Runs once after first render.
+
+**Class component:**
+
+```jsx
+componentDidMount() {
+  console.log("Mounted");
+}
+```
+
+**Hook:**
 
 ```jsx
 useEffect(() => {
-  // effect logic
-}, [dependencies]);
+  console.log("Mounted");
+}, []);
 ```
+
+#### 2. Component Did Update
+
+Runs after state/props change.
+
+**Class component:**
+
+```jsx
+componentDidUpdate() {
+  console.log("Updated");
+}
+```
+
+**Hook:**
+
+```jsx
+useEffect(() => {
+  console.log("Updated");
+}, [count]);
+```
+
+#### 3. Component Will Unmount
+
+Cleanup before component is removed.
+
+**Class component:**
+
+```jsx
+componentWillUnmount() {
+  console.log("Cleanup");
+}
+```
+
+**Hook:**
+
+```jsx
+useEffect(() => {
+  return () => {
+    console.log("Cleanup");
+  };
+}, []);
+```
+
+#### 4. Runs After Every Render
+
+**Class component:** `componentDidMount()` + `componentDidUpdate()`
+
+**Hook:**
+
+```jsx
+useEffect(() => {
+  console.log("Runs every render");
+});
+// No dependency array
+```
+
+#### Comparison
+
+| Lifecycle Method | useEffect |
+| --- | --- |
+| `componentDidMount()` | `useEffect(() => {}, [])` |
+| `componentDidUpdate()` | `useEffect(() => {}, [dependency])` |
+| `componentWillUnmount()` | `return () => {}` inside `useEffect` |
+| Mount + Update (all renders) | `useEffect(() => {})` |
+
+#### Dependency Array
+
+| Array | When it runs |
+| --- | --- |
+| `[]` | Runs only once (mount) |
+| `[count]` | Runs when `count` changes |
+| No array | Runs after every render |
+
+**Interview one-liner:** `useEffect` replaces `componentDidMount`, `componentDidUpdate`, and `componentWillUnmount` by using a dependency array and an optional cleanup function.
 
 ---
 
@@ -882,16 +970,10 @@ const { currentUser } = useContext(UserContext);
 | Feature | Functional | Class |
 | --- | --- | --- |
 | State | `useState()` | `this.state` & `this.setState()` |
-| Lifecycle | `useEffect` variants | `componentDidMount`, `componentDidUpdate`, `componentWillUnmount` |
+| Lifecycle | `useEffect` — see [Day 4](#day-4) | `componentDidMount`, `componentDidUpdate`, `componentWillUnmount` |
 | Refs | `useRef()` | `React.createRef()` |
 
-### useEffect Variants
-
-```jsx
-useEffect(() => {}, []);           // mount only
-useEffect(() => {}, [deps]);       // run when deps change
-useEffect(() => { return () => {} }, [deps]);  // cleanup on unmount/deps change
-```
+**Quick mapping:** `[]` = mount · `[deps]` = update when deps change · cleanup `return () => {}` = unmount · no array = every render.
 
 ---
 
@@ -1109,7 +1191,7 @@ Wrap `<App />` in `main.jsx` with `<ErrorBoundary>`.
 | Diffing | Algorithm finding minimum DOM changes during reconciliation |
 | Commit Phase | Apply only changed parts to Real DOM; browser repaints |
 | Hooks | `useState`, `useContext`, `useEffect`, `useMemo`, `useCallback`, `useRef` |
-| useEffect deps | No deps = every render; `[]` = mount only; `[deps]` = when deps change |
+| useEffect vs lifecycle | `[]` = mount; `[deps]` = update; cleanup = unmount; no array = every render |
 | useContext | Login, theme — eliminates prop drilling |
 | Fragments | JSX needs one root; `<>...</>` wraps multiple elements without extra DOM node |
 | StrictMode | Dev-only warnings for deprecated/unsafe patterns |
