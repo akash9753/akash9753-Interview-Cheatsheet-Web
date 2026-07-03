@@ -34,6 +34,7 @@ Structured <strong style="color:#16a34a;">React learning sequence</strong> — s
   <li><a href="#topic-14"><span style="color:#ea580c;font-weight:700;">14.</span> JWT Authentication</a></li>
   <li><a href="#topic-15"><span style="color:#ea580c;font-weight:700;">15.</span> Performance — memo, useMemo, useCallback</a></li>
   <li><a href="#topic-16"><span style="color:#0891b2;font-weight:700;">16.</span> Error Boundaries</a></li>
+  <li><a href="#topic-17"><span style="color:#0891b2;font-weight:700;">17.</span> All React Hooks — Use, Pros & Cons</a></li>
   <li><a href="#interview-quick-answers"><span style="color:#9333ea;font-weight:700;">Guide:</span> Interview Quick Answers</a></li>
 </ul>
 
@@ -765,6 +766,175 @@ Use cases: focus input, read uncontrolled form values, store previous value.
 | --- | --- | --- |
 | `componentWillUnmount()` | Before destroy | Cleanup timers, subscriptions, cancel requests |
 
+#### shouldComponentUpdate vs componentDidUpdate
+
+Both run during the **Updating** phase, but at **different times** with **different jobs**.
+
+| Point | `shouldComponentUpdate` | `componentDidUpdate` |
+| --- | --- | --- |
+| **When** | **Before** `render()` | **After** DOM is updated |
+| **Purpose** | Decide **whether** to re-render | React **after** re-render happened |
+| **Return value** | `true` = re-render · `false` = skip render | Nothing (void) |
+| **Can stop update?** | ✅ Yes — return `false` | ❌ No — render already done |
+| **Use case** | Performance — avoid unnecessary renders | Side effects — API call, sync with DOM |
+| **Receives** | `nextProps`, `nextState` | `prevProps`, `prevState` |
+| **Functional equivalent** | `React.memo()` | `useEffect(() => {}, [deps])` |
+
+**Flow when state/props change:**
+
+```text
+setState() / new props
+        ↓
+shouldComponentUpdate()  →  return false? → STOP (no render)
+        ↓ return true
+render()
+        ↓
+DOM updated
+        ↓
+componentDidUpdate()     →  run side effects here
+```
+
+**shouldComponentUpdate — skip re-render example:**
+
+```jsx
+class ProductList extends React.Component {
+  shouldComponentUpdate(nextProps, nextState) {
+    // Re-render only if selected category changed
+    return nextProps.category !== this.props.category;
+  }
+
+  render() {
+    return <div>{this.props.products.length} products</div>;
+  }
+}
+```
+
+Return `false` → React **skips** `render()` and **`componentDidUpdate` does NOT run** (because no update occurred).
+
+**componentDidUpdate — react after update example:**
+
+```jsx
+class UserProfile extends React.Component {
+  componentDidUpdate(prevProps) {
+    // Run only when userId prop actually changed
+    if (prevProps.userId !== this.props.userId) {
+      this.fetchUser(this.props.userId);
+    }
+  }
+
+  fetchUser(id) {
+    // API call after DOM reflects new user
+  }
+
+  render() {
+    return <div>{this.props.user.name}</div>;
+  }
+}
+```
+
+**Important rules for `componentDidUpdate`:**
+
+- Always compare `prevProps` / `prevState` before calling `setState` — otherwise infinite loop
+- Does **not** run on initial mount (use `componentDidMount` for that)
+
+**Functional equivalents:**
+
+```jsx
+// shouldComponentUpdate → React.memo
+const ProductList = React.memo(function ProductList({ category, products }) {
+  return <div>{products.length} products</div>;
+}, (prevProps, nextProps) => {
+  return prevProps.category === nextProps.category; // true = skip re-render
+});
+
+// componentDidUpdate → useEffect with deps
+useEffect(() => {
+  fetchUser(userId);
+}, [userId]); // runs when userId changes, not on first mount if you skip with ref
+```
+
+**Interview one-liners:**
+
+- `shouldComponentUpdate` runs **before** render and can **prevent** re-render; `componentDidUpdate` runs **after** render when update already happened.
+- `shouldComponentUpdate` = performance gate · `componentDidUpdate` = post-update side effects.
+- Functional alternative to `shouldComponentUpdate` is **`React.memo`**, not `useEffect`.
+
+#### Functional Alternative to shouldComponentUpdate
+
+Similar to `shouldComponentUpdate` in functional components:
+
+**1. React.memo** — prevents component re-render if props are the same.
+
+```jsx
+const User = React.memo(function User({ name }) {
+  return <h1>{name}</h1>;
+});
+```
+
+**2. useMemo** — prevents expensive calculation on every render.
+
+```jsx
+const total = useMemo(() => {
+  return price * quantity;
+}, [price, quantity]);
+```
+
+**3. useCallback** — prevents function recreation on every render.
+
+```jsx
+const handleClick = useCallback(() => {
+  console.log("Clicked");
+}, []);
+```
+
+| API | Similar to shouldComponentUpdate? | What it prevents |
+| --- | --- | --- |
+| `React.memo` | ✅ Yes — skips re-render when props unchanged | Unnecessary **component** re-renders |
+| `useMemo` | ❌ No — optimizes values, not render decision | Recomputing **expensive values** |
+| `useCallback` | ❌ No — stable function reference | Re-creating **functions** passed to memoized children |
+| `useEffect` | ❌ No — runs **after** render | Cannot stop render |
+
+**Important — `useEffect` is NOT similar to `shouldComponentUpdate`:**
+
+| | `shouldComponentUpdate` | `useEffect` |
+| --- | --- | --- |
+| **Timing** | **Before** render | **After** render |
+| **Can stop render?** | ✅ Yes — return `false` | ❌ No — render already happened |
+| **Purpose** | Performance gate | Side effects after update |
+
+```text
+shouldComponentUpdate  →  BEFORE render  →  can BLOCK re-render
+useEffect              →  AFTER render   →  cannot prevent re-render
+```
+
+**Interview one-liner:** The functional alternative of `shouldComponentUpdate` is `React.memo`, not `useEffect`. `useEffect` runs after render and cannot prevent re-render.
+
+#### React.memo vs useMemo — They Are NOT the Same
+
+| Feature | `React.memo` | `useMemo` |
+| --- | --- | --- |
+| **What is it?** | Higher Order Component (HOC) | React Hook |
+| **Used for** | Memoize **component** | Memoize **calculated value** |
+| **Prevents** | Component re-render | Re-calculation |
+| **Works on** | Functional component | Value / result |
+| **Similar to** | `shouldComponentUpdate` | Cached computed value |
+
+```jsx
+// React.memo — skip re-render if props unchanged
+const User = React.memo(function User({ name }) {
+  return <h1>{name}</h1>;
+});
+
+// useMemo — skip recalculation if deps unchanged
+const total = useMemo(() => price * quantity, [price, quantity]);
+```
+
+**Interview one-liner:** `React.memo` memoizes a **component** to avoid re-renders; `useMemo` memoizes a **value** to avoid recalculation.
+
+> Full comparison — see [Topic 15 — React.memo vs useMemo](#react-memo-vs-usememo).
+
+> See also [Topic 15 — Performance](#topic-15) for full `useMemo` / `useCallback` usage.
+
 #### useEffect Mapping (Functional Equivalent)
 
 `useEffect()` replaces the main lifecycle methods below:
@@ -1346,6 +1516,47 @@ Logout clears token + Redux state
 
 **Memoization** caches expensive results and reuses them when inputs unchanged.
 
+<a id="react-memo-vs-usememo"></a>
+
+### React.memo vs useMemo — They Are NOT the Same
+
+| Feature | `React.memo` | `useMemo` |
+| --- | --- | --- |
+| **What is it?** | Higher Order Component (HOC) | React Hook |
+| **Used for** | Memoize **component** | Memoize **calculated value** |
+| **Prevents** | Component re-render | Re-calculation |
+| **Works on** | Functional component | Value / result |
+| **Similar to** | `shouldComponentUpdate` | Cached computed value |
+
+#### React.memo Example
+
+```jsx
+const User = React.memo(function User({ name }) {
+  return <h1>{name}</h1>;
+});
+```
+
+**Use:** If props are the same, the component will **not re-render**.
+
+#### useMemo Example
+
+```jsx
+const total = useMemo(() => {
+  return price * quantity;
+}, [price, quantity]);
+```
+
+**Use:** If `price` and `quantity` are the same, `total` will **not recalculate**.
+
+```text
+React.memo   →  wraps COMPONENT  →  skips re-render when props equal
+useMemo      →  wraps VALUE      →  skips recalculation when deps equal
+```
+
+**Interview one-liner:** `React.memo` memoizes a component to avoid unnecessary re-renders, while `useMemo` memoizes a calculated value to avoid unnecessary recalculation.
+
+### All Three — Quick Reference
+
 | API | Used For | Prevents |
 | --- | --- | --- |
 | `React.memo(Component)` | Memoizing components | Unnecessary child re-renders |
@@ -1413,6 +1624,334 @@ Wrap `<App />` in `main.jsx`:
 
 ---
 
+<a id="topic-17"></a>
+
+## 17. All React Hooks — Use, Pros & Cons
+
+Hooks let functional components use state, lifecycle, context, and more. **Rules:** only call hooks at top level · only in functional components or custom hooks.
+
+### Hooks Overview
+
+| Hook | Primary use |
+| --- | --- |
+| `useState` | Local component state |
+| `useEffect` | Side effects after render |
+| `useContext` | Read Context value |
+| `useReducer` | Complex state logic |
+| `useRef` | DOM ref or mutable value |
+| `useMemo` | Cache computed value |
+| `useCallback` | Cache function reference |
+| `useLayoutEffect` | Sync DOM effect before paint |
+| `useId` | Stable unique IDs (a11y) |
+| `useImperativeHandle` | Customize ref exposed to parent |
+| `useTransition` | Non-urgent state updates (React 18) |
+| `useDeferredValue` | Defer updating a value (React 18) |
+| `useSyncExternalStore` | Subscribe to external store |
+| Custom hook | Reuse stateful logic |
+
+---
+
+### useState
+
+**Use:** Store and update local state (strings, numbers, objects, arrays).
+
+```jsx
+const [count, setCount] = useState(0);
+setCount(prev => prev + 1);
+```
+
+| Pros | Cons |
+| --- | --- |
+| Simple API | Many related states → messy |
+| Triggers re-render on update | Async batching — read state right after set may be stale |
+| Functional update `prev =>` avoids stale closure | Object/array updates need spread (immutable) |
+
+---
+
+### useEffect
+
+**Use:** Side effects — API calls, subscriptions, timers, sync with external systems. Maps to mount / update / unmount. See [Topic 6](#topic-6).
+
+```jsx
+useEffect(() => {
+  fetchData();
+  return () => cleanup();
+}, [id]);
+```
+
+| Pros | Cons |
+| --- | --- |
+| Replaces class lifecycle in one API | Easy to misuse deps → infinite loops |
+| Cleanup function for unmount | Runs **after** render — cannot prevent render |
+| Flexible dependency array | Over-fetching if deps wrong |
+
+---
+
+### useContext
+
+**Use:** Read shared/global data without prop drilling — auth user, theme, locale. See [Topic 11](#topic-11).
+
+```jsx
+const { user, setUser } = useContext(UserContext);
+```
+
+| Pros | Cons |
+| --- | --- |
+| Avoids prop drilling | Re-renders all consumers when context value changes |
+| Simple for global UI state | Not ideal for high-frequency updates |
+| Pairs well with Provider | Overuse makes components hard to test/reuse |
+
+---
+
+### useReducer
+
+**Use:** Complex state with multiple actions — forms, wizards, state machines. Similar to Redux reducer pattern locally.
+
+```jsx
+function reducer(state, action) {
+  switch (action.type) {
+    case 'increment': return { count: state.count + 1 };
+    default: return state;
+  }
+}
+const [state, dispatch] = useReducer(reducer, { count: 0 });
+dispatch({ type: 'increment' });
+```
+
+| Pros | Cons |
+| --- | --- |
+| Predictable state transitions | More boilerplate than `useState` |
+| Good for complex nested state | Overkill for simple toggle/counter |
+| Easier to test reducer pure function | Learning curve vs plain state |
+
+---
+
+### useRef
+
+**Use:** Access DOM nodes, store mutable values that persist without re-render. See [Topic 6](#topic-6).
+
+```jsx
+const inputRef = useRef(null);
+inputRef.current.focus();
+```
+
+| Pros | Cons |
+| --- | --- |
+| No re-render when `.current` changes | Changing ref does not trigger UI update |
+| Perfect for uncontrolled inputs | Not a substitute for state when UI must update |
+| Holds previous value / timer IDs | Must not read/write during render for DOM sync |
+
+---
+
+### useMemo
+
+**Use:** Cache expensive calculation between renders when dependencies unchanged. See [Topic 15](#react-memo-vs-usememo).
+
+```jsx
+const filtered = useMemo(
+  () => products.filter(p => p.category === cat),
+  [products, cat]
+);
+```
+
+| Pros | Cons |
+| --- | --- |
+| Skips heavy recalculation | Memory overhead storing cached value |
+| Stable reference for derived data | Wrong deps → stale/wrong results |
+| Not the same as `React.memo` | Premature optimization if calc is cheap |
+
+---
+
+### useCallback
+
+**Use:** Return same function reference when deps unchanged — helps `React.memo` children avoid re-render.
+
+```jsx
+const handleSave = useCallback((id) => {
+  saveProduct(id);
+}, [saveProduct]);
+```
+
+| Pros | Cons |
+| --- | --- |
+| Stable fn reference for memoized children | Adds complexity |
+| Prevents child re-render from new fn prop | Useless without `React.memo` on child |
+| Good for event handlers in lists | Overuse everywhere hurts readability |
+
+---
+
+### useLayoutEffect
+
+**Use:** Same as `useEffect` but runs **synchronously after DOM update, before browser paint** — measure DOM, prevent flicker.
+
+```jsx
+useLayoutEffect(() => {
+  const height = ref.current.getBoundingClientRect().height;
+  setTooltipHeight(height);
+}, []);
+```
+
+| Pros | Cons |
+| --- | --- |
+| Runs before user sees screen | **Blocks** browser paint — can hurt performance |
+| Good for layout measurements | Prefer `useEffect` by default |
+| Fixes visual flicker | SSR warnings — runs only on client |
+
+---
+
+### useId
+
+**Use:** Generate unique stable IDs for accessibility — link `label` to `input`, ARIA attributes.
+
+```jsx
+const id = useId();
+<label htmlFor={id}>Email</label>
+<input id={id} type="email" />
+```
+
+| Pros | Cons |
+| --- | --- |
+| SSR-safe unique IDs | IDs differ server vs client prefix — don't use in CSS selectors |
+| Avoids ID collisions | Not for list keys |
+| Built-in a11y helper | — |
+
+---
+
+### useImperativeHandle
+
+**Use:** Customize instance value exposed to parent via `ref` — focus input, play video, scroll container.
+
+```jsx
+useImperativeHandle(ref, () => ({
+  focus: () => inputRef.current.focus(),
+}), []);
+```
+
+| Pros | Cons |
+| --- | --- |
+| Imperative API when needed | Breaks declarative React pattern |
+| Encapsulates child DOM logic | Harder to maintain — use sparingly |
+| Works with `forwardRef` | Parent coupled to child implementation |
+
+---
+
+### useDebugValue
+
+**Use:** Display custom label for custom hooks in React DevTools.
+
+```jsx
+function useOnlineStatus() {
+  const [online, setOnline] = useState(true);
+  useDebugValue(online ? 'Online' : 'Offline');
+  return online;
+}
+```
+
+| Pros | Cons |
+| --- | --- |
+| Better DevTools debugging | Dev-only — no production effect |
+| Documents custom hook state | Only useful inside custom hooks |
+
+---
+
+### useTransition (React 18+)
+
+**Use:** Mark state updates as **non-urgent** — keep UI responsive during heavy re-renders (tab switch, filter large list).
+
+```jsx
+const [isPending, startTransition] = useTransition();
+startTransition(() => setFilter(heavyValue));
+```
+
+| Pros | Cons |
+| --- | --- |
+| Smoother UX for slow updates | `isPending` needs loading UI |
+| Keeps input responsive | Not for every state change |
+| Concurrent rendering feature | Mental model is advanced |
+
+---
+
+### useDeferredValue (React 18+)
+
+**Use:** Defer updating a value — lag behind urgent updates (e.g. defer filtered list while typing stays instant).
+
+```jsx
+const deferredQuery = useDeferredValue(query);
+const results = useMemo(() => search(deferredQuery), [deferredQuery]);
+```
+
+| Pros | Cons |
+| --- | --- |
+| Simple deferral without transition API | UI may show stale data briefly |
+| Good for search-as-you-type | Needs fallback/skeleton for deferred state |
+| Works with memoized derived data | React 18+ only |
+
+---
+
+### useSyncExternalStore
+
+**Use:** Subscribe to external stores (Redux-like, browser APIs) with SSR support.
+
+```jsx
+const width = useSyncExternalStore(subscribe, () => window.innerWidth);
+```
+
+| Pros | Cons |
+| --- | --- |
+| Official pattern for external stores | Low-level — rarely written by hand |
+| SSR-safe snapshot | Redux Toolkit uses internally via `useSelector` |
+| Tearing-safe in concurrent mode | Overkill for simple apps |
+
+---
+
+### Custom Hooks
+
+**Use:** Extract reusable stateful logic — prefix with `use`.
+
+```jsx
+function useFetch(url) {
+  const [data, setData] = useState(null);
+  useEffect(() => {
+    fetch(url).then(r => r.json()).then(setData);
+  }, [url]);
+  return data;
+}
+```
+
+| Pros | Cons |
+| --- | --- |
+| DRY — share logic across components | Must follow Rules of Hooks |
+| Composable (`useAuth`, `useCart`) | Can hide complexity if over-abstracted |
+| Testable in isolation | Naming convention required (`use` prefix) |
+
+---
+
+### Related Hooks (Other Libraries)
+
+| Hook | Source | Use |
+| --- | --- | --- |
+| `useParams`, `useNavigate`, `useLocation` | React Router — [Topic 10](#topic-10) | Route params, navigation, query string |
+| `useDispatch`, `useSelector` | Redux Toolkit — [Topic 13](#topic-13) | Dispatch actions, read store state |
+| `useFormikContext`, `useField` | Formik — [Topic 9](#topic-9) | Form state inside Formik forms |
+
+### React 19 Hooks (Brief)
+
+| Hook | Use |
+| --- | --- |
+| `useActionState` | Form actions with pending/error state |
+| `useFormStatus` | Read parent form submission status |
+| `useOptimistic` | Optimistic UI while async action pending |
+
+### Hooks Rules — Quick Reminder
+
+1. Only call hooks at the **top level** — not inside loops, conditions, or nested functions
+2. Only call hooks from **functional components** or **custom hooks**
+3. ESLint plugin `eslint-plugin-react-hooks` enforces these rules
+
+**Interview one-liner:** Core hooks — `useState` (state), `useEffect` (side effects), `useContext` (global data), `useRef` (DOM/mutable), `useMemo`/`useCallback` (performance), `useReducer` (complex state).
+
+---
+
 <a id="interview-quick-answers"></a>
 
 ## Interview Quick Answers
@@ -1431,6 +1970,10 @@ Wrap `<App />` in `main.jsx`:
 | One-way vs Two-way binding | One-way: state → UI; two-way: `value` + `onChange` |
 | Controlled vs Uncontrolled | Controlled: `value` + `onChange` + state; Uncontrolled: `ref` + `defaultValue`, read on submit |
 | useEffect vs lifecycle | `[]` = mount; `[deps]` = update; cleanup = unmount; no array = every render |
+| shouldComponentUpdate vs componentDidUpdate | Before render, can skip update (`React.memo`) vs after DOM update (`useEffect`) |
+| shouldComponentUpdate vs useEffect | `React.memo` = functional equivalent; `useEffect` runs after render, cannot block it |
+| React.memo vs useMemo | memo = skip component re-render; useMemo = skip value recalculation — not the same |
+| React.memo / useMemo / useCallback | memo = component; useMemo = value; useCallback = stable function |
 | useRef | DOM access or persist value without re-render |
 | Context API | Global state without prop drilling — auth, theme |
 | React Router | `BrowserRouter`, `Routes`, `Route`, `NavLink`, `useParams`, `useNavigate` |
@@ -1441,12 +1984,13 @@ Wrap `<App />` in `main.jsx`:
 | JWT auth | Login → store token → interceptor → protected routes |
 | memo / useMemo / useCallback | Skip re-renders, cache values, stable functions |
 | Error Boundary | Class component catching child render errors |
+| All React hooks | useState/effect/context/ref = core; useMemo/Callback = perf; useReducer = complex state |
 | Babel | Transpiler — JSX/ES6+ to browser JS; does not bundle |
 | Webpack | Configurable bundler — JS, CSS, images → optimized bundle |
 | Parcel | Zero-config bundler — easy setup, less flexible |
 | Vite | Fast dev (esbuild + ESM); production build via Rollup |
 | Webpack vs Vite | Webpack = enterprise/configurable; Vite = modern, very fast HMR |
 
-**Suggested learning order:** Setup → JSX → Components → Virtual DOM → Props/State → Hooks → Forms → Router → Context → API → Redux → Auth → Performance → Error Boundaries.
+**Suggested learning order:** Setup → JSX → Components → Virtual DOM → Props/State → Hooks (Topic 6 & 17) → Forms → Router → Context → API → Redux → Auth → Performance → Error Boundaries.
 
 **One-liner:** React QP follows the standard React path — fundamentals, hooks, routing, forms, API, global state, auth, performance, and production patterns.
