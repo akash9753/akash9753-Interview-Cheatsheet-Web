@@ -95,6 +95,14 @@ export const courses = [
     cardDesc: 'Standard React learning sequence — setup, hooks, Virtual DOM, routing, forms, Axios, Context, Redux, JWT, and performance.',
     brand: 'React QP',
   },
+  {
+    slug: 'javascript',
+    mdFile: 'javascript-learning-roadmap.md',
+    num: '13',
+    cardTitle: 'JavaScript',
+    cardDesc: 'Standard JS roadmap — variables, functions, closures, arrays, ES6+, async, DOM, fetch, and interview essentials.',
+    brand: 'JavaScript Learning Roadmap',
+  },
 ];
 
 const markdownModules = import.meta.glob('../../MarkDownFormat/*.md', {
