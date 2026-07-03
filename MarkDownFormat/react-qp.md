@@ -337,21 +337,170 @@ Also: `<React.Fragment key={id}>...</React.Fragment>` when a `key` is needed.
 
 Reusable UI unit — HTML + logic defining a specific part of the interface.
 
-| Type | Structure |
-| --- | --- |
-| **Functional** | Function returning JSX |
-| **Class** | Class extending `React.Component` with `render()` |
-| **Functional + TypeScript** | Typed props and return type |
+### Functional Component
 
-### Comparison
+A JavaScript **function** that returns JSX.
 
-| Feature | Functional | Class |
+```jsx
+function Greeting({ name }) {
+  return <h1>Hello, {name}</h1>;
+}
+
+// Arrow function style (same thing)
+const Greeting = ({ name }) => <h1>Hello, {name}</h1>;
+```
+
+### Class Component
+
+A JavaScript **class** extending `React.Component` with a `render()` method.
+
+```jsx
+class Greeting extends React.Component {
+  render() {
+    return <h1>Hello, {this.props.name}</h1>;
+  }
+}
+```
+
+### Real Example — Counter (Both Ways)
+
+**Functional (with hooks):**
+
+```jsx
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    document.title = `Count: ${count}`;
+  }, [count]);
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>+</button>
+    </div>
+  );
+}
+```
+
+**Class (with lifecycle):**
+
+```jsx
+class Counter extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { count: 0 };
+  }
+
+  componentDidMount() {
+    document.title = `Count: ${this.state.count}`;
+  }
+
+  componentDidUpdate() {
+    document.title = `Count: ${this.state.count}`;
+  }
+
+  render() {
+    return (
+      <div>
+        <p>Count: {this.state.count}</p>
+        <button onClick={() => this.setState({ count: this.state.count + 1 })}>
+          +
+        </button>
+      </div>
+    );
+  }
+}
+```
+
+Same UI — different syntax for state, updates, and side effects.
+
+### Full Comparison
+
+| Point | Functional Component | Class Component |
 | --- | --- | --- |
-| State | `useState()` | `this.state` & `this.setState()` |
-| Lifecycle | `useEffect` — see [Topic 6](#topic-6) | `componentDidMount`, `componentDidUpdate`, `componentWillUnmount` |
-| Refs | `useRef()` | `React.createRef()` |
+| **Syntax** | `function App() { return <div /> }` | `class App extends React.Component { render() {} }` |
+| **State** | `useState`, `useReducer` | `this.state` + `this.setState()` |
+| **Lifecycle** | `useEffect` — see [Topic 6](#topic-6) | `componentDidMount`, `componentDidUpdate`, `componentWillUnmount` |
+| **Props access** | Function parameters — `props.name` or `{ name }` | `this.props.name` |
+| **Refs** | `useRef()` | `React.createRef()` or callback ref |
+| **Context** | `useContext()` | `static contextType` or `Context.Consumer` |
+| **Hooks** | ✅ All hooks available | ❌ Hooks **not** allowed in classes |
+| **`this` keyword** | Not used (except in event handlers if needed) | Required — `this.state`, `this.props`, `this.setState` |
+| **Binding** | No binding issues | Must bind methods in constructor or use arrow class fields |
+| **Error Boundary** | ❌ Not supported (yet) | ✅ Only way to create Error Boundary |
+| **Code size** | Less boilerplate | More verbose (constructor, render, binding) |
+| **Modern standard** | React 18+ default — use for all new code | Legacy — still in old codebases |
+| **Performance** | Same — React optimizes both equally | Same |
 
-**Interview one-liner:** Modern React favors functional components with hooks; class components are legacy but still appear in Error Boundaries.
+### Hooks — Functional Only
+
+```jsx
+// ✅ Works in functional component
+function App() {
+  const [user, setUser] = useState(null);
+  useEffect(() => { fetchUser(); }, []);
+  return <div>{user?.name}</div>;
+}
+
+// ❌ Invalid — hooks cannot be used in class
+class App extends React.Component {
+  const [user, setUser] = useState(null); // SyntaxError
+}
+```
+
+### `this` in Class Components
+
+Class methods need correct `this` binding:
+
+```jsx
+class Button extends React.Component {
+  handleClick() {
+    console.log(this.props.label); // loses `this` if not bound
+  }
+
+  // Option 1: bind in constructor
+  constructor(props) {
+    super(props);
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  // Option 2: arrow class field (no bind needed)
+  handleClickArrow = () => {
+    console.log(this.props.label);
+  };
+
+  render() {
+    return <button onClick={this.handleClickArrow}>Click</button>;
+  }
+}
+```
+
+Functional components avoid this problem entirely.
+
+### When to Use Which?
+
+| Use Functional | Use Class |
+| --- | --- |
+| All new React projects | Maintaining legacy class code |
+| Hooks for state, effects, context | Error Boundary (only class option today) |
+| Simpler, less boilerplate | Old tutorials / existing class-based apps |
+
+### Migration Pattern
+
+```text
+Class this.state        →  useState / useReducer
+Class lifecycle methods →  useEffect
+Class this.props        →  function props / destructuring
+Class createRef         →  useRef
+```
+
+**Interview one-liners:**
+
+- Functional components use hooks; class components use `this.state` and lifecycle methods.
+- Hooks work **only** in functional components — never in classes.
+- Error Boundaries must still be class components (no hook equivalent yet).
+- Modern React = functional + hooks for all new development.
 
 ---
 
@@ -1241,6 +1390,7 @@ Wrap `<App />` in `main.jsx`:
 | Reconciliation / Diffing / Commit | Compare trees → find changes → apply to Real DOM |
 | JSX / Fragments | Single root required; Fragment avoids extra DOM node |
 | StrictMode | Dev-only warnings for deprecated/unsafe code |
+| Functional vs Class | Functional: hooks, no `this`; Class: `this.state`, lifecycle; Error Boundary = class only |
 | Props vs State | Props from parent (read-only); state owned by component |
 | useState `prev =>` | Functional update — `setCount(prev => prev + 1)` uses latest state; avoids stale closure |
 | One-way vs Two-way binding | One-way: state → UI; two-way: `value` + `onChange` |
