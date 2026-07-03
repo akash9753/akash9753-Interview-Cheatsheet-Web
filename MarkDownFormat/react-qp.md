@@ -368,6 +368,77 @@ Used to maintain state of an object.
 - The actual DOM displayed in the browser
 - Updating the Real DOM is **slower** because it causes re-rendering and repainting
 
+#### Real DOM (Vanilla JavaScript)
+
+**HTML:**
+
+```html
+<div id="root">
+  <h1>Hello</h1>
+</div>
+```
+
+**JavaScript:**
+
+```javascript
+const h1 = document.querySelector("h1");
+h1.textContent = "Hello Akash";
+```
+
+**What happens?**
+
+- JavaScript **directly updates** the Real DOM
+- Browser **repaints immediately**
+
+#### Virtual DOM (React)
+
+```jsx
+function App() {
+  const [name, setName] = React.useState("Hello");
+
+  return <h1>{name}</h1>;
+}
+
+// Updating state:
+setName("Hello Akash");
+```
+
+**What happens?**
+
+- React creates a **new Virtual DOM**
+- **Diffing** compares old vs new Virtual DOM
+- **Reconciliation** finds the changes
+- **Commit Phase** updates only the changed Real DOM node
+
+#### Behind the Scenes
+
+JSX:
+
+```jsx
+<h1>Hello</h1>
+```
+
+is converted into:
+
+```javascript
+React.createElement("h1", null, "Hello");
+```
+
+`React.createElement()` creates **Virtual DOM objects** (not actual HTML).
+
+#### Virtual DOM Object (Conceptual)
+
+```javascript
+{
+  type: "h1",
+  props: {
+    children: "Hello"
+  }
+}
+```
+
+This is just a JavaScript object stored in memory.
+
 #### React Fiber
 
 - React's **reconciliation engine** (introduced in React 16)
@@ -412,6 +483,36 @@ Commit Phase (Updates only changed parts in Real DOM)
 Browser Repaint (User sees updated UI)
 ```
 
+#### Flow Comparison
+
+**Vanilla JS:**
+
+```text
+Change Data
+    ↓
+Directly Update Real DOM
+    ↓
+Browser Repaint
+```
+
+**React:**
+
+```text
+Change State
+    ↓
+New Virtual DOM
+    ↓
+Diffing
+    ↓
+Reconciliation
+    ↓
+Commit Phase
+    ↓
+Update Real DOM
+    ↓
+Browser Repaint
+```
+
 #### Difference
 
 | Concept | Description |
@@ -431,6 +532,7 @@ Browser Repaint (User sees updated UI)
 - Diffing is the algorithm React uses during reconciliation to detect changes efficiently.
 - Commit Phase applies only the required changes to the Real DOM.
 - React updates only the changed parts of the Real DOM, improving performance.
+- In Vanilla JavaScript, we update the Real DOM directly. In React, we update state, React creates a new Virtual DOM, compares it with the old one, and updates only the changed parts of the Real DOM.
 
 ### Component
 
@@ -1001,7 +1103,7 @@ Wrap `<App />` in `main.jsx` with `<ErrorBoundary>`.
 
 | Topic | Key Points |
 | --- | --- |
-| Virtual DOM | Lightweight JS copy of Real DOM; React updates it first |
+| Virtual DOM vs Real DOM | Vanilla JS updates Real DOM directly; React updates state → Virtual DOM → diff → commit minimal Real DOM changes |
 | React Fiber | Reconciliation engine (React 16+) — schedules, prioritizes, pauses/resumes rendering |
 | Reconciliation | Compare old vs new Virtual DOM after state/prop change |
 | Diffing | Algorithm finding minimum DOM changes during reconciliation |
