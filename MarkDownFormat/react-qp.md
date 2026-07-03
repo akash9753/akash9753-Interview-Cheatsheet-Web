@@ -20,7 +20,7 @@ Day-wise notes from the <strong style="color:#16a34a;">Questpond ReactJS</strong
 
 <ul style="line-height:1.8;">
   <li><a href="#day-1"><span style="color:#2563eb;font-weight:700;">Day 1</span> — JavaScript, Node.js, React Intro, var/let, Hoisting</a></li>
-  <li><a href="#day-2"><span style="color:#2563eb;font-weight:700;">Day 2</span> — arguments, reduce, ES Modules, Vite, NPM</a></li>
+  <li><a href="#day-2"><span style="color:#2563eb;font-weight:700;">Day 2</span> — arguments, reduce, ES Modules, Vite, Webpack, NPM</a></li>
   <li><a href="#day-3"><span style="color:#16a34a;font-weight:700;">Day 3</span> — JSX, Fragments, Data Binding, useState, Virtual DOM, Components</a></li>
   <li><a href="#day-4"><span style="color:#16a34a;font-weight:700;">Day 4</span> — useRef, useEffect</a></li>
   <li><a href="#day-5"><span style="color:#16a34a;font-weight:700;">Day 5</span> — Bootstrap, Props, Parent–Child Data, React Router</a></li>
@@ -96,7 +96,7 @@ var i = 10;
 
 <a id="day-2"></a>
 
-## Day 2 — arguments, reduce, Modules, Vite & NPM
+## Day 2 — arguments, reduce, Modules, Vite, Webpack & NPM
 
 ### arguments Object
 
@@ -167,6 +167,57 @@ cd myapp
 npm install
 npm run dev
 ```
+
+### Webpack
+
+Webpack is a **JavaScript module bundler**.
+
+It takes many project files like:
+
+- JavaScript
+- CSS
+- Images
+- Fonts
+
+And bundles them into optimized files like:
+
+- `bundle.js`
+- `style.css`
+
+#### Why Webpack is used?
+
+- Combines many files into one/few files
+- Improves app loading speed
+- Reduces HTTP requests
+- Supports ES6/TypeScript using Babel/loader
+- Minifies code for production
+- Handles CSS, images, fonts also
+
+#### Main Concepts
+
+| Concept | Description | Example |
+| --- | --- | --- |
+| **Entry** | Starting file of app | `index.js` |
+| **Output** | Final generated bundled file | `bundle.js` |
+| **Loaders** | Convert/process files | CSS, TypeScript, images |
+| **Plugins** | Extra tasks — HTML generation, minification | — |
+| **Mode** | Build environment | `development` or `production` |
+
+#### Simple Flow
+
+```text
+Source Files (JS + CSS + Images)
+              ↓
+           Webpack
+              ↓
+    Optimized Bundle (bundle.js)
+```
+
+#### Similar Tools
+
+Vite, Parcel, Rollup, esbuild, SWC, Turbopack
+
+**Interview one-liner:** Webpack is a JavaScript module bundler that combines JavaScript, CSS, images, and other assets into optimized bundles for faster web application loading.
 
 ### NPM (Node Package Manager)
 
@@ -801,6 +852,7 @@ Wrap `<App />` in `main.jsx` with `<ErrorBoundary>`.
 | StrictMode | Dev-only warnings for deprecated/unsafe patterns |
 | Formik & Yup | Form state + schema validation |
 | Controlled vs Uncontrolled | React state vs DOM refs |
+| Webpack | JS module bundler — entry, output, loaders, plugins; bundles JS/CSS/images into optimized files |
 | Lazy loading | `lazy()` + `Suspense` — code splitting on demand |
 | Routing | `BrowserRouter`, `Routes`, `Route`, `NavLink` |
 | Props vs State | Props from parent (read-only); state internal to component |
