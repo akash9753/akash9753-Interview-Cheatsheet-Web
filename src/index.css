@@ -381,6 +381,104 @@ main {
   padding: 42px 52px 96px;
 }
 
+.course-search {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  margin: 0 0 24px;
+  padding: 14px 16px;
+  background: rgba(11, 16, 32, 0.92);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  backdrop-filter: blur(8px);
+}
+
+.course-search-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.course-search-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.course-search-input {
+  flex: 1 1 220px;
+  min-width: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.95rem;
+}
+
+.course-search-input:focus {
+  outline: 2px solid rgba(56, 189, 248, 0.45);
+  border-color: var(--accent);
+}
+
+.course-search-input::placeholder {
+  color: var(--muted);
+}
+
+.course-search-count {
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+  min-width: 4.5rem;
+  text-align: center;
+}
+
+.course-search-btn {
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  border-radius: 8px;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.course-search-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.course-search-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.course-search-clear {
+  font-size: 0.85rem;
+}
+
+mark.search-highlight {
+  background: rgba(250, 204, 21, 0.35);
+  color: inherit;
+  padding: 0 2px;
+  border-radius: 3px;
+}
+
+mark.search-highlight-active {
+  background: rgba(250, 204, 21, 0.85);
+  outline: 2px solid #facc15;
+  outline-offset: 1px;
+}
+
 main h1,
 main h2,
 main h3,

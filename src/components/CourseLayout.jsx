@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { CourseSearch } from './CourseSearch';
 import { MarkdownContent } from './MarkdownContent';
 import { TableOfContents, filterTocHeadings } from '../utils/toc';
 import { extractHeadings } from '../utils/headings';
@@ -135,7 +136,10 @@ export function CourseLayout({ brand, markdown }) {
         <TableOfContents headings={tocHeadings} />
       </aside>
       <main id="top">
-        <MarkdownContent markdown={markdown} />
+        <CourseSearch key={brand} contentRootId="course-content" />
+        <div id="course-content">
+          <MarkdownContent markdown={markdown} />
+        </div>
       </main>
       <a className="top-link" href="#top">Top</a>
     </div>
