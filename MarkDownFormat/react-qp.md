@@ -307,11 +307,50 @@ return (
 
 Mechanism to bind data values into HTML elements. React supports **one-way binding** by default.
 
-| Type | Example |
+#### One-way Binding
+
+Data flows only one way: **State/Variable → UI**
+
+```jsx
+const [name, setName] = useState("Akash");
+
+return <input value={name} />;
+```
+
+Here the UI shows `name`, but typing will **not** update state automatically.
+
+#### Two-way Binding
+
+Data flows both ways: **State/Variable ↔ UI**
+
+```jsx
+const [name, setName] = useState("");
+
+return (
+  <input
+    value={name}
+    onChange={(e) => setName(e.target.value)}
+  />
+);
+```
+
+- `value={name}` → state to UI
+- `onChange` → UI to state
+
+#### Difference
+
+| Binding | Data flow |
 | --- | --- |
-| One-way binding | `{value}` |
-| Event binding | `<input type="button" onClick={(e) => handleClick(e, 'Hello')} />` |
-| Two-way binding | `const [fullName, setFullName] = useState('pradeep shet');` |
+| **One-way** | State changes update UI only |
+| **Two-way** | State changes update UI, and UI changes update state |
+
+**Event binding example:**
+
+```jsx
+<input type="button" value="Click Me" onClick={(e) => handleClick(e, 'Hello')} />
+```
+
+**Interview one-liner:** One-way binding means data flows from component/state to UI, while two-way binding means data flows both from state to UI and UI back to state.
 
 ### useState()
 
@@ -898,6 +937,7 @@ Wrap `<App />` in `main.jsx` with `<ErrorBoundary>`.
 | Fragments | JSX needs one root; `<>...</>` wraps multiple elements without extra DOM node |
 | StrictMode | Dev-only warnings for deprecated/unsafe patterns |
 | Formik & Yup | Form state + schema validation |
+| One-way vs Two-way binding | One-way: state → UI only; two-way: state ↔ UI via `value` + `onChange` |
 | Controlled vs Uncontrolled | React state vs DOM refs |
 | Webpack | JS module bundler — entry, output, loaders, plugins; bundles JS/CSS/images into optimized files |
 | Lazy loading | `lazy()` + `Suspense` — code splitting on demand |
