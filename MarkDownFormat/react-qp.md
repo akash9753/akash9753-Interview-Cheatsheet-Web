@@ -415,6 +415,8 @@ class Counter extends React.Component {
 
 Same UI — different syntax for state, updates, and side effects.
 
+> Full class lifecycle diagram (Mounting → Updating → Unmounting) — see [Topic 6](#topic-6).
+
 ### Full Comparison
 
 | Point | Functional Component | Class Component |
@@ -730,9 +732,42 @@ const addressRef = useRef(null);
 
 Use cases: focus input, read uncontrolled form values, store previous value.
 
-### useEffect vs Class Lifecycle
+### useEffect vs Class Component Lifecycle
 
-`useEffect()` combines multiple class lifecycle methods.
+`useEffect()` combines multiple class lifecycle methods. Class components follow three phases:
+
+![React Class Component Lifecycle — Mounting, Updating, Unmounting](/assets/react/react-class-component-lifecycle.png)
+
+#### Mounting (component created & inserted into DOM)
+
+| Method | When | Purpose |
+| --- | --- | --- |
+| `constructor()` | First | Init state, bind methods |
+| `static getDerivedStateFromProps()` | Before render | Sync state from props |
+| `render()` | Required | Return JSX |
+| `componentDidMount()` | After first render | API calls, subscriptions, DOM setup |
+
+#### Updating (props or state change → re-render)
+
+**Triggers:** new props · `setState()` · `forceUpdate()`
+
+| Method | When | Purpose |
+| --- | --- | --- |
+| `static getDerivedStateFromProps()` | Before render | Update state from new props |
+| `shouldComponentUpdate()` | Before render | Return `false` to skip re-render (performance) |
+| `render()` | — | Return updated JSX |
+| `getSnapshotBeforeUpdate()` | Before DOM update | Capture DOM info (e.g. scroll position) |
+| `componentDidUpdate()` | After DOM update | React to prop/state changes, more API calls |
+
+#### Unmounting (component removed from DOM)
+
+| Method | When | Purpose |
+| --- | --- | --- |
+| `componentWillUnmount()` | Before destroy | Cleanup timers, subscriptions, cancel requests |
+
+#### useEffect Mapping (Functional Equivalent)
+
+`useEffect()` replaces the main lifecycle methods below:
 
 #### 1. Component Did Mount — runs once after first render
 
