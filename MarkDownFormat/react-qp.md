@@ -21,7 +21,7 @@ Day-wise notes from the <strong style="color:#16a34a;">Questpond ReactJS</strong
 <ul style="line-height:1.8;">
   <li><a href="#day-1"><span style="color:#2563eb;font-weight:700;">Day 1</span> — JavaScript, Node.js, React Intro, var/let, Hoisting</a></li>
   <li><a href="#day-2"><span style="color:#2563eb;font-weight:700;">Day 2</span> — arguments, reduce, ES Modules, Vite, Webpack, NPM</a></li>
-  <li><a href="#day-3"><span style="color:#16a34a;font-weight:700;">Day 3</span> — JSX, Fragments, Data Binding, useState, Virtual DOM, Components</a></li>
+  <li><a href="#day-3"><span style="color:#16a34a;font-weight:700;">Day 3</span> — JSX, Fragments, Data Binding, useState, Virtual DOM, Fiber, Components</a></li>
   <li><a href="#day-4"><span style="color:#16a34a;font-weight:700;">Day 4</span> — useRef, useEffect</a></li>
   <li><a href="#day-5"><span style="color:#16a34a;font-weight:700;">Day 5</span> — Bootstrap, Props, Parent–Child Data, React Router</a></li>
   <li><a href="#day-6"><span style="color:#7c3aed;font-weight:700;">Day 6</span> — useParams, useNavigate, useLocation, Lazy Loading</a></li>
@@ -356,10 +356,81 @@ return (
 
 Used to maintain state of an object.
 
-### Virtual DOM
+### Virtual DOM & Reconciliation
 
-- Lightweight memory representation of the **real DOM tree**
-- Maintains 2 DOM trees; based on comparison, syncs changes to Real DOM
+#### Virtual DOM
+
+- A lightweight **JavaScript copy** of the Real DOM
+- React updates the Virtual DOM first instead of the browser DOM
+
+#### Real DOM
+
+- The actual DOM displayed in the browser
+- Updating the Real DOM is **slower** because it causes re-rendering and repainting
+
+#### React Fiber
+
+- React's **reconciliation engine** (introduced in React 16)
+- Breaks rendering work into small units
+- Prioritizes important updates (e.g. user input over background rendering)
+- Can pause, resume, or cancel rendering work for better performance
+
+#### Reconciliation
+
+- Process React uses to compare the **old Virtual DOM** with the **new Virtual DOM** after a state/prop change
+- React Fiber performs this process
+- Determines what has changed and what needs to be updated
+
+#### Diffing Algorithm
+
+- Algorithm used during reconciliation
+- Compares old and new Virtual DOM trees efficiently
+- Finds the **minimum number of changes** required
+
+#### Commit Phase
+
+- React applies only the identified changes to the Real DOM
+- Browser repaints only the updated parts
+
+#### Complete Workflow
+
+```text
+State/Props Change
+        ↓
+Component Re-renders
+        ↓
+New Virtual DOM Created
+        ↓
+React Fiber (Schedules & Prioritizes Work)
+        ↓
+Diffing Algorithm (Old Virtual DOM vs New Virtual DOM)
+        ↓
+Reconciliation (Determines what changed)
+        ↓
+Commit Phase (Updates only changed parts in Real DOM)
+        ↓
+Browser Repaint (User sees updated UI)
+```
+
+#### Difference
+
+| Concept | Description |
+| --- | --- |
+| **Virtual DOM** | JavaScript representation of UI — fast to create/update; used internally by React |
+| **Real DOM** | Actual browser DOM — slower to update; visible to the user |
+| **React Fiber** | Reconciliation engine — schedules and prioritizes rendering work |
+| **Reconciliation** | Compares Virtual DOMs and decides what to update |
+| **Diffing Algorithm** | Detects differences efficiently during reconciliation |
+| **Commit Phase** | Applies calculated changes to the Real DOM |
+
+**Interview one-liners:**
+
+- Virtual DOM is a lightweight JavaScript copy of the Real DOM.
+- React Fiber is React's reconciliation engine that prioritizes and schedules rendering work.
+- Reconciliation is the process of comparing the old and new Virtual DOM.
+- Diffing is the algorithm React uses during reconciliation to detect changes efficiently.
+- Commit Phase applies only the required changes to the Real DOM.
+- React updates only the changed parts of the Real DOM, improving performance.
 
 ### Component
 
@@ -930,7 +1001,11 @@ Wrap `<App />` in `main.jsx` with `<ErrorBoundary>`.
 
 | Topic | Key Points |
 | --- | --- |
-| Virtual DOM | Lightweight JS representation of UI; diffed before updating real DOM |
+| Virtual DOM | Lightweight JS copy of Real DOM; React updates it first |
+| React Fiber | Reconciliation engine (React 16+) — schedules, prioritizes, pauses/resumes rendering |
+| Reconciliation | Compare old vs new Virtual DOM after state/prop change |
+| Diffing | Algorithm finding minimum DOM changes during reconciliation |
+| Commit Phase | Apply only changed parts to Real DOM; browser repaints |
 | Hooks | `useState`, `useContext`, `useEffect`, `useMemo`, `useCallback`, `useRef` |
 | useEffect deps | No deps = every render; `[]` = mount only; `[deps]` = when deps change |
 | useContext | Login, theme — eliminates prop drilling |
