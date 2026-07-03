@@ -1,165 +1,75 @@
-<h1 style="color:#2563eb;">React QP — Questpond ReactJS Course Notes</h1>
+<h1 style="color:#2563eb;">React QP — React Learning Roadmap</h1>
 
 ## Goal
 
 <p style="color:#374151;">
-Day-wise notes from the <strong style="color:#16a34a;">Questpond ReactJS</strong> course — JavaScript fundamentals, React components, hooks, routing, Formik, Axios, Context API, Redux, JWT auth, and interview topics.
+Structured <strong style="color:#16a34a;">React learning sequence</strong> — setup, JSX, components, Virtual DOM, hooks, routing, forms, API integration, Context, Redux, auth, performance, and interview topics. Based on Questpond course notes, reorganized for standard React progression.
 </p>
 
 ---
 
-## Lab Requirements
+## Setup
 
-- **Node.js**
+- **Node.js** + **npm**
 - **VS Code**
-- **Visual Studio Community Edition 2022**
 
 ---
 
 ## Topic Index
 
 <ul style="line-height:1.8;">
-  <li><a href="#day-1"><span style="color:#2563eb;font-weight:700;">Day 1</span> — JavaScript, Node.js, React Intro, var/let, Hoisting</a></li>
-  <li><a href="#day-2"><span style="color:#2563eb;font-weight:700;">Day 2</span> — arguments, reduce, ES Modules, Vite, Webpack, NPM</a></li>
-  <li><a href="#day-3"><span style="color:#16a34a;font-weight:700;">Day 3</span> — JSX, Fragments, Data Binding, useState, Virtual DOM, Fiber, Components</a></li>
-  <li><a href="#day-4"><span style="color:#16a34a;font-weight:700;">Day 4</span> — useRef, useEffect vs Class Lifecycle</a></li>
-  <li><a href="#day-5"><span style="color:#16a34a;font-weight:700;">Day 5</span> — Bootstrap, Props, Parent–Child Data, React Router</a></li>
-  <li><a href="#day-6"><span style="color:#7c3aed;font-weight:700;">Day 6</span> — useParams, useNavigate, useLocation, Lazy Loading</a></li>
-  <li><a href="#day-7"><span style="color:#7c3aed;font-weight:700;">Day 7</span> — Immutability, Controlled vs Uncontrolled Forms</a></li>
-  <li><a href="#day-8"><span style="color:#7c3aed;font-weight:700;">Day 8</span> — Formik & Yup Validation</a></li>
-  <li><a href="#day-9"><span style="color:#dc2626;font-weight:700;">Day 9</span> — Axios, CRUD Operations</a></li>
-  <li><a href="#day-10"><span style="color:#dc2626;font-weight:700;">Day 10</span> — Context API</a></li>
-  <li><a href="#day-11"><span style="color:#dc2626;font-weight:700;">Day 11</span> — Functional vs Class Components</a></li>
-  <li><a href="#day-12"><span style="color:#ea580c;font-weight:700;">Day 12</span> — Redux — Action, Reducer, Store, Dispatch</a></li>
-  <li><a href="#day-13"><span style="color:#ea580c;font-weight:700;">Day 13</span> — Redux Toolkit Implementation Steps</a></li>
-  <li><a href="#day-14"><span style="color:#ea580c;font-weight:700;">Day 14</span> — JWT Authentication with Redux</a></li>
-  <li><a href="#day-15"><span style="color:#0891b2;font-weight:700;">Day 15</span> — Axios Interceptor, Memo, Error Boundary, Interview Qs</a></li>
+  <li><a href="#topic-1"><span style="color:#2563eb;font-weight:700;">1.</span> React Intro, SPA & Project Setup (Vite, NPM, Webpack)</a></li>
+  <li><a href="#topic-2"><span style="color:#2563eb;font-weight:700;">2.</span> JSX, Fragments & StrictMode</a></li>
+  <li><a href="#topic-3"><span style="color:#2563eb;font-weight:700;">3.</span> Components — Functional vs Class</a></li>
+  <li><a href="#topic-4"><span style="color:#16a34a;font-weight:700;">4.</span> Virtual DOM, Fiber & Reconciliation</a></li>
+  <li><a href="#topic-5"><span style="color:#16a34a;font-weight:700;">5.</span> Props, State & Data Binding</a></li>
+  <li><a href="#topic-6"><span style="color:#16a34a;font-weight:700;">6.</span> useRef & useEffect vs Lifecycle</a></li>
+  <li><a href="#topic-7"><span style="color:#7c3aed;font-weight:700;">7.</span> Parent–Child Communication & UI Styling</a></li>
+  <li><a href="#topic-8"><span style="color:#7c3aed;font-weight:700;">8.</span> Forms — Controlled, Uncontrolled & Immutable State</a></li>
+  <li><a href="#topic-9"><span style="color:#7c3aed;font-weight:700;">9.</span> Formik & Yup Validation</a></li>
+  <li><a href="#topic-10"><span style="color:#dc2626;font-weight:700;">10.</span> React Router, Lazy Loading & Code Splitting</a></li>
+  <li><a href="#topic-11"><span style="color:#dc2626;font-weight:700;">11.</span> Context API</a></li>
+  <li><a href="#topic-12"><span style="color:#dc2626;font-weight:700;">12.</span> Axios, CRUD & Interceptors</a></li>
+  <li><a href="#topic-13"><span style="color:#ea580c;font-weight:700;">13.</span> Redux & Redux Toolkit</a></li>
+  <li><a href="#topic-14"><span style="color:#ea580c;font-weight:700;">14.</span> JWT Authentication</a></li>
+  <li><a href="#topic-15"><span style="color:#ea580c;font-weight:700;">15.</span> Performance — memo, useMemo, useCallback</a></li>
+  <li><a href="#topic-16"><span style="color:#0891b2;font-weight:700;">16.</span> Error Boundaries</a></li>
+  <li><a href="#interview-quick-answers"><span style="color:#9333ea;font-weight:700;">Guide:</span> Interview Quick Answers</a></li>
 </ul>
 
 ---
 
-<a id="day-1"></a>
+<a id="topic-1"></a>
 
-## Day 1 — JavaScript, Node.js & React Intro
+## 1. React Intro, SPA & Project Setup
 
-### JavaScript Basics
-
-- JavaScript is a **dynamic scripting language**
-- Interpreted at client side by the **V8 engine**
-- **JS / ES / ECMAScript** — standard for scripting language
-- **HTML** — W3C standard
-
-```javascript
-var i = 10;
-i = 'pradeep';
-i = true;
-let i = 1;
-```
-
-### var vs let
-
-| Keyword | Scope | Hoisting |
-| --- | --- | --- |
-| `var` | Global / function scope | Supports hoisting |
-| `let` | Block scope | Does not support hoisting |
-
-### Hoisting
-
-Scans the code and moves the declaration to the top:
-
-```javascript
-console.log(i);
-var i = 10;
-```
-
-### Node.js
-
-- JavaScript **runtime environment**
-- Cross platform, open source
-- Tool: **npm** (Node Package Manager)
-
-### React.js
+### What is React?
 
 - Library for developing **reusable UI components**
 - Known for speed, scalability, simplicity
-- Developed by **Facebook (Meta)**
+- Developed by **Meta (Facebook)**
+- **Declarative** — describe UI for a given state; React updates the DOM
 
-### Array Operators
+### Single Page Application (SPA)
 
-| Operator | Purpose |
-| --- | --- |
-| `map()` | Transform each item in the array; can modify objects |
-| Spread `...` | Expanding an array |
-| Rest `...` | Collect values into an array |
+One HTML page — JavaScript handles navigation without full page reload.
 
----
-
-<a id="day-2"></a>
-
-## Day 2 — arguments, reduce, Modules, Vite, Webpack & NPM
-
-### arguments Object
-
-```javascript
-function callFn() {
-  console.log(arguments[0]);
-}
-```
-
-`arguments` — built-in object containing array of args passed to a function.
-
-### reduce()
-
-Iterates through the array and returns a **single value**:
-
-```javascript
-let numbers = [2, 4, 5, 6, 7, 7];
-const sum = numbers.reduce((result, current) => {
-  return result + current;
-});
-```
-
-### ES Modules
-
-Modules allow you to break up code into separate files.
-
-```javascript
-// person.js
-import { Person, add } from "./person.js";
-
-class Employee {
-  constructor(eid) {
-    this.EmployeeId = eid;
-  }
-
-  showEmployeeInfo() {
-    let person = new Person(101, 'test person');
-    person.personId = 102;
-    person.showInfo();
-    alert('Hello');
-    add(1, 2);
-  }
-}
-export default Employee;
-```
-
-### Evolution of React.js
+### React Version History
 
 | Version | Year |
 | --- | --- |
 | 0.3.0 – 0.8.0 | 2013 |
 | v15 | 2016 |
-| v16 | 2017 |
+| v16 (Fiber) | 2017 |
 | v17 | 2020 |
-| v18 | 2022 |
-| v19 | 5 Dec 2024 |
+| v18 (Concurrent) | 2022 |
+| v19 | Dec 2024 |
 
-### Vite
+### Vite — Create React Project
 
 - Build tool for **faster development**
-- Creates scaffolded project
-- Spins up dev server faster with **HMR** (Hot Module Replacement)
-- Bundles code into ES standard
+- Scaffolded project, fast dev server, **HMR** (Hot Module Replacement)
+- Bundles code to ES standard
 
 ```bash
 npm create vite@latest myapp -- --template react
@@ -168,83 +78,91 @@ npm install
 npm run dev
 ```
 
+`npm run dev` starts a live dev server and transforms JSX into ES modules.
+
+### NPM (Node Package Manager)
+
+- Install and share packages from npm registry
+- Resolves dependencies from `package.json`
+
 ### Webpack
 
-Webpack is a **JavaScript module bundler**.
+Webpack is a **JavaScript module bundler** — bundles JS, CSS, images, and fonts into optimized files (`bundle.js`, `style.css`).
 
-It takes many project files like:
-
-- JavaScript
-- CSS
-- Images
-- Fonts
-
-And bundles them into optimized files like:
-
-- `bundle.js`
-- `style.css`
-
-#### Why Webpack is used?
+#### Why Webpack?
 
 - Combines many files into one/few files
-- Improves app loading speed
-- Reduces HTTP requests
-- Supports ES6/TypeScript using Babel/loader
+- Improves loading speed, reduces HTTP requests
+- Supports ES6/TypeScript via loaders
 - Minifies code for production
-- Handles CSS, images, fonts also
 
 #### Main Concepts
 
 | Concept | Description | Example |
 | --- | --- | --- |
 | **Entry** | Starting file of app | `index.js` |
-| **Output** | Final generated bundled file | `bundle.js` |
+| **Output** | Final bundled file | `bundle.js` |
 | **Loaders** | Convert/process files | CSS, TypeScript, images |
-| **Plugins** | Extra tasks — HTML generation, minification | — |
-| **Mode** | Build environment | `development` or `production` |
-
-#### Simple Flow
+| **Plugins** | HTML generation, minification | — |
+| **Mode** | Build environment | `development` / `production` |
 
 ```text
-Source Files (JS + CSS + Images)
-              ↓
-           Webpack
-              ↓
-    Optimized Bundle (bundle.js)
+Source Files (JS + CSS + Images) → Webpack → Optimized Bundle
 ```
 
-#### Similar Tools
+**Similar tools:** Vite, Parcel, Rollup, esbuild, SWC, Turbopack
 
-Vite, Parcel, Rollup, esbuild, SWC, Turbopack
+**Interview one-liner:** Webpack bundles JS, CSS, images, and assets into optimized files for faster web app loading.
 
-**Interview one-liner:** Webpack is a JavaScript module bundler that combines JavaScript, CSS, images, and other assets into optimized bundles for faster web application loading.
-
-### NPM (Node Package Manager)
-
-- Download or share JS/CSS packages from public repository
-- Resolves inter-dependencies
-- Reads `package.json`
+| Question | Answer |
+| --- | --- |
+| React library or framework? | Library for UI — paired with router/state for full apps |
+| Vite vs Webpack? | Vite = faster dev (native ESM); Webpack = mature, highly configurable bundler |
+| What is HMR? | Hot Module Replacement — updates modules in browser without full reload |
 
 ---
 
-<a id="day-3"></a>
+<a id="topic-2"></a>
 
-## Day 3 — JSX, Data Binding, useState & Components
-
-### npm run dev
-
-Starts a live development server — dynamically transforms JSX into ES modules.
+## 2. JSX, Fragments & StrictMode
 
 ### JSX
 
-- Mix of HTML and JavaScript
-- Type safe
-- Follows **camelCasing** convention
-- Helps create Virtual DOM and render HTML
+- Mix of HTML-like syntax and JavaScript
+- Follows **camelCase** for attributes (`className`, `onClick`)
+- Compiles to `React.createElement()` calls
+- Helps build the Virtual DOM tree
 
-### Why Can't a Component Return Two Elements Directly?
+### JSX vs HTML
 
-A React component must return a **single root element** because JSX must be one JavaScript expression representing one UI tree.
+| Point | HTML | JSX |
+| --- | --- | --- |
+| Class | `class` | `className` |
+| Inline styles | String | Object — `style={{ color: 'red' }}` |
+| Self-closing | Optional for some | Required — `<img />` |
+| Expressions | Not allowed | Allowed inside `{}` |
+
+### Behind the Scenes
+
+```jsx
+<h1>Hello</h1>
+```
+
+becomes:
+
+```javascript
+React.createElement("h1", null, "Hello");
+```
+
+Virtual DOM object (conceptual):
+
+```javascript
+{ type: "h1", props: { children: "Hello" } }
+```
+
+### Why Can't a Component Return Two Elements?
+
+JSX must be **one expression** representing one UI tree.
 
 **Invalid:**
 
@@ -255,7 +173,7 @@ return (
 );
 ```
 
-**Valid (using a parent element):**
+**Valid (wrapper div):**
 
 ```jsx
 return (
@@ -268,15 +186,7 @@ return (
 
 ### React Fragment
 
-React needs to render only **one root element**. Fragment (`<>...</>`) acts as a single root wrapper so React accepts it — unlike `<div>`, it does **not** create an extra HTML element in the DOM.
-
-```jsx
-<div></div>
-<></>
-<React.Fragment></React.Fragment>
-```
-
-**Valid (using Fragment):**
+Fragment (`<>...</>`) acts as a single root **without** an extra DOM node.
 
 ```jsx
 return (
@@ -294,38 +204,182 @@ return (
 <p>Welcome</p>
 ```
 
+Also: `<React.Fragment key={id}>...</React.Fragment>` when a `key` is needed.
+
 **Interview one-liners:**
 
-- React components cannot return multiple root elements because JSX must return a single root element (one JavaScript expression).
-- React Fragment allows multiple elements by acting as one root wrapper without adding extra HTML to the DOM.
+- JSX must return a single root element (one JavaScript expression).
+- Fragment wraps multiple elements as one root without adding HTML to the DOM.
 
 ### StrictMode
 
-`<StrictMode>` — helper component that warns about deprecated code and identifies risks. Works in **development** only.
+`<StrictMode>` — dev-only helper that warns about deprecated APIs and unsafe patterns. Does not render visible UI.
 
-### Data Binding
+---
 
-Mechanism to bind data values into HTML elements. React supports **one-way binding** by default.
+<a id="topic-3"></a>
 
-#### One-way Binding
+## 3. Components — Functional vs Class
 
-Data flows only one way: **State/Variable → UI**
+### What is a Component?
+
+Reusable UI unit — HTML + logic defining a specific part of the interface.
+
+| Type | Structure |
+| --- | --- |
+| **Functional** | Function returning JSX |
+| **Class** | Class extending `React.Component` with `render()` |
+| **Functional + TypeScript** | Typed props and return type |
+
+### Comparison
+
+| Feature | Functional | Class |
+| --- | --- | --- |
+| State | `useState()` | `this.state` & `this.setState()` |
+| Lifecycle | `useEffect` — see [Topic 6](#topic-6) | `componentDidMount`, `componentDidUpdate`, `componentWillUnmount` |
+| Refs | `useRef()` | `React.createRef()` |
+
+**Interview one-liner:** Modern React favors functional components with hooks; class components are legacy but still appear in Error Boundaries.
+
+---
+
+<a id="topic-4"></a>
+
+## 4. Virtual DOM, Fiber & Reconciliation
+
+### Virtual DOM
+
+- Lightweight **JavaScript copy** of the Real DOM
+- React updates Virtual DOM first, then commits minimal changes to Real DOM
+
+### Real DOM
+
+- Actual browser DOM — slower to update (re-render + repaint)
+
+### React Update Flow
+
+```jsx
+function App() {
+  const [name, setName] = useState("Hello");
+  return <h1>{name}</h1>;
+}
+
+setName("Hello Akash");
+```
+
+**What happens:**
+
+1. Component re-renders
+2. New Virtual DOM created
+3. **Diffing** compares old vs new Virtual DOM
+4. **Reconciliation** finds changes
+5. **Commit Phase** updates only changed Real DOM nodes
+6. Browser repaints
+
+### React Fiber
+
+- Reconciliation engine (React 16+)
+- Breaks rendering into small units
+- Prioritizes urgent updates (e.g. user input)
+- Can pause, resume, or cancel work
+
+### Reconciliation & Diffing
+
+| Term | Meaning |
+| --- | --- |
+| **Reconciliation** | Compare old vs new Virtual DOM after state/prop change |
+| **Diffing** | Algorithm finding minimum DOM changes |
+| **Commit Phase** | Apply only identified changes to Real DOM |
+
+### Complete Workflow
+
+```text
+State/Props Change
+        ↓
+Component Re-renders
+        ↓
+New Virtual DOM Created
+        ↓
+React Fiber (Schedules & Prioritizes)
+        ↓
+Diffing (Old vs New Virtual DOM)
+        ↓
+Reconciliation
+        ↓
+Commit Phase → Real DOM
+        ↓
+Browser Repaint
+```
+
+### React vs Direct DOM Updates
+
+| Approach | Flow |
+| --- | --- |
+| **Direct DOM** | Change data → update Real DOM → repaint |
+| **React** | Change state → Virtual DOM → diff → commit → repaint |
+
+**Interview one-liners:**
+
+- Virtual DOM is a lightweight JS copy of the Real DOM.
+- React Fiber schedules and prioritizes rendering work.
+- Reconciliation compares old and new Virtual DOM trees.
+- Diffing finds the minimum changes efficiently.
+- Commit Phase applies only required Real DOM updates.
+
+---
+
+<a id="topic-5"></a>
+
+## 5. Props, State & Data Binding
+
+### Props
+
+Data passed **from parent to child** — read-only in the child.
+
+```jsx
+<ProductList selectedCat={selectedCategory} title="Products" />
+
+function ProductList(props) {
+  const cat = props.selectedCat;
+}
+```
+
+### State — useState()
+
+Internal data a component owns and can change over time.
+
+```jsx
+const [count, setCount] = useState(0);
+const [user, setUser] = useState({ name: '', age: 0 });
+```
+
+Calling `setState` triggers re-render.
+
+### Props vs State
+
+| | Props | State |
+| --- | --- | --- |
+| Source | Parent | Component itself |
+| Mutable by child? | No | Yes (via setter) |
+| Use case | Configuration, callbacks | UI data, form values |
+
+### One-way Binding
+
+Data flows **State → UI** only.
 
 ```jsx
 const [name, setName] = useState("Akash");
-
-return <input value={name} />;
+return <input value={name} readOnly />;
 ```
 
-Here the UI shows `name`, but typing will **not** update state automatically.
+UI shows `name` but typing does **not** update state.
 
-#### Two-way Binding
+### Two-way Binding
 
-Data flows both ways: **State/Variable ↔ UI**
+Data flows **State ↔ UI**.
 
 ```jsx
 const [name, setName] = useState("");
-
 return (
   <input
     value={name}
@@ -337,305 +391,78 @@ return (
 - `value={name}` → state to UI
 - `onChange` → UI to state
 
-#### Difference
-
 | Binding | Data flow |
 | --- | --- |
 | **One-way** | State changes update UI only |
-| **Two-way** | State changes update UI, and UI changes update state |
+| **Two-way** | State and UI stay in sync via `value` + `onChange` |
 
-**Event binding example:**
-
-```jsx
-<input type="button" value="Click Me" onClick={(e) => handleClick(e, 'Hello')} />
-```
-
-**Interview one-liner:** One-way binding means data flows from component/state to UI, while two-way binding means data flows both from state to UI and UI back to state.
-
-### useState()
-
-Used to maintain state of an object.
-
-### Virtual DOM & Reconciliation
-
-#### Virtual DOM
-
-- A lightweight **JavaScript copy** of the Real DOM
-- React updates the Virtual DOM first instead of the browser DOM
-
-#### Real DOM
-
-- The actual DOM displayed in the browser
-- Updating the Real DOM is **slower** because it causes re-rendering and repainting
-
-#### Real DOM (Vanilla JavaScript)
-
-**HTML:**
-
-```html
-<div id="root">
-  <h1>Hello</h1>
-</div>
-```
-
-**JavaScript:**
-
-```javascript
-const h1 = document.querySelector("h1");
-h1.textContent = "Hello Akash";
-```
-
-**What happens?**
-
-- JavaScript **directly updates** the Real DOM
-- Browser **repaints immediately**
-
-#### Virtual DOM (React)
+**Event binding:**
 
 ```jsx
-function App() {
-  const [name, setName] = React.useState("Hello");
-
-  return <h1>{name}</h1>;
-}
-
-// Updating state:
-setName("Hello Akash");
+<button onClick={(e) => handleClick(e, 'Hello')}>Click Me</button>
 ```
 
-**What happens?**
-
-- React creates a **new Virtual DOM**
-- **Diffing** compares old vs new Virtual DOM
-- **Reconciliation** finds the changes
-- **Commit Phase** updates only the changed Real DOM node
-
-#### Behind the Scenes
-
-JSX:
-
-```jsx
-<h1>Hello</h1>
-```
-
-is converted into:
-
-```javascript
-React.createElement("h1", null, "Hello");
-```
-
-`React.createElement()` creates **Virtual DOM objects** (not actual HTML).
-
-#### Virtual DOM Object (Conceptual)
-
-```javascript
-{
-  type: "h1",
-  props: {
-    children: "Hello"
-  }
-}
-```
-
-This is just a JavaScript object stored in memory.
-
-#### React Fiber
-
-- React's **reconciliation engine** (introduced in React 16)
-- Breaks rendering work into small units
-- Prioritizes important updates (e.g. user input over background rendering)
-- Can pause, resume, or cancel rendering work for better performance
-
-#### Reconciliation
-
-- Process React uses to compare the **old Virtual DOM** with the **new Virtual DOM** after a state/prop change
-- React Fiber performs this process
-- Determines what has changed and what needs to be updated
-
-#### Diffing Algorithm
-
-- Algorithm used during reconciliation
-- Compares old and new Virtual DOM trees efficiently
-- Finds the **minimum number of changes** required
-
-#### Commit Phase
-
-- React applies only the identified changes to the Real DOM
-- Browser repaints only the updated parts
-
-#### Complete Workflow
-
-```text
-State/Props Change
-        ↓
-Component Re-renders
-        ↓
-New Virtual DOM Created
-        ↓
-React Fiber (Schedules & Prioritizes Work)
-        ↓
-Diffing Algorithm (Old Virtual DOM vs New Virtual DOM)
-        ↓
-Reconciliation (Determines what changed)
-        ↓
-Commit Phase (Updates only changed parts in Real DOM)
-        ↓
-Browser Repaint (User sees updated UI)
-```
-
-#### Flow Comparison
-
-**Vanilla JS:**
-
-```text
-Change Data
-    ↓
-Directly Update Real DOM
-    ↓
-Browser Repaint
-```
-
-**React:**
-
-```text
-Change State
-    ↓
-New Virtual DOM
-    ↓
-Diffing
-    ↓
-Reconciliation
-    ↓
-Commit Phase
-    ↓
-Update Real DOM
-    ↓
-Browser Repaint
-```
-
-#### Difference
-
-| Concept | Description |
-| --- | --- |
-| **Virtual DOM** | JavaScript representation of UI — fast to create/update; used internally by React |
-| **Real DOM** | Actual browser DOM — slower to update; visible to the user |
-| **React Fiber** | Reconciliation engine — schedules and prioritizes rendering work |
-| **Reconciliation** | Compares Virtual DOMs and decides what to update |
-| **Diffing Algorithm** | Detects differences efficiently during reconciliation |
-| **Commit Phase** | Applies calculated changes to the Real DOM |
-
-**Interview one-liners:**
-
-- Virtual DOM is a lightweight JavaScript copy of the Real DOM.
-- React Fiber is React's reconciliation engine that prioritizes and schedules rendering work.
-- Reconciliation is the process of comparing the old and new Virtual DOM.
-- Diffing is the algorithm React uses during reconciliation to detect changes efficiently.
-- Commit Phase applies only the required changes to the Real DOM.
-- React updates only the changed parts of the Real DOM, improving performance.
-- In Vanilla JavaScript, we update the Real DOM directly. In React, we update state, React creates a new Virtual DOM, compares it with the old one, and updates only the changed parts of the Real DOM.
-
-### Component
-
-Reusable code with HTML and JavaScript defining a specific part of the UI.
-
-| Approach | Description |
-| --- | --- |
-| Function Component | Function returning JSX |
-| Class Component | Class extending `React.Component` with `render()` |
+**Interview one-liner:** One-way = state → UI; two-way = state ↔ UI via controlled inputs.
 
 ---
 
-<a id="day-4"></a>
+<a id="topic-6"></a>
 
-## Day 4 — useRef & useEffect
+## 6. useRef & useEffect vs Lifecycle
 
 ### useRef
 
-React Hook that lets you reference a value or DOM element.
+Reference a DOM node or persist a value across renders **without** causing re-render.
 
 ```jsx
+const addressRef = useRef(null);
+
 <input type="text" ref={addressRef} />
 // addressRef.current.value = "Mumbai";
 ```
 
-Refs are used for getting reference to a DOM node or component instance.
+Use cases: focus input, read uncontrolled form values, store previous value.
 
-### useEffect vs Class Component Lifecycle
+### useEffect vs Class Lifecycle
 
-`useEffect()` combines the behavior of multiple class lifecycle methods.
+`useEffect()` combines multiple class lifecycle methods.
 
-#### 1. Component Did Mount
-
-Runs once after first render.
-
-**Class component:**
+#### 1. Component Did Mount — runs once after first render
 
 ```jsx
-componentDidMount() {
-  console.log("Mounted");
-}
+// Class
+componentDidMount() { console.log("Mounted"); }
+
+// Hook
+useEffect(() => { console.log("Mounted"); }, []);
 ```
 
-**Hook:**
+#### 2. Component Did Update — runs when deps change
 
 ```jsx
+// Class
+componentDidUpdate() { console.log("Updated"); }
+
+// Hook
+useEffect(() => { console.log("Updated"); }, [count]);
+```
+
+#### 3. Component Will Unmount — cleanup
+
+```jsx
+// Class
+componentWillUnmount() { console.log("Cleanup"); }
+
+// Hook
 useEffect(() => {
-  console.log("Mounted");
+  return () => { console.log("Cleanup"); };
 }, []);
 ```
 
-#### 2. Component Did Update
-
-Runs after state/props change.
-
-**Class component:**
+#### 4. Every Render
 
 ```jsx
-componentDidUpdate() {
-  console.log("Updated");
-}
-```
-
-**Hook:**
-
-```jsx
-useEffect(() => {
-  console.log("Updated");
-}, [count]);
-```
-
-#### 3. Component Will Unmount
-
-Cleanup before component is removed.
-
-**Class component:**
-
-```jsx
-componentWillUnmount() {
-  console.log("Cleanup");
-}
-```
-
-**Hook:**
-
-```jsx
-useEffect(() => {
-  return () => {
-    console.log("Cleanup");
-  };
-}, []);
-```
-
-#### 4. Runs After Every Render
-
-**Class component:** `componentDidMount()` + `componentDidUpdate()`
-
-**Hook:**
-
-```jsx
-useEffect(() => {
-  console.log("Runs every render");
-});
+useEffect(() => { console.log("Every render"); });
 // No dependency array
 ```
 
@@ -646,200 +473,126 @@ useEffect(() => {
 | `componentDidMount()` | `useEffect(() => {}, [])` |
 | `componentDidUpdate()` | `useEffect(() => {}, [dependency])` |
 | `componentWillUnmount()` | `return () => {}` inside `useEffect` |
-| Mount + Update (all renders) | `useEffect(() => {})` |
+| Mount + every update | `useEffect(() => {})` |
 
 #### Dependency Array
 
 | Array | When it runs |
 | --- | --- |
-| `[]` | Runs only once (mount) |
-| `[count]` | Runs when `count` changes |
-| No array | Runs after every render |
+| `[]` | Once on mount |
+| `[count]` | When `count` changes |
+| Omitted | After every render |
 
-**Interview one-liner:** `useEffect` replaces `componentDidMount`, `componentDidUpdate`, and `componentWillUnmount` by using a dependency array and an optional cleanup function.
+**Interview one-liner:** `useEffect` replaces mount, update, and unmount lifecycle methods using a dependency array and optional cleanup function.
 
 ---
 
-<a id="day-5"></a>
+<a id="topic-7"></a>
 
-## Day 5 — Bootstrap, Props & React Router
+## 7. Parent–Child Communication & UI Styling
 
-### Bootstrap
+### Parent → Child
 
-```bash
-npm install bootstrap@5.4 --save
-```
-
-Framework for designing responsive UI — `container`, `row`, `col`, `table`, `form-select`, `form-group`, `form-control`, `btn`.
-
-### Parent → Child Data Flow
-
-1. Add parent component `<Search />`
-2. Add child `<ProductList />` inside parent
-3. Pass data via child attributes:
+Pass data via props on the child component:
 
 ```jsx
-<ProductList selectedCat={selectedCategory} myname="pradeep" />
+<Search />
+  <ProductList selectedCat={selectedCategory} />
+</Search>
 ```
 
-4. Read in child via `props`:
+### Child → Parent
+
+Pass a **callback** from parent; child invokes it with data:
 
 ```jsx
-function ProductList(props) {
-  const cat = props.selectedCat;
-}
-```
-
-### Child → Parent Data Flow
-
-1. Add method in parent:
-
-```jsx
+// Parent
 const onUpdateCount = (message) => {
-  setTotalRecords('Total Count:' + message);
+  setTotalRecords('Total Count: ' + message);
 };
-```
+<ProductList onNotify={(count) => onUpdateCount(count)} />
 
-2. Pass callback to child:
-
-```jsx
-<ProductList onNotify={(event) => onUpdateCount(event)} />
-```
-
-3. Call from child:
-
-```jsx
+// Child
 onNotify(filtered.length);
 ```
 
-### Routing
+| Direction | Mechanism |
+| --- | --- |
+| Parent → Child | Props |
+| Child → Parent | Callback prop (`onNotify`, `onChange`) |
 
-Serving a web page/component based on request URL (matching).
+### Bootstrap (Optional UI)
 
 ```bash
-npm install react-router-dom --save
+npm install bootstrap@5.3 --save
 ```
 
-### Steps to Implement Routing
-
-1. Create `<Layout />` with `<BrowserRouter>` — tracks history and location, enables navigation
-2. Define routes inside `BrowserRouter`:
-
-```jsx
-<Routes>
-  <Route path="/databinding/:id" element={<Databinding />} />
-</Routes>
-```
-
-`Routes` — container holding all `Route` elements; only one route rendered at a time.
-
-3. Create Navbar with `<NavLink />`:
-
-```jsx
-<NavLink to="/databinding">Databinding</NavLink>
-```
+Responsive layout classes: `container`, `row`, `col`, `table`, `form-control`, `btn`.
 
 ---
 
-<a id="day-6"></a>
+<a id="topic-8"></a>
 
-## Day 6 — Route Hooks & Lazy Loading
+## 8. Forms — Controlled, Uncontrolled & Immutable State
 
-### useParams()
+### Immutable State Updates
 
-Read route parameters:
-
-```jsx
-const { id } = useParams();
-```
-
-### useNavigate()
-
-Navigate from one route to another:
+Never mutate state directly — always create a **new copy**:
 
 ```jsx
-const navigate = useNavigate();
+// Object
+setUser({ ...user, address: 'Mumbai' });
+
+// Array
+setItems([...items, newItem]);
+setItems(items.filter(i => i.id !== id));
 ```
 
-### useLocation()
+React compares by reference — mutation skips re-render detection.
 
-Read query string parameters:
+### Controlled Form
+
+Form state lives in React (`useState`).
 
 ```jsx
-const loc = useLocation();
-const queryParam = new URLSearchParams(loc.search);
-const city = queryParam.get('city');
-const country = queryParam.get('country');
-```
-
-### Lazy Loading
-
-Download component on demand based on requested URL.
-
-```jsx
-const Databinding = lazy(() => import('./Databinding'));
-
-<Suspense fallback={<div>Loading......</div>}>
-  <Routes>
-    <Route path="/databinding" element={<Databinding />} />
-  </Routes>
-</Suspense>
-```
-
-`<Suspense>` shows fallback until component is downloaded.
-
----
-
-<a id="day-7"></a>
-
-## Day 7 — Immutability & Forms
-
-### Immutability in JavaScript
-
-JavaScript objects/arrays are **mutable** by default. To update immutably, make copies and modify the copy.
-
-```javascript
-// Copy object & overwrite/extend property
-const obj1Copy = {
-  ...obj1, personId: 2, address: 'mumbai'
-};
-
-const arr1 = ['a', 'b'];
-const arr1Copy = [...arr1, 'c'];
-const arr2Copy = arr1.concat('d');
+const [email, setEmail] = useState("");
+<input value={email} onChange={(e) => setEmail(e.target.value)} />
 ```
 
 ### Uncontrolled Form
 
-Form elements (`<input>`, `<textarea>`, `<select>`) do **not** store state in React — rely on the DOM. Use **refs** to access values directly.
+DOM holds the value — read via **ref**:
 
-### Controlled Form
+```jsx
+const inputRef = useRef();
+<input ref={inputRef} defaultValue="" />
+// inputRef.current.value
+```
 
-Form elements **do** store their state in React (via `useState` or similar).
-
-| Type | State stored in | Access values via |
+| Type | State stored in | Access |
 | --- | --- | --- |
-| Uncontrolled | DOM | `ref.current.value` |
-| Controlled | React state | `value` + `onChange` |
+| **Controlled** | React state | `value` + `onChange` |
+| **Uncontrolled** | DOM | `ref.current.value` |
+
+**Interview one-liner:** Controlled forms sync with React state; uncontrolled forms use refs and the DOM.
 
 ---
 
-<a id="day-8"></a>
+<a id="topic-9"></a>
 
-## Day 8 — Formik & Yup
+## 9. Formik & Yup Validation
 
 ### Formik
 
-Lightweight React form library — simplifies form state management, validation, and submission.
+React form library — state management, validation, and submission in one place.
 
 ```bash
-npm install formik --save
-npm install yup --save
+npm install formik yup --save
 ```
 
-### Steps to Implement Formik
+### Implementation Steps
 
-1. Define initial model and handle submit:
+1. **Define model and submit handler:**
 
 ```jsx
 const initialProductForm = {
@@ -852,14 +605,17 @@ const initialProductForm = {
 
 <Formik
   initialValues={initialProductForm}
-  onSubmit={(frm) => handleSaveProduct(frm)}
-  enableReinitialize={true}>
+  onSubmit={(values) => handleSaveProduct(values)}
+  validationSchema={productValidationSchema}
+  enableReinitialize={true}
+>
+  {/* form fields */}
 </Formik>
 ```
 
-2. Add input elements with `<Field />` — `frm` tracks all control states. `name` attribute must match model property.
+2. **Fields** — use `<Field name="productCode" />`; `name` must match model property.
 
-3. Add Yup validation schema:
+3. **Yup validation schema:**
 
 ```jsx
 const productValidationSchema = Yup.object({
@@ -867,50 +623,83 @@ const productValidationSchema = Yup.object({
   productCode: Yup.string().required('Product code is mandatory'),
   price: Yup.string()
     .required('Product Price is mandatory')
-    .matches(/^\d+(\.\d{1,2})?$/, "Product Price is Invalid")
+    .matches(/^\d+(\.\d{1,2})?$/, "Invalid price")
 });
 ```
 
-Add to Formik: `validationSchema={productValidationSchema}`
-
-4. Show errors with `<ErrorMessage />`:
+4. **Show errors:**
 
 ```jsx
 <ErrorMessage component="label" className="text-danger" name="productCode" />
 ```
 
+**Interview one-liner:** Formik manages form state; Yup defines declarative validation schemas.
+
 ---
 
-<a id="day-9"></a>
+<a id="topic-10"></a>
 
-## Day 9 — Axios & CRUD
+## 10. React Router, Lazy Loading & Code Splitting
 
-### Axios
+### Install
 
 ```bash
-npm install axios --save
+npm install react-router-dom --save
 ```
 
-- JS library for HTTP requests from browser
-- **Interceptor** feature — intercept req/resp for custom logic (e.g. passing headers)
-- Ability to **cancel** requests
+Routing serves the matching component based on URL.
 
-### CRUD Operations
+### Setup Steps
 
-Create, Read, Update, Delete — standard API operations with Axios.
+1. Wrap app with `<BrowserRouter>` — tracks history and location
+2. Define routes:
+
+```jsx
+<Routes>
+  <Route path="/products/:id" element={<ProductDetail />} />
+  <Route path="/products" element={<ProductList />} />
+</Routes>
+```
+
+3. Navigation with `<NavLink to="/products">Products</NavLink>`
+
+### Route Hooks
+
+```jsx
+const { id } = useParams();           // /products/:id
+const navigate = useNavigate();       // navigate('/login')
+navigate('/home');
+
+const loc = useLocation();
+const params = new URLSearchParams(loc.search);
+const city = params.get('city');      // ?city=Mumbai
+```
+
+### Lazy Loading & Suspense
+
+Load components on demand — reduces initial bundle size.
+
+```jsx
+const ProductDetail = lazy(() => import('./ProductDetail'));
+
+<Suspense fallback={<div>Loading...</div>}>
+  <Routes>
+    <Route path="/products/:id" element={<ProductDetail />} />
+  </Routes>
+</Suspense>
+```
+
+**Interview one-liner:** `lazy()` + `Suspense` = code splitting; route loads component only when needed.
 
 ---
 
-<a id="day-10"></a>
+<a id="topic-11"></a>
 
-## Day 10 — Context API
+## 11. Context API
 
-### Context API
+Pass data through the tree **without prop drilling** — ideal for auth, theme, locale.
 
-- Pass data through component tree **without prop drilling**
-- Useful for global state — user authentication, session management
-
-### Steps to Implement
+### Steps
 
 1. **Create context:**
 
@@ -918,181 +707,152 @@ Create, Read, Update, Delete — standard API operations with Axios.
 export const UserContext = createContext(null);
 ```
 
-2. **Create Provider component:**
+2. **Provider component:**
 
 ```jsx
 export function UserProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState();
+  const [currentUser, setCurrentUser] = useState(null);
 
   return (
-    <UserContext.Provider value={{ currentUser }}>
+    <UserContext.Provider value={{ currentUser, setCurrentUser }}>
       {children}
     </UserContext.Provider>
   );
 }
 ```
 
-3. **Wrap app in Layout.jsx or App.jsx:**
+3. **Wrap app:**
 
 ```jsx
 <UserProvider>
-  <Navbar />
-  <Suspense fallback={<div>Loading......</div>}>
-    <Routes>
-      <Route path="/databinding" element={<Databind />} />
-    </Routes>
-  </Suspense>
+  <BrowserRouter>
+    <Routes>...</Routes>
+  </BrowserRouter>
 </UserProvider>
 ```
 
-4. **Consume in child with useContext:**
+4. **Consume:**
 
 ```jsx
-const { currentUser } = useContext(UserContext);
+const { currentUser, setCurrentUser } = useContext(UserContext);
 ```
+
+**Interview one-liner:** Context eliminates prop drilling for global data like login state or theme.
 
 ---
 
-<a id="day-11"></a>
+<a id="topic-12"></a>
 
-## Day 11 — Functional vs Class Components
+## 12. Axios, CRUD & Interceptors
 
-### Component Types
+### Axios
 
-| Type | Structure |
-| --- | --- |
-| Functional Component | Function returning JSX |
-| Class Component | Class extending `React.Component` with `render()` returning JSX |
-| Functional TypeScript Component | Typed functional component |
+```bash
+npm install axios --save
+```
 
-### Comparison
+HTTP client for browser — JSON handling, interceptors, request cancellation.
 
-| Feature | Functional | Class |
+### CRUD Pattern
+
+| Operation | HTTP | Example |
 | --- | --- | --- |
-| State | `useState()` | `this.state` & `this.setState()` |
-| Lifecycle | `useEffect` — see [Day 4](#day-4) | `componentDidMount`, `componentDidUpdate`, `componentWillUnmount` |
-| Refs | `useRef()` | `React.createRef()` |
+| Create | POST | `axios.post('/api/products', data)` |
+| Read | GET | `axios.get('/api/products')` |
+| Update | PUT/PATCH | `axios.put('/api/products/1', data)` |
+| Delete | DELETE | `axios.delete('/api/products/1')` |
 
-**Quick mapping:** `[]` = mount · `[deps]` = update when deps change · cleanup `return () => {}` = unmount · no array = every render.
+### Axios Interceptor
 
----
+Runs logic **before** request hits server or **after** response — attach Bearer token, log errors, handle 401.
 
-<a id="day-12"></a>
-
-## Day 12 — Redux Concepts
-
-### Redux
-
-Single centralized way for maintaining **global state**. Follows a specific pattern to update state.
-
-### Action
-
-JavaScript object with a **type** and **payload**:
-
-```javascript
-// FILTERPRODUCT, payload: { searchText: "sdas", category: "1" }
-
-export const ProductAction = {
-  FilterProduct: createAction("product/FILTERPRODUCT"),
-  SetCategory: createAction("product/setCategory"),
-};
-```
-
-### Reducer
-
-Function receiving current state and action — updates state and returns new state. Acts like an event listener.
-
-```javascript
-const productReducer = createReducer(initialState, (builder) => {
-  builder
-    .addCase(FILTERPRODUCT, (state, action) => {
-      state.filteredProducts = action.payload.cat
-        ? state.products.filter(f => f.category == action.payload.cat)
-        : state.products;
-    })
-    .addCase(ADDPRODUCT, (state, action) => {
-      // add product logic
-    });
+```jsx
+axios.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
 });
 ```
 
-### Store
+| Axios | fetch |
+| --- | --- |
+| Interceptors built-in | Manual wrapper needed |
+| Auto JSON | Manual `.json()` |
+| Cancel tokens | AbortController |
 
-Maintains current state:
-
-```javascript
-const store = configureStore({
-  reducer: {
-    productReducer,
-    categoryReducer
-  }
-});
-```
-
-### Dispatch
-
-Only way to pass action to store:
-
-```javascript
-store.dispatch(FILTERPRODUCT({ category: e.target.value }));
-```
+**Interview one-liner:** Interceptors attach auth headers or transform every request/response globally.
 
 ---
 
-<a id="day-13"></a>
+<a id="topic-13"></a>
 
-## Day 13 — Redux Toolkit Implementation
+## 13. Redux & Redux Toolkit
 
-### Steps
+### Redux Concepts
 
-1. **Install packages:**
+Centralized **global state** with a predictable update pattern.
+
+```text
+UI → dispatch(action) → reducer → new state → UI re-renders
+```
+
+| Term | Role |
+| --- | --- |
+| **Action** | Plain object `{ type, payload }` describing what happened |
+| **Reducer** | Pure function `(state, action) => newState` |
+| **Store** | Holds current state; single source of truth |
+| **Dispatch** | Only way to send actions to the store |
+
+### Redux Toolkit Setup
 
 ```bash
 npm install @reduxjs/toolkit react-redux
 ```
 
-2. **Create action file:**
+1. **Actions:**
 
 ```javascript
 export const ProductAction = {
   FilterProduct: createAction("product/FILTERPRODUCT"),
-  SetCategory: createAction("product/setCategory"),
   SetSearchText: createAction("product/setSearchText"),
+  Reset: createAction("product/RESET"),
 };
 ```
 
-3. **Create reducer file:**
+2. **Reducer:**
 
 ```javascript
 const initialState = {
-  products: [...productList],
+  products: [],
   filteredProducts: [],
-  message: "",
-  selectCategory: "",
-  searchText: ""
+  searchText: "",
+  selectCategory: ""
 };
 
 const productReducer = createReducer(initialState, (builder) => {
-  builder.addCase(ProductAction.Reset, (state, action) => {
-    state.searchText = "";
-    state.filteredProducts = state.products;
-    state.selectCategory = "";
-  });
+  builder
+    .addCase(ProductAction.FilterProduct, (state, action) => {
+      state.filteredProducts = action.payload.cat
+        ? state.products.filter(p => p.category === action.payload.cat)
+        : state.products;
+    })
+    .addCase(ProductAction.Reset, (state) => {
+      state.searchText = "";
+      state.filteredProducts = state.products;
+      state.selectCategory = "";
+    });
 });
 ```
 
-4. **Create store:**
+3. **Store:**
 
 ```javascript
 const store = configureStore({
-  reducer: {
-    productReducer,
-    categoryReducer
-  }
+  reducer: { productReducer, categoryReducer }
 });
 ```
 
-5. **Wrap app in Provider (main.jsx):**
+4. **Provider (main.jsx):**
 
 ```jsx
 <Provider store={store}>
@@ -1100,58 +860,86 @@ const store = configureStore({
 </Provider>
 ```
 
-6. **Dispatch actions:**
-
-```javascript
-store.dispatch(ProductAction.SetSearchText(e.target.value));
-```
-
-7. **Read state with useSelector:**
+5. **Use in components:**
 
 ```jsx
-const filteredProducts = useSelector(state => state.productReducer.filteredProducts);
+const dispatch = useDispatch();
+const filteredProducts = useSelector(s => s.productReducer.filteredProducts);
+
+dispatch(ProductAction.SetSearchText(e.target.value));
 ```
 
----
-
-<a id="day-14"></a>
-
-## Day 14 — JWT Authentication with Redux
-
-Enable **JWT-based authentication** and integrate with Redux store.
-
-- Store token in Redux state or secure storage
-- Attach Bearer token via Axios interceptor on every API call
-- Protect routes based on auth state
-- Login/logout flows update Redux + Context as needed
+**Interview one-liner:** Redux flow = Action → Dispatch → Reducer → Store → useSelector.
 
 ---
 
-<a id="day-15"></a>
+<a id="topic-14"></a>
 
-## Day 15 — Interceptors, Memo, Error Boundary & Interview Qs
+## 14. JWT Authentication
 
-### Axios Interceptor
+Integrate JWT with Redux + Axios for secure API access.
 
-Intercepts request and response **before** hitting the server. Major use case: pass **Bearer Token** in every header.
+### Flow
 
-### Memoization
+```text
+Login API → receive JWT → store token (Redux / localStorage)
+       ↓
+Axios interceptor attaches Bearer token on every request
+       ↓
+Protected routes check auth state → redirect if unauthenticated
+       ↓
+Logout clears token + Redux state
+```
 
-Performance optimization — stores result of expensive function calls and returns cached result when same inputs occur again.
+### Key Points
+
+- Store token in Redux state or `localStorage` (consider httpOnly cookies for production)
+- Request interceptor adds `Authorization: Bearer <token>`
+- Response interceptor handles 401 → redirect to login
+- Combine with Context for user profile; Redux for app-wide auth flag
+
+**Interview one-liner:** JWT auth = login → store token → interceptor sends Bearer header → protect routes by auth state.
+
+---
+
+<a id="topic-15"></a>
+
+## 15. Performance — memo, useMemo, useCallback
+
+**Memoization** caches expensive results and reuses them when inputs unchanged.
 
 | API | Used For | Prevents |
 | --- | --- | --- |
-| `React.memo(Component)` | Memoizing components | Re-rendering child components |
-| `useMemo(() => value, [deps])` | Memoizing computed values | Recomputing expensive values |
-| `useCallback(() => fn, [deps])` | Memoizing functions | Re-creating function instances |
-
-### Error Boundary
-
-React components can throw runtime errors that break the UI (white screen). Error boundaries handle errors gracefully and display a fallback view.
+| `React.memo(Component)` | Memoizing components | Unnecessary child re-renders |
+| `useMemo(() => value, [deps])` | Expensive computed values | Recomputing on every render |
+| `useCallback(() => fn, [deps])` | Stable function references | Re-creating functions passed to memoized children |
 
 ```jsx
-import React from "react";
+const MemoizedList = React.memo(ProductList);
 
+const filtered = useMemo(
+  () => products.filter(p => p.category === cat),
+  [products, cat]
+);
+
+const handleClick = useCallback(() => {
+  dispatch(ProductAction.Reset());
+}, [dispatch]);
+```
+
+**When to use:** Large lists, heavy calculations, props passed to `React.memo` children — not everywhere by default.
+
+---
+
+<a id="topic-16"></a>
+
+## 16. Error Boundaries
+
+Catch runtime errors in child components — prevents white screen of death.
+
+Must be a **class component** (no hook equivalent yet).
+
+```jsx
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -1163,7 +951,7 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    // log error to DB via API
+    // log to monitoring service / API
   }
 
   render() {
@@ -1173,40 +961,48 @@ class ErrorBoundary extends React.Component {
     return this.props.children;
   }
 }
-
-export default ErrorBoundary;
 ```
 
-Wrap `<App />` in `main.jsx` with `<ErrorBoundary>`.
+Wrap `<App />` in `main.jsx`:
+
+```jsx
+<ErrorBoundary>
+  <App />
+</ErrorBoundary>
+```
+
+**Interview one-liner:** Error Boundaries catch render errors in children and show fallback UI — class component only.
 
 ---
+
+<a id="interview-quick-answers"></a>
 
 ## Interview Quick Answers
 
 | Topic | Key Points |
 | --- | --- |
-| Virtual DOM vs Real DOM | Vanilla JS updates Real DOM directly; React updates state → Virtual DOM → diff → commit minimal Real DOM changes |
-| React Fiber | Reconciliation engine (React 16+) — schedules, prioritizes, pauses/resumes rendering |
-| Reconciliation | Compare old vs new Virtual DOM after state/prop change |
-| Diffing | Algorithm finding minimum DOM changes during reconciliation |
-| Commit Phase | Apply only changed parts to Real DOM; browser repaints |
-| Hooks | `useState`, `useContext`, `useEffect`, `useMemo`, `useCallback`, `useRef` |
-| useEffect vs lifecycle | `[]` = mount; `[deps]` = update; cleanup = unmount; no array = every render |
-| useContext | Login, theme — eliminates prop drilling |
-| Fragments | JSX needs one root; `<>...</>` wraps multiple elements without extra DOM node |
-| StrictMode | Dev-only warnings for deprecated/unsafe patterns |
-| Formik & Yup | Form state + schema validation |
-| One-way vs Two-way binding | One-way: state → UI only; two-way: state ↔ UI via `value` + `onChange` |
+| What is React? | UI library — reusable components, declarative, Virtual DOM |
+| Virtual DOM vs Real DOM | React updates Virtual DOM first → diff → commit minimal Real DOM changes |
+| React Fiber | Reconciliation engine — schedules, prioritizes, pauses rendering |
+| Reconciliation / Diffing / Commit | Compare trees → find changes → apply to Real DOM |
+| JSX / Fragments | Single root required; Fragment avoids extra DOM node |
+| StrictMode | Dev-only warnings for deprecated/unsafe code |
+| Props vs State | Props from parent (read-only); state owned by component |
+| One-way vs Two-way binding | One-way: state → UI; two-way: `value` + `onChange` |
 | Controlled vs Uncontrolled | React state vs DOM refs |
-| Webpack | JS module bundler — entry, output, loaders, plugins; bundles JS/CSS/images into optimized files |
+| useEffect vs lifecycle | `[]` = mount; `[deps]` = update; cleanup = unmount; no array = every render |
+| useRef | DOM access or persist value without re-render |
+| Context API | Global state without prop drilling — auth, theme |
+| React Router | `BrowserRouter`, `Routes`, `Route`, `NavLink`, `useParams`, `useNavigate` |
 | Lazy loading | `lazy()` + `Suspense` — code splitting on demand |
-| Routing | `BrowserRouter`, `Routes`, `Route`, `NavLink` |
-| Props vs State | Props from parent (read-only); state internal to component |
-| Redux lifecycle | Action → Dispatch → Reducer → Store → useSelector |
-| Mutable vs Immutable | Copy with spread/concat before modifying |
-| Functional vs Class | Hooks vs lifecycle methods |
-| Interceptor | Attach token / log requests before API call |
-| Axios vs fetch | Axios has interceptors, cancel, auto JSON |
+| Formik & Yup | Form state + schema validation |
+| Axios / Interceptors | HTTP client; interceptors for Bearer token, error handling |
+| Redux flow | Action → Dispatch → Reducer → Store → useSelector |
+| JWT auth | Login → store token → interceptor → protected routes |
+| memo / useMemo / useCallback | Skip re-renders, cache values, stable functions |
 | Error Boundary | Class component catching child render errors |
+| Webpack / Vite | Bundlers — Webpack configurable; Vite fast dev with ESM |
 
-**One-liner:** React QP covers the full stack from JS basics → Vite → hooks → routing → Formik → Axios → Context → Redux → JWT → memoization and error boundaries — everything Questpond Day 1–15 in one place.
+**Suggested learning order:** Setup → JSX → Components → Virtual DOM → Props/State → Hooks → Forms → Router → Context → API → Redux → Auth → Performance → Error Boundaries.
+
+**One-liner:** React QP follows the standard React path — fundamentals, hooks, routing, forms, API, global state, auth, performance, and production patterns.

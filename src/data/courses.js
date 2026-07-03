@@ -92,7 +92,7 @@ export const courses = [
     mdFile: 'react-qp.md',
     num: '12',
     cardTitle: 'React QP',
-    cardDesc: 'Questpond ReactJS day-wise notes — JS, Vite, hooks, routing, Formik, Axios, Context, Redux, and JWT.',
+    cardDesc: 'Standard React learning sequence — setup, hooks, Virtual DOM, routing, forms, Axios, Context, Redux, JWT, and performance.',
     brand: 'React QP',
   },
 ];
