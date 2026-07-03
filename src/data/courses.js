@@ -87,6 +87,14 @@ export const courses = [
     cardDesc: '50 real-world scenarios — API, Angular, microservices, security, and architecture with concise answers.',
     brand: 'Scenario-Based Interview Q&A',
   },
+  {
+    slug: 'react-qp',
+    mdFile: 'react-qp.md',
+    num: '12',
+    cardTitle: 'React QP',
+    cardDesc: 'Questpond ReactJS day-wise notes — JS, Vite, hooks, routing, Formik, Axios, Context, Redux, and JWT.',
+    brand: 'React QP',
+  },
 ];
 
 const markdownModules = import.meta.glob('../../MarkDownFormat/*.md', {
