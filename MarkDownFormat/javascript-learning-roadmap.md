@@ -30,6 +30,7 @@ Standard <strong style="color:#16a34a;">JavaScript learning sequence</strong> �
   <li><a href="#topic-17"><span style="color:#0891b2;font-weight:700;">17.</span> DOM Manipulation</a></li>
   <li><a href="#topic-18"><span style="color:#0891b2;font-weight:700;">18.</span> JSON, Fetch & Web Storage</a></li>
   <li><a href="#topic-19"><span style="color:#9333ea;font-weight:700;">19.</span> Modern ES6+ Features</a></li>
+  <li><a href="#topic-20"><span style="color:#9333ea;font-weight:700;">20.</span> Debouncing & Throttling</a></li>
   <li><a href="#interview-quick-answers"><span style="color:#9333ea;font-weight:700;">Guide:</span> Interview Quick Answers</a></li>
 </ul>
 
@@ -70,7 +71,22 @@ JavaScript **runtime** built on V8 — not a language itself.
 - Cross-platform, open source
 - **npm** — package manager for installing libraries
 
-**Interview one-liner:** JavaScript is the language; ECMAScript is its standard; Node.js runs JS outside the browser.
+### Execution Context & Call Stack
+
+Every JS code runs inside an **execution context**. Global context is created first; each function call creates a new context.
+
+| Phase | What happens |
+| --- | --- |
+| **Memory creation** | Variables get memory (`undefined` for `var`; full code stored for functions) |
+| **Code execution** | Values assigned; functions invoked line by line |
+
+**Call stack** — LIFO stack of execution contexts. Bottom = global context. Tracks order of execution.
+
+```text
+Global EC → outer() EC → inner() EC → (pop when done)
+```
+
+**Interview one-liner:** JavaScript is the language; ECMAScript is its standard; execution context + call stack drive how code runs.
 
 ---
 
@@ -105,6 +121,46 @@ let y = 20;
 ```
 
 **TDZ (Temporal Dead Zone):** Period between scope entry and `let`/`const` declaration where variable cannot be accessed.
+
+### Block Scope & Shadowing
+
+```javascript
+var b = 100;        // script/global scope
+{
+  let b = 20;       // shadows outer b inside block
+  console.log(b);   // 20
+}
+console.log(b);     // 100
+
+let a = 20;
+{
+  var a = 30;       // ❌ illegal shadowing — SyntaxError
+}
+```
+
+| Scope | `var` | `let` / `const` |
+| --- | --- | --- |
+| Inside `{ }` block | Escapes block (function/global scope) | Stays inside block |
+| Outside block | Accessible | `ReferenceError` |
+
+### Hoisting Edge Cases
+
+```javascript
+console.log(a); // undefined — var hoisted
+var a = 10;
+
+function getName() { console.log("Hi"); }
+getName(); // works — function declaration fully hoisted
+
+var getName = () => console.log("Hi");
+getName(); // TypeError if called before assignment — treated like var
+```
+
+| Error type | When |
+| --- | --- |
+| **ReferenceError** | Variable not declared, or `let`/`const` in TDZ |
+| **TypeError** | Wrong operation (e.g. assign to `const`) |
+| **SyntaxError** | Invalid code (illegal shadowing, missing `const` init) |
 
 **Interview one-liner:** Use `const` by default, `let` when reassignment needed, avoid `var`.
 
@@ -157,6 +213,24 @@ Automatic conversion when types mix in operations.
 | **Falsy** | `0`, `""`, `null`, `undefined`, `NaN`, `false` |
 
 **Interview one-liner:** JS has 7 primitives + object; `typeof null === "object"` is a known quirk.
+
+### Pass by Value vs Pass by Reference
+
+| Type | Behavior | Example |
+| --- | --- | --- |
+| **Primitives** (number, string, boolean…) | Pass by **value** — copy passed; changes inside function don't affect original | `x = 4` stays 4 |
+| **Objects & arrays** | Pass by **reference** — same memory address; mutations visible outside | `arr.push("bob")` changes original |
+
+```javascript
+function f(a, b, c) {
+  a = 3;              // primitive — no effect outside
+  b.push("bob");      // array — mutates original
+  c.first = false;    // object — mutates original
+}
+let x = 4, y = ["raj"], z = { first: true };
+f(x, y, z);
+// x = 4, y = ['raj','bob'], z = { first: false }
+```
 
 ---
 
@@ -294,6 +368,65 @@ Function passed as argument to another function.
 [1, 2, 3].forEach(n => console.log(n));
 ```
 
+### Function Statement vs Expression
+
+| Type | Syntax | Hoisted? |
+| --- | --- | --- |
+| **Declaration** | `function fn() {}` | Yes — full function |
+| **Expression** | `const fn = function() {}` | No — variable hoisted as `undefined` |
+| **Named expression** | `const fn = function xyz() {}` | `xyz` only visible inside function |
+
+### First-Class & Higher-Order Functions
+
+**First-class function** — functions treated like values: assign, pass as argument, return from another function.
+
+```javascript
+function displaySquare(fn) {
+  console.log("Square is " + fn(5));
+}
+displaySquare(function (n) { return n * n; });
+```
+
+**Higher-order function (HOF)** — takes and/or returns a function (`map`, `filter`, `reduce`, `displaySquare`).
+
+### IIFE — Immediately Invoked Function Expression
+
+Runs immediately after definition — creates private scope.
+
+```javascript
+(function (num) {
+  console.log(num * num);
+})(5);
+```
+
+### Pure Function
+
+Does **not** modify external variables — same input always gives same output.
+
+```javascript
+function add(a, b) { return a + b; }  // pure
+let total = 0;
+function impure(n) { total += n; }     // impure — mutates outer state
+```
+
+### Arrow Function vs Normal Function
+
+| Feature | Normal Function | Arrow Function |
+| --- | --- | --- |
+| `this` binding | Own `this` (dynamic) | Lexical `this` from parent scope |
+| Hoisting | Declaration hoisted | Not hoisted (expression) |
+| `arguments` object | Yes | No — use rest `...args` |
+| `new` keyword | Can be constructor | Cannot |
+| `call` / `apply` / `bind` | Changes `this` | Does not change `this` |
+
+```javascript
+const user = {
+  name: "Akash",
+  normal() { console.log(this.name); },       // "Akash"
+  arrow: () => console.log(this.name)         // undefined (window)
+};
+```
+
 **Interview one-liner:** Arrow functions don't bind their own `this`; use regular functions when `this` matters.
 
 ---
@@ -330,6 +463,21 @@ inc(); // 2
 
 **Use cases:** data privacy, factory functions, event handlers, React hooks pattern.
 
+```javascript
+function outer() {
+  let j = 20;
+  return function inner() {
+    console.log(j);
+    j++;                    // remembers and updates j across calls
+  };
+}
+const fn = outer();
+fn(); // 20
+fn(); // 21
+```
+
+Each call to `outer()` creates a **new** closure with fresh variables.
+
 **Interview one-liner:** A closure is a function plus its remembered lexical environment.
 
 ---
@@ -340,34 +488,103 @@ inc(); // 2
 
 `this` refers to the **execution context** — who called the function.
 
-| Context | `this` value |
-| --- | --- |
-| Global (non-strict) | `window` / `global` |
-| Object method | The object |
-| Arrow function | Lexical `this` from parent scope |
-| `call` / `apply` / `bind` | Explicitly set |
+### Four Rules of `this` (priority order)
+
+#### Rule 1 — `new` Binding
+
+When called with `new`, `this` points to the **newly created object**.
 
 ```javascript
-const user = {
-  name: "Akash",
-  greet() { console.log(this.name); }
-};
-user.greet(); // "Akash"
-
-const greet = user.greet;
-greet(); // undefined (lost context)
-
-const bound = user.greet.bind(user);
-bound(); // "Akash"
+function Vehicle(name) {
+  this.name = name;   // this = new object {}
+}
+new Vehicle("car");
 ```
 
-**Interview one-liner:** `this` depends on **how** a function is called, not where it is defined (except arrow functions).
+`new` does: (1) create object, (2) link prototype, (3) call constructor with `this` = new object, (4) return object if constructor returns nothing.
+
+#### Rule 2 — Explicit Binding (`call`, `apply`, `bind`)
+
+Manually set `this`.
+
+```javascript
+function ask() { console.log(this.name); }
+const john = { name: "John" };
+ask.call(john);   // "John"
+ask.apply(john);  // "John"
+```
+
+#### Rule 3 — Implicit Binding
+
+When function is called as **object method**, `this` = that object.
+
+```javascript
+const raj = {
+  name: "Raj",
+  greet() { console.log(this.name); }
+};
+raj.greet();           // "Raj"
+const fn = raj.greet;
+fn();                  // undefined — lost context (default binding)
+```
+
+#### Rule 4 — Default Binding
+
+Standalone function call in global scope — `this` = `window` (browser) or `global` (Node). Strict mode: `undefined`.
+
+### Quick Reference
+
+| Context | `this` value |
+| --- | --- |
+| `new Fn()` | New object |
+| `obj.method()` | `obj` |
+| `fn.call(obj)` / `apply` / `bind` | `obj` |
+| Arrow function | Lexical `this` (parent scope) |
+| Plain `fn()` | `window` / `undefined` (strict) |
+
+```javascript
+const bound = user.greet.bind(user);
+bound(); // "Akash" — hard binding fixes lost context
+```
+
+### call vs apply vs bind
+
+| Method | Invokes immediately? | Arguments | Returns |
+| --- | --- | --- | --- |
+| `call(obj, a, b)` | Yes | Comma-separated | Function result |
+| `apply(obj, [a, b])` | Yes | Array | Function result |
+| `bind(obj, a)` | No | Comma-separated | **New function** with fixed `this` |
+
+```javascript
+function sayHi(age) { return `${this.name} is ${age}`; }
+sayHi.call({ name: "Akash" }, 24);        // "Akash is 24"
+sayHi.apply({ name: "Akash" }, [24]);     // "Akash is 24"
+const bound = sayHi.bind({ name: "Akash" });
+bound(24);                                 // "Akash is 24"
+```
+
+**Use cases:** borrow methods, append arrays (`arr.push.apply`), `Math.max.apply(null, numbers)`.
+
+**Arrow + call/apply/bind:** Does **not** change `this` on arrow functions — they ignore explicit binding.
+
+**Interview one-liner:** `this` depends on **how** a function is called; `bind` permanently attaches `this`.
 
 ---
 
 <a id="topic-9"></a>
 
 ## 9. Objects & Prototypes
+
+### Ways to Create Objects
+
+| Method | Example |
+| --- | --- |
+| **Object literal** | `const o = { name: "Akash" }` |
+| **Object constructor** | `new Object()` |
+| **Object.create** | `Object.create(prototypeObj)` |
+| **Factory function** | `function createUser(n) { return { name: n }; }` |
+| **Constructor function** | `function User(n) { this.name = n; }` + `new User()` |
+| **ES6 class** | `class User { constructor(n) { this.name = n; } }` |
 
 ### Object Literals
 
@@ -442,6 +659,12 @@ const doubled = [1, 2, 3].map(n => n * 2);        // [2, 4, 6]
 const evens = [1, 2, 3, 4].filter(n => n % 2 === 0); // [2, 4]
 
 const sum = [2, 4, 5, 6].reduce((acc, n) => acc + n, 0); // 17
+
+// Group users by age
+const grouped = users.reduce((acc, user) => {
+  acc[user.age] = (acc[user.age] || 0) + 1;
+  return acc;
+}, {});
 ```
 
 **Interview one-liner:** `map` transforms, `filter` selects, `reduce` accumulates — all return new data without mutating (when used correctly).
@@ -494,23 +717,56 @@ const { name, age } = person;
 const { name: userName } = person; // rename
 ```
 
-### Spread `...`
+### Spread vs Rest — Full Comparison
 
-Expands array/object into individual elements.
+Same `...` syntax — **position** determines meaning.
+
+| | Spread | Rest |
+| --- | --- | --- |
+| **Purpose** | Expand array/object into individual elements | Collect remaining items into array/object |
+| **Used in** | Function **call**, array/object literal | Function **parameters**, destructuring |
+| **Direction** | Array → list of items | List of items → array |
 
 ```javascript
-const arr2 = [...arr1, 4, 5];
+// SPREAD — in calling function / literals (expand)
+const nums = [1, 2, 3, 4, 5];
+console.log(sum(...nums));           // spread array as arguments
+const merged = [...arr1, ...arr2];   // spread into new array
 const user2 = { ...user, city: "Mumbai" };
+
+// REST — in function parameters (collect)
+function sum(...args) {             // args = [1,2,3,4,5]
+  return args.reduce((a, b) => a + b, 0);
+}
+const [first, ...rest] = [1, 2, 3];  // rest = [2, 3]
+const { name, ...other } = user;     // rest collects remaining props
 ```
 
-### Rest `...`
+**Rules:**
 
-Collects remaining items into array/object.
+- Rest must be the **last** parameter in a function
+- Spread converts array → list; rest converts list → array
+
+### Shallow Copy vs Deep Copy
+
+| Type | What is copied | Nested objects |
+| --- | --- | --- |
+| **Shallow** | Top-level only | Still shared references |
+| **Deep** | All levels | Fully independent copy |
 
 ```javascript
-function log(first, ...rest) { console.log(rest); }
-const { name, ...otherProps } = user;
+// Shallow — same nested reference
+var raj = susan;                    // same reference
+var copy = { ...susan };            // new top-level, nested still shared
+var arrCopy = [...arr1];
+
+// Deep copy
+var deep = JSON.parse(JSON.stringify(obj));  // simple objects only
+// or structuredClone(obj) — modern browsers
+// or lodash cloneDeep for complex cases
 ```
+
+**Interview one-liner:** Spread expands; rest collects. Shallow copy duplicates top level; deep copy duplicates everything.
 
 ### Immutable Updates
 
@@ -520,8 +776,6 @@ Never mutate — always copy then modify (critical for React state).
 const updated = { ...obj, address: "Mumbai" };
 const newArr = [...arr, "c"];
 ```
-
-**Interview one-liner:** Spread expands; rest collects — both use `...` syntax in different positions.
 
 ---
 
@@ -582,6 +836,12 @@ class Employee extends Person {
 | Inheritance | `extends` + `super()` |
 | Static | `static method() {}` |
 
+**Notes from practice:**
+
+- Class **must** be called with `new` — cannot invoke without it
+- Class declarations are **not hoisted** like function declarations
+- Class expressions are allowed: `const Vehicle = class { ... }`
+
 **Interview one-liner:** ES6 classes are prototype-based inheritance with cleaner syntax — not like Java/C# classes internally.
 
 ---
@@ -620,25 +880,56 @@ if (!email) throw new Error("Email is required");
 
 JavaScript is **single-threaded** — async code avoids blocking the main thread.
 
+### Event Loop & Call Stack
+
+```javascript
+console.log("Start");
+setTimeout(() => console.log("Callback"), 0);
+console.log("End");
+// Start → End → Callback
+```
+
+Sync code runs first on the **call stack**. Async callbacks (`setTimeout`, promises) go to **task/microtask queue** and run after stack is empty.
+
+### setTimeout vs setInterval
+
+| API | Behavior |
+| --- | --- |
+| `setTimeout(fn, ms)` | Run **once** after delay |
+| `setInterval(fn, ms)` | Run **repeatedly** every interval |
+
 ### Callback (legacy)
 
 ```javascript
 setTimeout(() => console.log("Done"), 1000);
 ```
 
-Callback hell when nested deeply.
+Callback — function passed to run later. Nested callbacks → **callback hell**.
 
 ### Promise
 
 Represents future value — `pending` → `fulfilled` or `rejected`.
 
 ```javascript
-fetch("/api/users")
-  .then(res => res.json())
+const promise = new Promise((resolve, reject) => {
+  if (success) resolve(data);
+  else reject("Network error");
+});
+
+promise
   .then(data => console.log(data))
   .catch(err => console.error(err))
   .finally(() => console.log("Done"));
 ```
+
+### Promise Static Methods
+
+| Method | Behavior |
+| --- | --- |
+| `Promise.all([p1, p2])` | All must succeed; **fails fast** if any rejects |
+| `Promise.allSettled([p1, p2])` | Waits for all — returns every result (success or fail) |
+| `Promise.race([p1, p2])` | First settled (success or fail) wins |
+| `Promise.any([p1, p2])` | First **success** wins; fails only if all reject |
 
 ### async / await
 
@@ -662,7 +953,7 @@ async function loadUsers() {
 | **Promise** | Object representing async result |
 | **async/await** | Write async code like synchronous |
 
-**Interview one-liner:** Promises fix callback hell; `async/await` makes Promise chains readable.
+**Interview one-liner:** Event loop runs sync code first; Promises fix callback hell; `async/await` makes Promise chains readable.
 
 ---
 
@@ -697,6 +988,35 @@ button.addEventListener("click", (e) => {
 });
 ```
 
+### Event Propagation (3 Phases)
+
+When an event fires on a nested element, it travels through:
+
+```text
+1. Capturing phase  — window → target (top down)
+2. Target phase     — event reaches the element
+3. Bubbling phase   — target → window (bottom up)
+```
+
+```javascript
+parent.addEventListener("click", handler, true);  // capturing
+child.addEventListener("click", handler);         // bubbling (default)
+```
+
+### Event Delegation
+
+Attach **one listener on parent** instead of many on similar children — uses bubbling.
+
+```javascript
+document.querySelector("ul").addEventListener("click", (e) => {
+  if (e.target.tagName === "LI") {
+    console.log("Clicked:", e.target.textContent);
+  }
+});
+```
+
+Efficient for dynamic lists (items added/removed without re-binding listeners).
+
 | Method | Purpose |
 | --- | --- |
 | `createElement` | Create new node |
@@ -704,7 +1024,7 @@ button.addEventListener("click", (e) => {
 | `remove` | Remove node |
 | `addEventListener` | Handle user events |
 
-**Interview one-liner:** DOM APIs let JS read and modify the page structure, content, and respond to user events.
+**Interview one-liner:** DOM APIs let JS read and modify the page; event delegation handles child events efficiently via parent bubbling.
 
 ---
 
@@ -779,6 +1099,59 @@ Quick reference for features you'll use daily.
 
 ---
 
+<a id="topic-20"></a>
+
+## 20. Debouncing & Throttling
+
+Control how often a function runs — critical for search inputs, scroll, resize handlers.
+
+### Debouncing
+
+Delays execution until user **stops** triggering for a set time.
+
+```javascript
+function debounce(callback, delay = 300) {
+  let timeoutId;
+  return function (...args) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback(...args), delay);
+  };
+}
+
+const onSearch = debounce((text) => fetchResults(text), 500);
+input.addEventListener("input", (e) => onSearch(e.target.value));
+```
+
+**Use case:** Search box — API call only after user pauses typing.
+
+### Throttling
+
+Runs at most **once per interval** while events keep firing.
+
+```javascript
+function throttle(callback, limit = 300) {
+  let inThrottle = false;
+  return function (...args) {
+    if (!inThrottle) {
+      callback(...args);
+      inThrottle = true;
+      setTimeout(() => { inThrottle = false; }, limit);
+    }
+  };
+}
+```
+
+**Use case:** Scroll or resize — limit handler to every 300ms.
+
+| Technique | When it runs | Best for |
+| --- | --- | --- |
+| **Debounce** | After activity **stops** | Search input, form validation |
+| **Throttle** | At fixed **intervals** during activity | Scroll, mouse move, resize |
+
+**Interview one-liner:** Debounce waits until pause; throttle limits execution rate during continuous events.
+
+---
+
 <a id="interview-quick-answers"></a>
 
 ## Interview Quick Answers
@@ -786,21 +1159,30 @@ Quick reference for features you'll use daily.
 | Topic | Key Points |
 | --- | --- |
 | JS vs ECMAScript | JS = language; ES = standard spec |
+| Execution context | Memory phase → execution phase; call stack tracks order |
 | var vs let vs const | Block scope, hoisting, TDZ — prefer const |
+| Shadowing | Inner variable hides outer; `let` cannot be shadowed by `var` |
 | `==` vs `===` | Strict equality avoids type coercion |
-| Hoisting | Declarations lifted; let/const in TDZ until initialized |
+| Pass by value vs reference | Primitives copied; objects/arrays mutate by reference |
 | Closure | Inner function remembers outer scope variables |
-| `this` | Depends on call site; arrow functions use lexical `this` |
+| 4 rules of `this` | new → explicit → implicit → default binding |
+| call / apply / bind | Set `this`; bind returns new function |
+| Arrow vs normal | Arrow = lexical `this`; normal = dynamic `this` |
+| Pure function | No side effects on external state |
+| IIFE | Immediately invoked — private scope |
+| Spread vs rest | Spread expands (call/literal); rest collects (params/destructure) |
+| Shallow vs deep copy | Spread = shallow; `JSON.parse/stringify` or `structuredClone` for deep |
 | Prototype | Objects inherit via prototype chain |
 | map / filter / reduce | Transform / select / accumulate arrays |
-| Spread vs rest | Spread expands; rest collects — same `...` syntax |
-| Event loop | Call stack + task queue — async callbacks run after sync code |
-| Promise states | pending → fulfilled or rejected |
+| Promise.all / race / any | Parallel promises — different fail/success rules |
+| Event loop | Sync first, then microtasks, then macrotasks |
+| Event delegation | One parent listener + bubbling for dynamic children |
+| Debounce vs throttle | Debounce = after pause; throttle = fixed rate |
 | async/await | Syntactic sugar over Promises |
 | DOM | Tree of HTML nodes; JS can read/update via APIs |
 | JSON | `stringify` / `parse` for data exchange |
 | ES Modules | `import` / `export` for file-based modules |
 
-**Suggested learning order:** Basics → variables/types → operators → control flow → functions → scope/closures → objects/arrays → ES6+ → async → DOM/APIs.
+**Suggested learning order:** Basics → execution context → variables → types → functions → closures → `this` → objects → arrays → spread/rest → async → DOM → debounce/throttle.
 
-**One-liner:** Master JavaScript fundamentals first — types, functions, closures, and async — before frameworks like React or Node.
+**One-liner:** Master JavaScript fundamentals — execution context, closures, `this`, async, and DOM — before frameworks like React or Node.

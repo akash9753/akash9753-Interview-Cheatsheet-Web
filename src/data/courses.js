@@ -100,7 +100,7 @@ export const courses = [
     mdFile: 'javascript-learning-roadmap.md',
     num: '13',
     cardTitle: 'JavaScript',
-    cardDesc: 'Standard JS roadmap — variables, functions, closures, arrays, ES6+, async, DOM, fetch, and interview essentials.',
+    cardDesc: 'Standard JS roadmap — execution context, closures, this, spread/rest, async, DOM, debounce/throttle, and interview essentials.',
     brand: 'JavaScript Learning Roadmap',
   },
 ];
