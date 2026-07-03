@@ -242,15 +242,62 @@ Starts a live development server — dynamically transforms JSX into ES modules.
 - Follows **camelCasing** convention
 - Helps create Virtual DOM and render HTML
 
+### Why Can't a Component Return Two Elements Directly?
+
+A React component must return a **single root element** because JSX must be one JavaScript expression representing one UI tree.
+
+**Invalid:**
+
+```jsx
+return (
+  <h1>Hello</h1>
+  <p>Welcome</p>
+);
+```
+
+**Valid (using a parent element):**
+
+```jsx
+return (
+  <div>
+    <h1>Hello</h1>
+    <p>Welcome</p>
+  </div>
+);
+```
+
 ### React Fragment
 
-React needs to render only **one root element**:
+React needs to render only **one root element**. Fragment (`<>...</>`) acts as a single root wrapper so React accepts it — unlike `<div>`, it does **not** create an extra HTML element in the DOM.
 
 ```jsx
 <div></div>
 <></>
 <React.Fragment></React.Fragment>
 ```
+
+**Valid (using Fragment):**
+
+```jsx
+return (
+  <>
+    <h1>Hello</h1>
+    <p>Welcome</p>
+  </>
+);
+```
+
+**DOM output:**
+
+```html
+<h1>Hello</h1>
+<p>Welcome</p>
+```
+
+**Interview one-liners:**
+
+- React components cannot return multiple root elements because JSX must return a single root element (one JavaScript expression).
+- React Fragment allows multiple elements by acting as one root wrapper without adding extra HTML to the DOM.
 
 ### StrictMode
 
@@ -848,7 +895,7 @@ Wrap `<App />` in `main.jsx` with `<ErrorBoundary>`.
 | Hooks | `useState`, `useContext`, `useEffect`, `useMemo`, `useCallback`, `useRef` |
 | useEffect deps | No deps = every render; `[]` = mount only; `[deps]` = when deps change |
 | useContext | Login, theme — eliminates prop drilling |
-| Fragments | `<>...</>` — single parent without extra DOM node |
+| Fragments | JSX needs one root; `<>...</>` wraps multiple elements without extra DOM node |
 | StrictMode | Dev-only warnings for deprecated/unsafe patterns |
 | Formik & Yup | Form state + schema validation |
 | Controlled vs Uncontrolled | React state vs DOM refs |
