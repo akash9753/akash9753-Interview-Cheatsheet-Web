@@ -2033,6 +2033,83 @@ Concurrency Control
 
 ## 17. Records, Tuples, and Modern C# Features
 
+### Record vs Class — Understand the Real Difference
+
+![Record vs Class in C# — behavior and state vs data-only models](/assets/csharp/record-vs-class.png)
+
+| Use **Class** | Use **Record** |
+| --- | --- |
+| Object has **behavior** and **state changes** | Object only represents **data** |
+| Business logic, entities | DTOs, API requests/responses, read-only models |
+| Data mutates over time | Data transfer between layers |
+
+#### Class — Reference Type with Behavior
+
+```csharp
+public class Employee
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+
+    public void Promote()
+    {
+        // Business logic — behavior belongs in a class
+    }
+}
+```
+
+**Ideal for:** business logic · entities · objects whose data changes over time
+
+#### Record — Value-Based Reference Type
+
+```csharp
+public record Employee(string Name, int Age);
+```
+
+**Ideal for:** DTOs · API requests & responses · read-only data models · data transfer between layers
+
+#### The Most Important Difference — Equality
+
+**Class — reference equality**
+
+Even if data is identical, two different instances are **not equal** (different memory locations).
+
+```csharp
+var emp1 = new Employee { Name = "John", Age = 25 };
+var emp2 = new Employee { Name = "John", Age = 25 };
+
+Console.WriteLine(emp1 == emp2); // False
+```
+
+**Record — value equality**
+
+Records are equal if **all property values** are identical.
+
+```csharp
+var emp1 = new Employee("John", 25);
+var emp2 = new Employee("John", 25);
+
+Console.WriteLine(emp1 == emp2); // True
+```
+
+#### Full Comparison
+
+| Point | Class | Record |
+| --- | --- | --- |
+| **Primary purpose** | Behavior + mutable state | Immutable / data-centric models |
+| **Equality** | Reference equality (default) | Value equality (by property values) |
+| **Syntax** | Verbose — properties + methods | Concise — positional: `record Person(string Name)` |
+| **Mutation** | Properties can change anytime | Prefer `init` or `with` for copies |
+| **`with` expression** | Manual clone/copy | Built-in: `emp with { Age = 26 }` |
+| **Typical use** | Domain entities, services | DTOs, API models, config snapshots |
+
+#### Simple Rule
+
+- **Use class for behavior.**
+- **Use record for data.**
+
+**Interview one-liner:** Class compares by reference and holds behavior; record compares by value and is ideal for DTOs and immutable data.
+
 ### Collection Expressions (C# 12)
 
 | Syntax | Equivalent | Notes |
@@ -2117,7 +2194,7 @@ Concurrency Control
 
 | Question | Answer |
 | --- | --- |
-| Record vs class? | Record = value-based equality, `with` expressions, concise syntax for DTOs |
+| Record vs class? | Class = reference equality + behavior; Record = value equality + DTOs/data — use class for behavior, record for data |
 | Tuple vs record? | Tuple = lightweight anonymous grouping; record = named named type with semantics |
 | `init` vs `set`? | `init` = set only during object initialization |
 | Nullable reference types? | `string?` vs `string` — compile-time null analysis (C# 8+) |
