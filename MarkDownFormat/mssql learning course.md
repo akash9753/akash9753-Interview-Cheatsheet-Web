@@ -1757,12 +1757,23 @@ sp_helptext 'enrollment_details';
 
 A stored procedure is a set of SQL statements and procedural logic that can perform operations such as **INSERT**, **UPDATE**, **DELETE**, and **QUERYING** data.
 
-| Benefit | Detail |
+### Benefits of Stored Procedures
+
+| Benefit | Explanation |
 | --- | --- |
-| Reusability | Write once, execute many times |
-| Performance | Precompiled execution plan (cached) |
-| Security | `GRANT EXECUTE` without exposing tables |
-| Maintainability | Business logic centralized in DB layer |
+| **Security** | Grant `EXECUTE` on the procedure **without** giving `SELECT` or `UPDATE` on underlying tables. User runs `sp_UpdateSalary` but cannot directly read or modify the `employees` table. |
+| **Performance** | First run builds an execution plan (fastest path); SQL Server caches it. Next runs skip planning — **pre-compiled** and faster. |
+| **Reusability** | Write complex logic **once** (e.g. 50-line `sp_AddNewEmployee` with validation). Website, mobile app, and reports all call `EXEC sp_AddNewEmployee` — fix logic in one place only. |
+| **Simplicity** | Hides complexity — app dev calls `EXEC sp_GetCustomerOrderHistory @customerID = 123` without knowing the 10 tables behind it. |
+| **Reduced network traffic** | App sends one short line (`EXEC sp_GetCustomerOrderHistory 123`) instead of a large multi-line SQL script over the network. |
+
+```sql
+-- Security example — user can execute SP, not touch table directly
+GRANT EXECUTE ON dbo.sp_UpdateSalary TO AppUser;
+-- AppUser has NO SELECT/UPDATE on employees table
+```
+
+**Interview one-liner:** SPs give security (`EXECUTE` only), cached execution plans, single-place maintenance, and less network traffic than ad-hoc SQL.
 
 ### Types of Stored Procedures
 
