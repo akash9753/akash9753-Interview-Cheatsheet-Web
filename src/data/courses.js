@@ -146,7 +146,7 @@ export const courses = [
     num: '15',
     category: 'fundamentals',
     cardTitle: 'DSA',
-    cardDesc: 'Data structures, algorithms, Big-O, arrays, trees, graphs, sorting, DP, greedy, and interview patterns.',
+    cardDesc: '16 pattern-wise topics — arrays, strings, hashing, trees, graphs, DP, greedy, and LeetCode practice links.',
     brand: 'DSA Interview Roadmap',
   },
 ];

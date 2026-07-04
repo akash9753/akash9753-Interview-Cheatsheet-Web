@@ -3,30 +3,41 @@
 ## Goal
 
 <p style="color:#374151;">
-Standard <strong style="color:#16a34a;">Data Structures & Algorithms interview roadmap</strong> — complexity analysis, core data structures, classic patterns, sorting/searching, recursion, DP, and problem-solving strategy explained concisely.
+<strong style="color:#16a34a;">Pattern-wise DSA roadmap</strong> — 16 essential interview patterns with sub-patterns, LeetCode practice links, complexity notes, and concise theory. Learn one pattern at a time: easy → hard.
 </p>
+
+![DSA Patterns Mindmap — 16 Essential Patterns](/assets/dsa/dsa-patterns-mindmap.png)
+
+**Difficulty scale:** 2 = Easy · 3 = Medium · 4 = Hard · 5 = Very Hard · 6 = Extremely Hard
+
+| Step | How to use this course |
+| --- | --- |
+| 1 | Pick **one pattern** per week |
+| 2 | Read concept → solve LeetCode links **easy → hard** |
+| 3 | **Revise** patterns regularly before interviews |
 
 ---
 
 ## Topic Index
 
 <ul style="line-height:1.8;">
-  <li><a href="#topic-1"><span style="color:#2563eb;font-weight:700;">1.</span> DSA Basics & Time/Space Complexity</a></li>
-  <li><a href="#topic-2"><span style="color:#2563eb;font-weight:700;">2.</span> Arrays & Two Pointers</a></li>
-  <li><a href="#topic-3"><span style="color:#2563eb;font-weight:700;">3.</span> Strings & Sliding Window</a></li>
-  <li><a href="#topic-4"><span style="color:#16a34a;font-weight:700;">4.</span> Linked Lists</a></li>
-  <li><a href="#topic-5"><span style="color:#16a34a;font-weight:700;">5.</span> Stacks & Queues</a></li>
-  <li><a href="#topic-6"><span style="color:#16a34a;font-weight:700;">6.</span> Hash Tables & Hash Sets</a></li>
-  <li><a href="#topic-7"><span style="color:#7c3aed;font-weight:700;">7.</span> Trees — Binary Tree & BST</a></li>
-  <li><a href="#topic-8"><span style="color:#7c3aed;font-weight:700;">8.</span> Heaps & Priority Queue</a></li>
-  <li><a href="#topic-9"><span style="color:#7c3aed;font-weight:700;">9.</span> Graphs — BFS & DFS</a></li>
-  <li><a href="#topic-10"><span style="color:#dc2626;font-weight:700;">10.</span> Sorting Algorithms</a></li>
-  <li><a href="#topic-11"><span style="color:#dc2626;font-weight:700;">11.</span> Searching Algorithms</a></li>
-  <li><a href="#topic-12"><span style="color:#dc2626;font-weight:700;">12.</span> Recursion & Backtracking</a></li>
-  <li><a href="#topic-13"><span style="color:#ea580c;font-weight:700;">13.</span> Dynamic Programming</a></li>
-  <li><a href="#topic-14"><span style="color:#ea580c;font-weight:700;">14.</span> Greedy Algorithms</a></li>
-  <li><a href="#topic-15"><span style="color:#ea580c;font-weight:700;">15.</span> Binary Search & Divide & Conquer</a></li>
-  <li><a href="#topic-16"><span style="color:#9333ea;font-weight:700;">16.</span> Interview Patterns & Problem-Solving Framework</a></li>
+  <li><a href="#topic-1"><span style="color:#2563eb;font-weight:700;">1.</span> DSA Basics & Complexity</a></li>
+  <li><a href="#topic-2"><span style="color:#2563eb;font-weight:700;">2.</span> Pattern 1 — Arrays</a></li>
+  <li><a href="#topic-3"><span style="color:#2563eb;font-weight:700;">3.</span> Pattern 2 — String</a></li>
+  <li><a href="#topic-4"><span style="color:#16a34a;font-weight:700;">4.</span> Pattern 3 — Hashing</a></li>
+  <li><a href="#topic-5"><span style="color:#16a34a;font-weight:700;">5.</span> Pattern 4 — Stack</a></li>
+  <li><a href="#topic-6"><span style="color:#16a34a;font-weight:700;">6.</span> Pattern 5 — Queue / Deque</a></li>
+  <li><a href="#topic-7"><span style="color:#7c3aed;font-weight:700;">7.</span> Pattern 6 — Linked List</a></li>
+  <li><a href="#topic-8"><span style="color:#7c3aed;font-weight:700;">8.</span> Pattern 7 — Trees</a></li>
+  <li><a href="#topic-9"><span style="color:#7c3aed;font-weight:700;">9.</span> Pattern 8 — Recursion</a></li>
+  <li><a href="#topic-10"><span style="color:#dc2626;font-weight:700;">10.</span> Pattern 9 — Heap</a></li>
+  <li><a href="#topic-11"><span style="color:#dc2626;font-weight:700;">11.</span> Pattern 10 — Graphs</a></li>
+  <li><a href="#topic-12"><span style="color:#dc2626;font-weight:700;">12.</span> Pattern 11 — Trie</a></li>
+  <li><a href="#topic-13"><span style="color:#ea580c;font-weight:700;">13.</span> Pattern 12 — Dynamic Programming</a></li>
+  <li><a href="#topic-14"><span style="color:#ea580c;font-weight:700;">14.</span> Pattern 13 — Greedy</a></li>
+  <li><a href="#topic-15"><span style="color:#ea580c;font-weight:700;">15.</span> Pattern 14 — Bit Manipulation</a></li>
+  <li><a href="#topic-16"><span style="color:#9333ea;font-weight:700;">16.</span> Pattern 15 — Advanced Patterns</a></li>
+  <li><a href="#topic-17"><span style="color:#9333ea;font-weight:700;">17.</span> Pattern 16 — Range Structures</a></li>
   <li><a href="#interview-quick-answers"><span style="color:#9333ea;font-weight:700;">Guide:</span> Interview Quick Answers</a></li>
 </ul>
 
@@ -34,849 +45,526 @@ Standard <strong style="color:#16a34a;">Data Structures & Algorithms interview r
 
 <a id="topic-1"></a>
 
-## 1. DSA Basics & Time/Space Complexity
-
-### What is DSA?
+## 1. DSA Basics & Complexity
 
 | Term | Meaning |
 | --- | --- |
-| **Data Structure** | Way to organize and store data (array, list, tree, graph) |
+| **Data Structure** | Way to organize data (array, list, tree, graph) |
 | **Algorithm** | Step-by-step procedure to solve a problem |
-| **DSA** | Choosing the right structure + efficient algorithm for the problem |
+| **Pattern** | Reusable technique for a family of problems |
 
-### Big-O Notation
+### Big-O (Worst Case)
 
-Describes how runtime or memory **grows** as input size `n` increases — worst-case unless stated otherwise.
-
-| Complexity | Name | Example |
-| --- | --- | --- |
-| O(1) | Constant | Hash lookup, array index access |
-| O(log n) | Logarithmic | Binary search |
-| O(n) | Linear | Single loop over array |
-| O(n log n) | Linearithmic | Merge sort, heap sort |
-| O(n²) | Quadratic | Nested loops, bubble sort |
-| O(2ⁿ) | Exponential | Naive recursive Fibonacci |
-| O(n!) | Factorial | Generating all permutations |
-
-### Common Rules
-
-| Rule | Example |
+| Complexity | Example |
 | --- | --- |
-| Drop constants | O(2n) → O(n) |
-| Drop lower terms | O(n² + n) → O(n²) |
-| Different inputs → add | Two arrays size m, n → O(m + n) |
-| Nested work → multiply | Loop inside loop → O(n²) |
+| O(1) | Hash lookup, array index |
+| O(log n) | Binary search |
+| O(n) | Single loop |
+| O(n log n) | Merge sort, heap sort |
+| O(n²) | Nested loops |
+| O(2ⁿ) | Naive subsets / backtracking |
 
-### Space Complexity
+### Complexity by Input Size
 
-| Type | Meaning |
+| n | Feasible |
 | --- | --- |
-| **Auxiliary space** | Extra memory used by algorithm (excluding input) |
-| **Total space** | Input + auxiliary |
+| n ≤ 20 | O(2ⁿ) backtracking |
+| n ≤ 5,000 | O(n²) |
+| n ≤ 10⁵ | O(n log n) |
+| n ≤ 10⁶ | O(n) or tight O(n log n) |
 
-| Question | Answer |
-| --- | --- |
-| Best case vs worst case? | Big-O usually means **worst case**; mention best/average when relevant |
-| O(log n) when? | Halving search space each step — binary search, balanced tree ops |
-| Amortized O(1)? | Dynamic array push — occasional resize, average still constant |
-
-**Interview one-liner:** Big-O describes growth rate, not exact time — always state time and space complexity after coding.
+**One-liner:** Map every problem to a **pattern** first, then state time + space complexity.
 
 ---
 
 <a id="topic-2"></a>
 
-## 2. Arrays & Two Pointers
+## 2. Pattern 1 — Arrays
 
-### Array Basics
+**Why it matters:** Foundation of most problems — master indexing, traversal, and in-place tricks.
 
-| Operation | Time (array) | Notes |
+| Sub-pattern | Idea | Typical complexity |
 | --- | --- | --- |
-| Access by index | O(1) | Random access |
-| Search (unsorted) | O(n) | Linear scan |
-| Insert at end | O(1) amortized | Dynamic array |
-| Insert at middle | O(n) | Shift elements |
-| Delete | O(n) | Shift elements |
+| Prefix Sum | Precompute cumulative sums for range queries | Build O(n), query O(1) |
+| Sliding Window | Contiguous subarray/substring optimization | O(n) |
+| Kadane's / Subarray | Max sum / product subarray | O(n) |
+| Binary Search | Halve search space on sorted data | O(log n) |
 
-### Two Pointers Pattern
+### LeetCode — Arrays
 
-Use two indices moving toward each other or in same direction.
+| # | Problem | Sub-pattern | Diff | Link |
+| --- | --- | --- | --- | --- |
+| 303 | Range Sum Query — Immutable | Prefix Sum | 2 | [Solve](https://leetcode.com/problems/range-sum-query-immutable/) |
+| 560 | Subarray Sum Equals K | Prefix Sum | 5 | [Solve](https://leetcode.com/problems/subarray-sum-equals-k/) |
+| 53 | Maximum Subarray | Kadane's | 3 | [Solve](https://leetcode.com/problems/maximum-subarray/) |
+| 152 | Maximum Product Subarray | Kadane's | 3 | [Solve](https://leetcode.com/problems/maximum-product-subarray/) |
+| 3 | Longest Substring Without Repeating Characters | Sliding Window | 6 | [Solve](https://leetcode.com/problems/longest-substring-without-repeating-characters/) |
+| 76 | Minimum Window Substring | Sliding Window | 6 | [Solve](https://leetcode.com/problems/minimum-window-substring/) |
+| 424 | Longest Repeating Character Replacement | Sliding Window | 6 | [Solve](https://leetcode.com/problems/longest-repeating-character-replacement/) |
+| 904 | Fruit Into Baskets | Sliding Window | 6 | [Solve](https://leetcode.com/problems/fruit-into-baskets/) |
+| 704 | Binary Search | Binary Search | 2 | [Solve](https://leetcode.com/problems/binary-search/) |
+| 33 | Search in Rotated Sorted Array | Binary Search | 4 | [Solve](https://leetcode.com/problems/search-in-rotated-sorted-array/) |
+| 34 | Find First and Last Position | Binary Search | 4 | [Solve](https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/) |
 
-| Pattern | When to use | Example |
-| --- | --- | --- |
-| **Opposite ends** | Sorted array, pair sum | Two Sum II |
-| **Same direction** | Remove duplicates, partition | Remove element |
-| **Fast & slow** | Cycle detection, middle element | Linked list cycle |
-
-```csharp
-// Opposite ends — pair sum in sorted array
-int left = 0, right = nums.Length - 1;
-while (left < right)
-{
-    int sum = nums[left] + nums[right];
-    if (sum == target) return new[] { left, right };
-    if (sum < target) left++;
-    else right--;
-}
-```
-
-| Question | Answer |
-| --- | --- |
-| Two Sum unsorted? | Hash map — O(n) time, O(n) space |
-| Kadane's algorithm? | Max subarray sum — O(n), track current and global max |
-| Rotate array? | Reverse whole array, then reverse segments — O(n) time O(1) space |
-
-### LeetCode Practice — Two Pointers
-
-| # | Problem | Link |
-| --- | --- | --- |
-| 11 | Container With Most Water | [leetcode.com/problems/container-with-most-water](https://leetcode.com/problems/container-with-most-water/) |
-| 15 | 3Sum | [leetcode.com/problems/3sum](https://leetcode.com/problems/3sum/) |
-| 167 | Two Sum II — Input Array Is Sorted | [leetcode.com/problems/two-sum-ii-input-array-is-sorted](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/) |
-| 42 | Trapping Rain Water | [leetcode.com/problems/trapping-rain-water](https://leetcode.com/problems/trapping-rain-water/) |
-
-**Must-know:** Arrays excel at index access; two pointers avoid extra space when input is sorted or in-place.
+**One-liner:** Arrays + prefix sum / window / binary search cover a huge share of medium interview questions.
 
 ---
 
 <a id="topic-3"></a>
 
-## 3. Strings & Sliding Window
+## 3. Pattern 2 — String
 
-### String Basics (.NET / general)
+**Why it matters:** Text processing, parsing, pattern matching, and frequency-based string problems.
 
-| Operation | Typical complexity |
+| Sub-pattern | Idea |
 | --- | --- |
-| Access char at index | O(1) |
-| Concatenation | O(n + m) — new string allocated |
-| Substring search (naive) | O(n × m) |
-| Compare | O(min(n, m)) |
+| Two Pointers | Scan from ends or same direction |
+| Pattern Matching (KMP) | Linear-time substring search |
+| Anagram / Frequency Count | Char count maps |
+| Palindrome | Two pointers or expand around center |
 
-### First Repeating vs Non-Repeating Character
+### First Repeating vs Non-Repeating (`"swiss"`)
 
-| Problem | Question | `"swiss"` answer |
+| Problem | Answer | Approach |
 | --- | --- | --- |
-| **First repeating** | First char that appears **twice** (left → right) | **`'s'`** (duplicate at index 3) |
-| **First non-repeating** | First char that appears **exactly once** (left → right) | **`'w'`** (index 1) |
-
-#### First Repeating Character
-
-Find the **first character** that appears twice when scanning left to right.
-
-| Index | Char | Seen set | Action |
-| --- | --- | --- | --- |
-| 0 | s | {s} | Add |
-| 1 | w | {s, w} | Add |
-| 2 | i | {s, w, i} | Add |
-| 3 | s | s exists | **Return `'s'`** |
-
-**Approach:** `HashSet` — one pass — O(n) time, O(k) space.
+| First **repeating** | `'s'` | One pass + `HashSet` |
+| First **non-repeating** | `'w'` | Frequency map + second pass |
 
 ```csharp
+// First repeating — "swiss" → 's'
 public static char? FirstRepeatingChar(string s)
 {
     var seen = new HashSet<char>();
-    foreach (char c in s)
-    {
-        if (!seen.Add(c))
-            return c;
-    }
+    foreach (char c in s) if (!seen.Add(c)) return c;
     return null;
 }
 
-// FirstRepeatingChar("swiss") → 's'
-```
-
-#### First Non-Repeating Character
-
-Find the **first character** with frequency **1** when scanning left to right.
-
-| Pass | Action |
-| --- | --- |
-| 1 | Count frequency — `s:3, w:1, i:1` |
-| 2 | Scan left → right — skip `s` (count > 1), **return `'w'`** (count == 1) |
-
-**Approach:** `Dictionary` frequency map + second pass — O(n) time, O(k) space.
-
-```csharp
+// First non-repeating — "swiss" → 'w'
 public static char? FirstNonRepeatingChar(string s)
 {
     var freq = new Dictionary<char, int>();
-    foreach (char c in s)
-        freq[c] = freq.GetValueOrDefault(c) + 1;
-
-    foreach (char c in s)
-    {
-        if (freq[c] == 1)
-            return c;
-    }
+    foreach (char c in s) freq[c] = freq.GetValueOrDefault(c) + 1;
+    foreach (char c in s) if (freq[c] == 1) return c;
     return null;
 }
-
-// FirstNonRepeatingChar("swiss") → 'w'
-// FirstNonRepeatingChar("aabb") → null (no unique char)
 ```
 
-| Question | Answer |
-| --- | --- |
-| Repeating vs non-repeating? | Repeating = **one pass + set**; non-repeating = **count then scan** (two passes) |
-| Return index instead of char? | Return loop index on second pass (non-repeating) or when duplicate found (repeating) |
-| Brute force? | Two nested loops — O(n²) for either |
-| Case sensitive? | Yes unless problem says otherwise — `'S'` ≠ `'s'` |
+### LeetCode — String
 
-**Interview one-liner:** Repeating → stop at second occurrence; non-repeating → count first, then return first char with count 1.
+| # | Problem | Sub-pattern | Diff | Link |
+| --- | --- | --- | --- | --- |
+| 125 | Valid Palindrome | Palindrome | 2 | [Solve](https://leetcode.com/problems/valid-palindrome/) |
+| 5 | Longest Palindromic Substring | Palindrome | 4 | [Solve](https://leetcode.com/problems/longest-palindromic-substring/) |
+| 242 | Valid Anagram | Anagram / Frequency | 3 | [Solve](https://leetcode.com/problems/valid-anagram/) |
+| 49 | Group Anagrams | Anagram / Frequency | 3 | [Solve](https://leetcode.com/problems/group-anagrams/) |
+| 387 | First Unique Character in a String | Frequency | 3 | [Solve](https://leetcode.com/problems/first-unique-character-in-a-string/) |
+| 28 | Find the Index of the First Occurrence | KMP / Matching | 4 | [Solve](https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/) |
+| 344 | Reverse String | Two Pointers | 2 | [Solve](https://leetcode.com/problems/reverse-string/) |
+| 167 | Two Sum II | Two Pointers | 5 | [Solve](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/) |
 
-### Sliding Window
-
-Fixed or variable window over contiguous subarray/substring.
-
-| Type | When | Example |
-| --- | --- | --- |
-| **Fixed size k** | Max/min in window of size k | Max in window |
-| **Variable size** | Longest/shortest satisfying condition | Longest substring without repeat |
-
-```csharp
-// Variable window — longest substring without repeating chars
-var map = new Dictionary<char, int>();
-int left = 0, maxLen = 0;
-for (int right = 0; right < s.Length; right++)
-{
-    if (map.ContainsKey(s[right])) left = Math.Max(left, map[s[right]] + 1);
-    map[s[right]] = right;
-    maxLen = Math.Max(maxLen, right - left + 1);
-}
-```
-
-| Question | Answer |
-| --- | --- |
-| Anagram check? | Sort both O(n log n) or char frequency count O(n) |
-| Palindrome? | Two pointers from ends; or reverse half |
-| Sliding window vs two pointers? | Window maintains contiguous range; two pointers often on sorted data |
-
-### LeetCode Practice — Sliding Window
-
-| # | Problem | Link |
-| --- | --- | --- |
-| 3 | Longest Substring Without Repeating Characters | [leetcode.com/problems/longest-substring-without-repeating-characters](https://leetcode.com/problems/longest-substring-without-repeating-characters/) |
-| 76 | Minimum Window Substring | [leetcode.com/problems/minimum-window-substring](https://leetcode.com/problems/minimum-window-substring/) |
-| 424 | Longest Repeating Character Replacement | [leetcode.com/problems/longest-repeating-character-replacement](https://leetcode.com/problems/longest-repeating-character-replacement/) |
-| 904 | Fruit Into Baskets | [leetcode.com/problems/fruit-into-baskets](https://leetcode.com/problems/fruit-into-baskets/) |
-
-**Must-know:** Strings are often immutable — use `StringBuilder` for repeated concatenation in .NET.
+**One-liner:** String problems → frequency map, two pointers, or sliding window in most cases.
 
 ---
 
 <a id="topic-4"></a>
 
-## 4. Linked Lists
+## 4. Pattern 3 — Hashing
 
-### Types
+**Why it matters:** O(1) average lookups — turns O(n²) brute force into O(n).
 
-| Type | Structure |
+| Sub-pattern | Use case |
 | --- | --- |
-| Singly linked | Node → next only |
-| Doubly linked | Node → prev + next |
-| Circular | Last node points to head |
+| Hash Map | Key → value lookup |
+| Frequency Map | Count occurrences |
+| Count Distinct | Duplicates, unique elements |
+| Group Anagrams | Bucket by normalized key |
+| Two Sum | Complement lookup |
 
-### Complexity
+### LeetCode — Hashing
 
-| Operation | Singly | Doubly |
-| --- | --- | --- |
-| Access by index | O(n) | O(n) |
-| Insert at head | O(1) | O(1) |
-| Insert at tail (with tail ptr) | O(1) | O(1) |
-| Delete node (given pointer) | O(1)* | O(1) |
+| # | Problem | Sub-pattern | Diff | Link |
+| --- | --- | --- | --- | --- |
+| 1 | Two Sum | Two Sum / Hash Map | 4 | [Solve](https://leetcode.com/problems/two-sum/) |
+| 217 | Contains Duplicate | Count Distinct | 3 | [Solve](https://leetcode.com/problems/contains-duplicate/) |
+| 219 | Contains Duplicate II | Count Distinct | 3 | [Solve](https://leetcode.com/problems/contains-duplicate-ii/) |
+| 49 | Group Anagrams | Group Anagrams | 3 | [Solve](https://leetcode.com/problems/group-anagrams/) |
+| 347 | Top K Frequent Elements | Frequency Map | 4 | [Solve](https://leetcode.com/problems/top-k-frequent-elements/) |
+| 451 | Sort Characters By Frequency | Frequency Map | 4 | [Solve](https://leetcode.com/problems/sort-characters-by-frequency/) |
+| 146 | LRU Cache | Hash Map + DLL | 5 | [Solve](https://leetcode.com/problems/lru-cache/) |
+| 128 | Longest Consecutive Sequence | Hash Set | 4 | [Solve](https://leetcode.com/problems/longest-consecutive-sequence/) |
 
-*Singly needs previous node or copy-next trick for delete.
-
-### Classic Problems
-
-| Problem | Technique |
-| --- | --- |
-| Reverse linked list | Iterative three-pointer or recursive |
-| Detect cycle | Floyd's fast & slow pointers |
-| Merge two sorted lists | Dummy head + compare |
-| Find middle | Fast moves 2x, slow moves 1x |
-| Palindrome list | Find middle, reverse second half, compare |
-
-```csharp
-public class ListNode
-{
-    public int val;
-    public ListNode next;
-    public ListNode(int val = 0, ListNode next = null) { this.val = val; this.next = next; }
-}
-```
-
-**Interview one-liner:** Linked lists trade O(1) insert/delete at known position for O(n) random access — master dummy node and fast/slow pointers.
+**One-liner:** "Have I seen this before?" → hash set; "How many times?" → frequency map.
 
 ---
 
 <a id="topic-5"></a>
 
-## 5. Stacks & Queues
+## 5. Pattern 4 — Stack
 
-### Stack — LIFO
+**Why it matters:** LIFO — parsing, monotonic tracking, next greater/smaller element.
 
-| Operation | Time |
+| Sub-pattern | Use case |
 | --- | --- |
-| Push | O(1) |
-| Pop | O(1) |
-| Peek | O(1) |
+| Monotonic Stack | Next greater/smaller, histogram |
+| Balanced Parentheses | Matching brackets |
+| Next Greater / Smaller | Scan with decreasing/increasing stack |
+| Min Stack | O(1) min with extra stack |
 
-**Use cases:** Parentheses matching, undo, DFS, monotonic stack, expression evaluation.
+### LeetCode — Stack
 
-### Queue — FIFO
+| # | Problem | Sub-pattern | Diff | Link |
+| --- | --- | --- | --- | --- |
+| 20 | Valid Parentheses | Balanced Parentheses | 4 | [Solve](https://leetcode.com/problems/valid-parentheses/) |
+| 22 | Generate Parentheses | Balanced Parentheses | 4 | [Solve](https://leetcode.com/problems/generate-parentheses/) |
+| 155 | Min Stack | Min Stack | 2 | [Solve](https://leetcode.com/problems/min-stack/) |
+| 496 | Next Greater Element I | Next Greater | 4 | [Solve](https://leetcode.com/problems/next-greater-element-i/) |
+| 503 | Next Greater Element II | Next Greater | 4 | [Solve](https://leetcode.com/problems/next-greater-element-ii/) |
+| 739 | Daily Temperatures | Monotonic Stack | 4 | [Solve](https://leetcode.com/problems/daily-temperatures/) |
+| 84 | Largest Rectangle in Histogram | Monotonic Stack | 4 | [Solve](https://leetcode.com/problems/largest-rectangle-in-histogram/) |
 
-| Operation | Time (array impl.) | Time (linked list) |
-| --- | --- | --- |
-| Enqueue | O(1) amortized | O(1) |
-| Dequeue | O(n) naive / O(1) circular | O(1) |
-
-**Use cases:** BFS, task scheduling, buffer, level-order traversal.
-
-### Deque (Double-ended queue)
-
-Insert/delete at both ends — O(1) with proper implementation.
-
-### Monotonic Stack
-
-Maintains increasing or decreasing order — **next greater element**, largest rectangle in histogram.
-
-| Pattern | Stack type | Problem type |
-| --- | --- | --- |
-| Next greater/smaller | Monotonic decreasing/increasing | Array scanning |
-| Valid parentheses | Stack of open chars | Matching pairs |
-
-**Must-know:** `Stack<T>` in .NET; for BFS use `Queue<T>`; monotonic stack solves many O(n) array problems.
+**One-liner:** Monotonic stack keeps elements in sorted order while scanning — O(n) for next-greater family.
 
 ---
 
 <a id="topic-6"></a>
 
-## 6. Hash Tables & Hash Sets
+## 6. Pattern 5 — Queue / Deque
 
-### Core Idea
+**Why it matters:** FIFO and double-ended queues for BFS, sliding window max, and scheduling.
 
-Map **key → value** with average O(1) insert, lookup, delete using hash function + collision handling.
-
-| Collision handling | How |
+| Sub-pattern | Use case |
 | --- | --- |
-| Chaining | Linked list at each bucket |
-| Open addressing | Probe for next empty slot (linear, quadratic, double hashing) |
+| Sliding Window Maximum | Deque stores useful indices |
+| First Negative in Window | Queue of negatives per window |
+| Deque Optimization | Push/pop both ends O(1) |
+| Design Queue | Circular buffer implementation |
 
-### .NET Collections
+### LeetCode — Queue / Deque
 
-| Type | Use |
-| --- | --- |
-| `Dictionary<K,V>` | Key-value map |
-| `HashSet<T>` | Unique elements, O(1) contains |
-| `SortedDictionary` | Ordered keys — O(log n) ops |
+| # | Problem | Sub-pattern | Diff | Link |
+| --- | --- | --- | --- | --- |
+| 239 | Sliding Window Maximum | Sliding Window Max | 4 | [Solve](https://leetcode.com/problems/sliding-window-maximum/) |
+| 1425 | Constrained Subsequence Sum | Deque Optimization | 4 | [Solve](https://leetcode.com/problems/constrained-subsequence-sum/) |
+| 862 | Shortest Subarray with Sum at Least K | Deque | 4 | [Solve](https://leetcode.com/problems/shortest-subarray-with-sum-at-least-k/) |
+| 622 | Design Circular Queue | Design Queue | 2 | [Solve](https://leetcode.com/problems/design-circular-queue/) |
+| 641 | Design Circular Deque | Design Queue | 2 | [Solve](https://leetcode.com/problems/design-circular-deque/) |
+| 102 | Binary Tree Level Order Traversal | BFS Queue | 4 | [Solve](https://leetcode.com/problems/binary-tree-level-order-traversal/) |
 
-### Classic Uses
-
-| Problem | Hash approach |
-| --- | --- |
-| Two Sum | Store `target - num` → index |
-| Frequency count | `dict[char]++` |
-| Group anagrams | Key = sorted string or char count |
-| LRU Cache | Hash map + doubly linked list |
-
-| Question | Answer |
-| --- | --- |
-| Hash vs Tree map? | Hash O(1) avg vs Tree O(log n) — tree gives sorted order |
-| Worst case hash? | O(n) if all keys collide — mention in interview |
-| `GetHashCode` + `Equals`? | Must be consistent for custom keys in .NET |
-
-**Interview one-liner:** Hash map trades space for time — first choice when you need O(1) lookup by key.
+**One-liner:** Use deque when you need max/min in a sliding window in O(n).
 
 ---
 
 <a id="topic-7"></a>
 
-## 7. Trees — Binary Tree & BST
+## 7. Pattern 6 — Linked List
 
-### Binary Tree
+**Why it matters:** Pointer manipulation — cycles, reversal, merge — very common in interviews.
 
-Each node has at most **two** children.
-
-### Traversals
-
-| Order | Sequence | Use |
-| --- | --- | --- |
-| Inorder (LNR) | Left → Node → Right | BST gives sorted order |
-| Preorder (NLR) | Node → Left → Right | Serialize tree |
-| Postorder (LRN) | Left → Right → Node | Delete tree, evaluate expression |
-| Level order (BFS) | Level by level | Shortest path in unweighted tree |
-
-### Binary Search Tree (BST)
-
-| Property | Rule |
+| Sub-pattern | Technique |
 | --- | --- |
-| Left subtree | All values < node |
-| Right subtree | All values > node |
+| Fast–Slow Pointers | Middle node, cycle detection |
+| Reversal | Iterative three-pointer |
+| Cycle Detection | Floyd's algorithm |
+| Merge Lists | Dummy head + compare |
 
-| Operation | Average | Worst (skewed) |
-| --- | --- | --- |
-| Search | O(log n) | O(n) |
-| Insert | O(log n) | O(n) |
-| Delete | O(log n) | O(n) |
+### LeetCode — Linked List
 
-### Classic Problems
+| # | Problem | Sub-pattern | Diff | Link |
+| --- | --- | --- | --- | --- |
+| 206 | Reverse Linked List | Reversal | 2 | [Solve](https://leetcode.com/problems/reverse-linked-list/) |
+| 92 | Reverse Linked List II | Reversal | 2 | [Solve](https://leetcode.com/problems/reverse-linked-list-ii/) |
+| 141 | Linked List Cycle | Cycle Detection | 2 | [Solve](https://leetcode.com/problems/linked-list-cycle/) |
+| 142 | Linked List Cycle II | Cycle Detection | 2 | [Solve](https://leetcode.com/problems/linked-list-cycle-ii/) |
+| 876 | Middle of the Linked List | Fast–Slow | 2 | [Solve](https://leetcode.com/problems/middle-of-the-linked-list/) |
+| 21 | Merge Two Sorted Lists | Merge Lists | 2 | [Solve](https://leetcode.com/problems/merge-two-sorted-lists/) |
+| 23 | Merge k Sorted Lists | Merge Lists | 4 | [Solve](https://leetcode.com/problems/merge-k-sorted-lists/) |
+| 143 | Reorder List | Fast–Slow + Reversal | 4 | [Solve](https://leetcode.com/problems/reorder-list/) |
 
-| Problem | Technique |
-| --- | --- |
-| Height / depth | Recursion or BFS |
-| Validate BST | Range min/max per node |
-| LCA (lowest common ancestor) | Recursion — split at root |
-| Diameter | Max left depth + right depth at each node |
-| Serialize / deserialize | BFS or preorder with null markers |
-
-**Must-know:** Tree recursion template: process node, recurse left, recurse right; combine results.
+**One-liner:** Dummy head + fast/slow pointers solve most linked-list interview problems.
 
 ---
 
 <a id="topic-8"></a>
 
-## 8. Heaps & Priority Queue
+## 8. Pattern 7 — Trees
 
-### Heap
+**Why it matters:** Hierarchical data — traversals, BST, LCA appear in almost every onsite loop.
 
-Complete binary tree stored in array — **min-heap** (parent ≤ children) or **max-heap**.
-
-| Operation | Time |
+| Sub-pattern | Key idea |
 | --- | --- |
-| Peek min/max | O(1) |
-| Insert | O(log n) |
-| Extract min/max | O(log n) |
-| Build heap | O(n) |
+| Binary Tree Traversal | Inorder / preorder / postorder / level order |
+| Binary Search Tree | Left < root < right |
+| Lowest Common Ancestor | Recurse; split at root |
+| Tree Construction | Divide array by root index |
 
-### .NET
+### LeetCode — Trees
 
-`PriorityQueue<TElement, TPriority>` — min-heap by priority (lower = higher priority).
+| # | Problem | Sub-pattern | Diff | Link |
+| --- | --- | --- | --- | --- |
+| 94 | Binary Tree Inorder Traversal | Traversal | 4 | [Solve](https://leetcode.com/problems/binary-tree-inorder-traversal/) |
+| 102 | Binary Tree Level Order Traversal | Traversal | 4 | [Solve](https://leetcode.com/problems/binary-tree-level-order-traversal/) |
+| 104 | Maximum Depth of Binary Tree | Traversal | 3 | [Solve](https://leetcode.com/problems/maximum-depth-of-binary-tree/) |
+| 98 | Validate Binary Search Tree | BST | 3 | [Solve](https://leetcode.com/problems/validate-binary-search-tree/) |
+| 700 | Search in a Binary Search Tree | BST | 3 | [Solve](https://leetcode.com/problems/search-in-a-binary-search-tree/) |
+| 236 | Lowest Common Ancestor of a Binary Tree | LCA | 3 | [Solve](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/) |
+| 105 | Construct Binary Tree from Preorder and Inorder | Construction | 3 | [Solve](https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/) |
+| 124 | Binary Tree Maximum Path Sum | Traversal | 4 | [Solve](https://leetcode.com/problems/binary-tree-maximum-path-sum/) |
 
-### Use Cases
-
-| Problem | Why heap |
-| --- | --- |
-| K largest elements | Min-heap of size k |
-| Merge k sorted lists | Heap of list heads |
-| Median stream | Two heaps (max left, min right) |
-| Dijkstra shortest path | Min-priority queue |
-
-| Question | Answer |
-| --- | --- |
-| Heap vs BST? | Heap only guarantees root min/max; BST fully ordered |
-| Top K pattern? | O(n log k) with heap vs O(n log n) full sort |
-| `List<T>` as heap? | No — use `PriorityQueue` or implement sift up/down |
-
-**Interview one-liner:** Heap = partial order for fast min/max — ideal for top-K and scheduling.
+**One-liner:** Tree recursion = process node → left → right → combine results.
 
 ---
 
 <a id="topic-9"></a>
 
-## 9. Graphs — BFS & DFS
+## 9. Pattern 8 — Recursion
 
-### Representations
+**Why it matters:** Break problems into subproblems — backtracking, divide & conquer, memoization.
 
-| Type | Space | Best for |
-| --- | --- | --- |
-| Adjacency list | O(V + E) | Sparse graphs — most interviews |
-| Adjacency matrix | O(V²) | Dense graphs, O(1) edge lookup |
-
-### BFS — Breadth-First Search
-
-Queue-based; finds **shortest path** in unweighted graph.
-
-```text
-Queue ← start
-while queue not empty:
-  node = dequeue
-  for each neighbor:
-    if unvisited: mark, enqueue
-```
-
-### DFS — Depth-First Search
-
-Stack or recursion; used for cycles, connected components, topological sort.
-
-```text
-dfs(node):
-  mark visited
-  for each neighbor:
-    if unvisited: dfs(neighbor)
-```
-
-### Classic Problems
-
-| Problem | Algorithm |
+| Sub-pattern | When |
 | --- | --- |
-| Shortest path (unweighted) | BFS |
-| Cycle detection (undirected) | DFS with parent |
-| Cycle detection (directed) | DFS three-color or topological sort |
-| Number of islands | DFS/BFS on grid |
-| Topological sort | DFS postorder or Kahn's BFS (in-degree) |
-| Dijkstra | BFS + min-heap (non-negative weights) |
+| Backtracking | Explore all choices, undo |
+| Divide & Conquer | Split, solve, merge |
+| Tree / Graph Recursion | DFS on structure |
+| Memoization | Cache overlapping subproblems |
 
-| Question | Answer |
-| --- | --- |
-| BFS vs DFS? | BFS = shortest unweighted path, level order; DFS = deep exploration, backtracking |
-| Disconnected graph? | Run BFS/DFS from every unvisited node |
-| Grid as graph? | Each cell = node; 4 or 8 neighbors |
+### LeetCode — Recursion
 
-**Must-know:** Almost every graph problem starts with: directed? weighted? cyclic? — then pick BFS, DFS, or Dijkstra.
+| # | Problem | Sub-pattern | Diff | Link |
+| --- | --- | --- | --- | --- |
+| 78 | Subsets | Backtracking | 5 | [Solve](https://leetcode.com/problems/subsets/) |
+| 46 | Permutations | Backtracking | 5 | [Solve](https://leetcode.com/problems/permutations/) |
+| 39 | Combination Sum | Backtracking | 5 | [Solve](https://leetcode.com/problems/combination-sum/) |
+| 51 | N-Queens | Backtracking | 5 | [Solve](https://leetcode.com/problems/n-queens/) |
+| 169 | Majority Element | Divide & Conquer | 4 | [Solve](https://leetcode.com/problems/majority-element/) |
+| 509 | Fibonacci Number | Memoization | 3 | [Solve](https://leetcode.com/problems/fibonacci-number/) |
+| 200 | Number of Islands | Graph Recursion | 3 | [Solve](https://leetcode.com/problems/number-of-islands/) |
+| 79 | Word Search | Backtracking | 4 | [Solve](https://leetcode.com/problems/word-search/) |
+
+**One-liner:** Backtracking = choose → explore → undo; always define base case and prune early.
 
 ---
 
 <a id="topic-10"></a>
 
-## 10. Sorting Algorithms
+## 10. Pattern 9 — Heap
 
-### Comparison Table
+**Why it matters:** Priority queue — top-K, merge K lists, median stream.
 
-| Algorithm | Best | Average | Worst | Space | Stable? |
-| --- | --- | --- | --- | --- | --- |
-| Bubble Sort | O(n) | O(n²) | O(n²) | O(1) | Yes |
-| Selection Sort | O(n²) | O(n²) | O(n²) | O(1) | No |
-| Insertion Sort | O(n) | O(n²) | O(n²) | O(1) | Yes |
-| Merge Sort | O(n log n) | O(n log n) | O(n log n) | O(n) | Yes |
-| Quick Sort | O(n log n) | O(n log n) | O(n²) | O(log n) stack | No |
-| Heap Sort | O(n log n) | O(n log n) | O(n log n) | O(1) | No |
-| Counting Sort | O(n + k) | O(n + k) | O(n + k) | O(k) | Yes |
-
-### When to Use
-
-| Situation | Choice |
+| Sub-pattern | Use case |
 | --- | --- |
-| General purpose (.NET) | `Array.Sort` — introsort (quick + heap + insert) |
-| Need stable sort | Merge sort |
-| Limited memory | Heap sort |
-| Small integer range | Counting / radix sort |
-| Nearly sorted | Insertion sort |
+| Priority Queue | Process smallest/largest first |
+| Top K Elements | Min-heap of size K |
+| Heapify / Heap Sort | O(n log n) sort in-place |
 
-### Quick Sort Pivot
+### LeetCode — Heap
 
-| Strategy | Note |
-| --- | --- |
-| Random pivot | Avoids worst case on sorted input |
-| Median-of-three | Common practical choice |
+| # | Problem | Sub-pattern | Diff | Link |
+| --- | --- | --- | --- | --- |
+| 215 | Kth Largest Element in an Array | Top K | 3 | [Solve](https://leetcode.com/problems/kth-largest-element-in-an-array/) |
+| 347 | Top K Frequent Elements | Top K | 3 | [Solve](https://leetcode.com/problems/top-k-frequent-elements/) |
+| 703 | Kth Largest Element in a Stream | Priority Queue | 3 | [Solve](https://leetcode.com/problems/kth-largest-element-in-a-stream/) |
+| 295 | Find Median from Data Stream | Two Heaps | 4 | [Solve](https://leetcode.com/problems/find-median-from-data-stream/) |
+| 23 | Merge k Sorted Lists | Heap | 4 | [Solve](https://leetcode.com/problems/merge-k-sorted-lists/) |
+| 973 | K Closest Points to Origin | Top K | 3 | [Solve](https://leetcode.com/problems/k-closest-points-to-origin/) |
 
-**Interview one-liner:** Know merge vs quick — merge guarantees O(n log n) and stable; quick usually faster in practice, O(n²) worst case.
+**One-liner:** Top K → min-heap of size K — O(n log k) beats full sort O(n log n).
 
 ---
 
 <a id="topic-11"></a>
 
-## 11. Searching Algorithms
+## 11. Pattern 10 — Graphs
 
-| Algorithm | Requirement | Time |
-| --- | --- | --- |
-| Linear search | None | O(n) |
-| Binary search | Sorted array | O(log n) |
-| Ternary search | Unimodal function | O(log n) |
-| Interpolation search | Sorted + uniform distribution | O(log log n) avg |
+**Why it matters:** Networks, dependencies, shortest paths — BFS, DFS, Dijkstra, topological sort.
 
-### Binary Search Template
-
-```csharp
-int left = 0, right = nums.Length - 1;
-while (left <= right)
-{
-    int mid = left + (right - left) / 2;
-    if (nums[mid] == target) return mid;
-    if (nums[mid] < target) left = mid + 1;
-    else right = mid - 1;
-}
-return -1;
-```
-
-### Binary Search Variants
-
-| Variant | Condition |
+| Sub-pattern | Use case |
 | --- | --- |
-| First occurrence | `nums[mid] == target` → right = mid - 1, keep answer |
-| Last occurrence | `nums[mid] == target` → left = mid + 1, keep answer |
-| Search on answer | Monotonic predicate — min capacity, max speed |
+| BFS | Shortest path unweighted, levels |
+| DFS | Components, cycles, exhaustive search |
+| Dijkstra | Shortest path weighted (non-negative) |
+| Topological Sort | Ordering with dependencies |
 
-| Question | Answer |
-| --- | --- |
-| `mid = (left + right) / 2` overflow? | Use `left + (right - left) / 2` |
-| Binary search on unsorted? | Only if answer space is monotonic (binary search on answer) |
-| `List.BinarySearch` in .NET? | Requires sorted list — returns index or bitwise complement |
+### LeetCode — Graphs
+
+| # | Problem | Sub-pattern | Diff | Link |
+| --- | --- | --- | --- | --- |
+| 200 | Number of Islands | DFS / BFS | 4 | [Solve](https://leetcode.com/problems/number-of-islands/) |
+| 127 | Word Ladder | BFS | 4 | [Solve](https://leetcode.com/problems/word-ladder/) |
+| 695 | Max Area of Island | DFS | 4 | [Solve](https://leetcode.com/problems/max-area-of-island/) |
+| 207 | Course Schedule | Topological Sort | 3 | [Solve](https://leetcode.com/problems/course-schedule/) |
+| 210 | Course Schedule II | Topological Sort | 3 | [Solve](https://leetcode.com/problems/course-schedule-ii/) |
+| 743 | Network Delay Time | Dijkstra | 4 | [Solve](https://leetcode.com/problems/network-delay-time/) |
+| 133 | Clone Graph | DFS / BFS | 4 | [Solve](https://leetcode.com/problems/clone-graph/) |
+| 994 | Rotting Oranges | BFS | 4 | [Solve](https://leetcode.com/problems/rotting-oranges/) |
+
+**One-liner:** Unweighted shortest path → BFS; dependencies → topological sort; weighted → Dijkstra + heap.
 
 ---
 
 <a id="topic-12"></a>
 
-## 12. Recursion & Backtracking
+## 12. Pattern 11 — Trie
 
-### Recursion Anatomy
+**Why it matters:** Prefix search, autocomplete, dictionary word problems.
 
-| Part | Purpose |
+| Sub-pattern | Use case |
 | --- | --- |
-| **Base case** | Stop condition |
-| **Recursive case** | Smaller subproblem |
-| **Trust** | Assume recursive call works |
+| Insert / Search | Standard trie operations |
+| Prefix Problems | Starts-with queries |
+| Word Break | DP + trie or set |
 
-### Recursion vs Iteration
+### LeetCode — Trie
 
-| Aspect | Recursion | Iteration |
-| --- | --- | --- |
-| Stack | Call stack — O(depth) space | Explicit stack or O(1) |
-| Readability | Natural for trees, divide & conquer | Loops for linear work |
+| # | Problem | Sub-pattern | Diff | Link |
+| --- | --- | --- | --- | --- |
+| 208 | Implement Trie (Prefix Tree) | Insert / Search | 3 | [Solve](https://leetcode.com/problems/implement-trie-prefix-tree/) |
+| 211 | Design Add and Search Words | Prefix | 3 | [Solve](https://leetcode.com/problems/design-add-and-search-word-data-structure-design/) |
+| 677 | Map Sum Pairs | Prefix | 3 | [Solve](https://leetcode.com/problems/map-sum-pairs/) |
+| 139 | Word Break | Word Break | 3 | [Solve](https://leetcode.com/problems/word-break/) |
+| 140 | Word Break II | Word Break | 4 | [Solve](https://leetcode.com/problems/word-break-ii/) |
+| 212 | Word Search II | Trie + Backtracking | 4 | [Solve](https://leetcode.com/problems/word-search-ii/) |
 
-### Backtracking Template
-
-```text
-function backtrack(state):
-  if goal reached: record solution; return
-  for each choice:
-    if valid(choice):
-      apply choice
-      backtrack(updated state)
-      undo choice  // backtrack
-```
-
-### Classic Problems
-
-| Problem | Approach |
-| --- | --- |
-| Subsets / combinations | Include/exclude each element |
-| Permutations | Swap or used[] array |
-| N-Queens | Place row by row, check columns/diagonals |
-| Sudoku | Fill cell by cell, prune invalid |
-| Word search | DFS on grid + backtrack |
-
-| Question | Answer |
-| --- | --- |
-| Tail recursion? | Recursive call is last operation — can optimize to loop |
-| Memoization vs tabulation? | Top-down cache vs bottom-up table — both DP |
-| Pruning? | Skip branches early when invalid — critical for backtracking speed |
-
-**Interview one-liner:** Backtracking = DFS + undo; always define base case, choices, and prune invalid paths early.
+**One-liner:** Trie trades space for O(m) prefix lookup where m = word length.
 
 ---
 
 <a id="topic-13"></a>
 
-## 13. Dynamic Programming
+## 13. Pattern 12 — Dynamic Programming
 
-### When to Use DP
+**Why it matters:** Hard optimization — define state, recurrence, base case, then memoize or tabulate.
 
-1. **Optimal substructure** — optimal solution built from optimal sub-solutions  
-2. **Overlapping subproblems** — same subproblem solved repeatedly
-
-### Approaches
-
-| Approach | Style | Space tip |
-| --- | --- | --- |
-| Top-down (memoization) | Recursion + cache | `Dictionary` or array |
-| Bottom-up (tabulation) | Fill table iteratively | Often reduce to 1–2 rows |
-
-### Classic Problems
-
-| Problem | State | Transition |
-| --- | --- | --- |
-| Fibonacci | `dp[i]` | `dp[i] = dp[i-1] + dp[i-2]` |
-| Climbing stairs | `dp[i]` ways to step i | `dp[i] = dp[i-1] + dp[i-2]` |
-| 0/1 Knapsack | `dp[i][w]` | Take or skip item i |
-| LCS | `dp[i][j]` | Match or skip chars |
-| Coin change | `dp[amount]` | Min coins for amount |
-| Longest increasing subsequence | `dp[i]` or patience sorting | O(n log n) with binary search |
-
-### DP Patterns
-
-| Pattern | Signal |
+| Sub-pattern | Examples |
 | --- | --- |
-| 1D DP | Linear decision at each index |
-| 2D DP | Two sequences or grid path |
-| Interval DP | Range [i, j] — matrix chain, burst balloons |
-| State machine DP | Finite states — buy/sell stock with cooldown |
+| 1D DP | Climbing stairs, house robber, coin change |
+| 2D DP | Unique paths, LCS, edit distance |
+| Knapsack DP | Subset sum, partition equal subset |
+| DP on Trees | House robber III, tree diameter |
 
-| Question | Answer |
-| --- | --- |
-| DP vs greedy? | Greedy needs greedy choice property; DP when need to compare multiple choices |
-| Space optimize 1D? | If only need previous row → O(n) instead of O(n²) |
-| How to recognize DP? | Ask: can I define state? recurrence? overlapping subproblems? |
+### LeetCode — Dynamic Programming
 
-**Interview one-liner:** Define state, write recurrence, set base cases, then memoize or tabulate.
+| # | Problem | Sub-pattern | Diff | Link |
+| --- | --- | --- | --- | --- |
+| 70 | Climbing Stairs | 1D DP | 4 | [Solve](https://leetcode.com/problems/climbing-stairs/) |
+| 198 | House Robber | 1D DP | 4 | [Solve](https://leetcode.com/problems/house-robber/) |
+| 322 | Coin Change | 1D DP | 4 | [Solve](https://leetcode.com/problems/coin-change/) |
+| 62 | Unique Paths | 2D DP | 4 | [Solve](https://leetcode.com/problems/unique-paths/) |
+| 1143 | Longest Common Subsequence | 2D DP | 4 | [Solve](https://leetcode.com/problems/longest-common-subsequence/) |
+| 72 | Edit Distance | 2D DP | 4 | [Solve](https://leetcode.com/problems/edit-distance/) |
+| 416 | Partition Equal Subset Sum | Knapsack DP | 3 | [Solve](https://leetcode.com/problems/partition-equal-subset-sum/) |
+| 337 | House Robber III | DP on Trees | 3 | [Solve](https://leetcode.com/problems/house-robber-iii/) |
+
+**One-liner:** DP = optimal substructure + overlapping subproblems — write recurrence before coding.
 
 ---
 
 <a id="topic-14"></a>
 
-## 14. Greedy Algorithms
+## 14. Pattern 13 — Greedy
 
-### Greedy Strategy
+**Why it matters:** Local optimal choices — intervals, scheduling, jump game.
 
-At each step, pick the **locally optimal** choice hoping for global optimum.
-
-**Requires:** Greedy choice property + optimal substructure (not all problems fit).
-
-### Classic Problems
-
-| Problem | Greedy choice |
+| Sub-pattern | Examples |
 | --- | --- |
-| Activity selection | Pick earliest finishing compatible activity |
-| Huffman coding | Merge two smallest frequencies |
-| Fractional knapsack | Take max value/weight ratio first |
-| Minimum platforms | Sort arrivals/departures, sweep line |
-| Jump game | Track farthest reachable index |
-| Merge intervals | Sort by start, merge overlapping |
+| Activity Selection | Non-overlapping intervals |
+| Interval Scheduling | Merge / meeting rooms |
+| Huffman Coding | Merge smallest frequencies |
 
-| Greedy works? | Problem |
-| --- | --- |
-| Yes | Activity selection, Huffman, fractional knapsack |
-| No (need DP) | 0/1 knapsack, coin change with arbitrary denominations |
+### LeetCode — Greedy
 
-| Question | Answer |
-| --- | --- |
-| Prove greedy? | Exchange argument or stay-ahead — mention if asked |
-| Greedy vs DP? | Greedy = one choice per step; DP = explore and compare subproblems |
-| Interval problems? | Sort by start or end first — pattern for many greedy solutions |
+| # | Problem | Sub-pattern | Diff | Link |
+| --- | --- | --- | --- | --- |
+| 435 | Non-overlapping Intervals | Activity Selection | 3 | [Solve](https://leetcode.com/problems/non-overlapping-intervals/) |
+| 452 | Minimum Number of Arrows to Burst Balloons | Activity Selection | 3 | [Solve](https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/) |
+| 56 | Merge Intervals | Interval Scheduling | 3 | [Solve](https://leetcode.com/problems/merge-intervals/) |
+| 253 | Meeting Rooms II | Interval Scheduling | 3 | [Solve](https://leetcode.com/problems/meeting-rooms-ii/) |
+| 55 | Jump Game | Greedy | 3 | [Solve](https://leetcode.com/problems/jump-game/) |
+| 45 | Jump Game II | Greedy | 3 | [Solve](https://leetcode.com/problems/jump-game-ii/) |
+| 134 | Gas Station | Greedy | 3 | [Solve](https://leetcode.com/problems/gas-station/) |
+
+**One-liner:** Interval problems → sort by start or end first; greedy fails on 0/1 knapsack — use DP.
 
 ---
 
 <a id="topic-15"></a>
 
-## 15. Binary Search & Divide & Conquer
+## 15. Pattern 14 — Bit Manipulation
 
-### Divide & Conquer
+**Why it matters:** Compact tricks — XOR pairs, set bits, power of two.
 
-1. **Divide** — split problem into subproblems  
-2. **Conquer** — solve subproblems recursively  
-3. **Combine** — merge results
-
-| Algorithm | Divide step | Combine | Complexity |
-| --- | --- | --- | --- |
-| Merge sort | Split array in half | Merge sorted halves | O(n log n) |
-| Quick sort | Partition around pivot | Already in place | O(n log n) avg |
-| Binary search | Half the range | None | O(log n) |
-| Closest pair | Split by x, check strip | Min of three regions | O(n log n) |
-
-### Master Theorem (sketch)
-
-For `T(n) = aT(n/b) + O(n^d)`:
-
-| Condition | Result |
+| Sub-pattern | Trick |
 | --- | --- |
-| a > b^d | O(n^log_b(a)) |
-| a = b^d | O(n^d log n) |
-| a < b^d | O(n^d) |
+| Basic Operations | AND, OR, XOR, shift |
+| Counting Set Bits | `n & (n-1)` clears lowest bit |
+| XOR Tricks | `a^a=0`, find single number |
 
-### Binary Search on Answer
+### LeetCode — Bit Manipulation
 
-When answer lies in a range and `feasible(mid)` is monotonic:
+| # | Problem | Sub-pattern | Diff | Link |
+| --- | --- | --- | --- | --- |
+| 136 | Single Number | XOR Tricks | 3 | [Solve](https://leetcode.com/problems/single-number/) |
+| 191 | Number of 1 Bits | Counting Set Bits | 3 | [Solve](https://leetcode.com/problems/number-of-1-bits/) |
+| 338 | Counting Bits | Counting Set Bits | 3 | [Solve](https://leetcode.com/problems/counting-bits/) |
+| 260 | Single Number III | XOR Tricks | 3 | [Solve](https://leetcode.com/problems/single-number-iii/) |
+| 371 | Sum of Two Integers | Basic Operations | 3 | [Solve](https://leetcode.com/problems/sum-of-two-integers/) |
+| 231 | Power of Two | Basic Operations | 3 | [Solve](https://leetcode.com/problems/power-of-two/) |
+| 190 | Reverse Bits | Basic Operations | 3 | [Solve](https://leetcode.com/problems/reverse-bits/) |
 
-```text
-low = min, high = max
-while low < high:
-  mid = (low + high) / 2
-  if feasible(mid): high = mid   // or low = mid + 1
-  else: low = mid + 1
-```
-
-**Examples:** Koko eating bananas, minimum ship capacity, max minimum distance.
-
-**Interview one-liner:** If you see "minimize the maximum" or "maximize the minimum" — think binary search on answer space.
+**One-liner:** XOR cancels duplicates — `x ^ x = 0` — great for "find the odd one out".
 
 ---
 
 <a id="topic-16"></a>
 
-## 16. Interview Patterns & Problem-Solving Framework
+## 16. Pattern 15 — Advanced Patterns
 
-### DSA Patterns Mindmap — 16 Essential Patterns
+**Why it matters:** Combines multiple ideas — two pointers, meet in middle, sweep line, prefix sum.
 
-![DSA Patterns Mindmap — 16 Essential Patterns to Crack Coding Interviews](/assets/dsa/dsa-patterns-mindmap.png)
-
-**Difficulty scale:** 2 = Easy · 3 = Medium · 4 = Hard · 5 = Very Hard · 6 = Extremely Hard
-
-| # | Pattern | Sub-patterns (difficulty) | Why it matters |
-| --- | --- | --- | --- |
-| 1 | **Arrays** | Prefix Sum (5), Sliding Window (6), Kadane's / Subarray (3), Binary Search (2) | Foundation of many problems — master indexing & traversal |
-| 2 | **String** | Two Pointers (5), Pattern Matching / KMP (4), Anagram / Frequency Count (3), Palindrome (2) | Text processing, search, and pattern recognition |
-| 3 | **Hashing** | Hash Map (5), Frequency Map (4), Count Distinct (3), Group Anagrams (3), Two Sum (4) | Fast lookups — optimizes time complexity |
-| 4 | **Stack** | Monotonic Stack (4), Balanced Parentheses (4), Next Greater / Smaller (4), Min Stack (2) | LIFO — parsing, backtracking, nested problems |
-| 5 | **Queue / Deque** | Sliding Window Maximum (4), First Negative in Window (3), Deque Optimization (3), Design Queue (2) | FIFO / double-ended — range & window problems |
-| 6 | **Linked List** | Fast–Slow Pointers (2), Reversal (2), Cycle Detection (2), Merge Lists (2) | Sequential ops — memory-efficient real-world data |
-| 7 | **Trees** | Binary Tree Traversal (4), BST (3), Lowest Common Ancestor (3), Tree Construction (3) | Hierarchical data — frequent in interviews & systems |
-| 8 | **Recursion** | Backtracking (5), Divide & Conquer (4), Tree / Graph Recursion (3), Memoization (3) | Break into subproblems — builds optimization thinking |
-| 9 | **Heap** | Priority Queue (3), Top K Elements (3), Heapify / Heap Sort (3) | Priority-based & top-K problems |
-| 10 | **Graphs** | BFS (4), DFS (4), Shortest Path / Dijkstra (4), Topological Sort (3) | Networks, routing, dependencies |
-| 11 | **Trie** | Insert / Search (3), Prefix Problems (3), Word Break (3) | Prefix search & auto-complete |
-| 12 | **Dynamic Programming** | 1D DP (4), 2D DP (4), Knapsack DP (3), DP on Trees (3) | Hard optimization via states & recurrence |
-| 13 | **Greedy** | Activity Selection (3), Interval Scheduling (3), Huffman Coding (3) | Local optimal → global solution |
-| 14 | **Bit Manipulation** | Basic Operations (3), Counting Set Bits (3), XOR Tricks (3) | Low-level & high-performance tricks |
-| 15 | **Advanced Patterns** | Two Pointers (4), Meet in the Middle (3), Sweep Line (3), Prefix Sum (2) | Combines ideas for complex interview problems |
-| 16 | **Range Structures** | Segment Tree (3), Fenwick Tree / BIT (3) | Efficient range queries & updates |
-
-### How to Use This Mindmap
-
-| Step | Action |
+| Sub-pattern | Use case |
 | --- | --- |
-| 1 | Focus on **one pattern at a time** |
-| 2 | Solve problems **easy → hard** within each pattern |
-| 3 | **Revise & revisit** regularly |
-| 4 | **Consistency + practice** = interview success |
+| Two Pointers | Sorted pairs, container water, trapping rain |
+| Meet in the Middle | Split search space |
+| Sweep Line | Events on timeline / skyline |
+| Prefix Sum | Subarray sum equals K |
 
-**One-liner:** Practice → Understand → Optimize → Repeat — map every new problem to one of these 16 patterns first.
+### LeetCode — Advanced Patterns
+
+| # | Problem | Sub-pattern | Diff | Link |
+| --- | --- | --- | --- | --- |
+| 11 | Container With Most Water | Two Pointers | 4 | [Solve](https://leetcode.com/problems/container-with-most-water/) |
+| 15 | 3Sum | Two Pointers | 4 | [Solve](https://leetcode.com/problems/3sum/) |
+| 42 | Trapping Rain Water | Two Pointers | 4 | [Solve](https://leetcode.com/problems/trapping-rain-water/) |
+| 167 | Two Sum II | Two Pointers | 4 | [Solve](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/) |
+| 4 | Median of Two Sorted Arrays | Meet in the Middle | 4 | [Solve](https://leetcode.com/problems/median-of-two-sorted-arrays/) |
+| 218 | The Skyline Problem | Sweep Line | 4 | [Solve](https://leetcode.com/problems/the-skyline-problem/) |
+| 560 | Subarray Sum Equals K | Prefix Sum | 2 | [Solve](https://leetcode.com/problems/subarray-sum-equals-k/) |
+| 525 | Contiguous Array | Prefix Sum | 4 | [Solve](https://leetcode.com/problems/contiguous-array/) |
+
+**One-liner:** "Minimize maximum / maximize minimum" often → binary search on answer (see also Pattern 1 binary search).
 
 ---
 
-### 14 Common Patterns
+<a id="topic-17"></a>
 
-| # | Pattern | Example problems |
-| --- | --- | --- |
-| 1 | Two pointers | Two sum II, container with most water |
-| 2 | Sliding window | Longest substring, min window substring |
-| 3 | Fast & slow pointers | Linked list cycle, middle node |
-| 4 | Merge intervals | Overlapping intervals, meeting rooms |
-| 5 | Cyclic sort | Missing number, find duplicate |
-| 6 | In-place reversal | Reverse linked list, reverse subarray |
-| 7 | BFS | Level order, shortest path |
-| 8 | DFS | Islands, path sum, permutations |
-| 9 | Two heaps | Find median from stream |
-| 10 | Subsets / backtracking | Combinations, N-queens |
-| 11 | Modified binary search | First/last position, search rotated array |
-| 12 | Top K elements | K largest, K frequent |
-| 13 | K-way merge | Merge k sorted lists |
-| 14 | Topological sort | Course schedule, alien dictionary |
+## 17. Pattern 16 — Range Structures
 
-### Problem-Solving Steps (Interview)
+**Why it matters:** Efficient range queries and point updates — segment tree, Fenwick tree (BIT).
 
-| Step | Action |
+| Sub-pattern | Operations |
 | --- | --- |
-| 1 | **Clarify** — input size, edge cases, duplicates, sorted? |
-| 2 | **Examples** — walk through 2–3 cases including edge |
-| 3 | **Brute force** — state complexity first |
-| 4 | **Optimize** — identify pattern, data structure |
-| 5 | **Code** — clean names, handle edge cases |
-| 6 | **Test** — dry run with your examples |
-| 7 | **Analyze** — time and space complexity |
+| Segment Tree | Range query + point/range update O(log n) |
+| Fenwick Tree (BIT) | Prefix sums with updates O(log n) |
 
-### Complexity Targets by Input Size
+### LeetCode — Range Structures
 
-| n | Roughly feasible |
-| --- | --- |
-| n ≤ 20 | O(2ⁿ) — backtracking |
-| n ≤ 500 | O(n³) |
-| n ≤ 5,000 | O(n²) |
-| n ≤ 10⁵ | O(n log n) |
-| n ≤ 10⁶ | O(n) or O(n log n) tight |
+| # | Problem | Sub-pattern | Diff | Link |
+| --- | --- | --- | --- | --- |
+| 307 | Range Sum Query — Mutable | Segment Tree / BIT | 3 | [Solve](https://leetcode.com/problems/range-sum-query-mutable/) |
+| 315 | Count of Smaller Numbers After Self | Fenwick Tree | 3 | [Solve](https://leetcode.com/problems/count-of-smaller-numbers-after-self/) |
+| 327 | Count of Range Sum | Segment Tree | 3 | [Solve](https://leetcode.com/problems/count-of-range-sum/) |
+| 699 | Falling Squares | Segment Tree | 3 | [Solve](https://leetcode.com/problems/falling-squares/) |
 
-### Practice Platforms
-
-| Platform | Best for |
-| --- | --- |
-| LeetCode | Interview-style tagged problems |
-| HackerRank | Basics and timed practice |
-| NeetCode / Blind 75 | Curated pattern-based lists |
-
-**Suggested learning order:** Complexity → arrays/two pointers → strings/window → linked list → stack/queue → hash → trees → heap → graphs → sorting/search → recursion → DP → greedy → patterns.
-
-**One-liner:** Recognize the pattern first, then pick the data structure — speed in interviews comes from pattern matching, not memorizing every solution.
+**One-liner:** When you see many range sum/min/max queries with updates — think BIT or segment tree.
 
 ---
 
@@ -884,67 +572,47 @@ while low < high:
 
 ## Interview Quick Answers
 
+### Pattern Map (Quick Reference)
+
+| # | Pattern | Go-to signal |
+| --- | --- | --- |
+| 1 | Arrays | Subarray, sorted search, window on array |
+| 2 | String | Palindrome, anagram, substring |
+| 3 | Hashing | Lookup, frequency, duplicate |
+| 4 | Stack | Brackets, next greater, monotonic |
+| 5 | Queue / Deque | BFS, window max |
+| 6 | Linked List | Reverse, cycle, merge |
+| 7 | Trees | Traversal, BST, LCA |
+| 8 | Recursion | Subsets, permutations, explore all |
+| 9 | Heap | Top K, K-way merge, median |
+| 10 | Graphs | Islands, shortest path, schedule |
+| 11 | Trie | Prefix, dictionary words |
+| 12 | DP | Count ways, min/max optimization |
+| 13 | Greedy | Intervals, local best choice |
+| 14 | Bit Manipulation | XOR, single number, bits |
+| 15 | Advanced | Two pointers, prefix sum, sweep |
+| 16 | Range Structures | Range query + update |
+
+### Problem-Solving Steps
+
+| Step | Action |
+| --- | --- |
+| 1 | Clarify input, edge cases, constraints |
+| 2 | Map to **one of 16 patterns** |
+| 3 | Brute force + complexity |
+| 4 | Optimize → pick data structure |
+| 5 | Code, test, state time + space |
+
 | Topic | Key Points |
 | --- | --- |
-| Big-O | Worst-case growth rate; state time + space after solution |
-| Array vs linked list | Array O(1) access; linked list O(1) insert at head |
-| Stack vs queue | LIFO vs FIFO — DFS vs BFS |
-| Hash map | O(1) avg lookup — two sum, frequency |
-| BST | Left < root < right; inorder = sorted |
-| BFS vs DFS | BFS shortest unweighted path; DFS cycles, components |
-| Merge vs quick sort | Merge stable O(n log n) always; quick in-place, O(n²) worst |
-| Binary search | Sorted input or monotonic answer space |
-| DP | Optimal substructure + overlapping subproblems |
-| Greedy | Local optimal each step — prove or know counterexamples |
-| Two pointers | Sorted array pairs, in-place partition |
-| Sliding window | Contiguous subarray/substring optimization |
-| First repeating char | One pass + `HashSet` — e.g. `"swiss"` → `'s'` |
-| First non-repeating char | Count freq + second pass — e.g. `"swiss"` → `'w'` |
-| DSA patterns mindmap | 16 categories — arrays, strings, hashing, stack, graphs, DP, trie, greedy, bit ops, range structures |
-| Pattern recognition | Map problem to one pattern before coding — see Topic 16 mindmap |
-| Top K | Min-heap of size k — O(n log k) |
-| Backtracking | Choose → explore → undo |
+| Big-O | Worst-case growth; state time + space |
+| First repeating char | `"swiss"` → `'s'` — one pass + `HashSet` |
+| First non-repeating char | `"swiss"` → `'w'` — freq map + second pass |
+| Two pointers | 11, 15, 42, 167 on LeetCode |
+| Sliding window | 3, 76, 424, 904 on LeetCode |
+| Hash map | Two sum, frequency — O(1) avg lookup |
+| BFS vs DFS | BFS shortest unweighted; DFS explore/backtrack |
+| DP | State + recurrence + base case |
+| Top K | Min-heap size K — O(n log k) |
 
-### What is Time Complexity?
-
-> **One-liner:** How runtime grows with input size `n` — expressed in Big-O for worst case.
-
-### Array vs Linked List?
-
-| Point | Array | Linked List |
-| --- | --- | --- |
-| Access | O(1) by index | O(n) |
-| Insert at head | O(n) shift | O(1) |
-| Memory | Contiguous cache-friendly | Extra pointer per node |
-
-> **One-liner:** Arrays for random access; linked lists for frequent insert/delete at ends or unknown size.
-
-### When to Use Hash Map?
-
-| Signal | Example |
-| --- | --- |
-| Need O(1) lookup by value/key | Two sum, anagram groups |
-| Count frequency | Char count, word count |
-| Track seen elements | Duplicate detection |
-
-> **One-liner:** When brute force is O(n²) and you need "have I seen this before?" — use a hash map.
-
-### BFS vs DFS?
-
-| | BFS | DFS |
-| --- | --- | --- |
-| Structure | Queue | Stack / recursion |
-| Path | Shortest in unweighted graph | Deep exploration |
-| Memory | O(width) can be large | O(height) |
-
-> **One-liner:** BFS for shortest path and levels; DFS for exhaustive search and backtracking.
-
-### How to Approach a Coding Interview?
-
-1. Clarify constraints and edge cases  
-2. Start with brute force + complexity  
-3. Optimize using a known pattern  
-4. Code clearly, test with examples  
-5. State final time and space complexity  
-
-> **One-liner:** Think out loud, collaborate, and prioritize correct brute force over silent wrong optimal code.
+> **One-liner:** Practice → Understand → Optimize → Repeat — one pattern at a time with LeetCode links above.
