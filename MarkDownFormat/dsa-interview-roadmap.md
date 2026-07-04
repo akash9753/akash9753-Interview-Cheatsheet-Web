@@ -752,6 +752,44 @@ while low < high:
 
 ## 16. Interview Patterns & Problem-Solving Framework
 
+### DSA Patterns Mindmap — 16 Essential Patterns
+
+![DSA Patterns Mindmap — 16 Essential Patterns to Crack Coding Interviews](/assets/dsa/dsa-patterns-mindmap.png)
+
+**Difficulty scale:** 2 = Easy · 3 = Medium · 4 = Hard · 5 = Very Hard · 6 = Extremely Hard
+
+| # | Pattern | Sub-patterns (difficulty) | Why it matters |
+| --- | --- | --- | --- |
+| 1 | **Arrays** | Prefix Sum (5), Sliding Window (6), Kadane's / Subarray (3), Binary Search (2) | Foundation of many problems — master indexing & traversal |
+| 2 | **String** | Two Pointers (5), Pattern Matching / KMP (4), Anagram / Frequency Count (3), Palindrome (2) | Text processing, search, and pattern recognition |
+| 3 | **Hashing** | Hash Map (5), Frequency Map (4), Count Distinct (3), Group Anagrams (3), Two Sum (4) | Fast lookups — optimizes time complexity |
+| 4 | **Stack** | Monotonic Stack (4), Balanced Parentheses (4), Next Greater / Smaller (4), Min Stack (2) | LIFO — parsing, backtracking, nested problems |
+| 5 | **Queue / Deque** | Sliding Window Maximum (4), First Negative in Window (3), Deque Optimization (3), Design Queue (2) | FIFO / double-ended — range & window problems |
+| 6 | **Linked List** | Fast–Slow Pointers (2), Reversal (2), Cycle Detection (2), Merge Lists (2) | Sequential ops — memory-efficient real-world data |
+| 7 | **Trees** | Binary Tree Traversal (4), BST (3), Lowest Common Ancestor (3), Tree Construction (3) | Hierarchical data — frequent in interviews & systems |
+| 8 | **Recursion** | Backtracking (5), Divide & Conquer (4), Tree / Graph Recursion (3), Memoization (3) | Break into subproblems — builds optimization thinking |
+| 9 | **Heap** | Priority Queue (3), Top K Elements (3), Heapify / Heap Sort (3) | Priority-based & top-K problems |
+| 10 | **Graphs** | BFS (4), DFS (4), Shortest Path / Dijkstra (4), Topological Sort (3) | Networks, routing, dependencies |
+| 11 | **Trie** | Insert / Search (3), Prefix Problems (3), Word Break (3) | Prefix search & auto-complete |
+| 12 | **Dynamic Programming** | 1D DP (4), 2D DP (4), Knapsack DP (3), DP on Trees (3) | Hard optimization via states & recurrence |
+| 13 | **Greedy** | Activity Selection (3), Interval Scheduling (3), Huffman Coding (3) | Local optimal → global solution |
+| 14 | **Bit Manipulation** | Basic Operations (3), Counting Set Bits (3), XOR Tricks (3) | Low-level & high-performance tricks |
+| 15 | **Advanced Patterns** | Two Pointers (4), Meet in the Middle (3), Sweep Line (3), Prefix Sum (2) | Combines ideas for complex interview problems |
+| 16 | **Range Structures** | Segment Tree (3), Fenwick Tree / BIT (3) | Efficient range queries & updates |
+
+### How to Use This Mindmap
+
+| Step | Action |
+| --- | --- |
+| 1 | Focus on **one pattern at a time** |
+| 2 | Solve problems **easy → hard** within each pattern |
+| 3 | **Revise & revisit** regularly |
+| 4 | **Consistency + practice** = interview success |
+
+**One-liner:** Practice → Understand → Optimize → Repeat — map every new problem to one of these 16 patterns first.
+
+---
+
 ### 14 Common Patterns
 
 | # | Pattern | Example problems |
@@ -826,6 +864,8 @@ while low < high:
 | Two pointers | Sorted array pairs, in-place partition |
 | Sliding window | Contiguous subarray/substring optimization |
 | First repeating char | One pass + `HashSet` — e.g. `"swiss"` → `'s'` |
+| DSA patterns mindmap | 16 categories — arrays, strings, hashing, stack, graphs, DP, trie, greedy, bit ops, range structures |
+| Pattern recognition | Map problem to one pattern before coding — see Topic 16 mindmap |
 | Top K | Min-heap of size k — O(n log k) |
 | Backtracking | Choose → explore → undo |
 
