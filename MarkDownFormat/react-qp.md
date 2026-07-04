@@ -1556,6 +1556,128 @@ Logout clears token + Redux state
 
 **Memoization** caches expensive results and reuses them when inputs unchanged.
 
+### Higher Order Component (HOC)
+
+A **Higher Order Component** is a function that **takes a component and returns a new enhanced component** — adds behavior without changing the original.
+
+```text
+HOC pattern:
+  withFeature(WrappedComponent) → EnhancedComponent
+
+EnhancedComponent = extra logic + WrappedComponent
+```
+
+```jsx
+// HOC — inject auth check
+function withAuth(WrappedComponent) {
+  return function AuthComponent(props) {
+    const { user } = useContext(UserContext);
+    if (!user) return <Navigate to="/login" />;
+    return <WrappedComponent {...props} user={user} />;
+  };
+}
+
+const Dashboard = withAuth(function Dashboard({ user }) {
+  return <h1>Welcome, {user.name}</h1>;
+});
+```
+
+| Aspect | Detail |
+| --- | --- |
+| **Pattern** | `const Enhanced = hoc(Original)` |
+| **Purpose** | Reuse cross-cutting logic — auth, logging, data fetching |
+| **Props** | Spread `{...props}` to wrapped component |
+| **Display name** | Set `Enhanced.displayName` for DevTools debugging |
+
+#### Common HOC Use Cases
+
+| HOC | Adds |
+| --- | --- |
+| `withAuth` | Redirect if not logged in |
+| `withLoading` | Show spinner while data loads |
+| `withRouter` (legacy) | Inject route props — replaced by hooks |
+| `connect()` (Redux) | Inject `state` + `dispatch` — replaced by `useSelector` |
+
+| Pros | Cons |
+| --- | --- |
+| Reuse logic across many components | **Wrapper hell** — nested HOCs hard to read |
+| Separation of concerns | Props can collide or get hidden |
+| Classic React pattern (pre-hooks) | Harder to trace than hooks |
+| Still used in some libraries | Prefer **custom hooks** in modern React |
+
+**When to use today:** Rare in new code — use **custom hooks** (`useAuth`, `useFetch`) instead. Know HOC for interviews and legacy codebases.
+
+---
+
+### React.memo — Built-in HOC
+
+`React.memo` **is** a Higher Order Component — it wraps a functional component and **skips re-render if props are shallow-equal**.
+
+```jsx
+const User = React.memo(function User({ name, age }) {
+  console.log('User rendered');
+  return <p>{name} — {age}</p>;
+});
+
+// Parent re-renders but User props unchanged → User does NOT re-render
+```
+
+#### Custom props comparison
+
+```jsx
+const ProductRow = React.memo(
+  function ProductRow({ product }) {
+    return <tr><td>{product.name}</td><td>{product.price}</td></tr>;
+  },
+  (prevProps, nextProps) => {
+    // return true = props equal = SKIP re-render
+    return prevProps.product.id === nextProps.product.id
+        && prevProps.product.price === nextProps.product.price;
+  }
+);
+```
+
+| Aspect | `React.memo` | Custom HOC |
+| --- | --- | --- |
+| **Purpose** | Prevent re-render when props same | Add any behavior (auth, fetch, theme) |
+| **Built-in** | Yes — React API | You write the wrapper function |
+| **Comparison** | Shallow props by default; custom fn optional | Full control inside wrapper |
+| **Similar to** | Class `shouldComponentUpdate` | Any cross-cutting enhancement |
+
+| React.memo — Pros | React.memo — Cons |
+| --- | --- |
+| Easy performance win for pure presentational children | Shallow compare fails on new object/array refs every render |
+| Pairs with `useCallback` / `useMemo` for stable props | Useless if parent always passes new props |
+| Built-in — no custom HOC code | Over-memoizing adds complexity with little gain |
+| Custom compare fn for deep control | Does not prevent re-render from **Context** changes |
+
+**Interview one-liner:** HOC = function(Component) → EnhancedComponent; `React.memo` is React's built-in HOC to skip re-render when props unchanged.
+
+#### HOC vs Custom Hooks vs React.memo
+
+| Pattern | Modern? | Best for |
+| --- | --- | --- |
+| **Custom hook** | ✅ Preferred | Reusable stateful logic — `useAuth`, `useProducts` |
+| **React.memo** | ✅ Common | Skip child re-render when props stable |
+| **Classic HOC** | ⚠️ Legacy | Old codebases, library APIs — know for interviews |
+| **Render props** | ⚠️ Less common | Sharing render logic — `<DataProvider render={...} />` |
+
+```jsx
+// Modern — custom hook (replaces withAuth HOC)
+function useAuth() {
+  const { user } = useContext(UserContext);
+  if (!user) throw new RedirectToLogin();
+  return user;
+}
+
+function Dashboard() {
+  const user = useAuth();
+  return <h1>Welcome, {user.name}</h1>;
+}
+```
+
+---
+
 <a id="react-memo-vs-usememo"></a>
 
 ### React.memo vs useMemo — They Are NOT the Same
@@ -2153,6 +2275,10 @@ const data = use(dataPromise);
 | shouldComponentUpdate vs useEffect | `React.memo` = functional equivalent; `useEffect` runs after render, cannot block it |
 | React.memo vs useMemo | memo = skip component re-render; useMemo = skip value recalculation — not the same |
 | React.memo / useMemo / useCallback | memo = component; useMemo = value; useCallback = stable function |
+| HOC | Function(Component) → EnhancedComponent — auth, logging; prefer custom hooks today |
+| React.memo | Built-in HOC — skip re-render when props shallow-equal; custom compare fn optional |
+| HOC vs React.memo | HOC adds any behavior; React.memo only prevents re-render on same props |
+| HOC vs custom hook | Hooks preferred in modern React — less wrapper nesting, easier to test |
 | useRef | DOM access or persist value without re-render |
 | Context API | Global state without prop drilling — auth, theme |
 | React Router | `BrowserRouter`, `Routes`, `Route`, `NavLink`, `useParams`, `useNavigate` |
