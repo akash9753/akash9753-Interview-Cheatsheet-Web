@@ -1672,22 +1672,28 @@ Hooks let functional components use state, lifecycle, context, and more. **Rules
 
 ### Hooks Overview
 
-| Hook | Primary use |
-| --- | --- |
-| `useState` | Local component state |
-| `useEffect` | Side effects after render |
-| `useContext` | Read Context value |
-| `useReducer` | Complex state logic |
-| `useRef` | DOM ref or mutable value |
-| `useMemo` | Cache computed value |
-| `useCallback` | Cache function reference |
-| `useLayoutEffect` | Sync DOM effect before paint |
-| `useId` | Stable unique IDs (a11y) |
-| `useImperativeHandle` | Customize ref exposed to parent |
-| `useTransition` | Non-urgent state updates (React 18) |
-| `useDeferredValue` | Defer updating a value (React 18) |
-| `useSyncExternalStore` | Subscribe to external store |
-| Custom hook | Reuse stateful logic |
+| Hook | Category | Primary use |
+| --- | --- | --- |
+| `useState` | State | Local component state |
+| `useReducer` | State | Complex state with actions |
+| `useEffect` | Side effects | API, subscriptions, sync after render |
+| `useLayoutEffect` | Side effects | DOM measure/mutate before paint |
+| `useInsertionEffect` | Side effects | Inject styles before layout (CSS-in-JS) |
+| `useContext` | Context | Read shared global data |
+| `useRef` | Ref | DOM access or mutable value (no re-render) |
+| `useImperativeHandle` | Ref | Expose custom ref API to parent |
+| `useMemo` | Performance | Cache expensive computed value |
+| `useCallback` | Performance | Stable function reference |
+| `useId` | Utility | SSR-safe unique IDs (a11y) |
+| `useDebugValue` | Utility | Label custom hooks in DevTools |
+| `useTransition` | Concurrent (18+) | Mark updates as non-urgent |
+| `useDeferredValue` | Concurrent (18+) | Defer a value behind urgent UI |
+| `useSyncExternalStore` | External store | Subscribe to non-React store |
+| `useActionState` | Forms (19+) | Form action + pending/error state |
+| `useFormStatus` | Forms (19+) | Read parent form submit status |
+| `useOptimistic` | UI (19+) | Optimistic UI while async pending |
+| `use` | Data (19+) | Read Promise or Context (in render) |
+| Custom hook | Pattern | Reuse stateful logic (`use` prefix) |
 
 ---
 
@@ -1837,6 +1843,29 @@ useLayoutEffect(() => {
 | Good for layout measurements | Prefer `useEffect` by default |
 | Fixes visual flicker | SSR warnings — runs only on client |
 
+**When to use:** Measure DOM size/position before user sees flicker — tooltips, animations.
+
+---
+
+### useInsertionEffect
+
+**Use:** Inject styles into DOM **before** `useLayoutEffect` runs — built for CSS-in-JS libraries (styled-components, emotion).
+
+```jsx
+useInsertionEffect(() => {
+  // inject dynamic CSS into document head
+  return () => { /* remove on unmount */ };
+}, []);
+```
+
+| Pros | Cons |
+| --- | --- |
+| Runs before layout effects — avoids flash | **Rarely needed** in app code |
+| Correct hook for CSS-in-JS libs | Must not trigger layout reads here |
+| Prevents style/layout race | Client-only — SSR warnings |
+
+**When to use:** Almost never in app code — library authors use it for dynamic styles.
+
 ---
 
 ### useId
@@ -1974,13 +2003,123 @@ function useFetch(url) {
 | `useDispatch`, `useSelector` | Redux Toolkit — [Topic 13](#topic-13) | Dispatch actions, read store state |
 | `useFormikContext`, `useField` | Formik — [Topic 9](#topic-9) | Form state inside Formik forms |
 
-### React 19 Hooks (Brief)
+---
 
-| Hook | Use |
+### useActionState (React 19+)
+
+**Use:** Manage form/action state from a **Server Action** or async handler — returns `[state, formAction, isPending]`.
+
+```jsx
+const [state, submitAction, isPending] = useActionState(saveUser, initialState);
+
+<form action={submitAction}>
+  <button disabled={isPending}>{isPending ? 'Saving…' : 'Save'}</button>
+  {state?.error && <p>{state.error}</p>}
+</form>
+```
+
+| Pros | Cons |
 | --- | --- |
-| `useActionState` | Form actions with pending/error state |
-| `useFormStatus` | Read parent form submission status |
-| `useOptimistic` | Optimistic UI while async action pending |
+| Built-in pending + error state for forms | React 19+ / Next.js App Router pattern |
+| Replaces manual `useState` for submit flow | Tied to form actions — learning curve |
+| Works with Server Actions | Less familiar than classic `onSubmit` + axios |
+
+**When to use:** Server Actions, progressive forms, built-in pending UI.
+
+---
+
+### useFormStatus (React 19+)
+
+**Use:** Read **parent `<form>`** submission status from a child component — `pending`, `data`, `method`, `action`.
+
+```jsx
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return <button disabled={pending}>{pending ? 'Submitting…' : 'Submit'}</button>;
+}
+```
+
+| Pros | Cons |
+| --- | --- |
+| Decouple submit button from form logic | Must be **inside** a `<form>` |
+| No prop drilling for `isLoading` | Only works with form actions |
+| Clean loading states on nested buttons | React 19+ only |
+
+**When to use:** Reusable submit buttons inside forms without lifting pending state.
+
+---
+
+### useOptimistic (React 19+)
+
+**Use:** Show **optimistic UI** immediately while async action completes — rolls back on error.
+
+```jsx
+const [optimisticMessages, addOptimistic] = useOptimistic(messages, (state, newMsg) => [...state, newMsg]);
+
+async function sendMessage(text) {
+  addOptimistic({ id: 'temp', text, sending: true });
+  await api.post('/messages', { text });
+}
+```
+
+| Pros | Cons |
+| --- | --- |
+| Instant UX — feels fast | Must handle rollback on failure |
+| Built-in optimistic pattern | State sync with server can get tricky |
+| Great for chat, likes, todos | React 19+ — newer mental model |
+
+**When to use:** Chat apps, like buttons, todo toggles — anywhere UI should update before server confirms.
+
+---
+
+### use (React 19+)
+
+**Use:** Read a **Promise** or **Context** directly in render (with Suspense for promises). Can be called conditionally — exception to Rules of Hooks for `use` only.
+
+```jsx
+// Read Context conditionally
+if (condition) {
+  const theme = use(ThemeContext);
+}
+
+// Read Promise with Suspense boundary
+const data = use(dataPromise);
+```
+
+| Pros | Cons |
+| --- | --- |
+| Simpler async data in render + Suspense | Requires Suspense boundary for promises |
+| Can read context conditionally | New pattern — teams may not know it yet |
+| Replaces some `useEffect` + fetch boilerplate | Error handling needs Error Boundary / try-catch |
+
+**When to use:** React Server Components, Suspense data fetching, conditional context reads.
+
+---
+
+### All Hooks — Pros & Cons Summary
+
+| Hook | Best for | Main pro | Main con |
+| --- | --- | --- | --- |
+| `useState` | Counters, toggles, simple state | Simplest state API | Many fields → messy |
+| `useReducer` | Forms, wizards, state machines | Predictable transitions | More boilerplate |
+| `useEffect` | Fetch, subscriptions, timers | One API for lifecycle | Wrong deps → bugs |
+| `useLayoutEffect` | Measure DOM, prevent flicker | Runs before paint | Blocks rendering |
+| `useInsertionEffect` | CSS-in-JS libraries | Styles before layout | Not for app dev |
+| `useContext` | Theme, auth, locale | No prop drilling | All consumers re-render |
+| `useRef` | DOM focus, timers, prev value | No re-render on change | Not for UI state |
+| `useImperativeHandle` | Expose focus/scroll API | Imperative when needed | Breaks declarative style |
+| `useMemo` | Heavy filters, derived lists | Skips recalculation | Stale if deps wrong |
+| `useCallback` | Handlers for `React.memo` children | Stable function ref | Useless without memo child |
+| `useId` | Label/input pairs, ARIA | SSR-safe IDs | Not for list keys |
+| `useDebugValue` | Custom hook DevTools label | Easier debugging | Dev-only |
+| `useTransition` | Tab switch, heavy filter | Keeps UI responsive | Needs loading UI |
+| `useDeferredValue` | Search-as-you-type list | Simple deferral | Brief stale UI |
+| `useSyncExternalStore` | External store subscription | SSR-safe external data | Low-level API |
+| `useActionState` | Server form actions | Pending + error built-in | React 19 / actions only |
+| `useFormStatus` | Submit button in form | No pending prop drill | Must be inside `<form>` |
+| `useOptimistic` | Chat, likes, instant UI | Optimistic UX | Rollback on failure |
+| `use` | Promise/Context in render | Conditional context | Needs Suspense |
+| Custom hook | Shared logic (`useAuth`) | DRY composable logic | Can over-abstract |
 
 ### Hooks Rules — Quick Reminder
 
@@ -1988,7 +2127,7 @@ function useFetch(url) {
 2. Only call hooks from **functional components** or **custom hooks**
 3. ESLint plugin `eslint-plugin-react-hooks` enforces these rules
 
-**Interview one-liner:** Core hooks — `useState` (state), `useEffect` (side effects), `useContext` (global data), `useRef` (DOM/mutable), `useMemo`/`useCallback` (performance), `useReducer` (complex state).
+**Interview one-liner:** Core hooks — `useState` (state), `useEffect` (side effects), `useContext` (global), `useRef` (DOM/mutable), `useMemo`/`useCallback` (perf), `useReducer` (complex state); React 19 adds `useActionState`, `useFormStatus`, `useOptimistic`, `use`.
 
 ---
 
@@ -2025,7 +2164,12 @@ function useFetch(url) {
 | JWT auth | Login → store token → interceptor → protected routes |
 | memo / useMemo / useCallback | Skip re-renders, cache values, stable functions |
 | Error Boundary | Class component catching child render errors |
-| All React hooks | useState/effect/context/ref = core; useMemo/Callback = perf; useReducer = complex state |
+| All React hooks | Core: useState, useEffect, useContext, useRef; Perf: useMemo, useCallback; Complex: useReducer; React 19: useActionState, useFormStatus, useOptimistic, use |
+| useState pros/cons | Simple local state; cons — stale closure, spread for objects |
+| useEffect pros/cons | Side effects + cleanup; cons — wrong deps, runs after render |
+| useMemo vs useCallback | useMemo = cache value; useCallback = cache function — pair with React.memo |
+| useLayoutEffect vs useEffect | Layout = sync before paint; Effect = async after paint — default to useEffect |
+| useTransition vs useDeferredValue | Transition = wrap setState; DeferredValue = lag a value — both for responsive UI |
 | Babel | Transpiler — JSX/ES6+ to browser JS; does not bundle |
 | Webpack | Configurable bundler — JS, CSS, images → optimized bundle |
 | Parcel | Zero-config bundler — easy setup, less flexible |
