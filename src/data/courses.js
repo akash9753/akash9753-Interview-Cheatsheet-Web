@@ -2,7 +2,7 @@ export const courseCategories = [
   {
     id: 'fundamentals',
     label: 'Fundamentals',
-    description: 'Core languages, OOP, and programming principles',
+    description: 'Core languages, OOP, DSA, and programming principles',
   },
   {
     id: 'backend',
@@ -139,6 +139,15 @@ export const courses = [
     cardTitle: 'System Design',
     cardDesc: 'HLD vs LLD, SOLID, design patterns, scalability, microservices, databases, caching, CAP, messaging, and classic interview problems.',
     brand: 'System Design Interview Roadmap',
+  },
+  {
+    slug: 'dsa',
+    mdFile: 'dsa-interview-roadmap.md',
+    num: '15',
+    category: 'fundamentals',
+    cardTitle: 'DSA',
+    cardDesc: 'Data structures, algorithms, Big-O, arrays, trees, graphs, sorting, DP, greedy, and interview patterns.',
+    brand: 'DSA Interview Roadmap',
   },
 ];
 
