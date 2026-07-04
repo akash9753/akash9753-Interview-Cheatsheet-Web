@@ -1753,6 +1753,311 @@ sp_helptext 'enrollment_details';
 
 ## 13. Stored Procedures and Programmability
 
+### Stored Procedures — Definition
+
+A stored procedure is a set of SQL statements and procedural logic that can perform operations such as **INSERT**, **UPDATE**, **DELETE**, and **QUERYING** data.
+
+| Benefit | Detail |
+| --- | --- |
+| Reusability | Write once, execute many times |
+| Performance | Precompiled execution plan (cached) |
+| Security | `GRANT EXECUTE` without exposing tables |
+| Maintainability | Business logic centralized in DB layer |
+
+### Types of Stored Procedures
+
+| Type | Description |
+| --- | --- |
+| **Without parameters** | Fixed query — no inputs |
+| **With INPUT parameters** | Caller passes values in |
+| **With INPUT and OUTPUT parameters** | Returns values to caller via `OUTPUT` |
+
+### Procedural Logic in T-SQL
+
+Procedural logic means step-by-step (imperative) flow inside a stored procedure.
+
+| Construct | Syntax | Purpose |
+| --- | --- | --- |
+| Variables | `DECLARE @x INT` | Store temporary values |
+| Conditions | `IF ... ELSE` | Decision-making logic |
+| Loops | `WHILE ...` | Repeat until condition met |
+| Error handling | `TRY ... CATCH` | Handle exceptions gracefully |
+| Flow control | `RETURN`, `BREAK`, `CONTINUE` | Control execution flow |
+
+---
+
+### Type 1 — Stored Procedure Without Parameters
+
+```sql
+CREATE OR ALTER PROCEDURE get_employees_sp
+AS
+BEGIN
+    SELECT
+        emp_id,
+        fname,
+        lname,
+        email,
+        job_title,
+        department,
+        salary,
+        hire_date,
+        city
+    FROM employees;
+END;
+GO
+
+EXEC get_employees_sp;
+GO
+```
+
+---
+
+### Type 2 — Stored Procedure With Input Parameters
+
+```sql
+CREATE OR ALTER PROCEDURE get_emp_by_dept_sp
+    @p_department VARCHAR(100)
+AS
+BEGIN
+    SELECT *
+    FROM employees
+    WHERE department = @p_department;
+END;
+GO
+
+-- Named parameter
+EXEC get_emp_by_dept_sp @p_department = 'Tech';
+GO
+
+-- Positional parameter
+EXEC get_emp_by_dept_sp 'Tech';
+GO
+
+-- View procedure definition
+EXEC sp_helptext 'get_emp_by_dept_sp';
+GO
+
+-- Modify existing procedure
+ALTER PROCEDURE get_emp_by_dept_sp
+    @p_department VARCHAR(100)
+AS
+BEGIN
+    SELECT *
+    FROM employees
+    WHERE department = @p_department;
+END;
+GO
+```
+
+#### Update With Stored Procedure (Input Parameters)
+
+```sql
+CREATE OR ALTER PROCEDURE update_emp_salary
+    @p_employee_id INT,
+    @p_new_salary NUMERIC(10, 2)
+AS
+BEGIN
+    UPDATE employees
+    SET salary = @p_new_salary
+    WHERE emp_id = @p_employee_id;
+END;
+GO
+```
+
+**Execute — named parameters:**
+
+```sql
+EXEC update_emp_salary
+    @p_employee_id = 102,
+    @p_new_salary = 125000.00;
+GO
+```
+
+**Execute — positional parameters:**
+
+```sql
+EXEC update_emp_salary 102, 125000.00;
+GO
+```
+
+#### Default Parameter Values
+
+```sql
+CREATE OR ALTER PROCEDURE update_emp_salary
+    @p_employee_id INT = 102,
+    @p_new_salary NUMERIC(10, 2) = 125000.00
+AS
+BEGIN
+    UPDATE employees
+    SET salary = @p_new_salary
+    WHERE emp_id = @p_employee_id;
+END;
+GO
+
+-- Uses defaults when no arguments passed
+EXEC update_emp_salary;
+GO
+
+EXEC update_emp_salary 102, 125000.00;
+GO
+```
+
+---
+
+### Type 3 — Stored Procedure With Input and OUTPUT Parameters
+
+```sql
+CREATE OR ALTER PROCEDURE get_emp_dept
+    @p_dept VARCHAR(100),
+    @dept_avg NUMERIC(10, 2) OUTPUT
+AS
+BEGIN
+    SELECT @dept_avg = AVG(salary)
+    FROM employees
+    WHERE department = @p_dept;
+END;
+GO
+
+DECLARE @AvgDeptResult NUMERIC(10, 2);
+
+EXEC get_emp_dept
+    @p_dept = 'Sales',
+    @dept_avg = @AvgDeptResult OUTPUT;
+
+SELECT @AvgDeptResult AS DepartmentAverageSalary;
+GO
+```
+
+---
+
+### Procedural Logic — Safe Salary Update
+
+**Use case:** Update salary only if the new salary is a **raise** (greater than current). Return a message about the result.
+
+| Step | Logic |
+| --- | --- |
+| 1 | Get `emp_id` and `new_salary` as input |
+| 2 | Check if `emp_id` exists |
+| 3 | Compare `new_salary` with current — update only if higher |
+
+```sql
+CREATE OR ALTER PROCEDURE update_emp_salary_safely_sp
+    @p_employee_id INT,
+    @p_new_salary NUMERIC(10, 2),
+    @p_message VARCHAR(200) OUTPUT
+AS
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM employees WHERE emp_id = @p_employee_id)
+    BEGIN
+        SET @p_message = 'ERROR: EMP ID does not exist.';
+        RETURN;
+    END;
+
+    DECLARE @current_sal NUMERIC(10, 2);
+
+    SELECT @current_sal = salary
+    FROM employees
+    WHERE emp_id = @p_employee_id;
+
+    IF @p_new_salary > @current_sal
+    BEGIN
+        UPDATE employees
+        SET salary = @p_new_salary
+        WHERE emp_id = @p_employee_id;
+
+        SET @p_message = 'Success: Salary updated.';
+    END
+    ELSE
+    BEGIN
+        SET @p_message = 'ERROR: New salary should be greater than current salary.';
+    END
+END;
+GO
+```
+
+**Execute — named parameters:**
+
+```sql
+DECLARE @ResultMessage VARCHAR(200);
+
+EXEC update_emp_salary_safely_sp
+    @p_employee_id = 102,
+    @p_new_salary = 130000.00,
+    @p_message = @ResultMessage OUTPUT;
+
+SELECT @ResultMessage AS UpdateStatus;
+GO
+```
+
+**Execute — positional parameters:**
+
+```sql
+DECLARE @myresult VARCHAR(100);
+
+EXEC update_emp_salary_safely_sp 103, 95000, @myresult OUTPUT;
+
+SELECT @myresult;
+GO
+```
+
+---
+
+### How to Check Existing Stored Procedures
+
+| # | Purpose | Query |
+| --- | --- | --- |
+| 1 | Count all (user + system) | `SELECT COUNT(*) FROM sys.procedures;` |
+| 2 | Count user-defined only | `SELECT COUNT(*) FROM sys.procedures WHERE is_ms_shipped = 0;` |
+| 3 | List all procedure names | `SELECT name FROM sys.procedures ORDER BY name;` |
+| 4 | List with schema name | `SELECT SCHEMA_NAME(schema_id), name FROM sys.procedures;` |
+| 5 | Count via INFORMATION_SCHEMA | `SELECT COUNT(*) FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = 'PROCEDURE';` |
+| 6 | List via INFORMATION_SCHEMA | `SELECT ROUTINE_NAME FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = 'PROCEDURE';` |
+
+```sql
+-- List with schema
+SELECT
+    SCHEMA_NAME(schema_id) AS SchemaName,
+    name AS StoredProcedureName
+FROM sys.procedures
+ORDER BY SchemaName, StoredProcedureName;
+GO
+```
+
+### Modify or Delete a Procedure
+
+```sql
+ALTER PROCEDURE sp_GetAllTechEmployees
+    ...
+GO
+
+DROP PROCEDURE sp_GetAllTechEmployees;
+GO
+```
+
+### Stored Procedures — Quick Reference
+
+| Topic | Procedure / Command |
+| --- | --- |
+| No parameters | `get_employees_sp` |
+| Input parameters | `get_emp_by_dept_sp` |
+| Update salary | `update_emp_salary` |
+| Output parameter (avg) | `get_emp_dept` |
+| Safe update with logic | `update_emp_salary_safely_sp` |
+| View definition | `EXEC sp_helptext 'procedure_name'` |
+| List procedures | `sys.procedures` or `INFORMATION_SCHEMA.ROUTINES` |
+
+| Question | Answer |
+| --- | --- |
+| Named vs positional EXEC? | Named = readable, order-independent; positional = shorter but order matters |
+| `CREATE OR ALTER` vs `ALTER`? | `CREATE OR ALTER` creates if missing; `ALTER` fails if not exists |
+| Input vs OUTPUT parameter? | Input passes in; `OUTPUT` returns value to caller variable |
+| `sp_helptext`? | Shows stored procedure source definition |
+| Default parameter values? | Optional — `EXEC proc` uses defaults when args omitted |
+
+**Interview one-liner:** Stored procedures bundle reusable T-SQL with parameters, procedural logic, and `GRANT EXECUTE` security — use `OUTPUT` to return values to the caller.
+
+---
+
 ### Triggers
 
 Triggers are special procedures in a database that automatically execute predefined actions in response to certain events on a specified table or view.
