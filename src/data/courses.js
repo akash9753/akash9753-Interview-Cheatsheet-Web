@@ -1,8 +1,37 @@
+export const courseCategories = [
+  {
+    id: 'fundamentals',
+    label: 'Fundamentals',
+    description: 'Core languages, OOP, and programming principles',
+  },
+  {
+    id: 'backend',
+    label: 'Backend',
+    description: '.NET, databases, APIs, EF Core, and cloud',
+  },
+  {
+    id: 'frontend',
+    label: 'Frontend',
+    description: 'JavaScript, React, hooks, and UI development',
+  },
+  {
+    id: 'system-design',
+    label: 'System Design',
+    description: 'HLD, LLD, scalability, microservices, and architecture',
+  },
+  {
+    id: 'interview-qa',
+    label: 'Interview Q&A',
+    description: 'Senior-level questions and real-world scenarios',
+  },
+];
+
 export const courses = [
   {
     slug: 'mssql',
     mdFile: 'mssql learning course.md',
     num: '01',
+    category: 'backend',
     cardTitle: 'MSSQL Learning Course',
     cardDesc: 'SQL fundamentals, joins, indexes, normalization, and SQL Server topics.',
     brand: 'MSSQL Learning Course',
@@ -11,6 +40,7 @@ export const courses = [
     slug: 'programming-principles',
     mdFile: 'programming-principles-interview-roadmap.md',
     num: '02',
+    category: 'fundamentals',
     cardTitle: 'Programming Principles',
     cardDesc: 'SOLID, design patterns, and architectural patterns for interviews.',
     brand: 'Programming Principles',
@@ -19,6 +49,7 @@ export const courses = [
     slug: 'csharp-fundamentals',
     mdFile: 'csharp-fundamentals-interview-roadmap.md',
     num: '03',
+    category: 'fundamentals',
     cardTitle: 'C# Fundamentals',
     cardDesc: 'Core C# syntax, collections, LINQ, async, memory, and modern features.',
     brand: 'C# Fundamentals',
@@ -27,6 +58,7 @@ export const courses = [
     slug: 'csharp-oops',
     mdFile: 'csharp-oops-interview-roadmap.md',
     num: '04',
+    category: 'fundamentals',
     cardTitle: 'C# OOP',
     cardDesc: 'Classes, inheritance, polymorphism, abstraction, and OOP concepts.',
     brand: 'Csharp Oops Interview Roadmap',
@@ -35,6 +67,7 @@ export const courses = [
     slug: 'entity-framework-core',
     mdFile: 'entity-framework-core-interview-roadmap.md',
     num: '05',
+    category: 'backend',
     cardTitle: 'Entity Framework Core',
     cardDesc: 'DbContext, migrations, relationships, LINQ queries, and EF Core patterns.',
     brand: 'Entity Framework Core Interview Roadmap',
@@ -43,6 +76,7 @@ export const courses = [
     slug: 'aspnet-core-mvc',
     mdFile: 'aspnet-core-mvc-interview-roadmap.md',
     num: '06',
+    category: 'backend',
     cardTitle: 'ASP.NET Core MVC',
     cardDesc: 'MVC pipeline, routing, middleware, dependency injection, and web concepts.',
     brand: 'Aspnet Core Mvc Interview Roadmap',
@@ -51,6 +85,7 @@ export const courses = [
     slug: 'azure',
     mdFile: 'azure-interview-roadmap.md',
     num: '07',
+    category: 'backend',
     cardTitle: 'Azure',
     cardDesc: 'Azure compute, storage, networking, identity, monitoring, and cloud architecture.',
     brand: 'Azure Interview Roadmap',
@@ -59,6 +94,7 @@ export const courses = [
     slug: 'microservices',
     mdFile: 'microservices-interview-roadmap.md',
     num: '08',
+    category: 'system-design',
     cardTitle: 'Microservices',
     cardDesc: 'Service design, messaging, sagas, resilience patterns, and distributed systems.',
     brand: 'Microservices Interview Roadmap',
@@ -67,6 +103,7 @@ export const courses = [
     slug: 'react',
     mdFile: 'react-interview-roadmap.md',
     num: '09',
+    category: 'frontend',
     cardTitle: 'React',
     cardDesc: 'Components, hooks, routing, state management, performance, and React 18 interview topics.',
     brand: 'React Interview Roadmap',
@@ -75,6 +112,7 @@ export const courses = [
     slug: 'dotnet-senior-interview-qa',
     mdFile: 'dotnet-senior-interview-qa.md',
     num: '10',
+    category: 'interview-qa',
     cardTitle: '.NET Senior Interview Q&A',
     cardDesc: '215 senior-level Q&A — C#, ASP.NET Core, EF Core, security, messaging, and system design.',
     brand: '.NET Senior Interview Q&A',
@@ -83,6 +121,7 @@ export const courses = [
     slug: 'scenario-based-interview-qa',
     mdFile: 'scenario-based-interview-qa.md',
     num: '11',
+    category: 'interview-qa',
     cardTitle: 'Scenario-Based Interview Q&A',
     cardDesc: '50 real-world scenarios — API, Angular, microservices, security, and architecture with concise answers.',
     brand: 'Scenario-Based Interview Q&A',
@@ -91,6 +130,7 @@ export const courses = [
     slug: 'react-qp',
     mdFile: 'react-qp.md',
     num: '12',
+    category: 'frontend',
     cardTitle: 'React QP',
     cardDesc: 'Standard React learning sequence — setup, hooks, Virtual DOM, routing, forms, Axios, Context, Redux, JWT, and performance.',
     brand: 'React QP',
@@ -99,6 +139,7 @@ export const courses = [
     slug: 'javascript',
     mdFile: 'javascript-learning-roadmap.md',
     num: '13',
+    category: 'frontend',
     cardTitle: 'JavaScript',
     cardDesc: 'Standard JS roadmap — execution context, closures, this, spread/rest, async, DOM, debounce/throttle, and interview essentials.',
     brand: 'JavaScript Learning Roadmap',
@@ -107,6 +148,7 @@ export const courses = [
     slug: 'system-design',
     mdFile: 'system-design-interview-roadmap.md',
     num: '14',
+    category: 'system-design',
     cardTitle: 'System Design',
     cardDesc: 'HLD vs LLD, scalability, databases, caching, CAP, messaging, security, and classic interview problems.',
     brand: 'System Design Interview Roadmap',
@@ -121,6 +163,15 @@ const markdownModules = import.meta.glob('../../MarkDownFormat/*.md', {
 
 export function getCourseBySlug(slug) {
   return courses.find((course) => course.slug === slug) ?? null;
+}
+
+export function getCoursesGroupedByCategory() {
+  return courseCategories
+    .map((category) => ({
+      ...category,
+      courses: courses.filter((course) => course.category === category.id),
+    }))
+    .filter((group) => group.courses.length > 0);
 }
 
 export function getCourseMarkdown(mdFile) {
