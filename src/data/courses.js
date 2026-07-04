@@ -7,12 +7,17 @@ export const courseCategories = [
   {
     id: 'backend',
     label: 'Backend',
-    description: '.NET, databases, APIs, EF Core, and cloud',
+    description: '.NET, databases, APIs, and EF Core',
   },
   {
     id: 'frontend',
     label: 'Frontend',
     description: 'JavaScript, React, hooks, and UI development',
+  },
+  {
+    id: 'cloud-devops',
+    label: 'Cloud & DevOps',
+    description: 'Azure, cloud architecture, deployment, and infrastructure',
   },
   {
     id: 'system-design',
@@ -85,7 +90,7 @@ export const courses = [
     slug: 'azure',
     mdFile: 'azure-interview-roadmap.md',
     num: '07',
-    category: 'backend',
+    category: 'cloud-devops',
     cardTitle: 'Azure',
     cardDesc: 'Azure compute, storage, networking, identity, monitoring, and cloud architecture.',
     brand: 'Azure Interview Roadmap',
