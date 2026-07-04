@@ -149,6 +149,15 @@ export const courses = [
     cardDesc: '16 pattern-wise topics — arrays, strings, hashing, trees, graphs, DP, greedy, and LeetCode practice links.',
     brand: 'DSA Interview Roadmap',
   },
+  {
+    slug: 'todays-interview-qa',
+    mdFile: 'todays-interview-qa.md',
+    num: '16',
+    category: 'interview-qa',
+    cardTitle: "Today's Interview Q&A",
+    cardDesc: '16 real interview questions — LINQ, EF Core, API errors, MySQL indexes, thread pool, performance, and coding.',
+    brand: "Today's Interview Q&A",
+  },
 ];
 
 const markdownModules = import.meta.glob('../../MarkDownFormat/*.md', {
