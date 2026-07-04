@@ -1382,13 +1382,53 @@ axios.interceptors.request.use((config) => {
 });
 ```
 
-| Axios | fetch |
-| --- | --- |
-| Interceptors built-in | Manual wrapper needed |
-| Auto JSON | Manual `.json()` |
-| Cancel tokens | AbortController |
+### fetch vs Axios
 
-**Interview one-liner:** Interceptors attach auth headers or transform every request/response globally.
+| Aspect | `fetch` (native) | Axios |
+| --- | --- | --- |
+| **Source** | Built into browser & modern Node | Third-party — `npm install axios` |
+| **Bundle size** | Zero extra bytes | ~13 KB gzipped |
+| **JSON handling** | Manual — `response.json()` | Auto — `response.data` is parsed JSON |
+| **Request body** | Manual — `JSON.stringify(data)` | Auto serializes objects to JSON |
+| **Error handling** | Resolves on **4xx/5xx** — check `response.ok` | **Rejects** on HTTP error status (4xx, 5xx) |
+| **Interceptors** | Not built-in — wrap in custom helper | Built-in request & response interceptors |
+| **Timeout** | `AbortController` + `setTimeout` | `timeout` in config |
+| **Cancel request** | `AbortController` | `AbortController` (v0.22+) |
+| **Upload/download progress** | Limited / manual | `onUploadProgress`, `onDownloadProgress` |
+| **CSRF / XSRF** | Manual headers | `xsrfCookieName`, `xsrfHeaderName` built-in |
+| **Base URL** | Manual concat per call | `axios.create({ baseURL })` |
+| **Best for** | Simple GET, zero deps, native APIs | CRUD apps, JWT interceptors, global error handling |
+
+#### Same GET request — side by side
+
+```jsx
+// fetch (native)
+useEffect(() => {
+  fetch('/api/products')
+    .then((res) => {
+      if (!res.ok) throw new Error(res.statusText);
+      return res.json();
+    })
+    .then(setProducts)
+    .catch(console.error);
+}, []);
+
+// Axios
+useEffect(() => {
+  axios.get('/api/products')
+    .then((res) => setProducts(res.data))
+    .catch(console.error);
+}, []);
+```
+
+| Question | Answer |
+| --- | --- |
+| When use fetch? | Simple calls, no extra dependency, full control |
+| When use Axios? | Interceptors (JWT), consistent error handling, CRUD-heavy apps |
+| Does fetch throw on 404? | **No** — must check `response.ok` or `response.status` |
+| Does Axios throw on 404? | **Yes** — lands in `.catch()` |
+
+**Interview one-liner:** `fetch` is native but needs manual JSON and error checks; Axios adds interceptors, auto JSON, and rejects on HTTP errors — standard choice for React apps with auth.
 
 ---
 
@@ -1980,6 +2020,7 @@ function useFetch(url) {
 | Lazy loading | `lazy()` + `Suspense` — code splitting on demand |
 | Formik & Yup | Form state + schema validation |
 | Axios / Interceptors | HTTP client; interceptors for Bearer token, error handling |
+| fetch vs Axios | fetch = native, manual JSON/errors; Axios = interceptors, auto JSON, rejects on 4xx/5xx |
 | Redux flow | Action → Dispatch → Reducer → Store → useSelector |
 | JWT auth | Login → store token → interceptor → protected routes |
 | memo / useMemo / useCallback | Skip re-renders, cache values, stable functions |
