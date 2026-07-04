@@ -96,15 +96,6 @@ export const courses = [
     brand: 'Azure Interview Roadmap',
   },
   {
-    slug: 'microservices',
-    mdFile: 'microservices-interview-roadmap.md',
-    num: '08',
-    category: 'system-design',
-    cardTitle: 'Microservices',
-    cardDesc: 'Service design, messaging, sagas, resilience patterns, and distributed systems.',
-    brand: 'Microservices Interview Roadmap',
-  },
-  {
     slug: 'react',
     mdFile: 'react-interview-roadmap.md',
     num: '09',
@@ -155,7 +146,7 @@ export const courses = [
     num: '14',
     category: 'system-design',
     cardTitle: 'System Design',
-    cardDesc: 'HLD vs LLD, scalability, databases, caching, CAP, messaging, security, and classic interview problems.',
+    cardDesc: 'HLD vs LLD, scalability, microservices, databases, caching, CAP, messaging, and classic interview problems.',
     brand: 'System Design Interview Roadmap',
   },
 ];
