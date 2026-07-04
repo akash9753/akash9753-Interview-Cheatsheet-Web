@@ -2069,6 +2069,155 @@ GO
 
 ---
 
+### User Defined Functions (UDF)
+
+A **user-defined function** is a custom function created by the user to perform specific operations and **return a value** (scalar) or **a table** (table-valued).
+
+| UDF Type | Returns | Use in query |
+| --- | --- | --- |
+| **Scalar function** | Single value (`INT`, `VARCHAR`, `DATE`, etc.) | `SELECT dbo.fn(x)` in SELECT/WHERE |
+| **Inline table-valued function (ITVF)** | Table via single `RETURN (SELECT …)` | `SELECT * FROM dbo.fn()` or `CROSS APPLY` |
+| **Multi-statement TVF** | Table via `BEGIN…END` with multiple statements | Same as ITVF — slower than inline |
+
+#### Scalar Function — Syntax
+
+```sql
+CREATE FUNCTION function_name
+(
+    @param1 INT,
+    @param2 VARCHAR(50)
+)
+RETURNS return_data_type   -- INT, VARCHAR, DATE, NUMERIC, etc.
+AS
+BEGIN
+    DECLARE @result INT;
+    SET @result = @param1 * 2;
+    RETURN @result;
+END;
+GO
+```
+
+#### Use Case — Double the Salary
+
+Create a function that returns **double** of a numeric input.
+
+```sql
+CREATE FUNCTION dbo.DOUBLE_VALUE
+(
+    @p_num NUMERIC(10, 2)
+)
+RETURNS NUMERIC(10, 2)
+AS
+BEGIN
+    DECLARE @result NUMERIC(10, 2);
+    SET @result = @p_num * 2;
+    RETURN @result;
+END;
+GO
+```
+
+**Call in SELECT** — functions must use **schema name** (`dbo.`):
+
+```sql
+-- Single value
+SELECT dbo.DOUBLE_VALUE(100.5);   -- 201.00
+
+-- Per row in query
+SELECT
+    fname,
+    salary,
+    dbo.DOUBLE_VALUE(salary) AS double_salary
+FROM employees;
+GO
+```
+
+| Result example | fname | salary | double_salary |
+| --- | --- | --- | --- |
+| | Aarav | 180000.00 | 360000.00 |
+| | Diya | 120000.00 | 240000.00 |
+
+---
+
+#### Inline Table-Valued Function (ITVF) — Syntax
+
+```sql
+CREATE FUNCTION function_name
+(
+    @param1 INT,
+    @param2 VARCHAR(50)
+)
+RETURNS TABLE
+AS
+RETURN (
+    SELECT column1, column2
+    FROM your_table
+    WHERE some_column = @param1
+);
+GO
+```
+
+#### Use Case — Max Salary Employee per Department
+
+**Problem:** Find the **name of employees in each department having maximum salary**.
+
+```sql
+CREATE FUNCTION dbo.fn_TopEarnerPerDept()
+RETURNS TABLE
+AS
+RETURN (
+    SELECT e.fname, e.department, e.salary
+    FROM employees e
+    INNER JOIN (
+        SELECT department, MAX(salary) AS max_salary
+        FROM employees
+        GROUP BY department
+    ) d ON e.department = d.department
+       AND e.salary = d.max_salary
+);
+GO
+
+-- Use like a table
+SELECT * FROM dbo.fn_TopEarnerPerDept();
+GO
+```
+
+---
+
+### Stored Procedure vs User-Defined Function
+
+| Feature | Stored Procedure (SP) | User-Defined Function (UDF) |
+| --- | --- | --- |
+| **Purpose** | Execute business logic, DML, batch operations | Compute and **return a value or table** |
+| **Return** | Result sets, `OUTPUT` parameters, return code | **Must** `RETURN` scalar or table |
+| **How to call** | `EXEC sp_name @param = value` | `SELECT dbo.fn_name(arg)` or `FROM dbo.fn_name()` |
+| **Use in SELECT clause** | ❌ No | ✅ Yes — scalar & TVF |
+| **DML (INSERT/UPDATE/DELETE)** | ✅ Yes | ❌ No (functions must not modify data) |
+| **OUTPUT parameters** | ✅ Yes | ❌ No — only `RETURN` |
+| **Transactions / TRY…CATCH** | ✅ Full support | ⚠️ Limited — avoid side effects |
+| **Schema prefix required** | Optional on `EXEC` | ✅ Required — `dbo.function_name` |
+| **Side effects** | Allowed (audit logs, emails) | ❌ Should be side-effect free |
+| **Default parameters** | ✅ Yes | ✅ Yes |
+| **Performance** | Cached execution plan | Scalar UDF in large queries can be slow — prefer ITVF |
+| **Best for** | CRUD, workflows, security via `GRANT EXECUTE` | Reusable calculations, query expressions |
+
+```text
+SP  → EXEC sp_UpdateSalary @id, @amount     → business actions + DML
+UDF → SELECT dbo.DOUBLE_VALUE(salary)        → return value in a query
+ITVF→ SELECT * FROM dbo.fn_TopEarnerPerDept() → return table in FROM
+```
+
+| Question | Answer |
+| --- | --- |
+| SP vs UDF — when which? | **SP** for actions/DML; **UDF** for values used inside `SELECT` |
+| Can UDF call EXEC on SP? | Possible but discouraged — keep functions pure |
+| Scalar vs ITVF? | Scalar = one value; ITVF = table via single `RETURN (SELECT …)` |
+| Why `dbo.` prefix? | SQL Server requires schema-qualified name for UDFs in queries |
+| UDF modify data? | **No** — use stored procedure for INSERT/UPDATE/DELETE |
+
+**Interview one-liner:** **SP** = `EXEC` + DML + OUTPUT params; **UDF** = returns value/table for use in `SELECT` — cannot modify data.
+
+---
+
 ### Triggers
 
 Triggers are special procedures in a database that automatically execute predefined actions in response to certain events on a specified table or view.
@@ -2495,11 +2644,13 @@ WHERE 3 = (
 
 ### Stored Procedures vs Functions
 
-| Point | Stored Procedure | Function |
+| Point | Stored Procedure | User-Defined Function |
 | --- | --- | --- |
-| Return | Result sets, output params, status | Single scalar or table value |
-| DML | Can INSERT/UPDATE/DELETE | Cannot modify data (except table-valued quirks) |
-| Use in SELECT | No | Scalar/table functions yes |
-| Transaction | Can contain full logic | Limited side effects |
+| Call | `EXEC sp_name` | `SELECT dbo.fn(x)` or `FROM dbo.fn()` |
+| Return | Result sets, OUTPUT params | Scalar value or table (RETURN) |
+| DML | Can INSERT/UPDATE/DELETE | Cannot modify data |
+| Use in SELECT | No | Yes |
+| Schema prefix | Optional | Required (`dbo.`) |
+| Best for | Business logic, CRUD | Calculations, reusable query expressions |
 
-> **One-liner:** Procedures orchestrate business logic and DML; functions compute and return values for queries.
+> **One-liner:** SP orchestrates actions via `EXEC`; UDF returns a value/table for use inside `SELECT`.
