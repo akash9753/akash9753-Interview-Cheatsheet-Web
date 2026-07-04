@@ -1131,6 +1131,47 @@ class Repository<T> where T : class
 | **Deferred** | When enumerated (`foreach`, `ToList`, etc.) | `Where`, `Select`, `OrderBy` |
 | **Immediate** | As soon as operator is called | `ToList`, `ToArray`, `Count`, `First`, `Sum`, `Max` |
 
+### First / FirstOrDefault / Single / SingleOrDefault
+
+When to use each — based on **how many matches** you expect:
+
+| LINQ Method | **0 Match (Empty)** | **1 Match** | **2+ Matches** |
+| --- | --- | --- | --- |
+| **First()** | ❌ Throws `InvalidOperationException` | ✅ Returns the first element | ✅ Returns the first element |
+| **FirstOrDefault()** | ✅ Returns `default(T)` (`null`, `0`, etc.) | ✅ Returns the first element | ✅ Returns the first element |
+| **Single()** | ❌ Throws `InvalidOperationException` | ✅ Returns the only element | ❌ Throws `InvalidOperationException` |
+| **SingleOrDefault()** | ✅ Returns `default(T)` (`null`, `0`, etc.) | ✅ Returns the only element | ❌ Throws `InvalidOperationException` |
+
+#### When to Use Which
+
+| Method | Rule |
+| --- | --- |
+| **First()** | You expect **at least one** record |
+| **FirstOrDefault()** | Record **may or may not** exist |
+| **Single()** | You expect **exactly one** record (enforces uniqueness) |
+| **SingleOrDefault()** | Record may not exist, but if it exists there must be **only one** |
+
+```csharp
+var users = new List<User> { new(1, "Akash"), new(2, "Raj") };
+
+// First — at least one expected
+var first = users.First();                             // User id=1
+var missing = users.Where(u => u.Id == 99).First();    // throws
+
+// FirstOrDefault — may not exist
+var found = users.FirstOrDefault(u => u.Id == 99);       // null
+
+// Single — exactly one expected (e.g. unique key)
+var only = users.Single(u => u.Id == 1);               // User id=1
+var dup = users.Single(u => u.Age > 0);                // throws (2+ matches)
+
+// SingleOrDefault — zero or one only
+var opt = users.SingleOrDefault(u => u.Id == 1);        // User id=1
+var none = users.SingleOrDefault(u => u.Id == 99);     // null
+```
+
+**Interview one-liner:** `First` = need at least one; `FirstOrDefault` = optional; `Single` = exactly one required; `SingleOrDefault` = zero or one only.
+
 ### What to Learn
 
 - What is LINQ?
@@ -2492,27 +2533,23 @@ Console.WriteLine(emp1 == emp2); // True
 
 > **One-liner:** Use `IQueryable` with EF so filtering runs on the database, not in memory.
 
-### First vs FirstOrDefault
+### First vs FirstOrDefault vs Single vs SingleOrDefault
 
-| Point | First() | FirstOrDefault() |
-| --- | --- | --- |
-| No match | Throws `InvalidOperationException` | Returns default (`null`, `0`) |
-| Use when | You expect exactly one item | Match may not exist |
-| With predicate | `First(x => x.Id == 1)` | `FirstOrDefault(x => x.Id == 1)` |
-| Empty sequence | Throws | Returns default |
+| LINQ Method | 0 matches | 1 match | 2+ matches |
+| --- | --- | --- | --- |
+| `First()` | Throws | Returns first | Returns first |
+| `FirstOrDefault()` | Returns default | Returns first | Returns first |
+| `Single()` | Throws | Returns only | Throws |
+| `SingleOrDefault()` | Returns default | Returns only | Throws |
 
-> **One-liner:** Prefer `FirstOrDefault` unless absence of a match should be an error.
+| Method | Use when |
+| --- | --- |
+| `First()` | At least one record expected |
+| `FirstOrDefault()` | Record may or may not exist |
+| `Single()` | Exactly one record — enforces uniqueness |
+| `SingleOrDefault()` | Zero or one only |
 
-### Single vs SingleOrDefault
-
-| Point | Single() | SingleOrDefault() |
-| --- | --- | --- |
-| No match | Throws | Returns default |
-| More than one match | Throws | Throws |
-| Use when | Exactly one item required | Zero or one expected |
-| Typical use | Unique key lookup | Optional unique record |
-
-> **One-liner:** `Single` enforces uniqueness; `SingleOrDefault` allows zero or one result only.
+> **One-liner:** `First`/`FirstOrDefault` pick the first match; `Single`/`SingleOrDefault` require at most one match.
 
 ### Delegates and Events
 
