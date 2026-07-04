@@ -152,11 +152,16 @@ while (left < right)
 | Substring search (naive) | O(n × m) |
 | Compare | O(min(n, m)) |
 
-### First Repeating Character
+### First Repeating vs Non-Repeating Character
 
-Find the **first character** that appears twice when scanning the string left to right.
+| Problem | Question | `"swiss"` answer |
+| --- | --- | --- |
+| **First repeating** | First char that appears **twice** (left → right) | **`'s'`** (duplicate at index 3) |
+| **First non-repeating** | First char that appears **exactly once** (left → right) | **`'w'`** (index 1) |
 
-**Example:** `"swiss"` → **`'s'`** (second `s` at index 3 is the first repeat)
+#### First Repeating Character
+
+Find the **first character** that appears twice when scanning left to right.
 
 | Index | Char | Seen set | Action |
 | --- | --- | --- | --- |
@@ -165,7 +170,7 @@ Find the **first character** that appears twice when scanning the string left to
 | 2 | i | {s, w, i} | Add |
 | 3 | s | s exists | **Return `'s'`** |
 
-**Approach:** `HashSet` — O(n) time, O(k) space (`k` = unique chars).
+**Approach:** `HashSet` — one pass — O(n) time, O(k) space.
 
 ```csharp
 public static char? FirstRepeatingChar(string s)
@@ -180,16 +185,46 @@ public static char? FirstRepeatingChar(string s)
 }
 
 // FirstRepeatingChar("swiss") → 's'
-// FirstRepeatingChar("program") → null (no repeat)
+```
+
+#### First Non-Repeating Character
+
+Find the **first character** with frequency **1** when scanning left to right.
+
+| Pass | Action |
+| --- | --- |
+| 1 | Count frequency — `s:3, w:1, i:1` |
+| 2 | Scan left → right — skip `s` (count > 1), **return `'w'`** (count == 1) |
+
+**Approach:** `Dictionary` frequency map + second pass — O(n) time, O(k) space.
+
+```csharp
+public static char? FirstNonRepeatingChar(string s)
+{
+    var freq = new Dictionary<char, int>();
+    foreach (char c in s)
+        freq[c] = freq.GetValueOrDefault(c) + 1;
+
+    foreach (char c in s)
+    {
+        if (freq[c] == 1)
+            return c;
+    }
+    return null;
+}
+
+// FirstNonRepeatingChar("swiss") → 'w'
+// FirstNonRepeatingChar("aabb") → null (no unique char)
 ```
 
 | Question | Answer |
 | --- | --- |
-| Return index instead of char? | Store `Dictionary<char, int>` or return index when duplicate found |
-| Brute force? | Two nested loops — O(n²) |
+| Repeating vs non-repeating? | Repeating = **one pass + set**; non-repeating = **count then scan** (two passes) |
+| Return index instead of char? | Return loop index on second pass (non-repeating) or when duplicate found (repeating) |
+| Brute force? | Two nested loops — O(n²) for either |
 | Case sensitive? | Yes unless problem says otherwise — `'S'` ≠ `'s'` |
 
-**Interview one-liner:** One pass + hash set — if `Add` returns false, that char is the first repeat.
+**Interview one-liner:** Repeating → stop at second occurrence; non-repeating → count first, then return first char with count 1.
 
 ### Sliding Window
 
@@ -864,6 +899,7 @@ while low < high:
 | Two pointers | Sorted array pairs, in-place partition |
 | Sliding window | Contiguous subarray/substring optimization |
 | First repeating char | One pass + `HashSet` — e.g. `"swiss"` → `'s'` |
+| First non-repeating char | Count freq + second pass — e.g. `"swiss"` → `'w'` |
 | DSA patterns mindmap | 16 categories — arrays, strings, hashing, stack, graphs, DP, trie, greedy, bit ops, range structures |
 | Pattern recognition | Map problem to one pattern before coding — see Topic 16 mindmap |
 | Top K | Min-heap of size k — O(n log k) |
