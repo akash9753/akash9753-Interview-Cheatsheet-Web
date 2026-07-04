@@ -103,6 +103,14 @@ export const courses = [
     cardDesc: 'Standard JS roadmap — execution context, closures, this, spread/rest, async, DOM, debounce/throttle, and interview essentials.',
     brand: 'JavaScript Learning Roadmap',
   },
+  {
+    slug: 'system-design',
+    mdFile: 'system-design-interview-roadmap.md',
+    num: '14',
+    cardTitle: 'System Design',
+    cardDesc: 'HLD vs LLD, scalability, databases, caching, CAP, messaging, security, and classic interview problems.',
+    brand: 'System Design Interview Roadmap',
+  },
 ];
 
 const markdownModules = import.meta.glob('../../MarkDownFormat/*.md', {
