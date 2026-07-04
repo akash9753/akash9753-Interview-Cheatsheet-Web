@@ -126,6 +126,15 @@ while (left < right)
 | Kadane's algorithm? | Max subarray sum — O(n), track current and global max |
 | Rotate array? | Reverse whole array, then reverse segments — O(n) time O(1) space |
 
+### LeetCode Practice — Two Pointers
+
+| # | Problem | Link |
+| --- | --- | --- |
+| 11 | Container With Most Water | [leetcode.com/problems/container-with-most-water](https://leetcode.com/problems/container-with-most-water/) |
+| 15 | 3Sum | [leetcode.com/problems/3sum](https://leetcode.com/problems/3sum/) |
+| 167 | Two Sum II — Input Array Is Sorted | [leetcode.com/problems/two-sum-ii-input-array-is-sorted](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/) |
+| 42 | Trapping Rain Water | [leetcode.com/problems/trapping-rain-water](https://leetcode.com/problems/trapping-rain-water/) |
+
 **Must-know:** Arrays excel at index access; two pointers avoid extra space when input is sorted or in-place.
 
 ---
@@ -142,6 +151,45 @@ while (left < right)
 | Concatenation | O(n + m) — new string allocated |
 | Substring search (naive) | O(n × m) |
 | Compare | O(min(n, m)) |
+
+### First Repeating Character
+
+Find the **first character** that appears twice when scanning the string left to right.
+
+**Example:** `"swiss"` → **`'s'`** (second `s` at index 3 is the first repeat)
+
+| Index | Char | Seen set | Action |
+| --- | --- | --- | --- |
+| 0 | s | {s} | Add |
+| 1 | w | {s, w} | Add |
+| 2 | i | {s, w, i} | Add |
+| 3 | s | s exists | **Return `'s'`** |
+
+**Approach:** `HashSet` — O(n) time, O(k) space (`k` = unique chars).
+
+```csharp
+public static char? FirstRepeatingChar(string s)
+{
+    var seen = new HashSet<char>();
+    foreach (char c in s)
+    {
+        if (!seen.Add(c))
+            return c;
+    }
+    return null;
+}
+
+// FirstRepeatingChar("swiss") → 's'
+// FirstRepeatingChar("program") → null (no repeat)
+```
+
+| Question | Answer |
+| --- | --- |
+| Return index instead of char? | Store `Dictionary<char, int>` or return index when duplicate found |
+| Brute force? | Two nested loops — O(n²) |
+| Case sensitive? | Yes unless problem says otherwise — `'S'` ≠ `'s'` |
+
+**Interview one-liner:** One pass + hash set — if `Add` returns false, that char is the first repeat.
 
 ### Sliding Window
 
@@ -169,6 +217,15 @@ for (int right = 0; right < s.Length; right++)
 | Anagram check? | Sort both O(n log n) or char frequency count O(n) |
 | Palindrome? | Two pointers from ends; or reverse half |
 | Sliding window vs two pointers? | Window maintains contiguous range; two pointers often on sorted data |
+
+### LeetCode Practice — Sliding Window
+
+| # | Problem | Link |
+| --- | --- | --- |
+| 3 | Longest Substring Without Repeating Characters | [leetcode.com/problems/longest-substring-without-repeating-characters](https://leetcode.com/problems/longest-substring-without-repeating-characters/) |
+| 76 | Minimum Window Substring | [leetcode.com/problems/minimum-window-substring](https://leetcode.com/problems/minimum-window-substring/) |
+| 424 | Longest Repeating Character Replacement | [leetcode.com/problems/longest-repeating-character-replacement](https://leetcode.com/problems/longest-repeating-character-replacement/) |
+| 904 | Fruit Into Baskets | [leetcode.com/problems/fruit-into-baskets](https://leetcode.com/problems/fruit-into-baskets/) |
 
 **Must-know:** Strings are often immutable — use `StringBuilder` for repeated concatenation in .NET.
 
@@ -768,6 +825,7 @@ while low < high:
 | Greedy | Local optimal each step — prove or know counterexamples |
 | Two pointers | Sorted array pairs, in-place partition |
 | Sliding window | Contiguous subarray/substring optimization |
+| First repeating char | One pass + `HashSet` — e.g. `"swiss"` → `'s'` |
 | Top K | Min-heap of size k — O(n log k) |
 | Backtracking | Choose → explore → undo |
 
