@@ -42,15 +42,6 @@ export const courses = [
     brand: 'MSSQL Learning Course',
   },
   {
-    slug: 'programming-principles',
-    mdFile: 'programming-principles-interview-roadmap.md',
-    num: '02',
-    category: 'system-design',
-    cardTitle: 'Programming Principles',
-    cardDesc: 'SOLID, design patterns, and architectural patterns for interviews.',
-    brand: 'Programming Principles',
-  },
-  {
     slug: 'csharp-fundamentals',
     mdFile: 'csharp-fundamentals-interview-roadmap.md',
     num: '03',
@@ -146,7 +137,7 @@ export const courses = [
     num: '14',
     category: 'system-design',
     cardTitle: 'System Design',
-    cardDesc: 'HLD vs LLD, scalability, microservices, databases, caching, CAP, messaging, and classic interview problems.',
+    cardDesc: 'HLD vs LLD, SOLID, design patterns, scalability, microservices, databases, caching, CAP, messaging, and classic interview problems.',
     brand: 'System Design Interview Roadmap',
   },
 ];

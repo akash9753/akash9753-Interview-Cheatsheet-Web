@@ -12,18 +12,19 @@ Standard <strong style="color:#16a34a;">system design interview roadmap</strong>
 
 <ul style="line-height:1.8;">
   <li><a href="#topic-1"><span style="color:#2563eb;font-weight:700;">1.</span> HLD vs LLD — WhatsApp Example</a></li>
-  <li><a href="#topic-2"><span style="color:#2563eb;font-weight:700;">2.</span> Requirements — Functional & Non-Functional</a></li>
-  <li><a href="#topic-3"><span style="color:#2563eb;font-weight:700;">3.</span> Scalability & Load Balancing</a></li>
-  <li><a href="#topic-4"><span style="color:#16a34a;font-weight:700;">4.</span> Databases & Storage</a></li>
-  <li><a href="#topic-5"><span style="color:#16a34a;font-weight:700;">5.</span> Caching — Redis & CDN</a></li>
-  <li><a href="#topic-6"><span style="color:#16a34a;font-weight:700;">6.</span> API Design & Communication</a></li>
-  <li><a href="#topic-7"><span style="color:#7c3aed;font-weight:700;">7.</span> Message Queues & Event-Driven Design</a></li>
-  <li><a href="#topic-8"><span style="color:#7c3aed;font-weight:700;">8.</span> CAP Theorem & Consistency</a></li>
-  <li><a href="#topic-9"><span style="color:#7c3aed;font-weight:700;">9.</span> Microservices & Monolith at Scale</a></li>
-  <li><a href="#topic-10"><span style="color:#dc2626;font-weight:700;">10.</span> Authentication, Security & Rate Limiting</a></li>
-  <li><a href="#topic-11"><span style="color:#dc2626;font-weight:700;">11.</span> Observability — Logging, Metrics, Tracing</a></li>
-  <li><a href="#topic-12"><span style="color:#dc2626;font-weight:700;">12.</span> Classic System Design Problems</a></li>
-  <li><a href="#topic-13"><span style="color:#ea580c;font-weight:700;">13.</span> Interview Framework & Trade-offs</a></li>
+  <li><a href="#topic-2"><span style="color:#2563eb;font-weight:700;">2.</span> LLD — SOLID, Design Patterns & Architecture</a></li>
+  <li><a href="#topic-3"><span style="color:#2563eb;font-weight:700;">3.</span> Requirements — Functional & Non-Functional</a></li>
+  <li><a href="#topic-4"><span style="color:#2563eb;font-weight:700;">4.</span> Scalability & Load Balancing</a></li>
+  <li><a href="#topic-5"><span style="color:#16a34a;font-weight:700;">5.</span> Databases & Storage</a></li>
+  <li><a href="#topic-6"><span style="color:#16a34a;font-weight:700;">6.</span> Caching — Redis & CDN</a></li>
+  <li><a href="#topic-7"><span style="color:#16a34a;font-weight:700;">7.</span> API Design & Communication</a></li>
+  <li><a href="#topic-8"><span style="color:#7c3aed;font-weight:700;">8.</span> Message Queues & Event-Driven Design</a></li>
+  <li><a href="#topic-9"><span style="color:#7c3aed;font-weight:700;">9.</span> CAP Theorem & Consistency</a></li>
+  <li><a href="#topic-10"><span style="color:#7c3aed;font-weight:700;">10.</span> Microservices & Monolith at Scale</a></li>
+  <li><a href="#topic-11"><span style="color:#dc2626;font-weight:700;">11.</span> Authentication, Security & Rate Limiting</a></li>
+  <li><a href="#topic-12"><span style="color:#dc2626;font-weight:700;">12.</span> Observability — Logging, Metrics, Tracing</a></li>
+  <li><a href="#topic-13"><span style="color:#dc2626;font-weight:700;">13.</span> Classic System Design Problems</a></li>
+  <li><a href="#topic-14"><span style="color:#ea580c;font-weight:700;">14.</span> Interview Framework & Trade-offs</a></li>
   <li><a href="#interview-quick-answers"><span style="color:#9333ea;font-weight:700;">Guide:</span> Interview Quick Answers</a></li>
 </ul>
 
@@ -164,7 +165,176 @@ public class ChatService
 
 <a id="topic-2"></a>
 
-## 2. Requirements — Functional & Non-Functional
+## 2. LLD — SOLID, Design Patterns & Architecture
+
+### Where Principles Belong in System Design
+
+| Concept | Level | Used for |
+| --- | --- | --- |
+| **SOLID principles** | LLD | Class / interface design |
+| **Design patterns** | LLD | Reusable code structure |
+| **Architectural patterns** | HLD | Application / system structure |
+
+**Interview one-liner:** LLD uses SOLID and design patterns to build maintainable modules; HLD uses architectural patterns to structure the whole application.
+
+---
+
+### SOLID Principles
+
+| Principle | Full Form | Meaning | Example |
+| --- | --- | --- | --- |
+| **S** | Single Responsibility Principle | A class should have only one responsibility | `EmployeeService` for business logic, `EmployeeRepository` for database logic |
+| **O** | Open/Closed Principle | Open for extension, closed for modification | Extension methods in C# |
+| **L** | Liskov Substitution Principle | Child classes should replace parent classes without breaking behavior | `Bird bird = new Sparrow();` |
+| **I** | Interface Segregation Principle | Clients should not depend on unused interfaces | `IPrinter`, `IScanner` instead of one big `IMachine` |
+| **D** | Dependency Inversion Principle | Depend on abstractions, not concrete implementations | `PaymentService` depends on `IPaymentGateway` |
+
+#### SOLID — Bad vs Good (.NET)
+
+| Principle | Violation (bad) | Fix (good) |
+| --- | --- | --- |
+| SRP | `EmployeeService` saves to DB, sends email, generates PDF | Split into `EmployeeService`, `EmployeeRepository`, `EmailService` |
+| OCP | `if (type == "RazorPay")` in payment method | `IPaymentGateway` + strategy — add new gateway without editing existing code |
+| LSP | `Square : Rectangle` breaks `SetWidth`/`SetHeight` contract | Subtypes must honor parent behavior — don't weaken preconditions |
+| ISP | Fat `IMachine` with `Print`, `Scan`, `Fax` — client uses only `Print` | `IPrinter`, `IScanner` — small focused interfaces |
+| DIP | `OrderService` does `new SqlRepository()` | Depend on `IOrderRepository` — inject via constructor |
+
+#### IoC vs DI
+
+| Concept | Type | Meaning |
+| --- | --- | --- |
+| IoC | Principle / Concept | Transfers object creation and control to framework/container |
+| DI | Design Pattern | Implements IoC by injecting dependencies from outside |
+
+#### Service Lifetimes (ASP.NET Core)
+
+| Lifetime | Registration | Instance scope | Example |
+| --- | --- | --- | --- |
+| Transient | `AddTransient` | New every resolve | Lightweight stateless helpers |
+| Scoped | `AddScoped` | One per HTTP request | `DbContext`, unit-of-work |
+| Singleton | `AddSingleton` | One for app lifetime | Config, logging, caches |
+
+| Question | Answer |
+| --- | --- |
+| SRP in one line? | One class, one reason to change |
+| OCP in one line? | Extend via new types/interfaces, don't modify existing working code |
+| DIP vs DI? | DIP = principle (depend on abstractions); DI = pattern implementing it |
+| Scoped vs Singleton for DbContext? | **Scoped** — DbContext is not thread-safe; never Singleton |
+
+**Must-know:** SOLID is about maintainability and testability — tie each letter to a real refactor story. Constructor injection is the default in ASP.NET Core.
+
+---
+
+### Design Patterns (LLD)
+
+#### Top 5 Patterns for .NET Interviews
+
+| Pattern | Category | When to use | .NET example |
+| --- | --- | --- | --- |
+| Singleton | Creational | One shared instance | Logger, config holder |
+| Factory | Creational | Hide concrete type creation | `PaymentGatewayFactory` |
+| Repository | Structural-ish | Abstract data access | `IRepository<T>` over EF |
+| Strategy | Behavioral | Swap algorithms at runtime | Payment methods, pricing rules |
+| Decorator | Structural | Add behavior without subclassing | `LoggingDecorator` around service |
+
+#### Creational Patterns
+
+| Pattern | Meaning | Example |
+| --- | --- | --- |
+| Singleton | Ensures only one object instance exists | Logger class |
+| Factory | Creates objects without exposing creation logic | `PaymentGatewayFactory` |
+| Abstract Factory | Creates related object families | UI factory for Windows and Mac controls |
+| Builder | Builds complex objects step by step | `PizzaBuilder`, `ReportBuilder` |
+| Prototype | Creates objects by cloning existing objects | `MemberwiseClone()` |
+
+#### Structural Patterns
+
+| Pattern | Meaning | Example |
+| --- | --- | --- |
+| Adapter | Converts one interface into another compatible interface | Power adapter |
+| Decorator | Adds behavior dynamically without modifying class | `LoggingDecorator` around service |
+| Facade | Provides simplified interface to complex system | `HomeTheaterFacade` |
+| Composite | Treats group of objects as single object | Folder containing files/folders |
+| Proxy | Controls access to another object | Lazy loading in EF Core |
+| Bridge | Separates abstraction from implementation | `RemoteControl` and `TV` |
+
+#### Behavioral Patterns
+
+| Pattern | Meaning | Example |
+| --- | --- | --- |
+| Strategy | Encapsulates interchangeable algorithms | Different payment methods |
+| Observer | Notifies dependent objects automatically on state change | YouTube subscribers notification |
+| Command | Encapsulates request as an object | Remote control button commands |
+| Iterator | Sequentially accesses collection elements | `foreach` loop |
+| Mediator | Centralizes communication between objects | Chat room mediator |
+| State | Changes behavior based on object state | ATM machine states |
+| Chain of Responsibility | Passes request through chain of handlers | ASP.NET Core Middleware Pipeline |
+
+| Question | Answer |
+| --- | --- |
+| Factory vs Abstract Factory? | Factory = one product; Abstract Factory = families of related products |
+| Strategy vs State? | Strategy = client picks algorithm; State = object changes behavior by internal state |
+| Middleware = which pattern? | Chain of Responsibility |
+| Repository pattern? | Abstraction over data access — very common in .NET interviews |
+
+**Must-know:** **Creational** = how objects are born; **Structural** = how they're composed; **Behavioral** = how they communicate.
+
+---
+
+### Architectural Patterns (HLD)
+
+#### Layered vs Clean Architecture
+
+| Layer (traditional) | Clean Architecture ring | Responsibility |
+| --- | --- | --- |
+| UI / API | Presentation | Controllers, DTOs, HTTP |
+| Business / Service | Application | Use cases, commands, queries |
+| Domain | Domain | Entities, value objects, rules |
+| Data / Infrastructure | Infrastructure | EF, files, external APIs |
+
+**Dependency rule (Clean):** inner layers never reference outer layers — Domain has zero framework references.
+
+#### Architectural Pattern Summary
+
+| Pattern | Meaning | Example |
+| --- | --- | --- |
+| MVC | Separates application into Model, View, and Controller | ASP.NET Core MVC application |
+| Layered Architecture | Organizes code into layers like UI, Business, and Data | UI Layer → Service Layer → Repository Layer |
+| Clean Architecture | Separates business logic from frameworks and infrastructure | Domain, Application, Infrastructure, API projects |
+| Microservices | Breaks application into small independent services | Payment Service, User Service, Order Service |
+| Event-Driven Architecture | Components communicate using events/messages | RabbitMQ / Kafka event processing |
+| CQRS | Separates read and write operations into different models | MediatR in ASP.NET Core |
+
+#### CQRS Flow
+
+| Step | Command side | Query side |
+| --- | --- | --- |
+| Input | `CreateOrderCommand` | `GetOrderByIdQuery` |
+| Handler | Validates, writes to DB | Reads optimized model / projection |
+| Model | Write entity / aggregate | Read DTO / view model |
+| Storage | Same DB or separate write DB | Read replica / materialized view |
+
+#### Distributed Transaction Patterns
+
+| Pattern | Purpose | How |
+| --- | --- | --- |
+| Saga | Multi-service transaction | Choreography (events) or orchestration (coordinator) |
+| Outbox | Reliable publish | Write event to outbox table in same DB transaction as business data |
+| Inbox | Reliable consume | Store message ID — process once, idempotent handler |
+
+| Question | Answer |
+| --- | --- |
+| When CQRS? | High read/write asymmetry, complex domains, separate scaling of reads |
+| Saga vs 2PC? | 2PC rare in microservices; Saga uses compensating transactions |
+| Clean Architecture core idea? | Business rules at center; frameworks are plugins on the outside |
+
+**Must-know:** Event-driven decouples producers/consumers; MediatR is a popular CQRS/command dispatcher in ASP.NET Core.
+
+---
+
+<a id="topic-3"></a>
+
+## 3. Requirements — Functional & Non-Functional
 
 ### Functional Requirements
 
@@ -193,9 +363,9 @@ How the system **must perform** — quality attributes.
 
 ---
 
-<a id="topic-3"></a>
+<a id="topic-4"></a>
 
-## 3. Scalability & Load Balancing
+## 4. Scalability & Load Balancing
 
 ### Vertical vs Horizontal Scaling
 
@@ -223,9 +393,9 @@ Clients → Load Balancer → [Server 1, Server 2, Server 3]
 
 ---
 
-<a id="topic-4"></a>
+<a id="topic-5"></a>
 
-## 4. Databases & Storage
+## 5. Databases & Storage
 
 ### SQL vs NoSQL
 
@@ -255,9 +425,9 @@ Clients → Load Balancer → [Server 1, Server 2, Server 3]
 
 ---
 
-<a id="topic-5"></a>
+<a id="topic-6"></a>
 
-## 5. Caching — Redis & CDN
+## 6. Caching — Redis & CDN
 
 ### Caching Strategies
 
@@ -282,9 +452,9 @@ Edge servers cache static/media content close to users — reduces latency for i
 
 ---
 
-<a id="topic-6"></a>
+<a id="topic-7"></a>
 
-## 6. API Design & Communication
+## 7. API Design & Communication
 
 ### Sync vs Async
 
@@ -307,9 +477,9 @@ Single entry point — auth, routing, rate limiting, SSL termination.
 
 ---
 
-<a id="topic-7"></a>
+<a id="topic-8"></a>
 
-## 7. Message Queues & Event-Driven Design
+## 8. Message Queues & Event-Driven Design
 
 ### Why Message Queue?
 
@@ -330,9 +500,9 @@ Chat Service → Kafka → Notification Service
 
 ---
 
-<a id="topic-8"></a>
+<a id="topic-9"></a>
 
-## 8. CAP Theorem & Consistency
+## 9. CAP Theorem & Consistency
 
 ### CAP Theorem
 
@@ -361,9 +531,9 @@ In a distributed system, pick **two** of three:
 
 ---
 
-<a id="topic-9"></a>
+<a id="topic-10"></a>
 
-## 9. Microservices & Monolith at Scale
+## 10. Microservices & Monolith at Scale
 
 | | Monolith | Microservices |
 | --- | --- | --- |
@@ -376,9 +546,9 @@ In a distributed system, pick **two** of three:
 
 ---
 
-<a id="topic-10"></a>
+<a id="topic-11"></a>
 
-## 10. Authentication, Security & Rate Limiting
+## 11. Authentication, Security & Rate Limiting
 
 ### Auth Patterns
 
@@ -405,9 +575,9 @@ API Gateway → Rate Limiter → Backend Services
 
 ---
 
-<a id="topic-11"></a>
+<a id="topic-12"></a>
 
-## 11. Observability — Logging, Metrics, Tracing
+## 12. Observability — Logging, Metrics, Tracing
 
 | Pillar | Tool examples | Purpose |
 | --- | --- | --- |
@@ -419,9 +589,9 @@ API Gateway → Rate Limiter → Backend Services
 
 ---
 
-<a id="topic-12"></a>
+<a id="topic-13"></a>
 
-## 12. Classic System Design Problems
+## 13. Classic System Design Problems
 
 | Problem | Key components |
 | --- | --- |
@@ -442,9 +612,9 @@ API Gateway → Rate Limiter → Backend Services
 
 ---
 
-<a id="topic-13"></a>
+<a id="topic-14"></a>
 
-## 13. Interview Framework & Trade-offs
+## 14. Interview Framework & Trade-offs
 
 ### Back-of-Envelope Estimation
 
@@ -476,6 +646,9 @@ API Gateway → Rate Limiter → Backend Services
 | Topic | Key Points |
 | --- | --- |
 | HLD vs LLD | HLD = whole system architecture; LLD = module/classes/methods |
+| SOLID principles | LLD — class/interface design; one class one responsibility, depend on abstractions |
+| Design patterns | LLD — reusable code structure; creational, structural, behavioral |
+| Architectural patterns | HLD — MVC, layered, clean, microservices, CQRS, event-driven |
 | HLD focus | Services, DBs, infra, scaling, communication |
 | LLD focus | Classes, methods, validation, DB tables, design patterns |
 | HLD analogy | Blueprint of the city |
@@ -493,6 +666,6 @@ API Gateway → Rate Limiter → Backend Services
 | Observability | Logs + metrics + distributed tracing |
 | System design steps | Requirements → HLD → deep dive → trade-offs |
 
-**Suggested learning order:** HLD vs LLD → requirements → scale → databases → cache → APIs → messaging → CAP → security → classic problems → interview framework.
+**Suggested learning order:** HLD vs LLD → SOLID & design patterns → requirements → scale → databases → cache → APIs → messaging → CAP → security → classic problems → interview framework.
 
 **One-liner:** System design interviews test whether you can think at both levels — architect the city (HLD) and design the building (LLD).
