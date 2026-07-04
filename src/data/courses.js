@@ -22,7 +22,7 @@ export const courseCategories = [
   {
     id: 'system-design',
     label: 'System Design',
-    description: 'HLD, LLD, scalability, microservices, and architecture',
+    description: 'HLD, LLD, SOLID, design patterns, microservices, and architecture',
   },
   {
     id: 'interview-qa',
@@ -45,7 +45,7 @@ export const courses = [
     slug: 'programming-principles',
     mdFile: 'programming-principles-interview-roadmap.md',
     num: '02',
-    category: 'fundamentals',
+    category: 'system-design',
     cardTitle: 'Programming Principles',
     cardDesc: 'SOLID, design patterns, and architectural patterns for interviews.',
     brand: 'Programming Principles',
