@@ -543,20 +543,57 @@ Controllers handle incoming requests and return responses.
 
 ### `Controller` vs `ControllerBase`
 
-| Feature | `Controller` | `ControllerBase` |
+```text
+ControllerBase  ←  base class (API helpers: Ok, BadRequest, RedirectToAction…)
+     ↑
+Controller      ←  adds MVC view support: View(), ViewBag, ViewData, TempData
+```
+
+| Feature | `ControllerBase` | `Controller` |
 | --- | --- | --- |
-| Namespace | `Microsoft.AspNetCore.Mvc` | `Microsoft.AspNetCore.Mvc` |
-| Used in | MVC applications | Web API |
-| Supports views | Yes | No |
-| Returns HTML | Yes | No |
-| Returns JSON | Yes | Yes |
-| View support | `View()` available | Not available |
-| Razor support | Yes | No |
-| TempData/ViewBag/ViewData | Yes | No |
-| API support | Yes | Yes |
-| Lightweight | No | Yes |
-| Best for | MVC + Razor views | REST APIs |
-| Base class | Inherits from `ControllerBase` | Base API class |
+| **Inheritance** | Base class for HTTP controllers | **Inherits `ControllerBase`** |
+| **Primary use** | Web API / REST JSON endpoints | MVC apps with Razor views |
+| **`View()` / Razor** | ❌ Not available | ✅ Returns `.cshtml` views |
+| **`PartialView()`** | ❌ | ✅ |
+| **ViewBag / ViewData / TempData** | ❌ | ✅ MVC view data helpers |
+| **`Ok()`, `BadRequest()`, `NotFound()`** | ✅ | ✅ (inherited from `ControllerBase`) |
+| **Returns JSON** | ✅ | ✅ |
+| **Returns HTML** | ❌ (no view engine) | ✅ |
+| **Weight** | Lighter — no view dependencies | Heavier — pulls in MVC view features |
+| **Typical attribute** | `[ApiController]` + `[Route("api/[controller]")]` | Conventional or attribute routing for pages |
+| **When to choose** | API-only project | Server-rendered pages + optional API |
+
+#### Side-by-side examples
+
+```csharp
+// Web API — inherit ControllerBase
+[ApiController]
+[Route("api/[controller]")]
+public class ProductsController : ControllerBase
+{
+    [HttpGet]
+    public ActionResult<List<Product>> GetAll() => Ok(products);
+}
+
+// MVC with Razor — inherit Controller
+public class HomeController : Controller
+{
+    public IActionResult Index()
+    {
+        ViewBag.Title = "Home";
+        return View(model);  // returns Index.cshtml
+    }
+}
+```
+
+| Question | Answer |
+| --- | --- |
+| Can API use `Controller`? | Yes, but unnecessary — adds view overhead; use `ControllerBase` |
+| Can MVC use `ControllerBase`? | Only if returning JSON/redirects — no `return View()` |
+| What does `Controller` add? | View helpers — `View()`, `PartialView()`, ViewBag, ViewData, TempData |
+| Same action results? | Both support `Ok()`, `RedirectToAction()`, `File()`, etc. from `ControllerBase` |
+
+**Interview one-liner:** `ControllerBase` = API base with result helpers; `Controller` extends it with Razor view support — APIs use `ControllerBase`, MVC pages use `Controller`.
 
 ### `IActionResult` vs `ActionResult<T>`
 
@@ -595,7 +632,7 @@ Common error status codes:
 
 | Question | Answer |
 | --- | --- |
-| `Controller` vs `ControllerBase`? | `Controller` adds view support (`View()`, ViewBag); `ControllerBase` is API-focused, lighter |
+| `Controller` vs `ControllerBase`? | `ControllerBase` = API base (`Ok`, `BadRequest`); `Controller` adds `View()`, ViewBag, ViewData, TempData for Razor |
 | `IActionResult` vs `ActionResult<T>`? | `ActionResult<T>` gives typed response + better OpenAPI/Swagger docs |
 | When use `ControllerBase`? | Web APIs returning JSON/XML — no Razor views needed |
 | Common result helpers? | `Ok()`, `NotFound()`, `BadRequest()`, `CreatedAtAction()`, `NoContent()` |
@@ -2633,3 +2670,13 @@ app.UseExceptionHandler(errorApp =>
 | Controller | Processes request, selects view or redirect |
 
 > **One-liner:** Controller receives request, model holds data/logic, view renders the response.
+
+### Controller vs ControllerBase
+
+| Point | `ControllerBase` | `Controller` |
+| --- | --- | --- |
+| Use case | Web API / JSON | MVC + Razor views |
+| Views | No `View()` | `View()`, `PartialView()` |
+| Inheritance | Base class | Extends `ControllerBase` |
+
+> **One-liner:** `ControllerBase` for APIs; `Controller` adds Razor view helpers on top of the same action results.
