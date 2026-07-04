@@ -150,13 +150,13 @@ export const courses = [
     brand: 'DSA Interview Roadmap',
   },
   {
-    slug: 'todays-interview-qa',
-    mdFile: 'todays-interview-qa.md',
+    slug: 'sprinto-interview-qa',
+    mdFile: 'sprinto-interview-qa.md',
     num: '16',
     category: 'interview-qa',
-    cardTitle: "Today's Interview Q&A",
+    cardTitle: 'Sprinto Inter Q and Answer',
     cardDesc: '16 real interview questions — LINQ, EF Core, API errors, MySQL indexes, thread pool, performance, and coding.',
-    brand: "Today's Interview Q&A",
+    brand: 'Sprinto Inter Q and Answer',
   },
 ];
 

@@ -1,4 +1,4 @@
-<h1 style="color:#2563eb;">Today's Interview Q&amp;A</h1>
+<h1 style="color:#2563eb;">Sprinto Inter Q and Answer</h1>
 
 ## Goal
 
