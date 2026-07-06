@@ -1433,85 +1433,56 @@ Task task = Task.Run(() =>
 - **async/await** = Non-blocking wait
 - **TPL** = Task + Parallel library
 
-### TPL Hierarchy
+### TPL Hierarchy — Task Parallel Library
 
-```text
-TPL (Task Parallel Library)
-│
-├── Purpose
-│     └── Simplifies concurrent and parallel programming in .NET.
-│
-├── Built On
-│     └── ThreadPool
-│
-├── Core Components
-│     │
-│     ├── Task
-│     │     └── Represents asynchronous operation.
-│     │
-│     ├── Task<TResult>
-│     │     └── Task that returns value/result.
-│     │
-│     ├── async / await
-│     │     └── Simplifies asynchronous programming.
-│     │
-│     ├── CancellationToken
-│     │     └── Cancels running task safely.
-│     │
-│     └── ContinueWith()
-│           └── Executes task after previous task completes.
-│
-├── Task Execution Methods
-│     │
-│     ├── Task.Run()
-│     │     └── Runs code in background thread.
-│     │
-│     ├── Task.Wait()
-│     │     └── Waits for task completion.
-│     │
-│     ├── Task.WhenAll()
-│     │     └── Waits for all tasks to complete.
-│     │
-│     └── Task.WhenAny()
-│           └── Waits for first completed task.
-│
-├── Parallel Programming
-│     │
-│     ├── Parallel.For()
-│     │     └── Executes loop iterations in parallel.
-│     │
-│     ├── Parallel.ForEach()
-│     │     └── Executes collection items in parallel.
-│     │
-│     ├── Parallel.Invoke()
-│     │     └── Executes multiple methods simultaneously.
-│     │
-│     └── PLINQ
-│           └── Executes LINQ queries in parallel.
-│
-├── Best Use Cases
-│     │
-│     ├── async/await + Task.WhenAll()
-│     │     └── API calls, DB calls, network operations.
-│     │
-│     ├── Parallel.ForEach()
-│     │     └── CPU-intensive processing.
-│     │
-│     ├── Task.Run()
-│     │     └── Background processing.
-│     │
-│     └── CancellationToken
-│           └── Cancel long-running operations.
-│
-└── Benefits
-      │
-      ├── Better performance
-      ├── Automatic thread management
-      ├── Better scalability
-      ├── Simplified async programming
-      ├── Efficient CPU utilization
-      └── Easier than manual threading
+```csharp
+/*
+.NET
+ └── System.Threading.Tasks namespace
+      └── TPL - Task Parallel Library
+           ├── Task
+           │    ├── Task              // async work without return value
+           │    ├── Task<T>           // async work with return value
+           │    ├── Task.Run()        // run work on ThreadPool
+           │    ├── Task.Delay()      // delay without blocking thread
+           │    ├── Task.WhenAll()    // wait for multiple tasks
+           │    └── Task.WhenAny()    // wait for any one task
+           │
+           ├── Parallel
+           │    ├── Parallel.For()        // parallel loop
+           │    └── Parallel.ForEach()    // parallel foreach loop
+           │
+           ├── PLINQ
+           │    └── AsParallel()      // parallel LINQ query
+           │
+           └── ThreadPool
+                └── Used internally by Task and Parallel
+*/
+
+// Easy interview line:
+// TPL is part of System.Threading.Tasks namespace.
+// It provides Task, Task<T>, Parallel, and PLINQ to write async and parallel code.
+// Internally, TPL uses ThreadPool.
+
+// Simple flow:
+// async/await → Task / Task<T> → TPL → ThreadPool → Threads
+
+using System.Threading.Tasks;
+
+Task task = Task.Run(() =>
+{
+    Console.WriteLine("Task running using TPL");
+});
+
+Parallel.For(1, 5, i =>
+{
+    Console.WriteLine(i);
+});
 ```
+
+**Easy interview line:** TPL is in `System.Threading.Tasks` — provides `Task`, `Task<T>`, `Parallel`, and PLINQ; internally uses **ThreadPool**.
+
+**Simple flow:** `async/await` → `Task` / `Task<T>` → TPL → ThreadPool → Threads
 
 ### Synchronization Tools
 
