@@ -1362,74 +1362,76 @@ Memory Management in .NET
 
 ## 15. Multithreading and Parallel Programming
 
-### Concurrency vs Parallelism
-
-| Feature | Concurrency | Parallelism |
-| --- | --- | --- |
-| Meaning | Multiple tasks **make progress** (may interleave) | Multiple tasks **run simultaneously** on multiple cores |
-| Execution | Time-slicing on one or more cores | True simultaneous execution |
-| CPU cores | Works on single core | Requires multiple cores for real parallelism |
-| Goal | Responsiveness, structuring work | Throughput, CPU utilization |
-| Shared state | Often shares data — needs synchronization | Often partitions work — less contention |
-| C# examples | `async`/`await`, `Task`, event-driven | `Parallel.For`, `Parallel.ForEach`, PLINQ |
-| Example | Download file while UI stays responsive | Process 1 lakh records on multiple cores |
-
-- **Concurrency:** Multiple tasks in progress at the same time — they may not run at the exact same instant.
-- **Parallelism:** Multiple tasks actually run at the same time on multiple CPU cores.
-
-### Thread vs TPL vs Parallel Library
-
-#### 1. Thread
-
-Low-level way to create and manage your own thread. You manually start and control it — more control, but costly and complex.
+### Concurrency vs Parallelism — Thread, Async/Await, TPL
 
 ```csharp
-Thread t = new Thread(() =>
+// CONCURRENCY
+// - Multiple tasks are in progress at same time logically.
+// - They may not run at exact same time.
+// - Best for I/O work: API call, DB call, file read.
+//
+// Examples: async/await, Task.WhenAll
+
+public async Task ConcurrencyExample()
+{
+    Task<string> userTask = GetUserAsync();
+    Task<string> orderTask = GetOrderAsync();
+
+    // Both tasks are in progress together
+    await Task.WhenAll(userTask, orderTask);
+}
+
+// PARALLELISM
+// - Multiple tasks actually run at same time on multiple CPU cores.
+// - Best for CPU-heavy work: calculation, image processing, large data processing.
+//
+// Examples: Thread, Task.Run, Parallel.For / Parallel.ForEach
+
+public void ParallelismExample()
+{
+    Parallel.For(1, 5, i =>
+    {
+        Console.WriteLine($"Processing {i}");
+    });
+}
+
+// THREAD — actual execution unit; manual low-level parallel work
+Thread thread = new Thread(() =>
 {
     Console.WriteLine("Running on separate thread");
 });
-t.Start();
-```
+thread.Start();
 
-**Use:** Rarely used directly now; when you need full control over thread behavior.
+// ASYNC / AWAIT — non-blocking wait; mostly concurrency, not pure parallelism
+public async Task<string> GetDataAsync()
+{
+    HttpClient client = new HttpClient();
+    return await client.GetStringAsync("https://api.com/data");
+}
 
-#### 2. TPL (Task Parallel Library)
-
-High-level API over `ThreadPool`. Uses `Task` and `async`/`await`. Easier than `Thread` — best for async and background work.
-
-```csharp
+// TPL — Task Parallel Library; Task, Task.Run, Parallel.For; uses ThreadPool
 Task task = Task.Run(() =>
 {
-    Console.WriteLine("Running using TPL Task");
-});
-
-await task;
-```
-
-**Use:** API calls, file operations, background processing, `async`/`await`.
-
-#### 3. Parallel Library
-
-Part of TPL. Used for **CPU-bound** parallel work — runs loop/items in parallel on multiple cores.
-
-```csharp
-Parallel.For(0, 10, i =>
-{
-    Console.WriteLine($"Processing {i}");
+    Console.WriteLine("Running using TPL");
 });
 ```
 
-**Use:** CPU-heavy work, image processing, large calculations, big collections.
+| Concept | Meaning | Comes Under Mostly |
+| --- | --- | --- |
+| Thread | Actual worker/execution path | Parallelism |
+| `async`/`await` | Non-blocking wait | Concurrency |
+| `Task` | Represents future work | Concurrency / TPL |
+| `Task.WhenAll` | Runs multiple async operations together | Concurrency |
+| `Task.Run` | Runs work on ThreadPool thread | Parallelism |
+| `Parallel.For` | Runs loop iterations on multiple threads | Parallelism |
+| TPL | .NET library for Task and Parallel APIs | Both |
 
-### Main Difference
-
-| | Thread | TPL | Parallel Library |
-| --- | --- | --- | --- |
-| Level | Low-level, manual | High-level, task-based | Part of TPL |
-| Best for | Full thread control | Concurrency, async I/O | CPU-bound parallelism |
-| Examples | `new Thread()` | `Task.Run`, `async`/`await` | `Parallel.For`, `Parallel.ForEach` |
-
-> **One-liner:** `Thread` is low-level manual threading; TPL is high-level task-based concurrency with `Task`/`async-await`; Parallel Library is part of TPL for CPU-bound work across multiple cores.
+**Easy remember:**
+- **Concurrency** = Multiple tasks in progress
+- **Parallelism** = Multiple tasks running at same time
+- **Thread** = Actual worker
+- **async/await** = Non-blocking wait
+- **TPL** = Task + Parallel library
 
 ### TPL Hierarchy
 
