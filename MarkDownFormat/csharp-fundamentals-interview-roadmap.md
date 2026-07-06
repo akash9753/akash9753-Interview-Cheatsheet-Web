@@ -1348,6 +1348,7 @@ Memory Management in .NET
 | `Task` vs `Task<T>`? | `Task` = no return value; `Task<T>` = async operation returning `T` |
 | `async` without `await`? | Compiler warning — method runs synchronously |
 | `Task.Run` purpose? | Offload CPU-bound work to thread pool |
+| `Task` vs `Thread`? | Task = operation; async I/O often uses no new thread; `Task.Run`/parallel uses ThreadPool |
 | Async deadlock cause? | `.Result`/`.Wait()` on UI/ASP.NET sync context blocks continuation |
 | `ValueTask` vs `Task`? | `ValueTask` reduces allocation when result often synchronous |
 
@@ -1432,6 +1433,18 @@ Task task = Task.Run(() =>
 - **Thread** = Actual worker
 - **async/await** = Non-blocking wait
 - **TPL** = Task + Parallel library
+
+### Task vs Thread — Important
+
+```csharp
+Task task = SomeAsyncMethod();
+// Does NOT mean a new thread was created.
+
+Task.Run(() => { /* work */ });
+// Usually uses a ThreadPool thread.
+```
+
+> **Interview line:** **Task is not equal to Thread.** Task represents an operation. For async I/O, Task usually does **not** create a new thread. For `Task.Run` or parallel CPU work, Task uses **ThreadPool** threads.
 
 ### TPL Hierarchy — Task Parallel Library
 
