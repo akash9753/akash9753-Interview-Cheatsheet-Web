@@ -1,4 +1,4 @@
-﻿# C# Fundamentals Learning Roadmap for Interview Preparation
+# C# Fundamentals Learning Roadmap for Interview Preparation
 
 ## Goal
 
@@ -37,118 +37,42 @@ This roadmap is designed to prepare core C# and .NET fundamentals for interviews
 
 ## 1. C# Basics
 
-### What to Learn
+- C# is a statically typed, object-oriented language developed by Microsoft.
+- C# source code uses `.cs` files and is organized into **namespaces** and **classes**.
+- The `using` directive imports namespaces so you can use types without fully qualifying them.
+- Every console app needs an entry point — typically `static void Main()` or top-level statements.
+- Statements end with a semicolon (`;`); code blocks use `{ }`.
 
-- What is C#?
-- What is .NET?
-- Difference between .NET Framework, .NET Core, and modern .NET
-- Structure of a C# program
-- Namespaces
-- Assemblies
-- `.exe` files
-- `.dll` files
-- SDK, runtime, and CLI basics
-- CLR
-- CTS
-- CLS
-- IL
-- JIT compiler
-- Managed code
-- Unmanaged code
+```csharp
+using System;
 
-- `.exe` files are executable applications.
-- `.dll` files are shared libraries used by other applications.
-- The .NET compiler converts C# code into platform-independent Intermediate Language, also called IL.
-- IL code is packaged inside assemblies such as `.exe` and `.dll`.
-- Processors cannot understand IL directly, so IL must be converted into native machine instructions.
-- CLR provides the runtime environment required to execute .NET applications.
-- CLR provides services like garbage collection, security, threading, debugging, memory management, and exception handling.
-- JIT compiler translates IL into CPU-specific native code during runtime.
-- JIT compilation happens when the code is needed at runtime.
-- After JIT compilation, the generated native code is executed by the operating system and CPU.
-- Managed code is code controlled by CLR.
-- Unmanaged code runs outside CLR control and has its own runtime or direct operating system interaction.
-
-### CLR Execution Flow
-
-| Stage | What Happens |
-| --- | --- |
-| **Source (.cs)** | C# code written by the developer |
-| **Compiler (Roslyn)** | Compiles source to platform-independent IL |
-| **IL** | Bytecode packaged inside `.exe` / `.dll` assemblies |
-| **CLR** | Loads assembly; provides GC, security, threading, exception handling |
-| **JIT** | Translates IL to native CPU instructions when code is first needed |
-| **Native code** | Executed by the OS and processor |
-
-### CLR Responsibilities
-
-| Responsibility | Meaning |
-| --- | --- |
-| JIT compilation | Converts IL code into machine code during runtime |
-| Memory management | Automatically allocates and releases managed memory |
-| Garbage collection | Removes unused objects from memory automatically |
-| App domain management | Isolates applications for secure execution |
-| CLS | Defines common rules for .NET languages |
-| CTS | Defines all data types used in .NET |
-| Thread management | Handles execution of multiple threads |
-| Security management | Provides code and application security |
-| Debugging | Helps developers find and fix errors |
-| Exception handling | Handles runtime errors without crashing the application |
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Hello, World!");
+    }
+}
+```
 
 | Question | Answer |
 | --- | --- |
-| What is CLR? | Common Language Runtime — executes .NET apps and provides managed services |
-| IL vs native code? | IL is platform-independent bytecode; JIT converts it to CPU-specific machine code at runtime |
-| Managed vs unmanaged? | Managed = CLR-controlled (.NET); unmanaged = direct OS/COM/native resources |
-| .NET Framework vs .NET Core vs modern .NET? | Framework = Windows-only legacy; Core = cross-platform rewrite; modern .NET (5+) unifies the platform |
-| What is an assembly? | Deployment unit (.exe/.dll) containing IL, metadata, and manifest |
+| What is C#? | Statically typed, object-oriented language for building .NET applications |
+| Namespace? | Logical container for types — avoids naming conflicts |
+| `using` directive? | Imports a namespace for shorter type names |
+| `Main` method? | Application entry point |
+| Top-level statements? | C# 9+ — write code without explicit `Main` in one file |
 
 **Must-know points:**
-- C# compiles to **IL**, not directly to machine code — JIT runs at **runtime**
-- **CTS** defines all .NET types; **CLS** defines cross-language rules
-- `.dll` = library; `.exe` = entry-point application — both are assemblies
+- C# is **case-sensitive**
+- `//` single-line and `/* */` multi-line comments
+- **`var`** infers type at compile time (still strongly typed)
 
 ---
 
 <a id="topic-2"></a>
 
 ## 2. Variables, Data Types, and Operators
-
-### What to Learn
-
-- Value types and reference types
-- Primitive data types
-- Signed numeric data types
-- Unsigned numeric data types
-- `char`
-- `bool`
-- `string`
-- `object`
-- `var`
-- `dynamic`
-- `const`
-- `readonly`
-- Nullable types
-- Type safety
-- Casting
-- Conversion
-- `Convert`
-- `Parse`
-- `TryParse`
-- Boxing
-- Unboxing
-- Operators
-- Arithmetic operators
-- Relational operators
-- Logical operators
-- Assignment operators
-- Bitwise operators
-- Ternary operator
-- Null-coalescing operator `??`
-- Null-coalescing assignment operator `??=`
-- Null-conditional operator `?.`
-- `is` operator
-- `as` operator
 
 ### Signed Data Types
 
@@ -184,168 +108,71 @@ This roadmap is designed to prepare core C# and .NET fundamentals for interviews
 
 ### Type Safety, Casting, and Conversion
 
-- Type safety prevents storing incompatible data types in a variable.
-- Casting converts one data type into another using a cast operator.
-- Implicit casting is automatic conversion from a smaller or safe type to a larger compatible type.
-- Explicit casting is manual conversion from a larger type to a smaller type using a cast operator.
-- Conversion uses methods or helper classes such as `Convert`, `Parse`, and `TryParse`.
+| Concept | Detail |
+| --- | --- |
+| Implicit cast | Safe widening — automatic (`int` → `double`) |
+| Explicit cast | Narrowing — manual `(type)value`, data loss possible |
+| Casting | `(type)value` — compatible types |
+| Conversion | `Convert`, `Parse`, `TryParse` — strings, nulls, objects |
 
 ```csharp
 int a = 10;
-double b = a;       // Implicit casting
+double b = a;           // Implicit
 
-double x = 10.5;
-int y = (int)x;     // Explicit casting, data loss possible
+int y = (int)10.5;      // Explicit — data loss
 ```
 
-| Feature | Casting | Conversion |
-| --- | --- | --- |
-| Meaning | Changing datatype using cast operator | Changing datatype using methods/classes |
-| Syntax | `(type)value` | `Convert`, `Parse`, `TryParse` |
-| Performed by | Compiler/runtime | Methods |
-| Mostly used for | Compatible numeric types | String/object/data conversions |
-| Can handle null | No | Yes, depending on API |
-| Exception handling | Limited | Better control |
+| | `Convert` | `Parse` | `TryParse` | `is` | `as` |
+| --- | --- | --- | --- | --- | --- |
+| Use | Any type → target type | String → value type | String → value type | Check type | Cast reference type |
+| Returns | Converted value | Parsed value | `bool` + `out` value | `bool` | Casted type or `null` |
+| On failure | Default (e.g. `0` for null) | Throws exception | Returns `false` | Returns `false` | Returns `null` |
+| Best for | `null` / mixed types | Trusted valid input | User input | Inheritance check | Safe downcast |
 
-### Convert Class Methods
-
-| Method | Converts To |
-| --- | --- |
-| `Convert.ToInt16()` | `short` |
-| `Convert.ToInt32()` | `int` |
-| `Convert.ToInt64()` | `long` |
-| `Convert.ToDouble()` | `double` |
-| `Convert.ToDecimal()` | `decimal` |
-| `Convert.ToBoolean()` | `bool` |
-| `Convert.ToString()` | `string` |
-| `Convert.ToChar()` | `char` |
-
-### Parse vs TryParse
-
-| Feature | `Parse()` | `TryParse()` |
-| --- | --- | --- |
-| Return type | Actual datatype | `bool` |
-| Invalid input | Throws exception | Returns `false` |
-| Exception handling | Required | Not required |
-| Safer | No | Yes |
-| Performance | Slower when exceptions occur | Better for user input |
-| Recommended for user input | No | Yes |
+**Boxing / Unboxing:** Value type → `object` (heap allocation) → cast back. Avoid in hot paths.
 
 ### `var` vs `dynamic`
 
-| Feature | `var` | `dynamic` |
+| | `var` | `dynamic` |
 | --- | --- | --- |
-| Type decision | Compile time | Runtime |
 | Type checking | Compile time | Runtime |
-| Actual type | Fixed after assignment | Decided at runtime |
-| IntelliSense | Yes | Limited |
-| Performance | Faster | Slower |
-| Error detection | Compile time | Runtime |
 | Type safety | Strong | Weak |
 
 ### `const` vs `readonly`
 
-| Feature | `const` | `readonly` |
+| | `const` | `readonly` |
 | --- | --- | --- |
-| Initialization | Only at declaration | At declaration or in constructor |
-| Mutability | Always immutable | Immutable after initialization |
-| Runtime vs compile time | Compile time | Runtime |
-| Scope | Always static | Instance-level or static |
+| Set at | Declaration only | Declaration or constructor |
+| Scope | Always static | Instance or static |
 
-### Null-Conditional vs Traditional Null Checks
+### Null Operators
 
-| Approach | Syntax | Behavior |
-| --- | --- | --- |
-| Traditional | `if (obj != null) obj.Method();` | Verbose; repeated null checks |
-| Null-conditional `?.` | `obj?.Method()` | Calls only if not null; short-circuits |
-| Chained `?.` | `obj?.Child?.Name` | Returns null at first null in chain |
-| Null-coalescing `??` | `name ?? "Guest"` | Default when left side is null |
-| Null-coalescing assign `??=` | `name ??= "Guest"` | Assign only when variable is null |
+| Operator | Use |
+| --- | --- |
+| `?.` | Safe member access — short-circuits on null |
+| `??` | Default when left side is null |
+| `??=` | Assign only if variable is null |
 
 ```csharp
-// Traditional
-string city = null;
-if (customer != null && customer.Address != null)
-    city = customer.Address.City;
-
-// Null-conditional
 string city = customer?.Address?.City;
+string name = input ?? "Guest";
 ```
-
-### Null-Coalescing Operators
-
-- `??` returns a default value when the left side value is null.
-- `??=` assigns a value only when the variable is null.
-
-```csharp
-string name = null;
-string result = name ?? "Guest";
-
-name ??= "Akash";
-```
-
-### `is` and `as` Operators
-
-- `is` checks whether an object is compatible with a specific type.
-- `as` performs conversion between compatible reference types and returns `null` if conversion fails.
-
-### Boxing and Unboxing
-
-- Boxing converts a value type into a reference type such as `object`.
-- Unboxing converts the boxed object back into a value type.
-- Boxing and unboxing create extra heap objects, increase GC pressure, and reduce performance.
-
-```csharp
-int x = 10;
-object obj = x;     // Boxing
-
-int value = (int)obj; // Unboxing
-```
-
-### Quick Reference: Convert, Parse, TryParse, Boxing & Unboxing
-
-Use this table to choose the right conversion API or concept at a glance.
-
-| Topic | Method / Property / Concept | Namespace | When to use | Example |
-| --- | --- | --- | --- | --- |
-| `Convert` | **Method** | `System` | When value can be `null` | `int n = Convert.ToInt32(null); // 0` |
-| `Parse` | **Method** | `System` | When string value is 100% valid | `int n = int.Parse("123"); // 123` |
-| `TryParse` | **Method** | `System` | When value may be invalid, like user input | `bool ok = int.TryParse("abc", out int n); // false` |
-| Boxing | **Concept** | No specific namespace | When value type is stored in `object` | `object obj = 10;` |
-| Unboxing | **Concept** | No specific namespace | When object is converted back to value type | `int n = (int)obj;` |
 
 | Question | Answer |
 | --- | --- |
-| Value type vs reference type? | Value = stack/inline copy; reference = heap object accessed via reference |
-| `var` vs `dynamic`? | `var` = compile-time inferred type; `dynamic` = runtime binding, no compile-time checks |
-| `const` vs `readonly`? | `const` = compile-time constant, always static; `readonly` = set at declaration or ctor, instance or static |
-| `Parse` vs `TryParse`? | `Parse` throws on invalid input; `TryParse` returns `bool` — safer for user input |
-| Boxing cost? | Value → `object` allocates on heap; avoid in hot paths and generic collections |
+| `var` vs `dynamic`? | `var` = compile-time type; `dynamic` = runtime binding |
+| `const` vs `readonly`? | `const` = compile-time static; `readonly` = set once at runtime |
+| Boxing cost? | Heap allocation + GC pressure — avoid in loops/collections |
 
 **Must-know points:**
-- Implicit cast = safe widening; explicit cast = narrowing with possible **data loss**
-- `is` checks type; `as` casts reference types and returns **null** on failure
-- Prefer `TryParse` over `Parse` for **untrusted input**
+- Implicit = safe widening; explicit = narrowing with possible **data loss**
+- **`TryParse`** for user input; **`Convert`** when value may be `null`; **`is`** to check, **`as`** to cast safely
 
 ---
 
 <a id="topic-3"></a>
 
 ## 3. Control Flow Statements
-
-### What to Learn
-
-- `if`, `else if`, and `else`
-- `switch` statement
-- `switch` expression
-- `for` loop
-- `while` loop
-- `do while` loop
-- `foreach` loop
-- `break`
-- `continue`
-- `goto`
-- Pattern matching basics
 
 - Use `if` and `else` when conditions are different or complex.
 - Use `switch` when comparing one value against multiple possible values.
@@ -374,21 +201,6 @@ Use this table to choose the right conversion API or concept at a glance.
 
 ## 4. Methods and Parameters
 
-### What to Learn
-
-- Method declaration
-- Return types
-- Method overloading
-- Optional parameters
-- Named arguments
-- `ref` parameters
-- `out` parameters
-- `in` parameters
-- `params` keyword
-- Local functions
-- Expression-bodied methods
-- Recursive methods
-
 - Named parameters are used to specify an argument by name instead of position.
 - Optional parameters allow some arguments to be skipped by providing default values.
 - `params` is used when a method can accept a variable number of parameters.
@@ -396,32 +208,65 @@ Use this table to choose the right conversion API or concept at a glance.
 - `out` is used to return a new value. The variable does not need to be initialized before being passed.
 - `ref` is used to modify an existing value. The variable must be initialized before being passed.
 
-### `ref` vs `out` vs `in`
+### `ref` vs `out`
 
-| Feature | `ref` | `out` | `in` |
-| --- | --- | --- | --- |
-| Purpose | Pass by reference (read/write) | Return value via parameter | Pass by read-only reference |
-| Initialization before call | Required | Not required | Required |
-| Assignment inside method | Optional (usually modified) | Required before return | Cannot modify |
-| Data flow | Input and output | Output only | Input only |
-| Common use | Modify existing variable | Multiple return values | Large struct without copying |
-| Compiler rule | Must be assigned before passing | Method must assign before return | Passed as `readonly` ref |
+| `ref` | `out` |
+| --- | --- |
+| Pass variable by reference; must be initialized before passing | Pass variable by reference; must be assigned inside method |
+| Used for input + output | Used only for output |
+
+#### `ref` Example — modify existing value
 
 ```csharp
-static void UpdateValue(ref int number)
-{
-    number += 10;
-}
+using System;
 
-static void GetValue(out int number)
+class Program
 {
-    number = 100;
+    static void Increase(ref int number)
+    {
+        number = number + 10;
+    }
+
+    static void Main()
+    {
+        int value = 5;   // must initialize before ref
+
+        Increase(ref value);
+
+        Console.WriteLine(value);   // 15
+    }
+}
+```
+
+#### `out` Example — return multiple values
+
+```csharp
+using System;
+
+class Program
+{
+    static void GetValues(out int age, out string name)
+    {
+        age = 25;
+        name = "Akash";
+    }
+
+    static void Main()
+    {
+        int age;
+        string name;
+
+        GetValues(out age, out name);
+
+        Console.WriteLine(age);     // 25
+        Console.WriteLine(name);    // Akash
+    }
 }
 ```
 
 | Question | Answer |
 | --- | --- |
-| `ref` vs `out`? | `ref` = read/write existing var; `out` = output-only, no pre-init required |
+| `ref` vs `out`? | `ref` = input + output, must init before call; `out` = output only, assign inside method |
 | What is `in`? | Read-only reference — avoids copying large structs |
 | `params` keyword? | Accepts variable number of arguments as array — must be last parameter |
 | Method overloading? | Same name, different parameter types/count — resolved at compile time |
@@ -437,17 +282,6 @@ static void GetValue(out int number)
 <a id="topic-5"></a>
 
 ## 5. Static Members and Extension Methods
-
-### What to Learn
-
-- Static class
-- Static fields
-- Static methods
-- Static properties
-- Static constructor
-- Extension methods
-- `this` keyword in extension methods
-- Common use cases of extension methods
 
 - Extension methods allow adding new methods to an existing type without modifying the original source code.
 - Extension methods must be declared inside a static class.
@@ -484,21 +318,6 @@ public static class StringExtensions
 
 ## 6. Strings and String Handling
 
-### What to Learn
-
-- `string` type
-- `System.String`
-- String immutability
-- String interpolation
-- String concatenation
-- String interning
-- `StringBuilder`
-- Common string methods
-- String comparison
-- String formatting
-- Verbatim strings
-- Raw string literals
-
 - C# strings are objects.
 - `string` is a reference type.
 - `string` is a C# alias for `System.String`.
@@ -506,7 +325,7 @@ public static class StringExtensions
 - String objects are created in heap memory.
 - Strings are immutable, meaning the value cannot be changed after creation.
 - When a string is modified, a new string object is created.
-- String interning allows CLR to store only one copy of identical string literals.
+- String interning allows the runtime to store only one copy of identical string literals.
 - Strings are immutable, which also helps thread safety because multiple threads can read the same string without one thread changing it.
 
 ```csharp
@@ -562,31 +381,6 @@ sb.Append(" World");
 <a id="topic-7"></a>
 
 ## 7. Arrays and Collections
-
-### What to Learn
-
-- Single-dimensional arrays
-- Multi-dimensional arrays
-- Jagged arrays
-- `Array` class
-- Non-generic collections
-- Generic collections
-- `List<T>`
-- `Dictionary<TKey, TValue>`
-- `HashSet<T>`
-- `Queue<T>`
-- `Stack<T>`
-- `LinkedList<T>`
-- `SortedList`
-- `SortedDictionary`
-- `IEnumerable`
-- `IEnumerator`
-- `ICollection`
-- `IList`
-- `IDictionary`
-- `IComparable`
-- `IComparer`
-- Generic vs non-generic collections
 
 ### Collections vs Generics
 
@@ -944,18 +738,6 @@ System.Collections.Generic
 
 ## 8. Generics
 
-### What to Learn
-
-- Generic classes
-- Generic methods
-- Generic interfaces
-- Type parameters
-- Generic constraints
-- `where` keyword
-- Covariance
-- Contravariance
-- Benefits of generics
-
 - Generics allow classes, methods, and interfaces to use a placeholder type such as `T`.
 - Generic code can work with different data types safely.
 - Generic constraints restrict which types can be used as type arguments.
@@ -1000,18 +782,6 @@ class Repository<T> where T : class
 
 ## 9. Exception Handling
 
-### What to Learn
-
-- `try`
-- `catch`
-- `finally`
-- `throw`
-- `throw ex` vs `throw`
-- Custom exceptions
-- Exception filters
-- Checked and unchecked exceptions concept
-- Best practices for exception handling
-
 - Exception handling allows runtime errors to be handled without crashing the application.
 - `try` contains code that may throw an exception.
 - `catch` handles the exception.
@@ -1039,57 +809,28 @@ class Repository<T> where T : class
 
 ## 10. Delegates, Events, and Lambda Expressions
 
-### Delegates, Func, Action, Predicate
+```csharp
+// Delegate
+// A delegate is a type-safe function pointer that holds reference of a method.
 
-| Type | Signature | Returns | Example |
-| --- | --- | --- | --- |
-| `Delegate` | Custom method signature | Varies | `delegate void Notify(string msg);` |
-| `Action` | 0–16 parameters | `void` | `Action<string> log = Console.WriteLine;` |
-| `Func` | 0–16 params + return type | `TResult` | `Func<int,int,int> add = (a,b) => a + b;` |
-| `Predicate<T>` | One `T` parameter | `bool` | `Predicate<int> isEven = n => n % 2 == 0;` |
-| Lambda | Inline anonymous function | Varies | `nums.Where(x => x > 5)` |
+// Types of Delegate:
+// Func      => returns a value
+// Action    => returns void
+// Predicate => returns bool
 
-### Events vs Delegates
+Func<int, int> square = x => x * x;
+Action<string> print = msg => Console.WriteLine(msg);
+Predicate<int> isEven = x => x % 2 == 0;
 
-| Feature | Delegate field | Event |
-| --- | --- | --- |
-| Who can invoke? | Anyone holding the reference | Only the declaring class raises it |
-| Purpose | General method pointer | Publisher-subscriber encapsulation |
-| Multicast | Yes | Yes (backed by delegate) |
-| Syntax | `MyDelegate handler;` | `event MyDelegate Handler;` |
-| Memory leaks risk | Subscribers must `-=` manually | Same — always unsubscribe in `Dispose` |
 
-### What to Learn
+// Event
+// An event is a wrapper around delegate used to notify subscribers when something happens.
 
-- Delegates
-- Multicast delegates
-- Anonymous methods
-- Lambda expressions
-- `Func`
-- `Action`
-- `Predicate`
-- Events
-- Event handlers
-- Publisher-subscriber pattern
+public event Action OnSaved;
 
-- Delegates are type-safe references to methods.
-- `Func` represents a method that returns a value.
-- `Action` represents a method that does not return a value.
-- `Predicate` represents a method that returns a boolean value.
-- Lambda expressions provide a short syntax for anonymous functions.
-
-| Question | Answer |
-| --- | --- |
-| Delegate vs interface? | Delegate = single method signature; interface = full contract with multiple members |
-| Multicast delegate? | Delegate holding multiple methods — invokes all in order |
-| `Func` vs `Action`? | `Func` returns value; `Action` returns void |
-| Event vs delegate field? | Event restricts invocation to publisher — subscribers use `+=`/`-=` |
-| Lambda vs anonymous method? | Lambda is shorter; anonymous method allows more statement bodies |
-
-**Must-know points:**
-- Always **unsubscribe** event handlers to prevent memory leaks
-- `Predicate<T>` is legacy — prefer `Func<T, bool>`
-- Delegates enable LINQ, callbacks, and observer pattern
+OnSaved += () => Console.WriteLine("Saved");
+OnSaved?.Invoke();
+```
 
 ---
 
@@ -1171,47 +912,6 @@ var none = users.SingleOrDefault(u => u.Id == 99);     // null
 ```
 
 **Interview one-liner:** `First` = need at least one; `FirstOrDefault` = optional; `Single` = exactly one required; `SingleOrDefault` = zero or one only.
-
-### What to Learn
-
-- What is LINQ?
-- LINQ query syntax
-- LINQ method syntax
-- `Where`
-- `Select`
-- `SelectMany`
-- `OrderBy`
-- `OrderByDescending`
-- `ThenBy`
-- `GroupBy`
-- `Join`
-- `GroupJoin`
-- `Any`
-- `All`
-- `Contains`
-- `First`
-- `FirstOrDefault`
-- `Single`
-- `SingleOrDefault`
-- `Last`
-- `LastOrDefault`
-- `Count`
-- `Sum`
-- `Min`
-- `Max`
-- `Average`
-- `Distinct`
-- `Union`
-- `Intersect`
-- `Except`
-- `Skip`
-- `Take`
-- `ToList`
-- `ToArray`
-- `ToDictionary`
-- Deferred execution
-- Immediate execution
-- `IEnumerable` vs `IQueryable`
 
 - LINQ provides query capabilities directly in C#.
 - Query syntax looks similar to SQL.
@@ -1355,25 +1055,6 @@ System.Linq
 
 ## 12. File Handling and Streams
 
-### What to Learn
-
-- `File`
-- `FileInfo`
-- `Directory`
-- `DirectoryInfo`
-- `Path`
-- `Stream`
-- `FileStream`
-- `StreamReader`
-- `StreamWriter`
-- `MemoryStream`
-- Reading and writing files
-- `using` directive
-- `using` statement
-- `using` declaration
-- Alias directive
-- `IDisposable`
-
 - `using` can import namespaces.
 - `using` can automatically dispose resources.
 - The `using` statement ensures `Dispose()` is called even if an exception occurs.
@@ -1410,32 +1091,10 @@ using ProjectA = MyCompany.ProjectA.SubModule;
 
 ## 13. Memory Management and Garbage Collection
 
-### What to Learn
-
-- Stack memory
-- Heap memory
-- Managed heap
-- Managed memory
-- Unmanaged memory
-- Garbage collection
-- Generations in GC
-- Gen 0
-- Gen 1
-- Gen 2
-- Large Object Heap
-- Finalizers
-- Destructors
-- `IDisposable`
-- `Dispose()`
-- `using` statement
-- `using` declaration
-- Weak references
-- Memory leaks in .NET
-
 ### Garbage Collector
 
 - Garbage Collector automatically frees unused managed memory in .NET.
-- CLR decides when the Garbage Collector should run.
+- The runtime decides when the Garbage Collector should run.
 - Developers generally do not control the exact execution time of GC.
 - GC usually runs when memory pressure increases or memory allocation is required.
 - Memory cleanup in .NET is called non-deterministic finalization because timing is unpredictable.
@@ -1458,15 +1117,27 @@ using ProjectA = MyCompany.ProjectA.SubModule;
 | Size | Smaller | Larger |
 | Lifetime | Method scope | Until GC removes object |
 
-### Value Type vs Reference Type
+### `struct` vs `class`
 
-| Feature | Value Type | Reference Type |
-| --- | --- | --- |
-| Stores | Actual value | Memory address/reference |
-| Memory | Usually stack or inline | Heap for actual object |
-| Copy behavior | Copies value | Copies reference |
-| Nullable | No, except nullable value types | Yes |
-| Examples | `int`, `double`, `bool`, `char`, `struct`, `enum`, `DateTime` | `class`, `string`, `array`, `delegate`, `object` |
+| `struct` | `class` |
+| --- | --- |
+| Value type | Reference type |
+| Stored in stack/directly in containing type | Object stored in heap, reference stored in variable |
+| Copy creates new value | Copy creates new reference to same object |
+| Cannot inherit from another struct/class | Supports inheritance |
+| Best for small data | Best for complex objects |
+
+```csharp
+struct Point
+{
+    public int X;
+}
+
+class Person
+{
+    public string Name;
+}
+```
 
 ### GC Generations
 
@@ -1496,105 +1167,27 @@ Memory Management in .NET
 ├── Heap Memory
 │     └── Stores reference type objects.
 │
-├── Managed Memory
-│     └── Memory controlled by CLR (.NET Runtime).
-│
-│     ├── Managed Code
-│     │     └── Code executed under CLR.
+├── Garbage Collector (GC)
+│     ├── Purpose
+│     │     ├── Frees unused memory
+│     │     ├── Prevents memory leaks
+│     │     └── Manages heap automatically
 │     │
-│     │     ├── C#
-│     │     ├── VB.NET
-│     │     └── F#
+│     ├── Generations
+│     │     ├── Gen 0 — short-lived objects (fastest collection)
+│     │     ├── Gen 1 — survived Gen 0 (buffer)
+│     │     └── Gen 2 — long-lived objects (expensive collection)
 │     │
-│     ├── Managed Heap
-│     │     └── Stores managed objects created using new keyword.
+│     ├── Large Object Heap (LOH) — objects larger than ~85 KB
 │     │
-│     └── Garbage Collector (GC)
-│           └── Automatically cleans unused managed objects.
+│     └── Object Lifecycle
+│           ├── Created → Gen 0
+│           ├── Survives → Gen 1 → Gen 2
+│           └── No references → removed by GC
 │
-│           ├── Purpose
-│           │     ├── Frees unused memory
-│           │     ├── Prevents memory leaks
-│           │     └── Manages heap automatically
-│           │
-│           ├── Generations
-│           │     │
-│           │     ├── Gen 0
-│           │     │     └── Stores short-lived objects.
-│           │     │
-│           │     │     ├── Example
-│           │     │     │     ├── Local objects
-│           │     │     │     ├── Temporary strings
-│           │     │     │     └── Method-level objects
-│           │     │     │
-│           │     │     └── Fastest collection
-│           │     │
-│           │     ├── Gen 1
-│           │     │     └── Stores objects surviving Gen 0.
-│           │     │
-│           │     │     ├── Medium-lived objects
-│           │     │     └── Buffer between Gen0 and Gen2
-│           │     │
-│           │     └── Gen 2
-│           │           └── Stores long-lived objects.
-│           │
-│           │           ├── Example
-│           │           │     ├── Static objects
-│           │           │     ├── Singleton objects
-│           │           │     └── Application cache
-│           │           │
-│           │           └── Slowest and expensive collection
-│           │
-│           ├── Large Object Heap (LOH)
-│           │     └── Stores objects larger than 85 KB.
-│           │
-│           ├── GC Methods
-│           │     │
-│           │     ├── GC.Collect()
-│           │     │     └── Forces garbage collection manually.
-│           │     │
-│           │     ├── GC.GetGeneration()
-│           │     │     └── Returns generation of object.
-│           │     │
-│           │     └── GC.SuppressFinalize()
-│           │           └── Prevents finalizer execution.
-│           │
-│           └── Object Lifecycle
-│                 │
-│                 ├── Object Created
-│                 │     └── Stored in Gen 0
-│                 │
-│                 ├── Survives Collection
-│                 │     └── Moved to Gen 1
-│                 │
-│                 ├── Survives Again
-│                 │     └── Moved to Gen 2
-│                 │
-│                 └── No References
-│                       └── Removed by GC
-│
-└── Unmanaged Memory
-      └── Memory/resources outside CLR control.
-      
-      ├── Unmanaged Resources
-      │     ├── File Handles
-      │     ├── Database Connections
-      │     ├── Network Sockets
-      │     ├── COM Objects
-      │     └── Printer Resources
-      │
-      ├── Not cleaned directly by GC
-      │
-      └── Manual Cleanup
-            │
-            ├── IDisposable
-            │     └── Provides cleanup mechanism.
-            │
-            ├── Dispose()
-            │     └── Releases unmanaged resources manually.
-            │
-            └── using statement
-                  └── Automatically calls Dispose().
+└── Unmanaged Resources (outside GC)
+      ├── File handles, DB connections, sockets
+      └── Manual cleanup via IDisposable / using
 ```
 
 | Question | Answer |
@@ -1658,23 +1251,6 @@ Memory Management in .NET
 | Timeout | `cts.CancelAfter(TimeSpan.FromSeconds(30));` |
 | Propagate | Pass same token to all nested async calls |
 
-### What to Learn
-
-- Synchronous vs asynchronous programming
-- `Task`
-- `Task<T>`
-- `async`
-- `await`
-- `Task.Run`
-- `Task.Wait`
-- `Task.WhenAll`
-- `Task.WhenAny`
-- `ContinueWith`
-- Cancellation token
-- Deadlocks in async code
-- ConfigureAwait concept
-- ValueTask basics
-
 - Asynchronous programming helps keep applications responsive and non-blocking.
 - `Task` represents an asynchronous operation.
 - `Task<T>` represents an asynchronous operation that returns a value.
@@ -1702,34 +1278,6 @@ Memory Management in .NET
 <a id="topic-15"></a>
 
 ## 15. Multithreading and Parallel Programming
-
-### What to Learn
-
-- Process vs thread
-- Thread lifecycle
-- `Thread` class
-- Foreground thread
-- Background thread
-- Thread pool
-- Task Parallel Library
-- `Task`
-- `Task<T>`
-- `Parallel.For`
-- `Parallel.ForEach`
-- `Parallel.Invoke`
-- PLINQ
-- Locking
-- `lock` keyword
-- `Monitor`
-- `Mutex`
-- `Semaphore`
-- `SemaphoreSlim`
-- `ReaderWriterLock`
-- Race conditions
-- Deadlocks
-- Thread safety
-- Concurrent collections
-- Concurrency vs parallelism
 
 ### Concurrency vs Parallelism
 
@@ -2014,21 +1562,6 @@ Concurrency Control
 
 ## 16. Reflection and Attributes
 
-### What to Learn
-
-- Reflection basics
-- `Type`
-- `typeof`
-- `GetType`
-- `Activator.CreateInstance`
-- Reading metadata
-- Invoking public members
-- Attributes
-- Built-in attributes
-- Custom attributes
-- Use cases of reflection
-- Performance impact of reflection
-
 - Reflection allows a program to inspect and interact with types and metadata dynamically at runtime.
 - Reflection can be used to read metadata and invoke members dynamically.
 - `dynamic` uses runtime binding and may use reflection-like behavior internally.
@@ -2043,6 +1576,30 @@ Concurrency Control
 | Null safe | Yes — no instance needed | No — throws on null instance |
 | Syntax | `typeof(int)` | `obj.GetType()` |
 | Polymorphism | Returns declared type name | Returns derived type if overridden |
+
+### Type Checking & Casting — Quick Reference
+
+| Keyword / Method | Use |
+| --- | --- |
+| `typeof` | Check type at compile-time |
+| `GetType()` | Get actual runtime type of object |
+| `is` | Check type including inheritance |
+| `as` | Safe casting |
+
+```csharp
+// typeof — compile-time, no instance needed
+Type t1 = typeof(string);
+
+// GetType() — runtime type of instance
+object obj = "hello";
+Type t2 = obj.GetType();
+
+// is — type check (returns bool)
+if (obj is string s) { /* pattern match */ }
+
+// as — safe cast (returns null on failure)
+string? text = obj as string;
+```
 
 ### `dynamic` vs Reflection
 
@@ -2187,26 +1744,6 @@ Console.WriteLine(emp1 == emp2); // True
 | Exhaustiveness | Optional `default` | Compiler warns if not exhaustive |
 | Example | `switch(x) { case 1: … break; }` | `var r = x switch { 1 => "a", _ => "b" };` |
 
-### What to Learn
-
-- Records
-- Record classes
-- Record structs
-- Tuples
-- Deconstruction
-- Pattern matching
-- Nullable reference types
-- Init-only properties
-- Required members
-- Target-typed `new`
-- Global using
-- File-scoped namespace
-- Primary constructors
-- Collection expressions
-- `yield return`
-- `yield break`
-- Enum
-
 ### Yield: `yield return` vs Returning a List
 
 | Feature | `yield return` | `return list` |
@@ -2251,19 +1788,6 @@ Console.WriteLine(emp1 == emp2); // True
 <a id="topic-18"></a>
 
 ## 18. Testing in C#
-
-### What to Learn
-
-- Unit testing
-- Integration testing
-- Test-driven development basics
-- xUnit
-- NUnit
-- MSTest
-- Mocking
-- Moq or similar libraries
-- Arrange, Act, Assert pattern
-- Test coverage
 
 - Unit tests verify small units of logic independently.
 - Integration tests verify multiple parts working together.
@@ -2326,22 +1850,6 @@ Console.WriteLine(emp1 == emp2); // True
 | `Substring` in hot path | `AsSpan().Slice()` | Zero-allocation slice |
 | Reflection in hot path | Compiled expressions / source generators | Performance |
 
-### What to Learn
-
-- Expression trees
-- Dynamic keyword
-- Unsafe code
-- Pointers
-- Span<T>
-- Memory<T>
-- Ref structs
-- Attributes in depth
-- Source generators
-- Interceptors concept
-- Analyzers
-- Nullable annotations
-- Custom awaiters
-
 - `dynamic` delays type checking until runtime.
 - Runtime errors are possible with `dynamic` if the expected member does not exist.
 - Expression trees represent code as data and are commonly used by query providers.
@@ -2376,23 +1884,6 @@ Console.WriteLine(emp1 == emp2); // True
 | Lifetime | Independent copy | Must not outlive source string |
 | Use case | Need new string instance | Parsing, tokenizing, comparisons in hot paths |
 | Performance | Slower for many slices | Faster — zero-copy |
-
-### What to Learn
-
-- Big O basics
-- Avoiding unnecessary allocations
-- Choosing the right collection
-- String performance
-- `StringBuilder`
-- Boxing and unboxing performance
-- Async performance
-- LINQ performance considerations
-- Caching basics
-- Profiling basics
-- BenchmarkDotNet basics
-- Logging best practices
-- Exception handling best practices
-- Naming conventions
 
 ### Naming Conventions
 
@@ -2439,33 +1930,11 @@ Console.WriteLine(emp1 == emp2); // True
 | Aspect | Detail |
 | --- | --- |
 | Definition | Modern, type-safe, object-oriented language by Microsoft |
-| Runs on | .NET runtime (CLR) |
+| Runs on | .NET |
 | Use cases | Web, desktop, mobile, cloud, games |
 | Key strength | Rich ecosystem, strong typing, LINQ, async/await |
 
 > **One-liner:** C# is a versatile .NET language for building type-safe apps from web APIs to desktop tools.
-
-### .NET Framework vs .NET Core / .NET
-
-| Point | .NET Framework | .NET Core / .NET 5+ |
-| --- | --- | --- |
-| Platform | Windows only | Cross-platform (Win, Linux, Mac) |
-| Status | Maintenance mode | Active development (.NET 8, 9…) |
-| Deployment | Machine-wide GAC possible | Self-contained or framework-dependent |
-| Performance | Older runtime | Faster, modular, cloud-optimized |
-
-> **One-liner:** Use modern **.NET** for new projects; Framework remains for legacy Windows apps.
-
-### Managed Code vs Unmanaged Code
-
-| Point | Managed Code | Unmanaged Code |
-| --- | --- | --- |
-| Runtime | Runs under CLR with GC | Runs outside CLR (native C/C++) |
-| Memory | GC handles allocation/cleanup | Manual `malloc`/`free` |
-| Safety | Type-safe, bounds-checked | Pointer-based, developer-managed |
-| Interop | P/Invoke, `unsafe` blocks call unmanaged | DLLs, COM, native libraries |
-
-> **One-liner:** C# is managed by default; unmanaged code is native code you call via interop.
 
 ### Array vs ArrayList
 
@@ -2489,16 +1958,17 @@ Console.WriteLine(emp1 == emp2); // True
 
 > **One-liner:** IEnumerable reads; ICollection modifies; IList adds index-based access.
 
-### Value Type vs Reference Type
+### `struct` vs `class`
 
-| Point | Value Type | Reference Type |
-| --- | --- | --- |
-| Storage | Stack (or inline in object) | Heap — variable holds reference |
-| Copy behavior | Copies the value | Copies the reference (same object) |
-| Examples | `int`, `struct`, `enum` | `class`, `string`, arrays |
-| Null | Cannot be null (except `Nullable<T>`) | Can be null |
+| `struct` | `class` |
+| --- | --- |
+| Value type | Reference type |
+| Stored in stack/directly in containing type | Object stored in heap, reference stored in variable |
+| Copy creates new value | Copy creates new reference to same object |
+| Cannot inherit from another struct/class | Supports inheritance |
+| Best for small data | Best for complex objects |
 
-> **One-liner:** Value types copy data; reference types copy pointers to shared heap objects.
+> **One-liner:** `struct` copies data on the stack; `class` shares one heap object via reference.
 
 ### What are Generics (`<T>`)?
 
@@ -2553,11 +2023,10 @@ Console.WriteLine(emp1 == emp2); // True
 
 ### Delegates and Events
 
-| Concept | Meaning | Example |
-| --- | --- | --- |
-| Delegate | Type-safe function pointer | `Func<int,int>`, `Action` |
-| Multicast | Delegate holds multiple methods | `del += MethodB` |
-| Event | Restricted delegate — only publisher invokes | `public event EventHandler Click` |
-| Pattern | Observer / pub-sub within a class | WinForms, WPF, custom notifications |
+| Type | Returns |
+| --- | --- |
+| `Func` | A value |
+| `Action` | `void` |
+| `Predicate` | `bool` |
 
-> **One-liner:** Delegates reference methods; events wrap delegates so only the owner can raise them.
+> **One-liner:** Delegate = type-safe function pointer; Event = delegate wrapper to notify subscribers.
