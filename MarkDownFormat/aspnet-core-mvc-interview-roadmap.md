@@ -47,20 +47,6 @@ This roadmap is focused on <strong style="color:#16a34a;">ASP.NET Core interview
 
 ## 1. ASP.NET Core Basics
 
-### What to Learn
-
-- What is ASP.NET Core?
-- Difference between Web Forms, ASP.NET MVC 5, and ASP.NET Core MVC
-- Difference between ASP.NET MVC, ASP.NET Web API, and ASP.NET Core
-- Cross-platform nature of ASP.NET Core
-- Hosting model
-- Project structure
-- `Program.cs`
-- `Startup.cs` concept in older ASP.NET Core projects
-- `wwwroot` folder
-- `appsettings.json`
-- Environment-specific configuration
-
 ASP.NET Core is a modern, cross-platform framework for building web applications, MVC applications, Razor Pages, and HTTP APIs.
 
 ### Web Forms vs ASP.NET MVC 5 vs ASP.NET Core MVC
@@ -108,16 +94,6 @@ Common static files:
 <a id="topic-2"></a>
 
 ## 2. Hosting, Kestrel, and IIS
-
-### What to Learn
-
-- Kestrel web server
-- IIS integration
-- In-process hosting
-- Out-of-process hosting
-- Reverse proxy
-- IIS vs Kestrel
-- Production hosting patterns
 
 Kestrel is the default cross-platform web server used in ASP.NET Core applications.
 
@@ -236,16 +212,6 @@ Reverse proxy benefits:
 
 ## 3. MVC Architecture
 
-### What to Learn
-
-- MVC pattern
-- Model
-- View
-- Controller
-- Razor views
-- Controller to view flow
-- Strongly typed views
-
 MVC separates an application into Model, View, and Controller.
 
 | Part | Responsibility |
@@ -290,22 +256,6 @@ User Request
 <a id="topic-4"></a>
 
 ## 4. Request Pipeline and Middleware
-
-### What to Learn
-
-- Request pipeline
-- Middleware
-- Built-in middleware
-- Custom middleware
-- Middleware order
-- Request delegate
-- `Use`
-- `Run`
-- `Map`
-- `UseMiddleware<T>()`
-- Exception handling middleware
-- Static files middleware
-- Routing middleware
 
 Middleware is a software component executed during the request-response pipeline in ASP.NET Core.
 
@@ -460,18 +410,6 @@ Application Start
 
 ## 5. Routing
 
-### What to Learn
-
-- Conventional routing
-- Attribute routing
-- Endpoint routing
-- Area routing
-- Route parameters
-- Optional route parameters
-- Route constraints
-- Route templates
-- Route names
-
 Routing maps incoming requests to controllers, actions, Razor Pages, or endpoints.
 
 ### Conventional Routing
@@ -523,21 +461,6 @@ public class ProductsController : ControllerBase
 <a id="topic-6"></a>
 
 ## 6. Controllers and Actions
-
-### What to Learn
-
-- Controller basics
-- Action methods
-- Action results
-- `IActionResult`
-- `ActionResult<T>`
-- `Controller`
-- `ControllerBase`
-- Status code results
-- Content results
-- File results
-- Redirect results
-- Controller base classes
 
 Controllers handle incoming requests and return responses.
 
@@ -649,17 +572,6 @@ Common error status codes:
 
 ## 7. MVC Views and Data Passing
 
-### What to Learn
-
-- Passing model to view
-- Strongly typed views
-- `@model`
-- `ViewData`
-- `ViewBag`
-- `TempData`
-- ViewModel
-- Razor view basics
-
 A model is passed from Controller to View using the `View()` method in ASP.NET MVC/Core.
 
 ### Passing Model to View
@@ -741,28 +653,6 @@ Benefits:
 <a id="topic-8"></a>
 
 ## 8. Web API Fundamentals
-
-### What to Learn
-
-- What is Web API?
-- REST basics
-- REST constraints
-- HTTP methods
-- GET
-- POST
-- PUT
-- PATCH
-- DELETE
-- HTTP status codes
-- Request body
-- Response body
-- JSON/XML responses
-- DTOs
-- API versioning basics
-- Swagger/OpenAPI
-- Content negotiation
-- Web API vs MVC controller
-- Web API vs WCF
 
 Web API is used to build HTTP services. It allows communication between applications over HTTP and commonly returns data in JSON or XML format.
 
@@ -950,19 +840,6 @@ Accept: application/xml  -> XML response
 
 ## 9. Model Binding and Validation
 
-### What to Learn
-
-- Model binding
-- Binding from route
-- Binding from query string
-- Binding from request body
-- Binding from headers
-- Data annotations
-- Model validation
-- `ModelState`
-- Custom validation attributes
-- FluentValidation basics
-
 Model binding maps HTTP request data to action method parameters or model objects.
 
 Common binding sources:
@@ -991,24 +868,6 @@ Common binding sources:
 <a id="topic-10"></a>
 
 ## 10. Dependency Injection
-
-### What to Learn
-
-- What is dependency injection?
-- Why use dependency injection?
-- Problems without dependency injection
-- Constructor injection
-- Property injection
-- Method injection
-- Built-in dependency injection container
-- Service registration
-- Service lifetimes
-- Transient
-- Scoped
-- Singleton
-- `IServiceCollection`
-- `IServiceProvider`
-- Common lifetime mistakes
 
 Dependency Injection is a design pattern used to provide dependencies to a class instead of creating them inside the class.
 
@@ -1123,19 +982,6 @@ Important points:
 | `IOptionsSnapshot<T>` | Yes — per scope/request | Scoped | Settings that may change between requests |
 | `IOptionsMonitor<T>` | Yes — pushes `OnChange` callbacks | Singleton | Dynamic config with change notifications |
 
-### What to Learn
-
-- `appsettings.json`
-- Environment-specific settings
-- Environment variables
-- User secrets
-- Configuration providers
-- `IConfiguration`
-- Options pattern
-- `IOptions<T>`
-- `IOptionsSnapshot<T>`
-- `IOptionsMonitor<T>`
-
 `appsettings.json` stores application configuration settings in ASP.NET Core.
 
 Common configurations:
@@ -1242,18 +1088,6 @@ builder.Services.Configure<MySettings>(builder.Configuration.GetSection("MySetti
 | Metrics | Counters, histograms (latency, errors) | `WithMetrics()` — request duration, active connections |
 | Logs | Structured log events | Bridge `ILogger` to OTLP exporter |
 
-### What to Learn
-
-- Built-in logging
-- Log levels
-- Structured logging
-- Exception handling middleware
-- Developer exception page
-- Global exception handling
-- Problem Details
-- Custom error response
-- Correlation ID basics
-
 Common use cases:
 
 - Log request and response details
@@ -1279,20 +1113,6 @@ Common use cases:
 <a id="topic-13"></a>
 
 ## 13. Filters
-
-### What to Learn
-
-- Authorization filters
-- Resource filters
-- Action filters
-- Exception filters
-- Result filters
-- Endpoint filters
-- Filter execution order
-- Custom filters
-- Service filters
-- Type filters
-- Middleware vs filters
 
 Filters run inside the MVC/controller pipeline. Middleware runs in the full HTTP pipeline.
 
@@ -1340,23 +1160,6 @@ Filters run inside the MVC/controller pipeline. Middleware runs in the full HTTP
 <a id="topic-14"></a>
 
 ## 14. Authentication, Authorization, and JWT
-
-### What to Learn
-
-- Authentication vs authorization
-- Claims
-- Roles
-- Principal
-- Identity
-- JWT authentication
-- JWT structure
-- Access token
-- Refresh token
-- Cookie authentication
-- ASP.NET Core Identity basics
-- `[Authorize]`
-- `[AllowAnonymous]`
-- Authorization header
 
 Authentication verifies who the user is. Authorization verifies what the user can access.
 
@@ -1553,18 +1356,6 @@ Login
 
 ## 15. OAuth, OpenID Connect, and SSO
 
-### What to Learn
-
-- OAuth
-- OpenID
-- OpenID Connect
-- JWT token format
-- Microsoft Identity Platform
-- Microsoft Entra ID
-- IdentityServer4
-- Duende IdentityServer
-- Single Sign-On
-
 OAuth, OpenID, and OpenID Connect are protocols. JWT is a token format.
 
 ### Main Difference
@@ -1679,19 +1470,6 @@ Common technologies:
 | Data read/write | `HttpContext.Session.SetString/GetString` |
 | Timeout / close | Session expires (idle timeout) or `Session.Clear()` |
 | Browser closes | Session cookie may persist (depends on cookie settings) — server session may still expire |
-
-### What to Learn
-
-- Cookies
-- Session management
-- Session variables
-- TempData
-- ViewData
-- ViewBag
-- Query string
-- Hidden fields
-- HTTP context
-- ViewModel
 
 HTTP is stateless by default. Session management techniques help maintain user state/data between multiple HTTP requests.
 
@@ -1915,17 +1693,6 @@ public IActionResult Index()
 | Response leakage | Return response DTO — hide internal columns and relationships |
 | Validation | Data annotations on DTO + `Results.ValidationProblem` |
 
-### What to Learn
-
-- Minimal API basics
-- Route handlers
-- Parameter binding
-- Dependency injection in route handlers
-- Returning results
-- Endpoint filters
-- Grouping endpoints
-- Minimal API vs controller-based API
-
 Minimal APIs are a lightweight way to build HTTP APIs with less ceremony than controller-based APIs.
 
 ```csharp
@@ -1956,17 +1723,6 @@ app.Run();
 
 ## 18. File Upload and Download
 
-### What to Learn
-
-- `IFormFile`
-- Multipart form data
-- File size limits
-- File validation
-- Saving files
-- Streaming files
-- Returning files from APIs
-- Security risks in file upload
-
 | Question | Answer |
 | --- | --- |
 | What is `IFormFile`? | Represents uploaded file in multipart form — `file.OpenReadStream()`, `.FileName`, `.Length` |
@@ -1985,17 +1741,6 @@ app.Run();
 <a id="topic-19"></a>
 
 ## 19. Background Services
-
-### What to Learn
-
-- Hosted services
-- `IHostedService`
-- `BackgroundService`
-- Worker service
-- Timed background tasks
-- Queued background tasks
-- Cancellation tokens
-- Logging in background services
 
 | Question | Answer |
 | --- | --- |
@@ -2025,16 +1770,6 @@ app.Run();
 | Response caching | HTTP cache headers | Client/proxy revalidation | Static or semi-static GET responses |
 | Output caching (.NET 7+) | Server-side response cache | Policy-based (VaryByQuery, tags) | Full page/API response without re-execution |
 | HybridCache (.NET 9+) | L1 in-memory + L2 distributed | Tag-based invalidation | Best of both — local speed + shared L2 |
-
-### What to Learn
-
-- In-memory caching
-- Distributed caching
-- Response caching
-- Output caching
-- Cache expiration
-- Cache invalidation
-- Redis basics
 
 | Question | Answer |
 | --- | --- |
@@ -2085,20 +1820,6 @@ app.Run();
 | Config | `ocelot.json` route definitions |
 | Use case | Microservices gateway — single entry point to multiple downstream APIs |
 
-### What to Learn
-
-- HTTPS
-- CORS
-- CSRF
-- XSS basics
-- SQL injection prevention
-- Secure headers
-- Secrets management
-- Input validation
-- Rate limiting
-- Avoiding sensitive data in logs
-- Securing APIs
-
 ### Securing Web APIs
 
 Common practices:
@@ -2138,17 +1859,6 @@ public class PolicyController : ControllerBase
 
 ## 22. Testing ASP.NET Core Applications
 
-### What to Learn
-
-- Unit testing controllers
-- Unit testing services
-- Integration testing
-- `WebApplicationFactory`
-- Test server
-- Mocking dependencies
-- Testing middleware
-- Testing APIs
-
 | Question | Answer |
 | --- | --- |
 | Unit vs integration test? | Unit = isolate class with mocks; integration = real HTTP pipeline via test server |
@@ -2167,17 +1877,6 @@ public class PolicyController : ControllerBase
 <a id="topic-23"></a>
 
 ## 23. Deployment and Hosting
-
-### What to Learn
-
-- Development, staging, and production environments
-- Publishing an application
-- IIS hosting
-- Linux hosting
-- Docker basics
-- Reverse proxy basics
-- Health checks
-- Configuration in production
 
 Production hosting examples:
 
@@ -2214,19 +1913,6 @@ Production hosting examples:
 
 - Add `AddSignalR().AddStackExchangeRedis(connectionString)` for multi-server deployments
 - Sticky sessions not required when backplane is configured
-
-### What to Learn
-
-- Async APIs
-- Avoiding blocking calls
-- Efficient logging
-- Response compression
-- Caching
-- Pagination
-- Avoiding over-fetching data
-- Proper status codes
-- API response consistency
-- Monitoring basics
 
 ### Async, Threads, Concurrency, and Parallelism
 
