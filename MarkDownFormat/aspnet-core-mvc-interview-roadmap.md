@@ -1356,103 +1356,17 @@ Login
 
 ## 15. OAuth, OpenID Connect, and SSO
 
-OAuth, OpenID, and OpenID Connect are protocols. JWT is a token format.
-
-### Main Difference
-
-| Concept | Meaning |
+| Term | One-liner |
 | --- | --- |
-| OAuth | Authorization framework. Answers: what can the application access? |
-| OpenID | Authentication protocol. Answers: who is the user? |
-| OpenID Connect | Authentication layer over OAuth 2.0. Handles login and identity. |
-| JWT | Token format that carries claims/data. |
+| **OAuth 2.0** | Authorization protocol used to give an app limited access to a user's resources without sharing password. |
+| **OpenID** | Old authentication protocol used to verify user identity/login. |
+| **OpenID Connect** | Modern login/authentication layer built on top of OAuth 2.0. |
+| **Microsoft Entra ID** | Microsoft's cloud identity platform that supports OAuth 2.0 and OpenID Connect for login and access control. |
 
-### OAuth
-
-OAuth allows third-party applications to access resources securely.
-
-Examples:
-
-- Login with Google
-- Allow another app to access photos or profile data
-
-### OpenID Connect
-
-OpenID Connect is built on top of OAuth 2.0 and adds authentication support.
-
-Commonly used in:
-
-- Google Login
-- Microsoft Login
-- Azure AD / Microsoft Entra ID
-- Okta
-- Auth0
-
-### Real Login Flow
-
-```text
-User Clicks Login with Google
-    -> OpenID Connect
-    -> Uses OAuth 2.0
-    -> Generates JWT Token
-    -> Application Gets User Info
-```
-
-### OAuth vs OpenID vs OpenID Connect vs JWT
-
-| Feature | OAuth | OpenID | OpenID Connect | JWT |
-| --- | --- | --- | --- | --- |
-| Purpose | Authorization | Authentication | Authentication + authorization | Token format |
-| Checks | Access | Identity | Identity + access | Carries data |
-| Protocol/format | Framework | Protocol | Protocol | Token |
-| Uses JWT | Sometimes | No | Yes | Itself JWT |
-| Login support | No | Yes | Yes | No |
-| Permission handling | Yes | No | Yes | No |
-| Common use | API access | User identity | Social login | Secure data transfer |
-
-### Microsoft Identity Platform and Entra ID
-
-- Microsoft supports OpenID Connect through Microsoft Identity Platform and Microsoft Entra ID.
-- Azure Active Directory is now Microsoft Entra ID.
-- OIDC defines how authentication works.
-- Microsoft Entra ID performs authentication as a managed identity provider.
-
-### IdentityServer4 and Microsoft Entra ID
-
-IdentityServer4 is an OpenID Connect and OAuth 2.0 framework for ASP.NET Core applications. It is outdated for newer .NET versions; Duende IdentityServer is the newer commercial successor.
-
-| Feature | IdentityServer4 | Microsoft Entra ID |
-| --- | --- | --- |
-| Hosted by | Self-hosted | Microsoft Cloud |
-| Control | Full control | Managed by Microsoft |
-| Cost | Free old version | Subscription based |
-| Best for | Custom auth systems | Enterprise login |
-| OIDC support | Yes | Yes |
-| OAuth support | Yes | Yes |
-
-### SSO
-
-Single Sign-On is an authentication mechanism where a user logs in once and can access multiple applications without logging in again.
-
-Common technologies:
-
-- OpenID Connect
-- OAuth 2.0
-- SAML
-- JWT tokens
-
-| Question | Answer |
-| --- | --- |
-| OAuth vs OpenID Connect? | OAuth = authorization (what app can access); OIDC = authentication layer on OAuth 2.0 (who user is) |
-| OAuth vs JWT? | OAuth is a protocol/framework; JWT is a token format — OIDC often issues JWTs |
-| What is SSO? | Single login grants access to multiple apps without re-authenticating |
-| Microsoft Entra ID? | Formerly Azure AD — cloud identity provider with OIDC/OAuth support |
-| IdentityServer4 vs Duende? | IdentityServer4 is legacy; Duende is the supported commercial successor for .NET |
-
-**Must-know points:**
-- "Login with Google/Microsoft" = OIDC flow on top of OAuth 2.0
-- JWT carries claims after OIDC login — app validates token, does not call IdP every request
-- SAML is enterprise SSO alternative to OIDC — common in corporate environments
+**Easy remember:**
+- **OAuth** = Access
+- **OpenID Connect** = Login
+- **Microsoft Entra ID** = Identity provider
 
 ---
 
