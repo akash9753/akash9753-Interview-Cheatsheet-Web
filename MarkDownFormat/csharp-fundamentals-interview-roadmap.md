@@ -106,6 +106,28 @@ class Program
 | `string` | Reference type | Stores text |
 | `object` | Reference type | Base type of all data types |
 
+### `struct` vs `class`
+
+| `struct` | `class` |
+| --- | --- |
+| Value type | Reference type |
+| Stored in stack/directly in containing type | Object stored in heap, reference stored in variable |
+| Copy creates new value | Copy creates new reference to same object |
+| Cannot inherit from another struct/class | Supports inheritance |
+| Best for small data | Best for complex objects |
+
+```csharp
+struct Point
+{
+    public int X;
+}
+
+class Person
+{
+    public string Name;
+}
+```
+
 ### Type Safety, Casting, and Conversion
 
 | Concept | Detail |
@@ -162,11 +184,13 @@ string name = input ?? "Guest";
 | --- | --- |
 | `var` vs `dynamic`? | `var` = compile-time type; `dynamic` = runtime binding |
 | `const` vs `readonly`? | `const` = compile-time static; `readonly` = set once at runtime |
+| `struct` vs `class`? | `struct` = value type, copy by value; `class` = reference type, copy shares same object |
 | Boxing cost? | Heap allocation + GC pressure — avoid in loops/collections |
 
 **Must-know points:**
 - Implicit = safe widening; explicit = narrowing with possible **data loss**
 - **`TryParse`** for user input; **`Convert`** when value may be `null`; **`is`** to check, **`as`** to cast safely
+- Use **`struct`** for small immutable data; **`class`** for objects with behavior and identity
 
 ---
 
@@ -290,13 +314,40 @@ class Program
 - Extension methods are useful when you want to add helper behavior to a type whose source code you do not control.
 
 ```csharp
-public static class StringExtensions
+using System;
+using System.Collections.Generic;
+
+// Extension methods must be in a static class
+public static class DictionaryExtensions
 {
-    public static bool IsNullOrEmptyText(this string value)
+    public static void PrintKeyValue<TKey, TValue>(this Dictionary<TKey, TValue> dictionary)
     {
-        return string.IsNullOrEmpty(value);
+        foreach (var pair in dictionary)
+            Console.WriteLine($"Key: {pair.Key}, Value: {pair.Value}");
     }
 }
+
+class Program
+{
+    static void Main()
+    {
+        var users = new Dictionary<int, string>
+        {
+            { 1, "Akash" },
+            { 2, "Ravi" },
+            { 3, "Priya" }
+        };
+
+        users.PrintKeyValue();
+    }
+}
+```
+
+**Output:**
+```text
+Key: 1, Value: Akash
+Key: 2, Value: Ravi
+Key: 3, Value: Priya
 ```
 
 | Question | Answer |
@@ -809,9 +860,20 @@ class Repository<T> where T : class
 
 ## 10. Delegates, Events, and Lambda Expressions
 
+- A **delegate** is a type-safe function pointer — it holds a reference to a method.
+- **Lambda** (`x => x * x`) is shorthand for an anonymous method, often assigned to delegates.
+- An **event** is a wrapper around a delegate — it notifies listeners when something happens. Others can listen (`+=`), but only the class that owns the event can fire it (`Invoke`).
+
+### Built-in Delegate Types
+
+| Type | Returns | Use |
+| --- | --- | --- |
+| `Func` | A value | Compute and return (last generic = return type) |
+| `Action` | `void` | Execute side effects |
+| `Predicate` | `bool` | Test a condition (`Func<T, bool>`) |
+
 ```csharp
-// Delegate
-// A delegate is a type-safe function pointer that holds reference of a method.
+// Delegate — type-safe function pointer; holds reference of a method
 
 // Types of Delegate:
 // Func      => returns a value
@@ -821,16 +883,59 @@ class Repository<T> where T : class
 Func<int, int> square = x => x * x;
 Action<string> print = msg => Console.WriteLine(msg);
 Predicate<int> isEven = x => x % 2 == 0;
+```
 
+### Event — Basic Example
 
-// Event
-// An event is a wrapper around delegate used to notify subscribers when something happens.
+```csharp
+// Event — wrapper around delegate; notifies subscribers when something happens
 
 public event Action OnSaved;
 
 OnSaved += () => Console.WriteLine("Saved");
 OnSaved?.Invoke();
 ```
+
+### Delegate vs Event
+
+| | Delegate field | Event |
+| --- | --- | --- |
+| External `=` assignment | Allowed | Blocked |
+| External `Invoke` | Allowed | Blocked |
+| `+=` / `-=` subscribe | Yes | Yes |
+| Purpose | General callback | One class notifies others who are listening |
+
+```csharp
+public class DocumentService
+{
+    public event Action? OnSaved;
+
+    public void Save()
+    {
+        // save logic...
+        OnSaved?.Invoke();  // only this class can fire the event
+    }
+}
+
+var service = new DocumentService();
+service.OnSaved += () => Console.WriteLine("Saved");
+service.Save();
+```
+
+| Question | Answer |
+| --- | --- |
+| What is a delegate? | Type-safe function pointer — holds reference of a method |
+| `Func` vs `Action` vs `Predicate`? | Returns value / void / bool |
+| What is a lambda? | Inline anonymous function for delegates and LINQ |
+| What is an event? | Wrapper around delegate — notifies listeners; only owner can fire it |
+| Why events over public delegates? | Prevents outsiders from invoking or overwriting handlers |
+| Multicast delegate? | `+=` chains multiple methods; all run on `Invoke` |
+
+**Must-know points:**
+- `Func` last type parameter is always the **return type**
+- `?.Invoke()` safely calls only when subscribers exist
+- Unsubscribe with `-=` to avoid **memory leaks** on long-lived publishers
+- Common in UI (`Click`), domain notifications, and LINQ (`Where(x => ...)`)
 
 ---
 
@@ -1117,28 +1222,6 @@ using ProjectA = MyCompany.ProjectA.SubModule;
 | Size | Smaller | Larger |
 | Lifetime | Method scope | Until GC removes object |
 
-### `struct` vs `class`
-
-| `struct` | `class` |
-| --- | --- |
-| Value type | Reference type |
-| Stored in stack/directly in containing type | Object stored in heap, reference stored in variable |
-| Copy creates new value | Copy creates new reference to same object |
-| Cannot inherit from another struct/class | Supports inheritance |
-| Best for small data | Best for complex objects |
-
-```csharp
-struct Point
-{
-    public int X;
-}
-
-class Person
-{
-    public string Name;
-}
-```
-
 ### GC Generations
 
 | Generation | Purpose |
@@ -1289,19 +1372,64 @@ Memory Management in .NET
 | Goal | Responsiveness, structuring work | Throughput, CPU utilization |
 | Shared state | Often shares data — needs synchronization | Often partitions work — less contention |
 | C# examples | `async`/`await`, `Task`, event-driven | `Parallel.For`, `Parallel.ForEach`, PLINQ |
-| Analogy | One chef switching between dishes | Multiple chefs cooking at once |
+| Example | Download file while UI stays responsive | Process 1 lakh records on multiple cores |
 
-### Thread vs TPL
+- **Concurrency:** Multiple tasks in progress at the same time — they may not run at the exact same instant.
+- **Parallelism:** Multiple tasks actually run at the same time on multiple CPU cores.
 
-| Feature | `Thread` | TPL |
-| --- | --- | --- |
-| Level | Low-level | High-level |
-| Namespace | `System.Threading` | `System.Threading.Tasks` |
-| Management | Manual | Automatic |
-| Performance | Slower/heavier | Faster/lighter |
-| Resource usage | Heavy | Lightweight |
-| Recommended today | Less common | Most common |
-| Uses ThreadPool | No by default | Yes |
+### Thread vs TPL vs Parallel Library
+
+#### 1. Thread
+
+Low-level way to create and manage your own thread. You manually start and control it — more control, but costly and complex.
+
+```csharp
+Thread t = new Thread(() =>
+{
+    Console.WriteLine("Running on separate thread");
+});
+t.Start();
+```
+
+**Use:** Rarely used directly now; when you need full control over thread behavior.
+
+#### 2. TPL (Task Parallel Library)
+
+High-level API over `ThreadPool`. Uses `Task` and `async`/`await`. Easier than `Thread` — best for async and background work.
+
+```csharp
+Task task = Task.Run(() =>
+{
+    Console.WriteLine("Running using TPL Task");
+});
+
+await task;
+```
+
+**Use:** API calls, file operations, background processing, `async`/`await`.
+
+#### 3. Parallel Library
+
+Part of TPL. Used for **CPU-bound** parallel work — runs loop/items in parallel on multiple cores.
+
+```csharp
+Parallel.For(0, 10, i =>
+{
+    Console.WriteLine($"Processing {i}");
+});
+```
+
+**Use:** CPU-heavy work, image processing, large calculations, big collections.
+
+### Main Difference
+
+| | Thread | TPL | Parallel Library |
+| --- | --- | --- | --- |
+| Level | Low-level, manual | High-level, task-based | Part of TPL |
+| Best for | Full thread control | Concurrency, async I/O | CPU-bound parallelism |
+| Examples | `new Thread()` | `Task.Run`, `async`/`await` | `Parallel.For`, `Parallel.ForEach` |
+
+> **One-liner:** `Thread` is low-level manual threading; TPL is high-level task-based concurrency with `Task`/`async-await`; Parallel Library is part of TPL for CPU-bound work across multiple cores.
 
 ### TPL Hierarchy
 
@@ -1543,9 +1671,114 @@ Concurrency Control
 
 - Optimistic locking assumes that concurrency conflicts will rarely happen, so there is no lock; it only checks old values against new values during update.
 
+### Optimistic vs Pessimistic Concurrency
+
+| Optimistic | Pessimistic |
+| --- | --- |
+| No lock while reading | Locks data immediately |
+| Uses `RowVersion` / Concurrency Token | Uses SQL locks (`UPDLOCK`, `XLOCK`) |
+| Better performance | Lower performance due to blocking |
+| Conflicts detected during `SaveChanges()` | Conflicts prevented before update |
+| Best for low contention | Best for high contention (banking, inventory, payments) |
+
+### Optimistic Concurrency
+
+Does not lock data while reading. Checks during update whether another user changed the data.
+
+**When to use:** Low-conflict apps, normal CRUD, profile update, product update
+
+**How it works:**
+1. User A reads record
+2. User B reads same record
+3. User B updates first
+4. User A tries to update
+5. System detects conflict using `RowVersion`
+
+**Entity:**
+
+```csharp
+public class Product
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public int Stock { get; set; }
+
+    [Timestamp]
+    public byte[] RowVersion { get; set; }
+}
+```
+
+**EF Core:**
+
+```csharp
+try
+{
+    var product = await context.Products.FindAsync(id);
+
+    product.Stock = 20;
+
+    await context.SaveChangesAsync();
+}
+catch (DbUpdateConcurrencyException)
+{
+    Console.WriteLine("Data was modified by another user.");
+}
+```
+
+> **One-liner:** Optimistic concurrency does not lock the row. It uses `RowVersion` / Concurrency Token to detect conflicts during `SaveChanges()`.
+
+### Pessimistic Concurrency
+
+Locks the data during a transaction so other transactions cannot modify it until the lock is released.
+
+**When to use:** Banking, ticket booking, inventory management, payment processing
+
+**SQL Server:**
+
+```sql
+BEGIN TRANSACTION;
+
+SELECT * FROM Products WITH (UPDLOCK, ROWLOCK)
+WHERE Id = 1;
+
+UPDATE Products
+SET Stock = Stock - 1
+WHERE Id = 1;
+
+COMMIT TRANSACTION;
+```
+
+**EF Core:**
+
+```csharp
+using var transaction = await context.Database.BeginTransactionAsync();
+
+var product = await context.Products
+    .FromSqlInterpolated($@"
+        SELECT * FROM Products WITH (UPDLOCK, ROWLOCK)
+        WHERE Id = {id}")
+    .FirstAsync();
+
+product.Stock--;
+await context.SaveChangesAsync();
+
+await transaction.CommitAsync();
+```
+
+| Lock Hint | Purpose |
+| --- | --- |
+| `UPDLOCK` | Prevents other updates |
+| `ROWLOCK` | Locks only the selected row |
+| `XLOCK` | Exclusive lock — no reads or writes |
+| `HOLDLOCK` | Holds lock until transaction completes |
+
+> **One-liner:** EF Core has no built-in pessimistic concurrency — use a database transaction with SQL Server lock hints (`UPDLOCK` / `XLOCK` / `ROWLOCK`) to lock rows until the transaction completes.
+
 | Question | Answer |
 | --- | --- |
 | Process vs thread? | Process = isolated app instance; thread = execution unit within process |
+| Concurrency vs parallelism? | Concurrency = tasks make progress; parallelism = tasks run on multiple cores at once |
+| Thread vs TPL vs Parallel? | Thread = manual/low-level; TPL = `Task`/async; Parallel = CPU-bound multi-core loops |
 | `lock` vs `Monitor`? | `lock` is syntactic sugar for `Monitor.Enter`/`Exit` |
 | Race condition? | Unsynchronized shared mutable state — unpredictable results |
 | Deadlock? | Two threads each hold a lock the other needs — circular wait |
@@ -1968,6 +2201,11 @@ Console.WriteLine(emp1 == emp2); // True
 | Cannot inherit from another struct/class | Supports inheritance |
 | Best for small data | Best for complex objects |
 
+```csharp
+struct Point { public int X; }
+class Person { public string Name; }
+```
+
 > **One-liner:** `struct` copies data on the stack; `class` shares one heap object via reference.
 
 ### What are Generics (`<T>`)?
@@ -2029,4 +2267,41 @@ Console.WriteLine(emp1 == emp2); // True
 | `Action` | `void` |
 | `Predicate` | `bool` |
 
-> **One-liner:** Delegate = type-safe function pointer; Event = delegate wrapper to notify subscribers.
+| Delegate field vs Event | Delegate | Event |
+| --- | --- | --- |
+| External invoke | Yes | No |
+| External `=` | Yes | No |
+
+> **One-liner:** Delegate = type-safe function pointer; Event = wrapper around delegate to notify listeners (only owner can fire it).
+
+### Optimistic Concurrency (EF Core)
+
+| Aspect | Detail |
+| --- | --- |
+| Definition | No lock on read; checks for changes at update time |
+| When to use | Low conflict, CRUD, profile/product updates |
+| How | `RowVersion` / `[Timestamp]` / Concurrency Token |
+| On conflict | `DbUpdateConcurrencyException` at `SaveChanges()` |
+
+> **One-liner:** No row lock — `RowVersion` detects if data changed when you call `SaveChanges()`.
+
+### Pessimistic Concurrency (EF Core)
+
+| Aspect | Detail |
+| --- | --- |
+| Definition | Locks rows during a transaction until commit/rollback |
+| When to use | Banking, tickets, inventory, payments |
+| EF Core support | No built-in API — use `BeginTransactionAsync` + SQL lock hints |
+| Common hints | `UPDLOCK`, `ROWLOCK`, `XLOCK`, `HOLDLOCK` |
+
+> **One-liner:** Use a transaction with `UPDLOCK`/`ROWLOCK` in raw SQL — EF Core does not lock rows pessimistically by default.
+
+### Thread vs TPL vs Parallel Library
+
+| | Thread | TPL | Parallel Library |
+| --- | --- | --- | --- |
+| Level | Low-level, manual | High-level, task-based | Part of TPL |
+| Best for | Full thread control | Async I/O, background work | CPU-bound multi-core work |
+| Examples | `new Thread()` | `Task.Run`, `async`/`await` | `Parallel.For`, `Parallel.ForEach` |
+
+> **One-liner:** Thread = manual; TPL = Task/async concurrency; Parallel = CPU work across cores.
