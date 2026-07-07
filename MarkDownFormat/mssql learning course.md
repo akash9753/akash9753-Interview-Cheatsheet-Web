@@ -1,163 +1,32 @@
 # SQL Course Notes
 
-## Course Topics Overview
+## Topic Index
 
-### 1. SQL and Database Fundamentals
+<ul>
+  <li><a href="#topic-1">1. SQL and Database Fundamentals</a></li>
+  <li><a href="#topic-2">2. Data Definition Language (DDL)</a></li>
+  <li><a href="#topic-3">3. Data Types</a></li>
+  <li><a href="#topic-4">4. Constraints and Keys</a></li>
+  <li><a href="#topic-5">5. Data Manipulation Language (DML)</a></li>
+  <li><a href="#topic-6">6. Basic Querying</a></li>
+  <li><a href="#topic-7">7. Aggregate and Grouping Queries</a></li>
+  <li><a href="#topic-8">8. Joins and Relationships</a></li>
+  <li><a href="#topic-9">9. Subqueries and CTEs</a></li>
+  <li><a href="#topic-10">10. SQL Functions</a></li>
+  <li><a href="#topic-11">11. Set Operators</a></li>
+  <li><a href="#topic-12">12. Views and Window Functions</a></li>
+  <li><a href="#topic-13">13. Stored Procedures and Programmability</a></li>
+  <li><a href="#topic-14">14. Transactions and Error Handling</a></li>
+  <li><a href="#topic-15">15. Normalization and Database Design</a></li>
+  <li><a href="#topic-16">16. Indexes and Performance Tuning</a></li>
+  <li><a href="#topic-17">17. Database Administration Basics</a></li>
+  <li><a href="#topic-18">18. Advanced SQL Server Topics</a></li>
+</ul>
 
-- What is data, database, DBMS, and RDBMS
-- SQL vs T-SQL vs SQL Server
-- Relational database concepts
-- Tables, rows, columns, and schemas
-- SQL Server installation and tools
+---
 
-### 2. Data Definition Language (DDL)
 
-- CREATE DATABASE
-- CREATE TABLE
-- ALTER TABLE
-- DROP TABLE
-- TRUNCATE TABLE
-- Schema design basics
-
-### 3. Data Types
-
-- Numeric data types
-- String data types
-- Date and time data types
-- Boolean/bit data type
-- Choosing the correct data type
-
-### 4. Constraints and Keys
-
-- PRIMARY KEY
-- FOREIGN KEY
-- UNIQUE
-- NOT NULL
-- DEFAULT
-- CHECK
-- IDENTITY
-
-### 5. Data Manipulation Language (DML)
-
-- INSERT
-- SELECT
-- UPDATE
-- DELETE
-- MERGE
-
-### 6. Basic Querying
-
-- WHERE Clause
-- DISTINCT
-- ORDER BY
-- TOP
-- LIKE
-- Logical Operators
-- IN, NOT IN
-- BETWEEN
-- IS NULL
-- CASE
-
-### 7. Aggregate and Grouping Queries
-
-- COUNT, SUM, AVG, MIN, MAX
-- GROUP BY
-- HAVING Clause
-- GROUP BY ROLLUP
-
-### 8. Joins and Relationships
-
-- One-to-One relationship
-- One-to-Many relationship
-- Many-to-Many relationship
-- INNER JOIN
-- LEFT JOIN
-- RIGHT JOIN
-- FULL OUTER JOIN
-- CROSS JOIN
-- SELF JOIN
-
-### 9. Subqueries and CTEs
-
-- Single-row subquery
-- Multiple-row subquery
-- Correlated subquery
-- Inline view subquery
-- Common Table Expressions (CTE)
-
-### 10. SQL Functions
-
-- String functions
-- Date functions
-- Aggregate functions
-- Conversion functions
-- User-defined functions
-
-### 11. Set Operators
-
-- UNION
-- UNION ALL
-- EXCEPT
-- INTERSECT
-
-### 12. Views and Window Functions
-
-- Views
-- ROW_NUMBER
-- RANK
-- DENSE_RANK
-- LAG and LEAD
-- FIRST_VALUE and LAST_VALUE
-- NTILE
-
-### 13. Stored Procedures and Programmability
-
-- Stored procedures
-- Input parameters
-- Output parameters
-- Procedural logic
-- Scalar functions
-- Table-valued functions
-- Triggers
-
-### 14. Transactions and Error Handling
-
-- Transactions
-- COMMIT
-- ROLLBACK
-- TRY...CATCH
-- ACID properties
-
-### 15. Normalization and Database Design
-
-- Normalization
-- Data redundancy
-- Relationship design
-- Practical database design
-
-### 16. Indexes and Performance Tuning
-
-- Clustered indexes
-- Non-clustered indexes
-- Composite indexes
-- Query statistics
-- Execution performance
-
-### 17. Database Administration Basics
-
-- Import and export data
-- Backup and restore basics
-- System databases
-- Generate test data
-- Database maintenance
-
-### 18. Advanced SQL Server Topics
-
-- APPLY operators
-- Dynamic SQL
-- Temporary tables
-- Import data from CSV
-- Indexes
+<a id="topic-1"></a>
 
 ## 1. SQL and Database Fundamentals
 
@@ -212,6 +81,8 @@
 - A **schema** organizes objects and controls access (`dbo` is the default schema)
 - SQL is declarative — you describe *what* data you want, not *how* to fetch it
 - SQL Server is one RDBMS product; PostgreSQL, MySQL, and Oracle are others
+
+<a id="topic-2"></a>
 
 ## 2. Data Definition Language (DDL)
 
@@ -373,6 +244,8 @@ DROP CONSTRAINT chk_emp_positive_sal;
 - Always back up before `DROP DATABASE` or `DROP TABLE` in production
 - `sp_help` and `INFORMATION_SCHEMA` views are useful for inspecting object metadata
 
+<a id="topic-3"></a>
+
 ## 3. Data Types
 
 ### Datatypes
@@ -398,6 +271,8 @@ DROP CONSTRAINT chk_emp_positive_sal;
 - `VARCHAR(n)` caps length; `VARCHAR(MAX)` for large text (has performance implications)
 - `NVARCHAR` stores Unicode (2 bytes/char); `VARCHAR` is single-byte (ASCII)
 - Implicit conversions between incompatible types can cause **index scans** and wrong results
+
+<a id="topic-4"></a>
 
 ## 4. Constraints and Keys
 
@@ -511,6 +386,8 @@ SELECT * FROM employees;
 - `IDENTITY` columns are read-only on insert unless `SET IDENTITY_INSERT ON`
 - Composite keys are common in junction tables (many-to-many)
 
+<a id="topic-5"></a>
+
 ## 5. Data Manipulation Language (DML)
 
 ### CRUD Operations
@@ -572,6 +449,8 @@ TRUNCATE TABLE students;
 - `INSERT` column list order must match `VALUES` order
 - `MERGE` is powerful but complex — test carefully for unintended updates
 - DML changes data; DDL changes structure — know which you're running
+
+<a id="topic-6"></a>
 
 ## 6. Basic Querying
 
@@ -702,6 +581,8 @@ WHERE fname IS NULL;
 - `ORDER BY` without `TOP`/`OFFSET` on large tables can be expensive
 - `LIKE '%text'` (leading wildcard) prevents index use on that column
 - `CASE` is an expression — can appear in `SELECT`, `WHERE`, `ORDER BY`
+
+<a id="topic-7"></a>
 
 ## 7. Aggregate and Grouping Queries
 
@@ -866,6 +747,8 @@ HAVING SUM(salary) > 200000;
 - `COUNT(DISTINCT col)` counts unique non-NULL values
 - `ROLLUP` is useful for report-style subtotals without separate queries
 - Wrong GROUP BY is a top interview trap — know the partial dependency rule
+
+<a id="topic-8"></a>
 
 ## 8. Joins and Relationships
 
@@ -1423,6 +1306,8 @@ Result:
 - `ON DELETE CASCADE` auto-deletes child rows when parent is deleted — use carefully
 - Self join aliases the same table twice (`e` employee, `m` manager)
 
+<a id="topic-9"></a>
+
 ## 9. Subqueries and CTEs
 
 ### Sub Queries
@@ -1551,6 +1436,8 @@ WHERE avg > 90000;
 - `IN (subquery)` fails if subquery returns NULLs unexpectedly — consider `EXISTS`
 - Inline views in `FROM` must have an alias
 
+<a id="topic-10"></a>
+
 ## 10. SQL Functions
 
 ### String Functions
@@ -1599,6 +1486,8 @@ SELECT FORMAT(GETDATE(), 'yyyy-MMMM-dd');
 - `GETDATE()` returns server local time; prefer `SYSDATETIME()` for higher precision
 - `FORMAT()` is convenient but slower than `CONVERT` for large datasets
 - UDFs in `WHERE` can prevent index use — be cautious in performance-critical queries
+
+<a id="topic-11"></a>
 
 ## 11. Set Operators
 
@@ -1686,6 +1575,8 @@ SELECT EmployeeID, Name, Department FROM DelhiEmployees;
 - `ORDER BY` after set operators applies to the **final combined** result
 - NULLs are considered equal for duplicate removal in UNION
 
+<a id="topic-12"></a>
+
 ## 12. Views and Window Functions
 
 ### Views
@@ -1750,6 +1641,8 @@ sp_helptext 'enrollment_details';
 - `ROW_NUMBER()` is ideal for deduplication with a CTE + `WHERE rn = 1`
 - Indexed views (materialized) store data — have restrictions on definition
 - `sp_helptext` shows view definition; `INFORMATION_SCHEMA.VIEWS` lists all views
+
+<a id="topic-13"></a>
 
 ## 13. Stored Procedures and Programmability
 
@@ -2333,6 +2226,70 @@ END;
 - `inserted`/`deleted` are only available inside trigger scope
 - Prefer stored procedures for repeated business logic and granular permissions (`GRANT EXECUTE`)
 
+---
+
+<a id="topic-14"></a>
+
+## 14. Transactions and Error Handling
+
+### Transactions
+
+A transaction groups one or more SQL statements into a single atomic unit — either all changes succeed or none are applied.
+
+```sql
+BEGIN TRANSACTION;
+
+UPDATE accounts SET balance = balance - 100 WHERE account_id = 1;
+UPDATE accounts SET balance = balance + 100 WHERE account_id = 2;
+
+COMMIT TRANSACTION;
+-- Use ROLLBACK TRANSACTION; to undo instead
+```
+
+### ACID Properties
+
+| Property | Meaning |
+| --- | --- |
+| **Atomicity** | All statements in the transaction succeed or all are rolled back |
+| **Consistency** | Database moves from one valid state to another |
+| **Isolation** | Concurrent transactions do not corrupt each other's work |
+| **Durability** | Committed changes survive system failure |
+
+### TRY...CATCH
+
+Use `TRY...CATCH` in T-SQL to handle errors inside stored procedures and batches.
+
+```sql
+BEGIN TRY
+    BEGIN TRANSACTION;
+
+    UPDATE employees SET salary = salary * 1.1 WHERE department = 'Tech';
+
+    COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT > 0
+        ROLLBACK TRANSACTION;
+
+    THROW;
+END CATCH;
+```
+
+| Question | Answer |
+| --- | --- |
+| COMMIT vs ROLLBACK? | `COMMIT` saves changes; `ROLLBACK` undoes the transaction |
+| What is `@@TRANCOUNT`? | Returns the number of open transactions in the current session |
+| TRY...CATCH vs RAISERROR? | `TRY...CATCH` handles errors; `RAISERROR`/`THROW` raises them |
+| Implicit vs explicit transaction? | Each statement may auto-commit unless wrapped in `BEGIN TRAN` |
+
+**Must-know points:**
+- Use explicit transactions when multiple DML statements must succeed together
+- Always `ROLLBACK` in `CATCH` when `@@TRANCOUNT > 0`
+- `THROW` re-raises the error after rollback for logging or caller handling
+- DDL statements often auto-commit and cannot always be rolled back
+
+<a id="topic-15"></a>
+
 ## 15. Normalization and Database Design
 
 ### Normalization
@@ -2448,6 +2405,8 @@ Better design:
 - Over-normalization can mean too many JOINs — balance with indexing and views
 - Junction tables resolve many-to-many while staying in 3NF
 
+<a id="topic-16"></a>
+
 ## 16. Indexes and Performance Tuning
 
 ### Indexes
@@ -2560,6 +2519,123 @@ DROP INDEX i_name ON employees;
 - Leading wildcard `LIKE '%x'` and functions on indexed columns cause **scans**
 - `STATISTICS IO` shows logical reads — lower is better
 - Drop unused indexes — each index must be maintained on every data change
+
+---
+
+<a id="topic-17"></a>
+
+## 17. Database Administration Basics
+
+### System Databases
+
+| Database | Purpose |
+| --- | --- |
+| `master` | Server-level metadata, logins, databases list |
+| `model` | Template for new databases |
+| `msdb` | SQL Agent jobs, backups, alerts |
+| `tempdb` | Temporary objects, work tables, version store |
+| User database | Your application data |
+
+### Backup and Restore
+
+```sql
+-- Full backup
+BACKUP DATABASE MyDB
+TO DISK = 'C:\Backups\MyDB.bak'
+WITH INIT, COMPRESSION;
+
+-- Restore
+RESTORE DATABASE MyDB
+FROM DISK = 'C:\Backups\MyDB.bak'
+WITH REPLACE;
+```
+
+### Import and Export Data
+
+| Method | Use case |
+| --- | --- |
+| `BULK INSERT` | Load large flat files into a table |
+| `bcp` utility | Command-line bulk copy in/out |
+| SSMS Import/Export Wizard | GUI for CSV, Excel, other sources |
+| `OPENROWSET` / linked servers | Read external data in a query |
+
+```sql
+BULK INSERT dbo.Employees
+FROM 'C:\data\employees.csv'
+WITH (
+    FIRSTROW = 2,
+    FIELDTERMINATOR = ',',
+    ROWTERMINATOR = '\n',
+    TABLOCK
+);
+```
+
+| Question | Answer |
+| --- | --- |
+| Full vs differential vs log backup? | Full = entire DB; differential = changes since last full; log = transaction log for point-in-time recovery |
+| What is `tempdb`? | Recreated on SQL Server restart — holds `#temp` tables and internal work |
+| Why backup `master`? | Contains logins, linked servers, and server configuration |
+
+**Must-know points:**
+- Schedule regular **full** backups; add **log** backups for production recovery models
+- Test **restore** on a non-production server — backups are useless if restore fails
+- `tempdb` contention can affect heavy temp-table workloads — monitor and tune
+- Use `DBCC CHECKDB` periodically to verify database integrity
+
+---
+
+<a id="topic-18"></a>
+
+## 18. Advanced SQL Server Topics
+
+### APPLY Operators
+
+`CROSS APPLY` and `OUTER APPLY` join each left row to the result of a correlated subquery or table-valued function (see Topic 8 for examples).
+
+| Operator | Behavior |
+| --- | --- |
+| `CROSS APPLY` | Like `INNER JOIN` — only rows where the right side returns data |
+| `OUTER APPLY` | Like `LEFT JOIN` — keeps left rows even if right side is empty |
+
+### Temporary Tables
+
+```sql
+CREATE TABLE #SessionTemp (
+    emp_id INT,
+    salary NUMERIC(10, 2)
+);
+
+INSERT INTO #SessionTemp
+SELECT emp_id, salary FROM employees WHERE department = 'Tech';
+
+SELECT * FROM #SessionTemp;
+```
+
+- `#temp` tables are session-scoped and stored in `tempdb`
+- Support indexes and statistics — useful for multi-step ETL or heavy intermediate results
+- `##global` temp tables are visible to all sessions (rare in app code)
+
+### Dynamic SQL
+
+```sql
+DECLARE @sql NVARCHAR(MAX) = N'SELECT * FROM ' + QUOTENAME(@tableName);
+EXEC sp_executesql @sql;
+```
+
+- Use only with **parameterized** `sp_executesql` — never concatenate untrusted input
+- `QUOTENAME` escapes identifiers; parameters handle values safely
+
+| Question | Answer |
+| --- | --- |
+| `#temp` vs `@table` variable? | Temp table supports indexes/stats and is better for large sets; table variable is scoped to batch/procedure |
+| When use dynamic SQL? | Pivot columns, optional filters, or metadata-driven queries — always parameterize |
+| CROSS APPLY vs subquery? | APPLY can call TVFs and reference outer columns directly in the right side |
+
+**Must-know points:**
+- Prefer **set-based** SQL over cursors and loops for performance
+- Dynamic SQL needs **`sp_executesql` + parameters** to prevent SQL injection
+- `tempdb` growth from `#temp` tables can affect server performance — clean up when done
+- `APPLY` shines with **TOP N per group** and table-valued functions
 
 ---
 
