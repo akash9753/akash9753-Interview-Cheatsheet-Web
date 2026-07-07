@@ -8,27 +8,31 @@ This roadmap is focused on Entity Framework Core interview preparation.
 
 ## Topic Index
 
-- 1. Entity Framework Core Basics
-- 2. DbContext and DbSet
-- 3. Entities and Models
-- 4. Relationships
-- 5. Configuration
-- 6. Migrations
-- 7. Querying Data
-- 8. Loading Related Data
-- 9. Tracking and No Tracking
-- 10. CRUD Operations
-- 11. Transactions
-- 12. Concurrency
-- 13. Performance Optimization
-- 14. Raw SQL and Stored Procedures
-- 15. Repository and Unit of Work
-- 16. EF Core with ASP.NET Core
-- 17. Testing EF Core Code
-- 18. Advanced EF Core Topics
-- 19. Security, Diagnostics, and Best Practices
+<ul>
+  <li><a href="#topic-1">1. Entity Framework Core Basics</a></li>
+  <li><a href="#topic-2">2. DbContext and DbSet</a></li>
+  <li><a href="#topic-3">3. Entities and Models</a></li>
+  <li><a href="#topic-4">4. Relationships</a></li>
+  <li><a href="#topic-5">5. Configuration</a></li>
+  <li><a href="#topic-6">6. Migrations</a></li>
+  <li><a href="#topic-7">7. Querying Data</a></li>
+  <li><a href="#topic-8">8. Loading Related Data</a></li>
+  <li><a href="#topic-9">9. Tracking and No Tracking</a></li>
+  <li><a href="#topic-10">10. CRUD Operations</a></li>
+  <li><a href="#topic-11">11. Transactions</a></li>
+  <li><a href="#topic-12">12. Concurrency</a></li>
+  <li><a href="#topic-13">13. Performance Optimization</a></li>
+  <li><a href="#topic-14">14. Raw SQL and Stored Procedures</a></li>
+  <li><a href="#topic-15">15. Repository and Unit of Work</a></li>
+  <li><a href="#topic-16">16. EF Core with ASP.NET Core</a></li>
+  <li><a href="#topic-17">17. Testing EF Core Code</a></li>
+  <li><a href="#topic-18">18. Advanced EF Core Topics</a></li>
+  <li><a href="#topic-19">19. Security, Diagnostics, and Best Practices</a></li>
+</ul>
 
 ---
+
+<a id="topic-1"></a>
 
 ## 1. Entity Framework Core Basics
 
@@ -79,6 +83,8 @@ public class AppDbContext : DbContext
 `Book` is a **POCO** — a plain class. EF Core maps it by convention; no need to inherit from `EntityObject` (EF 6) or any EF base type.
 
 ---
+
+<a id="topic-2"></a>
 
 ## 2. DbContext and DbSet
 
@@ -137,6 +143,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 - `Set<Book>()` and `DbSet<Book>` are equivalent
 
 ---
+
+<a id="topic-3"></a>
 
 ## 3. Entities and Models
 
@@ -299,6 +307,8 @@ public record CreateBookDto(string Title, decimal Price, int AuthorId);
 
 ---
 
+<a id="topic-4"></a>
+
 ## 4. Relationships
 
 | Relationship | Example |
@@ -378,6 +388,8 @@ modelBuilder.Entity<Book>()
 
 ---
 
+<a id="topic-5"></a>
+
 ## 5. Configuration
 
 Data annotations:
@@ -438,6 +450,8 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
 
 ---
 
+<a id="topic-6"></a>
+
 ## 6. Migrations
 
 Migrations track schema changes over time and apply them to the database.
@@ -483,6 +497,8 @@ Each migration creates `Up()` and `Down()` methods to apply or revert changes.
 - Back up database before major schema changes
 
 ---
+
+<a id="topic-7"></a>
 
 ## 7. Querying Data
 
@@ -623,6 +639,8 @@ Use `ToListAsync()` in async apps instead of `ToList()`.
 
 ---
 
+<a id="topic-8"></a>
+
 ## 8. Loading Related Data
 
 ### Include vs Select
@@ -717,6 +735,8 @@ N+1 problem: loading parent list then querying each child separately. Fix with `
 
 ---
 
+<a id="topic-9"></a>
+
 ## 9. Tracking and No Tracking
 
 ### AsNoTracking vs Default Tracking
@@ -772,6 +792,8 @@ Use tracking for updates; use `AsNoTracking()` for read-only APIs and reports.
 | `Attach` vs `Update`? | `Attach` = Unchanged state; `Update` = all properties marked Modified |
 
 ---
+
+<a id="topic-10"></a>
 
 ## 10. CRUD Operations
 
@@ -886,6 +908,8 @@ await context.Books.Where(b => b.Price == 0).ExecuteDeleteAsync();
 
 ---
 
+<a id="topic-11"></a>
+
 ## 11. Transactions
 
 ### Transaction Isolation Levels
@@ -936,6 +960,8 @@ catch
 | `TransactionScope` use case? | Multiple DbContexts or DB + message queue — distributed transaction |
 
 ---
+
+<a id="topic-12"></a>
 
 ## 12. Concurrency
 
@@ -993,6 +1019,8 @@ var emp = context.Employees
 | When use pessimistic? | High-conflict scenarios — bank transfers, seat booking |
 
 ---
+
+<a id="topic-13"></a>
 
 ## 13. Performance Optimization
 
@@ -1109,6 +1137,8 @@ options.UseSqlServer(connectionString, sql =>
 
 ---
 
+<a id="topic-14"></a>
+
 ## 14. Raw SQL and Stored Procedures
 
 ### FromSql — Safe vs Unsafe
@@ -1176,6 +1206,8 @@ Always use parameters. Never concatenate user input into SQL strings.
 
 ---
 
+<a id="topic-15"></a>
+
 ## 15. Repository and Unit of Work
 
 `DbContext` already acts as Unit of Work — it tracks changes and saves them together via `SaveChanges()`.
@@ -1224,6 +1256,8 @@ Use repository when you need testability or complex query abstraction. Skip it i
 - Prefer service layer + DbContext directly for most apps
 
 ---
+
+<a id="topic-16"></a>
 
 ## 16. EF Core with ASP.NET Core
 
@@ -1275,6 +1309,8 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 
 ---
 
+<a id="topic-17"></a>
+
 ## 17. Testing EF Core Code
 
 SQLite in-memory (better relational behavior):
@@ -1323,6 +1359,8 @@ Prefer SQLite in-memory or a real test database for integration tests.
 - Test migrations separately against real database
 
 ---
+
+<a id="topic-18"></a>
 
 ## 18. Advanced EF Core Topics
 
@@ -1419,6 +1457,8 @@ modelBuilder.Entity<Payment>()
 | Value converter use case? | Map enum to string, encrypt column, custom type serialization |
 
 ---
+
+<a id="topic-19"></a>
 
 ## 19. Security, Diagnostics, and Best Practices
 
