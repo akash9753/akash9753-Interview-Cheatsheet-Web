@@ -819,26 +819,86 @@ public record EmployeeDto(int Id, string Name, string Department);
 | PATCH | Update partial data |
 | DELETE | Delete data |
 
-### Example Web API Controller
+### Attributes in ASP.NET Core
 
 ```csharp
-[ApiController]
-[Route("api/[controller]")]
-public class EmployeeController : ControllerBase
+using Microsoft.AspNetCore.Mvc;
+
+namespace InterviewRoadmap.Controllers;
+
+/*
+    ATTRIBUTES IN ASP.NET CORE
+
+    [ApiController]
+    - It is an attribute.
+    - It is NOT attribute routing.
+    - It gives Web API features like:
+        1. Automatic model validation
+        2. Automatic 400 Bad Request if model is invalid
+        3. Better request binding from body, route, query
+
+    [Route("api/[controller]")]
+    - It is an attribute.
+    - It is used for ATTRIBUTE ROUTING.
+    - It defines the controller level route.
+
+    [HttpGet], [HttpPost], [HttpPut], [HttpDelete]
+    - These are HTTP method attributes.
+    - These are also part of ATTRIBUTE ROUTING.
+
+    Interview line:
+    [ApiController] is an API behavior attribute,
+    while [Route] and [HttpGet] are used for attribute routing.
+*/
+
+[ApiController]                 // API behavior attribute
+[Route("api/[controller]")]     // Attribute routing: api/Product
+public class ProductController : ControllerBase
 {
-    [HttpGet]
-    public IActionResult GetEmployees()
+    [HttpGet]                   // Attribute routing: GET api/Product
+    public IActionResult GetProducts()
     {
-        return Ok();
+        return Ok("All products");
     }
 
-    [HttpPost]
-    public IActionResult AddEmployee()
+    [HttpGet("{id}")]           // Attribute routing: GET api/Product/1
+    public IActionResult GetProductById(int id)
     {
-        return Ok();
+        return Ok($"Product Id: {id}");
+    }
+
+    [HttpPost]                  // Attribute routing: POST api/Product
+    public IActionResult AddProduct(Product product)
+    {
+        return Ok(product);
+    }
+
+    [HttpPut("{id}")]           // Attribute routing: PUT api/Product/1
+    public IActionResult UpdateProduct(int id, Product product)
+    {
+        return Ok($"Product {id} updated");
+    }
+
+    [HttpDelete("{id}")]        // Attribute routing: DELETE api/Product/1
+    public IActionResult DeleteProduct(int id)
+    {
+        return Ok($"Product {id} deleted");
     }
 }
+
+public class Product
+{
+    public string Name { get; set; }
+}
 ```
+
+| Attribute | Type | Purpose |
+| --- | --- | --- |
+| `[ApiController]` | API behavior | Auto validation, 400 on invalid model, binding inference |
+| `[Route("api/[controller]")]` | Attribute routing | Controller-level URL template |
+| `[HttpGet]`, `[HttpPost]`, etc. | Attribute routing | HTTP verb + action route |
+
+> **Interview line:** `[ApiController]` is an API **behavior** attribute; `[Route]` and `[HttpGet]` are used for **attribute routing**.
 
 ### Web API vs MVC Controller
 
@@ -898,6 +958,7 @@ Accept: application/xml  -> XML response
 | What is content negotiation? | Server picks response format (JSON/XML) based on `Accept` header |
 | API versioning strategies? | URL path, query string, header, or media type — pick one and document it |
 | Swagger/OpenAPI purpose? | Interactive API docs, client codegen, contract testing |
+| `[ApiController]` vs `[Route]`? | `[ApiController]` = API behavior (validation, binding); `[Route]`/`[HttpGet]` = attribute routing |
 
 **Must-know points:**
 - Never expose EF entities directly — use DTOs to prevent over-posting and hide schema
