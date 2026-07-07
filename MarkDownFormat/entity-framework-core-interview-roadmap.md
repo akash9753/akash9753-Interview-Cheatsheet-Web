@@ -32,15 +32,6 @@ This roadmap is focused on Entity Framework Core interview preparation.
 
 ## 1. Entity Framework Core Basics
 
-### What to Learn
-
-- What is EF Core?
-- ORM concept
-- EF vs EF Core vs ADO.NET
-- Code-first vs database-first
-- Entities, DbContext, DbSet
-- POCO entities (plain C# classes, no ORM base class)
-
 EF Core is an ORM that maps C# classes to database tables so you work with objects instead of raw SQL for most operations.
 
 | Technology | Type | Change tracking | Migrations | Performance | Best for |
@@ -90,13 +81,6 @@ public class AppDbContext : DbContext
 ---
 
 ## 2. DbContext and DbSet
-
-### What to Learn
-
-- Role of `DbContext` and `DbSet`
-- `DbContextOptions`, connection string, DI registration
-- `OnConfiguring`, `OnModelCreating`
-- DbContext lifetime and thread safety
 
 `DbContext` is the main session with the database. `DbSet<T>` represents a table/collection of entities.
 
@@ -155,13 +139,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 ---
 
 ## 3. Entities and Models
-
-### What to Learn
-
-- Entity classes, primary keys, foreign keys
-- POCO entities — plain classes with no ORM inheritance
-- Navigation properties, required/optional fields
-- Shadow properties, owned types, value objects
 
 EF Core detects primary keys by convention: `Id` or `{ClassName}Id`.
 
@@ -324,12 +301,6 @@ public record CreateBookDto(string Title, decimal Price, int AuthorId);
 
 ## 4. Relationships
 
-### What to Learn
-
-- One-to-one, one-to-many, many-to-many
-- Required vs optional relationships
-- Cascade delete, self-referencing
-
 | Relationship | Example |
 | --- | --- |
 | One-to-one | Book → BookDetail |
@@ -409,12 +380,6 @@ modelBuilder.Entity<Book>()
 
 ## 5. Configuration
 
-### What to Learn
-
-- Data annotations vs Fluent API
-- `IEntityTypeConfiguration<T>`
-- Table/column mapping, indexes, defaults
-
 Data annotations:
 
 ```csharp
@@ -474,11 +439,6 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
 ---
 
 ## 6. Migrations
-
-### What to Learn
-
-- Create, apply, remove, rollback migrations
-- Migration history, SQL scripts, production updates
 
 Migrations track schema changes over time and apply them to the database.
 
@@ -616,11 +576,6 @@ Each migration creates `Up()` and `Down()` methods to apply or revert changes.
 - Join only tables/columns needed for the result
 - Use `EXISTS` / `Any()` instead of `Count() > 0` for existence checks
 
-### What to Learn
-
-- LINQ to Entities, filtering, sorting, grouping, joins
-- Projection, paging, query execution flow
-
 ```csharp
 // Filter + sort
 var books = context.Books
@@ -712,11 +667,6 @@ var dto = context.Authors
 - Single `Include` on one navigation → default single query is fine
 - Always measure — split query trades one round-trip for multiple
 
-### What to Learn
-
-- Eager, lazy, explicit loading
-- `Include`, `ThenInclude`, N+1 problem
-
 | Strategy | When to use |
 | --- | --- |
 | Eager loading | Related data needed immediately |
@@ -785,11 +735,6 @@ N+1 problem: loading parent list then querying each child separately. Fix with `
 - `AsNoTracking()` = read-only, no overhead — use for GET endpoints
 - To update after `AsNoTracking`: attach entity and set state, or query with tracking
 - `AsNoTrackingWithIdentityResolution()` — no tracking but same PK returns same instance
-
-### What to Learn
-
-- Change tracking, entity states
-- `AsNoTracking`, `AsTracking`
 
 EF Core tracks entities by default and detects changes for `SaveChanges()`.
 
@@ -885,11 +830,6 @@ var books = context.Books
 - Combine `Select` + `AsNoTracking` for fastest reads
 - Use `ExecuteUpdate`/`ExecuteDelete` for bulk ops without loading entities
 
-### What to Learn
-
-- Insert, read, update, delete
-- `SaveChanges`, `SaveChangesAsync`
-
 Create:
 
 ```csharp
@@ -965,11 +905,6 @@ await context.Books.Where(b => b.Price == 0).ExecuteDeleteAsync();
 - EF `SaveChanges()` uses a transaction — all changes commit or rollback together
 - Use `BeginTransactionAsync()` when multiple `SaveChanges` must be atomic
 
-### What to Learn
-
-- Default transaction, manual transactions
-- `BeginTransaction`, commit, rollback
-
 `SaveChanges()` runs inside a transaction by default.
 
 Manual transaction:
@@ -1014,12 +949,6 @@ catch
 | Performance | Better for low-conflict apps | Better when conflicts are frequent |
 | Exception | `DbUpdateConcurrencyException` | Blocking/waiting on locked rows |
 | Best for | Web apps, most CRUD | Financial systems, seat booking |
-
-### What to Learn
-
-- Optimistic vs pessimistic concurrency
-- Row version, concurrency tokens
-- `DbUpdateConcurrencyException`
 
 Optimistic concurrency (default in EF Core):
 
@@ -1138,11 +1067,6 @@ var book = await GetBookById(context, 5);
 - Compiled queries help when the **same query shape** runs repeatedly with different parameters
 - Not needed for every query — use for proven hot paths
 
-### What to Learn
-
-- `AsNoTracking`, projection, pagination
-- Compiled queries, split queries, indexes, N+1 avoidance
-
 Key tips:
 
 - Use `AsNoTracking()` for read-only queries
@@ -1224,11 +1148,6 @@ options.UseSqlServer(connectionString, sql =>
 - Most CRUD, relationships, migrations, change tracking
 - Team productivity and maintainability matter more than micro-seconds
 
-### What to Learn
-
-- `FromSqlRaw`, `FromSqlInterpolated`
-- Stored procedures, SQL injection prevention
-
 ```csharp
 // Parameterized (safe)
 var books = context.Books
@@ -1258,11 +1177,6 @@ Always use parameters. Never concatenate user input into SQL strings.
 ---
 
 ## 15. Repository and Unit of Work
-
-### What to Learn
-
-- Repository pattern, Unit of Work
-- When it helps vs when it adds unnecessary abstraction
 
 `DbContext` already acts as Unit of Work — it tracks changes and saves them together via `SaveChanges()`.
 
@@ -1313,11 +1227,6 @@ Use repository when you need testability or complex query abstraction. Skip it i
 
 ## 16. EF Core with ASP.NET Core
 
-### What to Learn
-
-- DI registration, scoped lifetime
-- Using EF Core in services, seeding data
-
 ```csharp
 // Program.cs
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -1367,11 +1276,6 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 ---
 
 ## 17. Testing EF Core Code
-
-### What to Learn
-
-- In-memory provider, SQLite in-memory
-- Integration tests, mocking repositories
 
 SQLite in-memory (better relational behavior):
 
@@ -1469,12 +1373,6 @@ var allBooks = context.Books.IgnoreQueryFilters().ToList();
 - Used for semantic search, recommendations, RAG applications
 - Not needed for typical CRUD — advanced PostgreSQL + .NET scenario
 
-### What to Learn
-
-- Global query filters, soft delete
-- Interceptors, value converters
-- Inheritance mapping (TPH, TPT, TPC)
-
 Soft delete with global filter:
 
 ```csharp
@@ -1523,12 +1421,6 @@ modelBuilder.Entity<Payment>()
 ---
 
 ## 19. Security, Diagnostics, and Best Practices
-
-### What to Learn
-
-- SQL injection prevention
-- Sensitive data logging, detailed errors
-- Async queries, least privilege, input validation
 
 Never enable sensitive logging in production:
 
