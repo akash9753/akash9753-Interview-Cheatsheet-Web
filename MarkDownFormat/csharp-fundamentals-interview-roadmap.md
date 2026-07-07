@@ -841,8 +841,62 @@ class Repository<T> where T : class
 - `throw ex` resets the stack trace and is usually avoided.
 - Do not use exceptions for normal control flow.
 
+### Exception vs InnerException
+
+```csharp
+/*
+    Exception
+    - Main/current error object.
+    - Contains error message, stack trace, type, etc.
+
+    InnerException
+    - Original/root exception inside another exception.
+    - Used when we catch one exception and throw a new custom exception.
+    - Helps to know actual reason of failure.
+
+    Interview line:
+    Exception is the current error, InnerException is the original error that caused it.
+*/
+
+try
+{
+    try
+    {
+        int x = int.Parse("abc"); // Original error
+    }
+    catch (Exception ex)
+    {
+        // Wrapping original exception inside new exception
+        throw new Exception("Failed to convert string to number", ex);
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine("Exception Message:");
+    Console.WriteLine(ex.Message);
+
+    Console.WriteLine();
+
+    Console.WriteLine("InnerException Message:");
+    Console.WriteLine(ex.InnerException?.Message);
+}
+
+/*
+Output:
+
+Exception Message:
+Failed to convert string to number
+
+InnerException Message:
+The input string 'abc' was not in a correct format.
+*/
+```
+
+> **Interview line:** **Exception** is the current error; **InnerException** is the original error that caused it.
+
 | Question | Answer |
 | --- | --- |
+| Exception vs InnerException? | Exception = current/wrapped error; InnerException = original root cause |
 | `throw` vs `throw ex`? | `throw` preserves stack trace; `throw ex` resets it — avoid `throw ex` |
 | `finally` always runs? | Yes — even if `return` in `try` or `catch` (unless process crash) |
 | Exception filters? | `catch (Ex ex) when (ex.HResult == …)` — conditional catch |
