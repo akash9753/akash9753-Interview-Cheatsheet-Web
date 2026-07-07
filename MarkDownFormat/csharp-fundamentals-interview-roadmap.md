@@ -1356,14 +1356,67 @@ Memory Management in .NET
 | Keywords | None | `async` / `await` |
 | Best for | CPU-bound quick work | I/O-bound — network, DB, file |
 
+### What Happens Under the Hood
+
+**1. `await` is a state machine, not a thread swap**
+
+The compiler rewrites your `async` method into a state machine that resumes at the `await` point. No new thread is guaranteed. In WPF/WinForms, `await` captures the `SynchronizationContext` so the continuation resumes on the UI thread.
+
+**2. The classic deadlock: `.Result` blocking the thread the continuation needs**
+
+The UI thread blocks on `.Result` or `.Wait()` → the `async` method tries to resume on that same UI thread → neither side proceeds. Fix: stay **async all the way up** — no mixed `.Result` or `.Wait()`.
+
+```csharp
+// BAD — deadlock on UI thread or ASP.NET (legacy) sync context
+var data = GetDataAsync().Result;
+
+// GOOD
+var data = await GetDataAsync();
+```
+
+**3. `ConfigureAwait(false)` matters in libraries — and is a no-op in ASP.NET Core**
+
+ASP.NET Core has no `SynchronizationContext` to capture, so `ConfigureAwait(false)` changes nothing there. It is essential in **WPF/WinForms library code** when you do not need to resume on the UI thread.
+
+```csharp
+// Library code — avoid capturing UI context
+await client.GetAsync(url).ConfigureAwait(false);
+```
+
+**4. `TaskCompletionSource` bridges callback APIs into `Task`**
+
+Use it to wrap event-based or callback APIs as `await`-able tasks. Always create with **`TaskCreationOptions.RunContinuationsAsynchronously`** — without it, the callback thread can synchronously run every continuation waiting on that task.
+
+```csharp
+var tcs = new TaskCompletionSource<string>(
+    TaskCreationOptions.RunContinuationsAsynchronously);
+
+someCallbackApi.OnComplete += result => tcs.SetResult(result);
+someCallbackApi.OnError += ex => tcs.SetException(ex);
+
+return tcs.Task;
+```
+
+**5. `async void` outside event handlers is a silent crash waiting to happen**
+
+Exceptions thrown inside `async void` cannot be caught by the caller — they crash the process via the unobserved exception path. Use **`async Task`** everywhere except UI event handlers where the signature is forced.
+
+```csharp
+// BAD — exception cannot be caught by caller
+async void LoadData() { throw new Exception(); }
+
+// GOOD
+async Task LoadDataAsync() { /* ... */ }
+```
+
 ### Async Programming Rules
 
 | Rule | Detail |
 | --- | --- |
 | `async` all the way | Don't mix blocking calls in async methods |
-| Avoid `Task.Result` / `.Wait()` | Causes deadlocks on sync context (ASP.NET legacy) |
-| Return `Task` not `void` | Except event handlers |
-| Use `ConfigureAwait(false)` in libraries | Avoids capturing UI/sync context |
+| Avoid `Task.Result` / `.Wait()` | Causes deadlocks when continuation needs the blocked thread (UI / legacy sync context) |
+| Return `Task` not `void` | Except UI event handlers — `async void` exceptions crash the process |
+| Use `ConfigureAwait(false)` in libraries | Skips UI `SynchronizationContext`; no-op in ASP.NET Core |
 | Prefer `await` over `ContinueWith` | Cleaner exception propagation |
 | Name async methods with `Async` suffix | Convention — `GetDataAsync()` |
 | Don't wrap purely CPU work in fake async | Use `Task.Run` for CPU offload, not `Task.Delay(0)` |
@@ -1403,12 +1456,20 @@ Memory Management in .NET
 | `async` without `await`? | Compiler warning — method runs synchronously |
 | `Task.Run` purpose? | Offload CPU-bound work to thread pool |
 | `Task` vs `Thread`? | Task = operation; async I/O often uses no new thread; `Task.Run`/parallel uses ThreadPool |
-| Async deadlock cause? | `.Result`/`.Wait()` on UI/ASP.NET sync context blocks continuation |
+| Async deadlock cause? | `.Result`/`.Wait()` blocks the thread the `await` continuation needs to resume on |
+| `ConfigureAwait(false)` in ASP.NET Core? | No-op — no `SynchronizationContext`; still useful in WPF/WinForms libraries |
+| `async void` risk? | Exceptions not catchable by caller — only for UI event handlers |
+| `TaskCompletionSource` use? | Wrap callback/event APIs as `Task`; use `RunContinuationsAsynchronously` |
+| What does `await` compile to? | State machine that resumes after I/O — not a guaranteed thread switch |
 | `ValueTask` vs `Task`? | `ValueTask` reduces allocation when result often synchronous |
 
 **Must-know points:**
 - Async is for **I/O-bound** work — not a magic speedup for CPU loops
-- `await` captures context by default — use `ConfigureAwait(false)` in library code
+- `await` is a **state machine** resume, not a thread swap — no new thread for async I/O
+- `await` captures context by default — `ConfigureAwait(false)` in libraries; **no-op in ASP.NET Core**
+- Never `.Result`/`.Wait()` on UI thread — **async all the way** to avoid deadlock
+- `async void` only for UI events; use `async Task` everywhere else
+- `TaskCompletionSource` + **`RunContinuationsAsynchronously`** when bridging callbacks to `Task`
 - Always pass **CancellationToken** through public async APIs
 
 ---

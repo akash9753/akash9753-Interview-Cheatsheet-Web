@@ -2643,16 +2643,226 @@ EXEC sp_executesql @sql;
 
 ## Interview Quick Answers
 
-### Clustered Index vs Non-Clustered Index
+### RANK() vs DENSE_RANK() vs ROW_NUMBER()
+
+All three are **window functions** — they assign a number to each row within a partition without collapsing rows like `GROUP BY`.
+
+```sql
+SELECT
+    name,
+    salary,
+    ROW_NUMBER() OVER (ORDER BY salary DESC) AS row_num,
+    RANK()       OVER (ORDER BY salary DESC) AS rank_val,
+    DENSE_RANK() OVER (ORDER BY salary DESC) AS dense_rank_val
+FROM employees;
+```
+
+| Function | Ties behavior | Gaps after ties? | Example ranks for salaries 100k, 100k, 90k |
+| --- | --- | --- | --- |
+| `ROW_NUMBER()` | Breaks ties arbitrarily (unique number per row) | N/A — always unique | 1, 2, 3 |
+| `RANK()` | Same rank for tied values | **Yes** — skips next rank | 1, 1, 3 |
+| `DENSE_RANK()` | Same rank for tied values | **No** — next rank is consecutive | 1, 1, 2 |
+
+| Use case | Best function |
+| --- | --- |
+| Remove duplicates — keep one row per group | `ROW_NUMBER()` + CTE + `WHERE rn = 1` |
+| Top N with ties (Olympic-style ranking) | `RANK()` |
+| Top N distinct levels (3rd highest salary with ties) | `DENSE_RANK()` |
+
+> **One-liner:** `ROW_NUMBER` = unique; `RANK` skips after ties; `DENSE_RANK` keeps consecutive ranks after ties.
+
+### Clustered vs Non-Clustered Index
 
 | Point | Clustered Index | Non-Clustered Index |
 | --- | --- | --- |
 | Data storage | Sorts and stores table rows physically | Separate structure with pointer to row |
-| Per table | Only one allowed | Many allowed |
+| Per table | Only **one** allowed | **Many** allowed |
 | Default | Usually on PRIMARY KEY | Created manually on lookup columns |
-| Best for | Range scans on key, primary lookups | `WHERE`, `JOIN`, `ORDER BY` on non-key columns |
+| Leaf level | Contains the actual data rows | Contains index key + pointer to data row |
+| Best for | Range scans on key, primary lookups | `WHERE`, `JOIN`, `ORDER BY`, `GROUP BY` on non-key columns |
+| Trade-off | Defines physical row order — choose key carefully | Extra disk space; slows INSERT/UPDATE/DELETE slightly |
+
+```sql
+-- Clustered (usually on PK automatically)
+CREATE CLUSTERED INDEX IX_Employees_Dept ON employees(department);
+
+-- Non-clustered
+CREATE NONCLUSTERED INDEX IX_Employees_Salary ON employees(salary);
+```
 
 > **One-liner:** Clustered = table row order (one per table); non-clustered = extra lookup index for faster searches.
+
+### WHERE vs HAVING
+
+| Clause | When it runs | Filters | Can use aggregates? |
+| --- | --- | --- | --- |
+| `WHERE` | **Before** grouping | Individual rows | **No** — `WHERE COUNT(*) > 2` is invalid |
+| `HAVING` | **After** grouping | Groups / aggregate results | **Yes** — `HAVING AVG(salary) > 90000` |
+
+```sql
+-- WHERE — filter rows before GROUP BY
+SELECT department, COUNT(*) AS emp_count
+FROM employees
+WHERE salary > 50000
+GROUP BY department;
+
+-- HAVING — filter groups after aggregation
+SELECT department, AVG(salary) AS avg_sal
+FROM employees
+GROUP BY department
+HAVING AVG(salary) > 90000;
+```
+
+> **One-liner:** `WHERE` filters rows before grouping; `HAVING` filters groups after `GROUP BY`.
+
+### Different Types of Joins
+
+| Join | Returns | Use when |
+| --- | --- | --- |
+| **INNER JOIN** | Only matching rows from both tables | You need related data only (orders with customers) |
+| **LEFT JOIN** | All left rows + matches from right (`NULL` if no match) | Keep all parents even without children |
+| **RIGHT JOIN** | All right rows + matches from left | Same as LEFT — rarely used; prefer swapping table order |
+| **FULL OUTER JOIN** | All rows from both sides — match or `NULL` | Find mismatches on either side |
+| **CROSS JOIN** | Cartesian product — every left row × every right row | Combinations, number sequences |
+| **SELF JOIN** | Table joined to itself with aliases | Hierarchy — employee → manager |
+
+```sql
+-- INNER — only customers who placed orders
+SELECT c.name, o.order_id
+FROM Customers c
+INNER JOIN Orders o ON c.id = o.customer_id;
+
+-- LEFT — all customers, including those with no orders
+SELECT c.name, o.order_id
+FROM Customers c
+LEFT JOIN Orders o ON c.id = o.customer_id;
+```
+
+> **One-liner:** INNER = matches only; LEFT = all left + optional right; CROSS = every combination; SELF = same table twice.
+
+### CTE (Common Table Expression)
+
+A **CTE** is a named temporary result set defined with `WITH` — readable, reusable within the same query, and supports **recursion**.
+
+```sql
+-- Readable multi-step query
+WITH dept_avg AS (
+    SELECT department, AVG(salary) AS avg_sal
+    FROM employees
+    GROUP BY department
+)
+SELECT e.name, e.salary, d.avg_sal
+FROM employees e
+INNER JOIN dept_avg d ON e.department = d.department
+WHERE e.salary > d.avg_sal;
+
+-- ROW_NUMBER deduplication
+WITH ranked AS (
+    SELECT *, ROW_NUMBER() OVER (PARTITION BY email ORDER BY created_at DESC) AS rn
+    FROM users
+)
+SELECT * FROM ranked WHERE rn = 1;
+```
+
+| Point | CTE | Subquery in FROM | Temp table (`#temp`) |
+| --- | --- | --- | --- |
+| Syntax | `WITH name AS (...)` | `FROM (SELECT ...) alias` | `CREATE TABLE #t` |
+| Readability | High — named steps | Medium | Good for multi-batch |
+| Scope | Single statement (unless recursive) | Single statement | Session-scoped |
+| Indexes | No | No | Yes — good for large data |
+
+> **One-liner:** CTE = named inline result with `WITH` — improves readability, supports recursion, and powers `ROW_NUMBER` dedup patterns.
+
+### ACID Properties & Transactions
+
+A **transaction** groups SQL statements into one atomic unit — all succeed (`COMMIT`) or all undo (`ROLLBACK`).
+
+```sql
+BEGIN TRANSACTION;
+
+UPDATE accounts SET balance = balance - 100 WHERE account_id = 1;
+UPDATE accounts SET balance = balance + 100 WHERE account_id = 2;
+
+COMMIT TRANSACTION;
+-- ROLLBACK TRANSACTION;  -- use to undo
+```
+
+| Property | Meaning |
+| --- | --- |
+| **Atomicity** | All statements succeed or all are rolled back |
+| **Consistency** | Database moves from one valid state to another (constraints hold) |
+| **Isolation** | Concurrent transactions do not corrupt each other's work |
+| **Durability** | Committed changes survive crash/restart (via transaction log) |
+
+| Question | Answer |
+| --- | --- |
+| `COMMIT` vs `ROLLBACK`? | `COMMIT` saves; `ROLLBACK` undoes all changes in the transaction |
+| Implicit vs explicit? | Each statement may auto-commit unless wrapped in `BEGIN TRAN` |
+| DDL in transaction? | Often auto-commits in SQL Server — cannot always roll back `CREATE TABLE` |
+
+> **One-liner:** ACID = all-or-nothing, valid state, isolated concurrency, durable commits — wrap related DML in `BEGIN TRAN` / `COMMIT`.
+
+### Deadlocks in SQL Server
+
+A **deadlock** occurs when two or more sessions each hold a lock the other needs — circular wait. SQL Server picks a **victim** and rolls back that transaction (error 1205).
+
+```
+Session A: locks Row 1 → waits for Row 2
+Session B: locks Row 2 → waits for Row 1  → DEADLOCK
+```
+
+| Cause | Example |
+| --- | --- |
+| Opposite lock order | A updates `Orders` then `Customers`; B updates `Customers` then `Orders` |
+| Long transactions | Locks held too long increase collision chance |
+| Missing indexes | Table scans escalate to page/table locks |
+
+| Prevention | Action |
+| --- | --- |
+| Consistent lock order | Always access tables in the same order across procedures |
+| Keep transactions short | Commit quickly; avoid user input inside a transaction |
+| Right indexes | Reduce scan locks — seek instead of scan |
+| Retry logic | Catch error 1205 in app and retry the transaction |
+| Avoid hints as default | `NOLOCK` trades consistency for speed — not a deadlock fix |
+
+```sql
+-- Detect deadlocks in Extended Events or error log
+-- SQL Server automatically chooses victim — your app should retry
+```
+
+> **One-liner:** Deadlock = circular lock wait — SQL Server kills one victim; fix with consistent table order, short transactions, and retry on error 1205.
+
+### Query Optimization & Indexing Strategies
+
+| Strategy | Action |
+| --- | --- |
+| Read execution plan | Look for **index scans**, key lookups, high-cost operators |
+| Index filter columns | Add non-clustered indexes on `WHERE`, `JOIN`, `ORDER BY`, `GROUP BY` columns |
+| Leading column rule | Composite index `(dept, salary)` helps `WHERE dept = ?` but not `WHERE salary = ?` alone |
+| Avoid `SELECT *` | Return only needed columns — reduces I/O and key lookups |
+| No functions on indexed columns | `WHERE YEAR(hire_date) = 2024` prevents index use — use range instead |
+| Update statistics | Stale stats cause bad plans — `UPDATE STATISTICS` or auto-update |
+| Set-based over cursors | Replace row-by-row loops with JOINs or set updates |
+| Measure with IO/TIME | `SET STATISTICS IO ON; SET STATISTICS TIME ON;` |
+
+```sql
+-- BAD — non-sargable (index cannot be used efficiently)
+WHERE YEAR(hire_date) = 2024
+
+-- GOOD — sargable range
+WHERE hire_date >= '2024-01-01' AND hire_date < '2025-01-01'
+```
+
+| Red flag in plan | Fix |
+| --- | --- |
+| Table / index scan on large table | Add or fix index; check predicate sargability |
+| Key lookup (bookmark lookup) | Include columns in index (`INCLUDE`) or narrow `SELECT` |
+| Sort / hash match high cost | Index to support `ORDER BY` / `JOIN`; check cardinality estimates |
+| Missing index suggestion | Evaluate suggested index — not every suggestion is correct |
+
+> **One-liner:** Index `WHERE`/`JOIN` columns, read the execution plan, keep predicates sargable, and prefer set-based SQL over cursors.
+
+---
 
 ### What is the N+1 Query Problem?
 
@@ -2664,39 +2874,6 @@ EXEC sp_executesql @sql;
 | Fix | `JOIN`, `Include()`, or single query with projection |
 
 > **One-liner:** N+1 is one query plus one per row — batch with JOIN or eager load to fix.
-
-### How Do You Optimize a Stored Procedure?
-
-| Technique | Action |
-| --- | --- |
-| Indexes | Add indexes on `WHERE`, `JOIN`, `ORDER BY` columns |
-| Avoid `SELECT *` | Return only needed columns |
-| Reduce loops | Set-based SQL over cursors where possible |
-| Analyze plan | Check execution plan for scans vs seeks |
-
-> **One-liner:** Index filter columns, avoid cursors, return only needed data, and read the execution plan.
-
-### What is a Query Execution Plan?
-
-| Aspect | Detail |
-| --- | --- |
-| Definition | Visual/text map of how SQL Server executes a query |
-| Shows | Index seek vs scan, joins, estimated cost, row counts |
-| How to view | `SET SHOWPLAN_ALL ON` or "Display Estimated Plan" in SSMS |
-| Use | Find missing indexes, table scans, bad joins |
-
-> **One-liner:** Execution plan reveals how SQL runs your query — look for scans, high cost, and bad estimates.
-
-### CTE vs Temp Table
-
-| Point | CTE | Temp Table |
-| --- | --- | --- |
-| Scope | Single statement (unless recursive) | Session-scoped (`#temp`) |
-| Storage | In-memory or spool | `tempdb` — can have indexes |
-| Reuse | Referenced multiple times in same query | Persists across batches in session |
-| Best for | Readable subqueries, recursion | Large intermediate results, multiple steps |
-
-> **One-liner:** CTE improves readability in one query; temp tables persist and support indexes for heavy work.
 
 ### Query to Find Third Highest Salary
 

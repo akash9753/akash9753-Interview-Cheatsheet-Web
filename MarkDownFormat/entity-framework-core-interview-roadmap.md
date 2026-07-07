@@ -130,15 +130,75 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 | Transient | Possible but wasteful | New context every injection — more connections |
 | Singleton | **Never** | Not thread-safe, stale state, memory leak risk |
 
+### Why Is DbContext Scoped?
+
+`AddDbContext` registers `DbContext` as **Scoped** by default because one HTTP request should own one database session.
+
+| Reason | Explanation |
+| --- | --- |
+| **Not thread-safe** | Multiple concurrent requests must not share the same `DbContext` instance |
+| **Unit of work** | One request = one change tracker + one `SaveChanges()` boundary |
+| **Consistent snapshot** | All queries in the request see the same tracked state and transaction scope |
+| **Must be disposed** | `DbContext` holds a DB connection and tracked entities — dispose at end of request |
+| **Avoid stale tracker** | A long-lived context accumulates old entities and wrong updates |
+
+```csharp
+// Scoped — one context per HTTP request (default)
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(connectionString));
+```
+
+### Why Shouldn't Scoped Be Injected into Singleton?
+
+A **Singleton** lives for the entire application. A **Scoped** service (like `DbContext`) lives for one request. If a singleton constructor takes a scoped dependency, the container gives the singleton **one** scoped instance at startup and keeps it forever — this is a **captive dependency**.
+
+| Problem | What goes wrong |
+| --- | --- |
+| **Never disposed per request** | The same `DbContext` survives across thousands of requests |
+| **Stale change tracker** | Entities from old requests stay tracked — wrong updates or memory growth |
+| **Concurrency bugs** | One singleton serves many threads at once; `DbContext` is not thread-safe |
+| **Invalid lifetime** | Scoped services expect a scope boundary that a singleton does not have |
+
+```csharp
+// BAD — captive dependency
+public class ReportCacheService  // Singleton
+{
+    public ReportCacheService(AppDbContext context) { } // Scoped captured forever
+}
+
+// GOOD — create a scope when you need scoped services
+public class ReportCacheService
+{
+    private readonly IServiceScopeFactory _scopeFactory;
+    public ReportCacheService(IServiceScopeFactory scopeFactory) => _scopeFactory = scopeFactory;
+
+    public async Task<Report> BuildAsync()
+    {
+        using var scope = _scopeFactory.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        return await context.Reports.AsNoTracking().FirstAsync();
+    }
+}
+
+// GOOD — background / parallel work
+builder.Services.AddDbContextFactory<AppDbContext>(options => options.UseSqlServer(cs));
+// Inject IDbContextFactory<AppDbContext> and call CreateDbContext() per operation
+```
+
 | Question | Answer |
 | --- | --- |
 | Is DbContext thread-safe? | No — never share across threads or register as Singleton |
 | Why Scoped in ASP.NET Core? | One request = one unit of work = one consistent snapshot |
+| Why not Singleton for DbContext? | Not thread-safe; tracker never resets; connection not disposed per request |
+| Inject scoped into singleton? | **No** — captive dependency; use `IServiceScopeFactory` or `IDbContextFactory` |
 | What does `SaveChanges()` do? | Detects tracked changes, generates SQL INSERT/UPDATE/DELETE in one transaction |
 | `AddDbContext` vs `AddDbContextFactory`? | Factory creates new contexts on demand — useful in Blazor, background jobs |
 
 **Must-know points:**
 - `DbContext` implements IDisposable — always scoped/disposed per request
+- **Scoped** = one context per request; **never** register or inject as Singleton
+- Singleton holding scoped `DbContext` = **captive dependency** — stale tracker and thread-safety bugs
+- Background jobs: `IServiceScopeFactory.CreateScope()` or `AddDbContextFactory`
 - `ApplyConfigurationsFromAssembly()` loads all `IEntityTypeConfiguration<T>` classes
 - `Set<Book>()` and `DbSet<Book>` are equivalent
 
@@ -1141,20 +1201,87 @@ options.UseSqlServer(connectionString, sql =>
 
 ## 14. Raw SQL and Stored Procedures
 
+EF Core gives you the flexibility of **raw SQL** without exposing your database to SQL injection — when you use it correctly.
+
+Many developers still build SQL strings manually with concatenation. That is dangerous. **Raw SQL is not the problem — unsafe string concatenation is.**
+
+### When User Input Reaches Your Query
+
+This matters whenever values come from:
+
+- API requests
+- Search filters
+- Query strings
+- User input forms
+
+Never paste user input directly into a SQL string.
+
+### FromSqlInterpolated — Default Safe Choice
+
+`FromSqlInterpolated` (and `ExecuteSqlInterpolated`) turns your values into a **parameterized query** behind the scenes. The value is sent as a **parameter**, not embedded in the SQL text.
+
+```csharp
+// SAFE — EF Core parameterizes {minPrice} automatically
+var books = await context.Books
+    .FromSqlInterpolated($"SELECT * FROM Books WHERE Price > {minPrice}")
+    .ToListAsync();
+
+// Behind the scenes → something like:
+// SELECT * FROM Books WHERE Price > @p0
+// @p0 = minPrice
+```
+
+**Small habit. Massive security difference.** Prefer `FromSqlInterpolated` whenever you need raw SQL with dynamic values.
+
+### FromSqlRaw — More Flexibility, More Responsibility
+
+Use `FromSqlRaw` when you need:
+
+- Complex joins EF cannot express cleanly
+- Database-specific features
+- Stored procedures
+- Optimized reporting queries
+
+It is safe **only when values are parameterized** — never concatenated from user input.
+
+```csharp
+// SAFE — {0} placeholder becomes a SqlParameter
+var books = await context.Books
+    .FromSqlRaw("EXEC GetBooksByAuthor @AuthorId = {0}", authorId)
+    .ToListAsync();
+
+await context.Database.ExecuteSqlRawAsync(
+    "UPDATE Books SET Price = Price * 1.1 WHERE CategoryId = {0}", categoryId);
+
+// SAFE — explicit DbParameter (best when you control parameter names/types)
+var param = new SqlParameter("@authorId", authorId);
+var results = await context.Books
+    .FromSqlRaw("SELECT * FROM Books WHERE AuthorId = @authorId", param)
+    .ToListAsync();
+```
+
+```csharp
+// UNSAFE — never do this with user input
+var sql = "SELECT * FROM Books WHERE Title = '" + searchTerm + "'";
+var books = context.Books.FromSqlRaw(sql).ToList(); // SQL injection risk
+```
+
 ### FromSql — Safe vs Unsafe
 
 | Approach | Example | Safe? |
 | --- | --- | --- |
-| `FromSqlInterpolated` | `$"SELECT * FROM Books WHERE Id = {id}"` | Yes — parameterized |
-| `FromSqlRaw` with params | `FromSqlRaw("... WHERE Id = {0}", id)` | Yes — parameterized |
-| String concatenation | `$"SELECT * FROM Books WHERE Id = {userInput}"` | **No — SQL injection** |
-| LINQ queries | `.Where(b => b.Id == id)` | Yes — always parameterized |
+| `FromSqlInterpolated` | `$"SELECT * FROM Books WHERE Id = {id}"` | **Yes** — auto-parameterized (preferred) |
+| `FromSqlRaw` with `{0}` params | `FromSqlRaw("... WHERE Id = {0}", id)` | **Yes** — parameterized |
+| `FromSqlRaw` with `SqlParameter` | `FromSqlRaw("... @id", new SqlParameter("@id", id))` | **Yes** — explicit parameters |
+| String concatenation | `"WHERE Id = '" + userInput + "'"` | **No — SQL injection** |
+| LINQ queries | `.Where(b => b.Id == id)` | **Yes** — always parameterized |
 
 **Quick revision:**
-- Never build SQL with `+` or string concat from user input
-- `FromSqlInterpolated` and `FromSqlRaw` with `{0}` placeholders are safe
+- **Stick to `FromSqlInterpolated`** for raw SQL with dynamic values — EF parameterizes for you
+- Use **`FromSqlRaw` only when you need it** — stored procedures, DB-specific SQL, tuned reports
+- With `FromSqlRaw`, pass values via **`{0}` placeholders** or **`DbParameter` / `SqlParameter`** — never concatenate
 - LINQ is the safest default — EF parameterizes automatically
-- `ExecuteSqlRawAsync` with parameters for non-query commands
+- `ExecuteSqlInterpolated` / parameterized `ExecuteSqlRawAsync` for non-query commands
 
 ### EF Core vs Dapper
 
@@ -1196,13 +1323,24 @@ await context.Database.ExecuteSqlRawAsync(
 
 Always use parameters. Never concatenate user input into SQL strings.
 
+> **Interview line:** Raw SQL is fine in EF Core — unsafe concatenation is not. Use `FromSqlInterpolated` by default; if you use `FromSqlRaw`, pass values as parameters or `DbParameter`, never as string-built SQL.
+
 | Question | Answer |
 | --- | --- |
-| How to prevent SQL injection in EF Core? | Use LINQ, `FromSqlInterpolated`, or parameterized `FromSqlRaw` |
-| `FromSqlRaw` vs `FromSqlInterpolated`? | Both safe with params; interpolated is cleaner syntax |
+| How to prevent SQL injection in EF Core? | LINQ, `FromSqlInterpolated`, or parameterized `FromSqlRaw` / `SqlParameter` |
+| `FromSqlInterpolated` vs `FromSqlRaw`? | Interpolated auto-parameterizes — preferred; Raw needs `{0}` or `DbParameter` |
+| Is raw SQL in EF Core dangerous? | Only if you concatenate user input — parameterized raw SQL is safe |
+| When to use `FromSqlRaw`? | Stored procedures, DB-specific SQL, complex reporting — always parameterize |
 | Can EF Core call stored procedures? | Yes — `FromSqlRaw("EXEC sp_name @p = {0}", param)` |
 | EF Core vs Dapper? | EF = full ORM; Dapper = micro-ORM, raw SQL, faster reads |
-| When to use raw SQL? | Complex reports, TVPs, performance-tuned queries EF cannot express |
+| When to use raw SQL at all? | Complex reports, TVPs, performance-tuned queries EF cannot express |
+
+**Must-know points:**
+- User input from APIs, filters, query strings, and forms must **never** be concatenated into SQL
+- `FromSqlInterpolated` sends values as **parameters** (`@p0`) — not as literal SQL text
+- `FromSqlRaw` is flexible but **your responsibility** — sanitize is not enough; use parameters
+- **LINQ** remains the safest default — EF generates parameterized SQL automatically
+- Use raw SQL when you truly need it; otherwise prefer LINQ or `FromSqlInterpolated`
 
 ---
 
@@ -1298,7 +1436,9 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 | Question | Answer |
 | --- | --- |
 | Why Scoped for DbContext? | Aligns with HTTP request — one consistent unit of work |
-| Inject DbContext in Singleton service? | **No** — inject `IDbContextFactory` instead |
+| Inject DbContext in Singleton service? | **No** — captive dependency; inject `IDbContextFactory` or create a scope |
+| Why is DbContext scoped? | One request = one unit of work; not thread-safe; must dispose after request |
+| Captive dependency? | Singleton captures one scoped instance for app lifetime — stale `DbContext` and bugs |
 | How to seed data? | `HasData()` in migration or `DbInitializer` on startup |
 | `EnsureCreated` vs Migrations? | `EnsureCreated` = dev only, no migration history; use migrations in production |
 

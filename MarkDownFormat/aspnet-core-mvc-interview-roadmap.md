@@ -1086,17 +1086,51 @@ Important points:
 - Scoped is commonly used in ASP.NET Core web applications.
 - Singleton services should be thread-safe.
 
+### Why Is DbContext Scoped?
+
+`DbContext` is registered with **`AddScoped`** (via `AddDbContext`) because each HTTP request is one **unit of work**:
+
+- **Not thread-safe** — concurrent requests must not share one instance
+- **Change tracking** — one tracker per request; disposed when the request ends
+- **Connection lifecycle** — `DbContext` implements `IDisposable`; scoped disposal closes the connection cleanly
+
+### Why Shouldn't Scoped Be Injected into Singleton?
+
+A singleton is created **once** and reused for the app lifetime. A scoped service is created **once per request**. Injecting scoped into singleton causes a **captive dependency** — the singleton holds the first scoped instance forever.
+
+| Lifetime rule | Allowed injection |
+| --- | --- |
+| Singleton → Singleton | Yes |
+| Scoped → Scoped / Transient | Yes (within same scope) |
+| Transient → anything | Yes |
+| Singleton → Scoped | **No** — captive dependency |
+| Singleton → DbContext | **Never** — use `IDbContextFactory` or `IServiceScopeFactory` |
+
+```csharp
+// BAD
+public class CacheService  // Singleton
+{
+    public CacheService(AppDbContext db) { }  // Scoped — captured forever
+}
+
+// GOOD — create a scope per operation
+using var scope = _scopeFactory.CreateScope();
+var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+```
+
 | Question | Answer |
 | --- | --- |
 | Why use DI? | Loose coupling, testability, centralized registration, lifecycle management |
 | Preferred injection style? | Constructor injection — dependencies explicit and required |
 | Transient vs scoped? | Transient = new every resolve; scoped = one per request (default for web services) |
-| Can scoped be injected into singleton? | No — captive dependency; inject `IServiceScopeFactory` instead |
+| Can scoped be injected into singleton? | **No** — captive dependency; singleton keeps one scoped instance for app lifetime |
 | `DbContext` lifetime? | Always scoped — one per request; never singleton |
+| Fix captive dependency? | Inject `IServiceScopeFactory` and `CreateScope()`, or `IDbContextFactory` for EF |
 
 **Must-know points:**
 - Register interfaces, not concrete types, in `Program.cs` / `ConfigureServices`
-- Captive dependency (singleton holding scoped) causes stale state and bugs — common interview question
+- **Captive dependency** = singleton holding scoped (e.g. `DbContext`) — stale state, no per-request dispose, not thread-safe
+- `DbContext` is scoped: one request = one unit of work; use `IDbContextFactory` in singletons/background jobs
 - `IServiceProvider` resolves services; prefer constructor injection over `GetService()` in app code
 
 ---
@@ -2051,11 +2085,13 @@ Important differences:
 - Parallelism means multiple tasks execute at the same time on multiple CPU cores.
 - TPL can use multiple cores for parallel work.
 - Threading uses time slicing and context switching.
-- Synchronization context connects callbacks back to the original context when needed.
+- Synchronization context connects callbacks back to the original context when needed (WPF/WinForms). ASP.NET Core has **no** `SynchronizationContext` — `ConfigureAwait(false)` is a no-op there.
 
 | Question | Answer |
 | --- | --- |
 | Why async in ASP.NET Core? | Frees threads during I/O wait — improves scalability under load |
+| `ConfigureAwait(false)` needed in ASP.NET Core? | No — no sync context to capture; still use in reusable WPF/WinForms libraries |
+| Async deadlock in controllers? | Blocking with `.Result`/`.Wait()` on request thread — stay async end-to-end |
 | Async vs multithreading? | Async = concurrency without extra threads for I/O; multithreading = parallel CPU work |
 | Pagination benefit? | Limits payload size and DB load — `Skip/Take` or keyset pagination |
 | Response compression? | `AddResponseCompression()` — gzip/Brotli for text responses |
@@ -2063,5 +2099,7 @@ Important differences:
 
 **Must-know points:**
 - Use `async`/`await` for I/O-bound work (DB, HTTP, file) — avoid `.Result` and `.Wait()` (deadlocks)
+- `await` frees the thread during I/O — it does not spawn a background thread for every call
+- `ConfigureAwait(false)` is optional in ASP.NET Core controllers — no UI sync context exists
 - Enable response compression for JSON/HTML — not for already-compressed content (images)
 - Monitor with OpenTelemetry + Application Insights — traces, metrics, logs
