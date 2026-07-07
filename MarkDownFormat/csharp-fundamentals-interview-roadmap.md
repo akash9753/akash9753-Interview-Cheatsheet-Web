@@ -1356,6 +1356,150 @@ Memory Management in .NET
 | Keywords | None | `async` / `await` |
 | Best for | CPU-bound quick work | I/O-bound — network, DB, file |
 
+### Concurrency vs Parallelism
+
+> **Interview trap:** "Executing multiple tasks at the same time" is only **~50% correct**. Concurrency means multiple tasks **in progress** — they may share one core through **time slicing**. Parallelism means tasks run **simultaneously on different cores**.
+
+![Concurrency vs Parallelism comparison table — goal, perspective, and resource utilization](/assets/csharp/concurrency-vs-parallelism-table.png)
+
+| | **Concurrency** | **Parallelism** |
+| --- | --- | --- |
+| **Definition** | Multiple tasks overlap on the **same core** (time slicing) | Multiple tasks on **different cores** at the same instant |
+| **Goal** | **Usability** — keep app responsive | **Performance** — faster CPU-bound work |
+| **Perspective** | Software design — cooperative overlapping work | Hardware — true simultaneous execution |
+| **Resource use** | Light | Heavy |
+| **Keyword** | **Non-blocking** | **Multi-core speedup** |
+
+![Concurrency and parallelism in the real world — juggler (one worker, many tasks) vs office cubicles (many workers at once)](/assets/csharp/concurrency-parallelism-real-world.png)
+
+| Real-world analogy | Maps to |
+| --- | --- |
+| **Juggler** — one person, many balls in progress | **Concurrency** — one thread, tasks take turns |
+| **Many cubicles** — many people working at once | **Parallelism** — many cores/threads simultaneously |
+
+| Statement | Correct? |
+| --- | --- |
+| Concurrency is about **performance** | **No** — it is about **usability** and responsiveness |
+| Parallelism is about **performance** | **Yes** — use multiple cores for CPU-bound speedup |
+| Async/await is a type of **concurrency** | **Yes** — non-blocking overlap, not necessarily parallel |
+| Concurrent apps can be **nondeterministic** in order | **Yes** — intermediate sequence may vary |
+
+![Concurrent applications can be nondeterministic in execution order](/assets/csharp/concurrency-nondeterministic.png)
+
+![Final output can still be deterministic even when intermediate steps run in varying order](/assets/csharp/concurrency-deterministic-output.png)
+
+> **Interview line:** **Non-blocking = concurrency** (usability). **Performance = parallelism** (multi-core). `async`/`await` is a form of concurrency — not the same as parallelism.
+
+### Async/Await — A Form of Concurrency
+
+Async is **not mainly about creating threads**. For I/O-bound work, the goal is **usability** — keep the main thread free so the app stays responsive.
+
+![Async is about making the application usable — not primarily about performance](/assets/csharp/async-usability-not-performance.png)
+
+| About async | Not about async |
+| --- | --- |
+| Making application **usable** | Improving raw **performance** |
+| **Non-blocking** main thread | Creating new threads for every call |
+
+![What async is about vs not about](/assets/csharp/async-about-not-about.png)
+
+**Blocking — thread waits (bad for usability):**
+
+```csharp
+static void Main(string[] args)
+{
+    SomeMethod();                        // blocks 20 seconds
+    Console.WriteLine("Main method code");
+}
+
+static void SomeMethod()
+{
+    Task.Delay(20000).Wait();            // blocks caller thread
+}
+```
+
+![Blocking example — Task.Delay().Wait() freezes the main thread](/assets/csharp/async-blocking-wait-example.png)
+
+**Non-blocking — main thread continues (concurrency):**
+
+```csharp
+static void Main(string[] args)
+{
+    SomeMethod();                        // starts async work, returns immediately
+    Console.WriteLine("Main method code"); // prints right away
+}
+
+static async void SomeMethod()
+{
+    await Task.Delay(20000);             // releases thread during wait
+}
+```
+
+![Non-blocking async — await releases the thread until the delay completes](/assets/csharp/async-nonblocking-await-example.png)
+
+![Main thread continues ahead while Task.Delay runs — non-blocking flow](/assets/csharp/async-nonblocking-main-thread.png)
+
+**Fire-and-forget downloads — app stays usable while files download:**
+
+```csharp
+static void Main(string[] args)
+{
+    NewMethod();   // download file 1 (async)
+    NewMethod1();  // download file 2 (async)
+
+    Console.WriteLine("Start data input, enter your name");
+    string str = Console.ReadLine();       // user can type while downloads run
+}
+```
+
+![Async fire-and-forget downloads — UI stays responsive during Task.Delay](/assets/csharp/async-fire-and-forget-downloads.png)
+
+| Myth | Reality |
+| --- | --- |
+| "Async always creates threads" | **No** — async I/O often uses **zero** extra threads |
+| "Asynchronous code does not use threads" | **Mostly true for I/O** — thread is released during wait; continuation *may* use a pool thread |
+| Can you do non-blocking with threads? | Yes — `Task.Factory.StartNew` uses **worker threads** — but it is **resource-intensive** |
+
+![Async does not use or create threads — common interview claim for I/O-bound work](/assets/csharp/async-does-not-create-threads.png)
+
+![Task.Factory.StartNew spawns worker threads visible in debugger](/assets/csharp/async-task-startnew-worker-threads.png)
+
+### SynchronizationContext and Worker Threads
+
+| Term | Meaning |
+| --- | --- |
+| **Main thread** | UI thread or entry thread — must stay responsive |
+| **Worker thread** | Any thread **other than** the main thread — often from **ThreadPool** |
+| **SynchronizationContext** | Captures *where* `await` resumes — UI thread in WPF/WinForms; none in ASP.NET Core console |
+
+After `await`, code after the wait may resume on a **different worker thread** (especially in console apps with no sync context):
+
+![Why extra worker thread after await — continuation may run on ThreadPool thread](/assets/csharp/async-worker-thread-after-await.png)
+
+```csharp
+// WPF/WinForms — await captures SynchronizationContext → resumes on UI thread
+// ASP.NET Core / Console — no sync context → may resume on any ThreadPool thread
+await Task.Delay(1000);
+Console.WriteLine("After await");  // might be worker thread in console app
+```
+
+The compiler implements `async`/`await` using a **state machine** — the hidden mechanism behind non-blocking code:
+
+![State machines — the hidden recipe behind async/await](/assets/csharp/async-state-machine-hidden-recipe.png)
+
+**Summarizing async vs threading:**
+
+| Point | Detail |
+| --- | --- |
+| Async does **not** create threads (for I/O) | Thread released during wait |
+| Async uses **state machines** internally | Compiler-generated `IAsyncStateMachine` |
+| Without sync context | Continuation may run on **ThreadPool** worker thread |
+| **Asynchrony is a form of concurrency** | Overlap without blocking — not always parallelism |
+| Threads for non-blocking? | Possible via `Task.Run` / `StartNew` — but **resource-intensive** |
+| **Usability vs performance** | Async/concurrency = usability; parallelism = performance |
+
+![Async summarizing — state machine, concurrency, sync context, usability vs performance](/assets/csharp/async-summarizing.png)
+
 ### What Happens Under the Hood
 
 **1. `await` is a state machine, not a thread swap**
@@ -1452,6 +1596,13 @@ async Task LoadDataAsync() { /* ... */ }
 
 | Question | Answer |
 | --- | --- |
+| Concurrency vs parallelism? | Concurrency = overlapping tasks (usability/non-blocking); parallelism = simultaneous multi-core execution (performance) |
+| Is "multiple tasks at same time" concurrency? | Only partly — true concurrency can time-slice on **one core** |
+| Is async a type of concurrency? | **Yes** — non-blocking overlap; not necessarily parallel |
+| Async goal — performance or usability? | **Usability** — responsive UI/server thread; parallelism is for CPU speedup |
+| Does async create threads? | **Not for I/O** — thread released during wait; continuation may use ThreadPool |
+| What is a worker thread? | Any thread other than the main thread — often ThreadPool background thread |
+| What is SynchronizationContext? | Decides where `await` resumes — UI thread in WPF/WinForms; none in ASP.NET Core |
 | `Task` vs `Task<T>`? | `Task` = no return value; `Task<T>` = async operation returning `T` |
 | `async` without `await`? | Compiler warning — method runs synchronously |
 | `Task.Run` purpose? | Offload CPU-bound work to thread pool |
@@ -1464,6 +1615,12 @@ async Task LoadDataAsync() { /* ... */ }
 | `ValueTask` vs `Task`? | `ValueTask` reduces allocation when result often synchronous |
 
 **Must-know points:**
+- **Concurrency** = usability + **non-blocking**; **parallelism** = **performance** on multiple cores
+- `async`/`await` is a **form of concurrency** — not the same as parallelism
+- "Multiple tasks at the same time" describes parallelism better than concurrency
+- Async I/O does **not** guarantee a new thread — `await` uses a **state machine**
+- **SynchronizationContext** controls resume thread (UI in WPF/WinForms; ThreadPool in console)
+- **Worker thread** = any non-main thread; may appear after `await` without sync context
 - Async is for **I/O-bound** work — not a magic speedup for CPU loops
 - `await` is a **state machine** resume, not a thread swap — no new thread for async I/O
 - `await` captures context by default — `ConfigureAwait(false)` in libraries; **no-op in ASP.NET Core**
@@ -1532,6 +1689,98 @@ Task task = Task.Run(() =>
 });
 ```
 
+### Time Slicing vs True Parallelism
+
+On a **single processor**, multiple threads do **not** run at the same time. The OS uses **time slicing** — it switches rapidly between threads via **context switching**. That is **concurrency**, not true **parallelism**.
+
+![Single processor — Thread 1 and Thread 2 share one CPU through time slicing and context switching](/assets/csharp/single-processor-time-slicing.png)
+
+| Single core | Multi-core |
+| --- | --- |
+| One thread runs at a time | Multiple threads can run **simultaneously** |
+| OS switches between threads (context switch) | Thread 1 on Processor 1, Thread 2 on Processor 2 |
+| Feels concurrent, not parallel | **True parallelism** — real speedup for CPU work |
+
+![True parallelism — Thread 1 on Processor 1 and Thread 2 on Processor 2 at the same time](/assets/csharp/multicore-true-parallelism.png)
+
+| Term | Meaning |
+| --- | --- |
+| **Time slicing** | CPU gives each thread a small time slice, then switches |
+| **Context switching** | Save thread state, load another thread — has overhead |
+| **True parallelism** | Two+ threads executing on different cores at the same instant |
+
+> **Interview line:** Many threads on one core = time slicing + context switching, not real parallelism. Real parallelism needs multiple cores running work simultaneously.
+
+### Foreground vs Background Thread
+
+Every `Thread` is either **foreground** or **background**. This controls whether the thread keeps the process alive.
+
+| Type | `IsBackground` | Keeps process alive? | Typical examples |
+| --- | --- | --- | --- |
+| **Foreground** | `false` (default for `new Thread()`) | **Yes** — CLR waits for it to finish | Main UI thread, worker you must complete before exit |
+| **Background** | `true` | **No** — process exits when all foreground threads end | `ThreadPool` threads, daemon-style workers |
+
+```csharp
+// Foreground thread (default) — app waits for this to finish
+Thread fg = new Thread(() => DoWork());
+fg.IsBackground = false;
+fg.Start();
+
+// Background thread — app can exit even if this is still running
+Thread bg = new Thread(() => DoWork());
+bg.IsBackground = true;
+bg.Start();
+```
+
+| Question | Answer |
+| --- | --- |
+| Main thread type? | **Foreground** — keeps the app running |
+| `ThreadPool` thread type? | **Background** — reused workers, do not block shutdown alone |
+| What happens on app exit? | CLR stops all **background** threads; waits for **foreground** threads |
+| When set `IsBackground = true`? | Short-lived workers that should not prevent process shutdown |
+
+> **Interview line:** Foreground threads keep the process alive; background threads do not. `ThreadPool` threads are always background — prefer them over creating foreground threads manually.
+
+### Thread Pooling
+
+Creating a **new `Thread` per request** is expensive: allocate a thread object, reserve stack memory, then garbage-collect when done. There is also a **practical limit** on how many threads the OS can handle — too many hurts **performance**.
+
+**Thread pooling** reuses a fixed set of worker threads instead of create-and-destroy every time.
+
+```
+Request
+   │
+   ├─ BAD: new Thread() → Resources allocated → Task executed → GC ❌
+   │
+   └─ GOOD: Queue work → ThreadPool picks idle thread → Task executed → thread returns to Pool ✅
+```
+
+![Thread pooling vs creating new threads — reuse pool workers instead of per-request thread allocation](/assets/csharp/thread-pooling-lifecycle.png)
+
+![Thread pooling — hundreds of tasks reuse threads picked from the pool](/assets/csharp/thread-pool-hundreds-tasks.png)
+
+| Approach | Cost | Best for |
+| --- | --- | --- |
+| `new Thread()` each time | High — creation + GC + no reuse | Rare — when you need full thread control |
+| **ThreadPool** (`Task.Run`, `Parallel.For`) | Low — reuse existing workers | Most CPU offload and parallel work |
+
+```csharp
+// Uses ThreadPool — preferred
+Task.Run(() => ProcessItem(item));
+
+// Parallel loop — also uses ThreadPool
+Parallel.For(0, 100, i => Process(i));
+
+// Manual queue to pool
+ThreadPool.QueueUserWorkItem(_ => DoWork());
+```
+
+**Pooling must-know:**
+- `Task.Run`, `Parallel.For`, and `Parallel.ForEach` all use the **ThreadPool** internally
+- Pool threads are **background** threads — efficient for short work items
+- Avoid `new Thread()` in hot paths (per HTTP request, per message) — use `Task.Run` or async I/O instead
+- Thread creation has overhead and limits — pooling improves throughput under load
+
 | Concept | Meaning | Comes Under Mostly |
 | --- | --- | --- |
 | Thread | Actual worker/execution path | Parallelism |
@@ -1549,7 +1798,23 @@ Task task = Task.Run(() =>
 - **async/await** = Non-blocking wait
 - **TPL** = Task + Parallel library
 
-### Task vs Thread — Important
+### Task vs Thread — Task Encapsulates Threading
+
+`Task` is a **higher-level encapsulation over threading**. You describe *what work* to do; the runtime maps it to `ThreadPool` threads, scheduling, and completion — you do not manage raw `Thread` objects yourself.
+
+```csharp
+using System.Threading;       // Thread, ThreadPool — low-level
+using System.Threading.Tasks; // Task, Parallel — TPL (high-level)
+```
+
+![System.Threading vs System.Threading.Tasks namespaces](/assets/csharp/threading-namespaces.png)
+
+| | `Thread` | `Task` / TPL |
+| --- | --- | --- |
+| Level | Low-level — manual create/start/join | High-level — represents an operation |
+| Who schedules? | You — or OS time-slices on one core | TPL + ThreadPool — partitions across cores |
+| Multicore use | Manual — you must split work yourself | `Parallel.For` auto-splits work across cores |
+| Best for | Rare — full thread control | Most async and parallel scenarios |
 
 ```csharp
 Task task = SomeAsyncMethod();
@@ -1559,7 +1824,50 @@ Task.Run(() => { /* work */ });
 // Usually uses a ThreadPool thread.
 ```
 
-> **Interview line:** **Task is not equal to Thread.** Task represents an operation. For async I/O, Task usually does **not** create a new thread. For `Task.Run` or parallel CPU work, Task uses **ThreadPool** threads.
+> **Interview line:** **Task is not equal to Thread.** Task is encapsulation over threading — an operation abstraction. For async I/O, Task usually does **not** create a new thread. For `Task.Run` or `Parallel.For`, TPL uses **ThreadPool** threads across available cores.
+
+### TPL — Multicore Processing
+
+**TPL (Task Parallel Library)** uses processors better than manual `new Thread()` because it **partitions work** and schedules it across all available CPU cores.
+
+![TPL encapsulates multi-core execution](/assets/csharp/tpl-multicore-encapsulation.png)
+
+```csharp
+// Manual thread — one thread, you split work yourself
+// Thread o1 = new Thread(RunMillionIterations);
+// o1.Start();
+
+// TPL — splits 1 million iterations across cores automatically
+Parallel.For(0, 1_000_000, _ => RunMillionIterations());
+
+private static void RunMillionIterations()
+{
+    string x = "";
+    for (int i = 0; i < 1_000_000; i++)
+        x += "s";
+}
+```
+
+![Parallel.For partitions loop work across Core 1 and Core 2 with synchronization](/assets/csharp/parallel-for-multicore-partition.png)
+
+![Parallel.For example — TPL splits million iterations across cores instead of one manual thread](/assets/csharp/parallel-for-million-iterations.png)
+
+**What TPL does for you:**
+
+| Manual `Thread` | TPL (`Parallel.For`, `Task.Run`) |
+| --- | --- |
+| You create and manage each thread | Runtime queues work to **ThreadPool** |
+| OS time-slices on single core unless you assign work per core | **Partitions** loop/work across multiple cores |
+| No built-in sync for shared results | Handles **work stealing**, partitioning, and sync |
+| High creation overhead per thread | Reuses pool threads — better throughput |
+
+| Concept | Meaning |
+| --- | --- |
+| **Core affinity** | OS maps threads to CPU cores — you want work spread across cores, not piled on one |
+| **TPL multicore** | `Parallel.For` / `Parallel.ForEach` divide iterations across available processors |
+| **Synchronization** | When parallel paths update shared state (`Variable [X]`), use `lock` or thread-safe types |
+
+> **Interview line:** Raw threading on one core is time slicing. TPL **encapsulates multicore execution** — it partitions CPU-bound work so Thread 1 runs on Processor 1, Thread 2 on Processor 2, without you managing cores manually.
 
 ### TPL Hierarchy — Task Parallel Library
 
@@ -1878,6 +2186,15 @@ await transaction.CommitAsync();
 | Question | Answer |
 | --- | --- |
 | Process vs thread? | Process = isolated app instance; thread = execution unit within process |
+| Foreground vs background thread? | Foreground keeps process alive; background does not — `ThreadPool` threads are background |
+| What is thread pooling? | Reuse a pool of worker threads instead of `new Thread()` per task — less allocation, better performance |
+| Why avoid `new Thread()` every request? | Thread creation + GC overhead; OS thread limit hurts performance under load |
+| Time slicing vs true parallelism? | Single core = threads take turns (context switching); multi-core = threads run simultaneously |
+| What is context switching? | OS saves one thread's state and loads another — overhead, not real parallel speedup |
+| Task vs Thread? | Task encapsulates threading — operation abstraction; Thread is low-level worker |
+| Why TPL over manual Thread? | TPL partitions work across cores, uses ThreadPool, handles scheduling |
+| What does `Parallel.For` do? | Splits loop iterations across available CPU cores automatically |
+| Core affinity? | OS schedules threads to cores — TPL spreads CPU work to use all cores efficiently |
 | Concurrency vs parallelism? | Concurrency = tasks make progress; parallelism = tasks run on multiple cores at once |
 | Thread vs TPL vs Parallel? | Thread = manual/low-level; TPL = `Task`/async; Parallel = CPU-bound multi-core loops |
 | `lock` vs `Monitor`? | `lock` is syntactic sugar for `Monitor.Enter`/`Exit` |
@@ -1886,7 +2203,12 @@ await transaction.CommitAsync();
 | `ConcurrentDictionary` vs `Dictionary` + lock? | Built-in thread-safe operations without manual locking |
 
 **Must-know points:**
-- Prefer **TPL** (`Task`, `Parallel`) over raw `Thread` for most scenarios
+- Prefer **TPL** (`Task`, `Parallel`) over raw `Thread` for most scenarios — uses **ThreadPool** and **multicore partitioning**
+- **Single core** = time slicing + context switching (concurrency, not parallelism)
+- **Multi-core** = true parallelism when threads run on different processors at the same time
+- **Task** encapsulates threading — you work with operations, not manual thread lifecycle
+- **Foreground** thread keeps app alive; **background** thread does not — pool threads are background
+- **Thread pooling** reuses workers — avoid per-request `new Thread()` creation and GC pressure
 - `lock` only works on **reference types** — lock on private readonly object, not `this` or strings
 - `async`/`await` is concurrency; `Parallel.For` is parallelism
 
@@ -2397,12 +2719,64 @@ class Person { public string Name; }
 
 > **One-liner:** Use a transaction with `UPDLOCK`/`ROWLOCK` in raw SQL — EF Core does not lock rows pessimistically by default.
 
+### Concurrency vs Parallelism
+
+| | Concurrency | Parallelism |
+| --- | --- | --- |
+| Goal | **Usability** — non-blocking, responsive app | **Performance** — multi-core speedup |
+| Execution | Tasks overlap — may time-slice on one core | Tasks run simultaneously on different cores |
+| Example | `async`/`await`, juggler with many balls | `Parallel.For`, many workers in cubicles |
+| Interview trap | "Multiple tasks at same time" — only ~50% defines concurrency |
+
+> **One-liner:** Non-blocking = concurrency (usability). Multi-core = parallelism (performance). Async is a form of concurrency.
+
+### Async/Await vs Threading
+
+| Point | Detail |
+| --- | --- |
+| Async goal | **Usability** — not primarily raw performance |
+| Creates threads? | **No** for I/O — thread released during `await` |
+| Mechanism | Compiler **state machine** + optional ThreadPool continuation |
+| Worker thread | Any thread other than main — may resume after `await` |
+| Sync context | WPF/WinForms → UI thread; ASP.NET Core console → ThreadPool |
+
+> **One-liner:** Async is concurrency for responsiveness — state machine under the hood, not a thread per call.
+
 ### Thread vs TPL vs Parallel Library
 
 | | Thread | TPL | Parallel Library |
 | --- | --- | --- | --- |
 | Level | Low-level, manual | High-level, task-based | Part of TPL |
 | Best for | Full thread control | Async I/O, background work | CPU-bound multi-core work |
+| Pooling | No — create/destroy each time | Yes — uses ThreadPool | Yes — uses ThreadPool |
 | Examples | `new Thread()` | `Task.Run`, `async`/`await` | `Parallel.For`, `Parallel.ForEach` |
+
+### Foreground vs Background Thread
+
+| Type | Keeps process alive? | Example |
+| --- | --- | --- |
+| Foreground | Yes | Main thread, `new Thread()` with `IsBackground = false` |
+| Background | No | `ThreadPool` threads, `IsBackground = true` |
+
+> **One-liner:** Foreground keeps the app running; background does not — ThreadPool workers are always background.
+
+### Thread Pooling
+
+> **One-liner:** Thread pooling reuses worker threads from a pool — faster than `new Thread()` per task and avoids creation/GC overhead.
+
+### Time Slicing vs True Parallelism
+
+| Scenario | What happens |
+| --- | --- |
+| Many threads, **one core** | Time slicing + context switching — not real parallelism |
+| Threads on **multiple cores** | True parallelism — Thread 1 on Processor 1, Thread 2 on Processor 2 |
+
+### Task Encapsulates Threading
+
+> **One-liner:** `Task` is a higher-level wrapper over threading — TPL schedules work on ThreadPool threads so you don't manage raw `Thread` objects.
+
+### TPL Multicore Processing
+
+> **One-liner:** TPL encapsulates multicore execution — `Parallel.For` partitions CPU work across all available cores better than manual `new Thread()`.
 
 > **One-liner:** Thread = manual; TPL = Task/async concurrency; Parallel = CPU work across cores.
