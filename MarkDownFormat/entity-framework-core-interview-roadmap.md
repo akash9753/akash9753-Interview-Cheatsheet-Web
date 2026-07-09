@@ -972,6 +972,76 @@ await context.Books.Where(b => b.Price == 0).ExecuteDeleteAsync();
 
 ## 11. Transactions
 
+### SaveChanges vs Manual Transaction
+
+EF Core **automatically wraps a single `SaveChanges()` call inside a transaction** — all tracked changes in that call commit or roll back together.
+
+Use **`context.Database.BeginTransactionAsync()`** when you need **multiple `SaveChanges()` calls** to succeed or fail as **one atomic unit** (e.g. insert parent, get generated ID, then insert child).
+
+**Flow:**
+
+```text
+BeginTransaction
+    Insert Order
+    SaveChanges          → order.Id available
+
+    Insert Payment
+    SaveChanges
+
+    Commit               → both saved permanently
+
+If any error:
+    Rollback             → neither Order nor Payment is saved
+```
+
+### Place Order — Multiple SaveChanges in One Transaction
+
+```csharp
+public async Task PlaceOrderAsync()
+{
+    await using var transaction = await _context.Database.BeginTransactionAsync();
+
+    try
+    {
+        var order = new Order
+        {
+            CustomerId = 1,
+            OrderDate = DateTime.Now
+        };
+
+        _context.Orders.Add(order);
+        await _context.SaveChangesAsync();   // 1st SaveChanges — gets order.Id
+
+        var payment = new Payment
+        {
+            OrderId = order.Id,              // needs ID from first save
+            Amount = 5000,
+            Status = "Paid"
+        };
+
+        _context.Payments.Add(payment);
+        await _context.SaveChangesAsync();   // 2nd SaveChanges
+
+        await transaction.CommitAsync();     // commit only if both succeed
+    }
+    catch
+    {
+        await transaction.RollbackAsync();
+        throw;
+    }
+}
+```
+
+| Step | What happens |
+| --- | --- |
+| `BeginTransactionAsync()` | Starts explicit DB transaction |
+| 1st `SaveChangesAsync()` | Inserts `Order`; EF populates `order.Id` |
+| 2nd `SaveChangesAsync()` | Inserts `Payment` linked to `order.Id` |
+| `CommitAsync()` | Persists both operations permanently |
+| `RollbackAsync()` on error | Undoes **both** inserts — no partial order without payment |
+
+> **Interview one-liner:** Single `SaveChanges()` is already transactional; use `BeginTransactionAsync()` when multiple `SaveChanges()` calls must be all-or-nothing.
+
 ### Transaction Isolation Levels
 
 | Level | Dirty read | Non-repeatable read | Phantom read | Performance | Use case |
@@ -989,12 +1059,10 @@ await context.Books.Where(b => b.Price == 0).ExecuteDeleteAsync();
 - EF `SaveChanges()` uses a transaction — all changes commit or rollback together
 - Use `BeginTransactionAsync()` when multiple `SaveChanges` must be atomic
 
-`SaveChanges()` runs inside a transaction by default.
-
-Manual transaction:
+### BeginTransactionAsync — Generic Pattern
 
 ```csharp
-using var transaction = await context.Database.BeginTransactionAsync();
+await using var transaction = await context.Database.BeginTransactionAsync();
 try
 {
     context.Books.Add(new Book { Title = "A" });
@@ -1013,10 +1081,11 @@ catch
 
 | Question | Answer |
 | --- | --- |
-| Is `SaveChanges` transactional? | Yes — all changes in one transaction by default |
-| When use manual transaction? | Multiple `SaveChanges` calls must succeed or fail together |
-| `Commit` vs `SaveChanges`? | `SaveChanges` auto-commits; manual needs explicit `CommitAsync()` |
-| What happens on exception? | Transaction rolls back — no partial saves |
+| Is `SaveChanges` transactional? | Yes — all changes in **one** `SaveChanges()` call share one transaction by default |
+| When use manual transaction? | Multiple `SaveChanges()` calls must succeed or fail together |
+| Why two `SaveChanges` in PlaceOrder? | First save generates `order.Id`; second save links `Payment.OrderId` |
+| `Commit` vs `SaveChanges`? | `SaveChanges` writes to DB inside open transaction; `CommitAsync()` finalizes the manual transaction |
+| What happens on exception? | `RollbackAsync()` — no partial saves across both operations |
 | `TransactionScope` use case? | Multiple DbContexts or DB + message queue — distributed transaction |
 
 ---
