@@ -314,6 +314,55 @@ In this example:
 - `course_id` alone is not unique because one course can have many students.
 - `student_id + course_id` together uniquely identify each enrollment row.
 
+### PRIMARY KEY vs UNIQUE
+
+Both enforce **uniqueness** — no two rows can have the same value(s) in that column or column set. The difference is role, nullability, count per table, and how they are used in relationships.
+
+| Aspect | `PRIMARY KEY` | `UNIQUE` |
+| --- | --- | --- |
+| **Purpose** | Main row identifier for the table | Alternate / business key — also unique but not the main identifier |
+| **NULL allowed** | **No** — all PK columns must be `NOT NULL` | **Yes** — column can allow `NULL` (only **one** `NULL` per unique column in SQL Server) |
+| **Per table** | **Only one** primary key (can be composite) | **Multiple** unique constraints allowed |
+| **Default index** | Creates **clustered** index by default | Creates **non-clustered** unique index by default |
+| **Used by FOREIGN KEY** | Most common parent reference | Also valid — FK can reference a `UNIQUE` column |
+| **IDENTITY** | Often combined with `IDENTITY` for surrogate keys | Can be used on business columns like `email`, `ssn` |
+| **Interview meaning** | "This column identifies each row" | "This value must not repeat, but it's not the main key" |
+
+```sql
+CREATE TABLE employees (
+    emp_id   INT IDENTITY(1,1) PRIMARY KEY,   -- main identifier, NOT NULL, clustered
+    email    VARCHAR(100) NOT NULL UNIQUE,    -- alternate key — must be unique
+    phone    VARCHAR(20) UNIQUE,              -- allows NULL, but non-NULL phones must be unique
+    fname    VARCHAR(50) NOT NULL,
+    lname    VARCHAR(50) NOT NULL
+);
+
+-- Named constraints (clearer in production)
+CREATE TABLE products (
+    product_id   INT NOT NULL,
+    sku          VARCHAR(20) NOT NULL,
+    barcode      VARCHAR(30) NULL,
+    CONSTRAINT PK_products PRIMARY KEY (product_id),
+    CONSTRAINT UQ_products_sku UNIQUE (sku),
+    CONSTRAINT UQ_products_barcode UNIQUE (barcode)
+);
+```
+
+| Scenario | Use |
+| --- | --- |
+| Surrogate key (`emp_id`, `order_id`) | `PRIMARY KEY` + often `IDENTITY` |
+| Login email, national ID, SKU | `UNIQUE` — business rule, not necessarily the PK |
+| Junction table (enrollment) | Composite `PRIMARY KEY (student_id, course_id)` |
+| Optional unique field (passport, secondary email) | `UNIQUE` on nullable column |
+
+| Question | Answer |
+| --- | --- |
+| PRIMARY KEY vs UNIQUE? | Both unique; PK = main row ID, NOT NULL, one per table; UNIQUE = alternate keys, allows NULL |
+| Can UNIQUE have NULL? | Yes — SQL Server allows only **one** NULL in a unique column |
+| How many PRIMARY KEYs per table? | **One** (can span multiple columns as composite PK) |
+| FK references UNIQUE? | Yes — parent column must be PK or UNIQUE |
+| `NOT NULL` + `UNIQUE` = PRIMARY KEY? | No — PK is explicitly chosen; semantics and index defaults differ |
+
 ### Employee Table Task
 
 #### Create Employees Table
@@ -372,7 +421,9 @@ SELECT * FROM employees;
 
 | Question | Answer |
 | --- | --- |
-| PRIMARY KEY vs UNIQUE? | Both enforce uniqueness; PK cannot be NULL, only one per table, and is the main row identifier |
+| PRIMARY KEY vs UNIQUE? | Both enforce uniqueness; PK = NOT NULL, one per table, main row ID; UNIQUE = alternate keys, allows NULL |
+| Can a table have multiple UNIQUE constraints? | Yes — e.g. unique `email` and unique `phone` on same table |
+| Does PRIMARY KEY allow NULL? | No — implicit `NOT NULL` on all PK columns |
 | What is a FOREIGN KEY? | Column referencing another table's PK — enforces referential integrity |
 | What is IDENTITY? | Auto-incrementing integer column — `IDENTITY(seed, increment)` |
 | What is a composite key? | Primary key made of two or more columns when no single column is unique |
@@ -434,12 +485,63 @@ WHERE student_id IN (101, 102);
 TRUNCATE TABLE students;
 ```
 
+### DELETE vs TRUNCATE
+
+Both remove rows from a table, but they work very differently in SQL Server — especially around logging, speed, triggers, and identity columns.
+
+| Aspect | `DELETE` | `TRUNCATE TABLE` |
+| --- | --- | --- |
+| **Type** | DML (Data Manipulation Language) | DDL-like operation (deallocates data pages) |
+| **Syntax** | `DELETE FROM table [WHERE condition]` | `TRUNCATE TABLE table` |
+| **WHERE clause** | **Yes** — delete specific rows | **No** — removes **all** rows only |
+| **Speed** | Slower — row-by-row delete | Faster — deallocates extents (minimal logging) |
+| **Transaction log** | Logs **each deleted row** | Logs **page deallocations** (much less log) |
+| **Rollback** | Yes — inside `BEGIN TRAN` / `ROLLBACK` | Yes — inside explicit transaction (SQL Server) |
+| **Triggers** | Fires `ON DELETE` triggers | Does **not** fire `DELETE` triggers |
+| **IDENTITY column** | Does **not** reset seed | **Resets** identity to seed value |
+| **Foreign keys** | Works with FK rules (`CASCADE`, etc.) | **Fails** if another table has FK referencing this table |
+| **Permissions** | `DELETE` permission | `ALTER` permission on table |
+| **Row count** | Returns count of deleted rows | No per-row count returned |
+| **Locking** | Row-level locks (can escalate) | Table lock + schema modification lock |
+| **Use when** | Remove some rows, need triggers/audit, FK-safe partial delete | Empty entire table fast — dev/reset, no row filter needed |
+
+```sql
+-- DELETE — specific rows, fires triggers, keeps identity seed
+BEGIN TRANSACTION;
+
+DELETE FROM orders
+WHERE order_date < '2020-01-01';
+
+-- Check: SELECT IDENT_CURRENT('orders');  -- identity NOT reset
+
+ROLLBACK TRANSACTION;  -- or COMMIT
+
+-- TRUNCATE — all rows, fast, resets identity, no WHERE
+BEGIN TRANSACTION;
+
+TRUNCATE TABLE staging_orders;
+
+-- Check: SELECT IDENT_CURRENT('staging_orders');  -- identity reset to seed
+
+ROLLBACK TRANSACTION;  -- or COMMIT
+```
+
+| Related | Difference |
+| --- | --- |
+| `TRUNCATE` vs `DROP TABLE` | `TRUNCATE` empties data but **keeps** table structure; `DROP` removes the table entirely |
+| `DELETE` without `WHERE` | Deletes all rows but still row-by-row — slower than `TRUNCATE`, keeps identity, fires triggers |
+
 | Question | Answer |
 | --- | --- |
 | What is DML? | Data Manipulation Language — `INSERT`, `SELECT`, `UPDATE`, `DELETE`, `MERGE` |
 | INSERT with explicit columns vs `INSERT ... SELECT`? | Explicit lists target columns; `SELECT` copies rows from another query/table |
 | UPDATE without WHERE? | Updates **every row** in the table — dangerous in production |
-| DELETE vs TRUNCATE? | DELETE is row-level, logged, supports WHERE; TRUNCATE is fast, all-or-nothing, resets identity |
+| `DELETE` vs `TRUNCATE`? | `DELETE` = row-level DML with `WHERE`; `TRUNCATE` = fast full-table empty, resets identity |
+| Can `TRUNCATE` use `WHERE`? | No — all rows only; use `DELETE` for filtered removal |
+| Does `TRUNCATE` fire triggers? | No — `DELETE` triggers do not run |
+| Which resets IDENTITY? | `TRUNCATE` resets to seed; `DELETE` does not |
+| FK blocking `TRUNCATE`? | Yes — if another table references this table via FK |
+| TRUNCATE vs DROP TABLE? | TRUNCATE empties rows, keeps structure; DROP removes the table object |
 | What is MERGE? | Upsert — inserts new rows and updates existing in one statement based on a match condition |
 | Can you roll back DELETE? | Yes, inside an explicit transaction with `BEGIN TRAN` / `COMMIT` / `ROLLBACK` |
 
@@ -2692,6 +2794,23 @@ CREATE NONCLUSTERED INDEX IX_Employees_Salary ON employees(salary);
 
 > **One-liner:** Clustered = table row order (one per table); non-clustered = extra lookup index for faster searches.
 
+### PRIMARY KEY vs UNIQUE
+
+| Aspect | `PRIMARY KEY` | `UNIQUE` |
+| --- | --- | --- |
+| **Uniqueness** | Yes | Yes |
+| **NULL** | Not allowed | Allowed (one NULL per column in SQL Server) |
+| **Count per table** | One | Many |
+| **Default index** | Clustered | Non-clustered unique |
+| **Typical use** | `emp_id`, `order_id` — row identity | `email`, `sku` — business uniqueness |
+
+```sql
+emp_id   INT PRIMARY KEY,           -- main identifier
+email    VARCHAR(100) UNIQUE,       -- must not duplicate
+```
+
+> **One-liner:** PRIMARY KEY = one NOT NULL row identifier per table; UNIQUE = extra uniqueness rules, often on business columns.
+
 ### WHERE vs HAVING
 
 | Clause | When it runs | Filters | Can use aggregates? |
@@ -2714,6 +2833,25 @@ HAVING AVG(salary) > 90000;
 ```
 
 > **One-liner:** `WHERE` filters rows before grouping; `HAVING` filters groups after `GROUP BY`.
+
+### DELETE vs TRUNCATE
+
+| Aspect | `DELETE` | `TRUNCATE TABLE` |
+| --- | --- | --- |
+| **Category** | DML | DDL-like (page deallocation) |
+| **Filter rows** | `WHERE` supported | All rows only — no `WHERE` |
+| **Speed** | Slower (row-by-row) | Faster (minimal logging) |
+| **Triggers** | Fires `ON DELETE` | Does not fire `DELETE` triggers |
+| **IDENTITY** | Seed unchanged | Reset to seed |
+| **Foreign keys** | Respects FK / cascade rules | Blocked if referenced by another table's FK |
+| **Best for** | Partial delete, audit trails | Fast full-table reset (staging/dev tables) |
+
+```sql
+DELETE FROM orders WHERE status = 'Cancelled';   -- some rows
+TRUNCATE TABLE staging_import;                 -- all rows, fast reset
+```
+
+> **One-liner:** `DELETE` removes specific rows with full logging and triggers; `TRUNCATE` empties the whole table fast and resets identity.
 
 ### Different Types of Joins
 
