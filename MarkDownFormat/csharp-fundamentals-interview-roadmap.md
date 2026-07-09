@@ -2400,6 +2400,63 @@ Console.WriteLine(emp1 == emp2); // True
 
 **Interview one-liner:** Class compares by reference and holds behavior; record compares by value and is ideal for DTOs and immutable data.
 
+### Constructor Chaining
+
+Constructor chaining means one constructor calls another constructor in the **same class** (`this(...)`) or in the **base class** (`base(...)`) to reuse initialization logic and avoid duplicate code.
+
+| Keyword | Calls | Use |
+| --- | --- | --- |
+| `this(...)` | Another constructor in the **same class** | Overload chaining — delegate common setup to one ctor |
+| `base(...)` | A constructor in the **parent class** | Inheritance — initialize base fields before derived ctor body runs |
+
+**Rules:**
+- `this(...)` or `base(...)` must be the **first statement** in the constructor (if used).
+- You cannot use **both** `this(...)` and `base(...)` in the same constructor.
+- If neither is written, the compiler implicitly calls `base()` (parameterless base ctor).
+- If you define **any** constructor, the compiler does **not** add a default parameterless ctor unless you write one.
+
+```csharp
+public class Employee
+{
+    public Employee() : this("Unknown", 0) { }              // chains to parameterized ctor
+
+    public Employee(string name) : this(name, 0) { }        // chains to full ctor
+
+    public Employee(string name, int id)
+    {
+        Name = name;
+        Id = id;
+    }
+
+    public string Name { get; }
+    public int Id { get; }
+}
+
+public class Manager : Employee
+{
+    public Manager(string name, int teamSize) : base(name) // calls parent ctor first
+    {
+        TeamSize = teamSize;
+    }
+
+    public int TeamSize { get; }
+}
+```
+
+| Constructor execution order (inheritance) | When |
+| --- | --- |
+| Base class static constructor | Once per type, before any instance |
+| Derived class static constructor | Once per type, before any instance |
+| Base class instance constructor | Before derived ctor body |
+| Derived class instance constructor | After base ctor completes |
+
+| Question | Answer |
+| --- | --- |
+| `this(...)` vs `base(...)` in ctor? | `this(...)` chains within same class; `base(...)` calls parent constructor |
+| Default constructor? | Compiler adds parameterless ctor only if no constructors are defined |
+| Constructor chaining benefit? | Reuses initialization logic — single place for common setup |
+| Can ctor call both `this` and `base`? | No — only one chaining call allowed as first statement |
+
 ### Collection Expressions (C# 12)
 
 | Syntax | Equivalent | Notes |
@@ -2465,6 +2522,7 @@ Console.WriteLine(emp1 == emp2); // True
 | Question | Answer |
 | --- | --- |
 | Record vs class? | Class = reference equality + behavior; Record = value equality + DTOs/data — use class for behavior, record for data |
+| Constructor chaining? | `this(...)` calls another ctor in same class; `base(...)` calls parent ctor — must be first statement |
 | Tuple vs record? | Tuple = lightweight anonymous grouping; record = named named type with semantics |
 | `init` vs `set`? | `init` = set only during object initialization |
 | Nullable reference types? | `string?` vs `string` — compile-time null analysis (C# 8+) |
@@ -2472,6 +2530,7 @@ Console.WriteLine(emp1 == emp2); // True
 
 **Must-know points:**
 - Records: `public record Person(string Name, int Age);` — positional syntax
+- Constructor chaining: one **full** ctor holds logic; others delegate via `this(...)` or `base(...)`
 - Deconstruction: `(var x, var y) = tuple;` or `var (a, b) = point;`
 - File-scoped namespace: `namespace MyApp;` — less indentation (C# 10)
 
