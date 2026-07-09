@@ -1266,6 +1266,44 @@ using ProjectA = MyCompany.ProjectA.SubModule;
 - The `IDisposable` pattern is commonly used for files, streams, database connections, and similar resources.
 - `using` automatically calls `Dispose()` after resource usage.
 
+### Dispose vs Finalizer
+
+| Aspect | `Dispose()` | Finalizer (`~ClassName()`) |
+| --- | --- | --- |
+| **When it runs** | Deterministic — when you call `Dispose()` or exit a `using` block | Non-deterministic — when GC collects the object |
+| **Who triggers it** | Developer (or `using` / `using var`) | Garbage Collector |
+| **Interface** | `IDisposable.Dispose()` | Destructor syntax `~ClassName()` |
+| **Timing guarantee** | Runs immediately (or at end of scope) | No guarantee — may run late or never |
+| **Managed resources** | Safe to release (other managed objects, streams, etc.) | Avoid — other managed objects may already be collected |
+| **Unmanaged resources** | Yes — primary use case | Yes — safety net if `Dispose()` was never called |
+| **Performance** | Lightweight; no extra GC overhead | Adds object to finalization queue; extra GC pass — slower |
+| **Exception safety** | Exceptions can be handled normally | Exceptions in finalizers are swallowed by the runtime |
+| **Multiple calls** | Should be idempotent — guard with `_disposed` flag | Runs at most once per object |
+| **Suppress** | Call `GC.SuppressFinalize(this)` after cleanup to skip finalizer | N/A |
+| **Typical use** | Files, streams, DB connections, sockets, `HttpClient` | Rare — only when wrapping unmanaged handles and implementing full dispose pattern |
+| **Preferred?** | **Yes** — always prefer `using` / explicit `Dispose()` | Last-resort backup only |
+
+```csharp
+class FileWrapper : IDisposable {
+    private bool _disposed;
+    private FileStream _stream;
+
+    public void Dispose() {
+        Dispose(true);
+        GC.SuppressFinalize(this); // skip finalizer — already cleaned up
+    }
+
+    protected virtual void Dispose(bool disposing) {
+        if (_disposed) return;
+        if (disposing) _stream?.Dispose(); // managed — only when disposing == true
+        // release unmanaged handles here (both paths)
+        _disposed = true;
+    }
+
+    ~FileWrapper() => Dispose(false); // finalizer safety net
+}
+```
+
 ### Stack vs Heap
 
 | Feature | Stack | Heap |
@@ -1489,16 +1527,14 @@ The compiler implements `async`/`await` using a **state machine** — the hidden
 
 **Summarizing async vs threading:**
 
-| Point | Detail |
-| --- | --- |
-| Async does **not** create threads (for I/O) | Thread released during wait |
-| Async uses **state machines** internally | Compiler-generated `IAsyncStateMachine` |
-| Without sync context | Continuation may run on **ThreadPool** worker thread |
-| **Asynchrony is a form of concurrency** | Overlap without blocking — not always parallelism |
-| Threads for non-blocking? | Possible via `Task.Run` / `StartNew` — but **resource-intensive** |
-| **Usability vs performance** | Async/concurrency = usability; parallelism = performance |
+- **Async does not create threads** — for I/O, the thread is released during `await`
+- **Async uses state machines internally** — compiler-generated `IAsyncStateMachine`
+- **Without `SynchronizationContext`**, async can resume on a **ThreadPool** thread for the remaining code
+- **Asynchrony is a form of concurrency** — overlap without blocking; not always parallelism
+- You **can** implement non-blocking with threads (`Task.Run` / `StartNew`) — but it is **resource-intensive**
+- **Usability vs performance** — async/concurrency = usability; parallelism = performance
 
-![Async summarizing — state machine, concurrency, sync context, usability vs performance](/assets/csharp/async-summarizing.png)
+![Summarizing — async, state machines, sync context, concurrency, usability vs performance](/assets/csharp/async-summarizing.png)
 
 ### What Happens Under the Hood
 
