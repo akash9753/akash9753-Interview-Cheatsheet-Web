@@ -71,17 +71,24 @@
 
 ### Sliding Window
 
+Fixed / variable window over an **array** (contiguous subarray).
+
 | # | Problem | Diff | Link |
 | --- | --- | --- | --- |
-| — | Maximum Sum Subarray of Size K | 2 | [GFG](https://www.geeksforgeeks.org/problems/max-sum-subarray-of-size-k5313/1) · [LC 643](https://leetcode.com/problems/maximum-average-subarray-i/) |
-| 3 | Longest Substring Without Repeating Characters | 3 | [Solve](https://leetcode.com/problems/longest-substring-without-repeating-characters/) |
+| 643 | Maximum Average Subarray I | 2 | [Solve](https://leetcode.com/problems/maximum-average-subarray-i/) |
+| — | Maximum Sum Subarray of Size K | 2 | [GFG](https://www.geeksforgeeks.org/problems/max-sum-subarray-of-size-k5313/1) |
 | 209 | Minimum Size Subarray Sum | 3 | [Solve](https://leetcode.com/problems/minimum-size-subarray-sum/) |
-| 424 | Longest Repeating Character Replacement | 3 | [Solve](https://leetcode.com/problems/longest-repeating-character-replacement/) |
-| 567 | Permutation in String | 3 | [Solve](https://leetcode.com/problems/permutation-in-string/) |
-| 438 | Find All Anagrams in a String | 3 | [Solve](https://leetcode.com/problems/find-all-anagrams-in-a-string/) |
-| 76 | Minimum Window Substring | 4 | [Solve](https://leetcode.com/problems/minimum-window-substring/) |
+| 713 | Subarray Product Less Than K | 3 | [Solve](https://leetcode.com/problems/subarray-product-less-than-k/) |
+| 1004 | Max Consecutive Ones III | 3 | [Solve](https://leetcode.com/problems/max-consecutive-ones-iii/) |
+| 1493 | Longest Subarray of 1's After Deleting One Element | 3 | [Solve](https://leetcode.com/problems/longest-subarray-of-1s-after-deleting-one-element/) |
 | 904 | Fruit Into Baskets | 3 | [Solve](https://leetcode.com/problems/fruit-into-baskets/) |
+| 930 | Binary Subarrays With Sum | 3 | [Solve](https://leetcode.com/problems/binary-subarrays-with-sum/) |
+| 1248 | Count Number of Nice Subarrays | 3 | [Solve](https://leetcode.com/problems/count-number-of-nice-subarrays/) |
+| 992 | Subarrays with K Different Integers | 4 | [Solve](https://leetcode.com/problems/subarrays-with-k-different-integers/) |
+| 1423 | Maximum Points You Can Obtain from Cards | 3 | [Solve](https://leetcode.com/problems/maximum-points-you-can-obtain-from-cards/) |
+| 1343 | Number of Sub-arrays of Size K and Average ≥ Threshold | 3 | [Solve](https://leetcode.com/problems/number-of-sub-arrays-of-size-k-and-average-greater-than-or-equal-to-threshold/) |
 | 239 | Sliding Window Maximum | 4 | [Solve](https://leetcode.com/problems/sliding-window-maximum/) |
+| 480 | Sliding Window Median | 4 | [Solve](https://leetcode.com/problems/sliding-window-median/) |
 
 ### Kadane's / Subarray
 
@@ -142,7 +149,6 @@
 | 125 | Valid Palindrome | 2 | [Solve](https://leetcode.com/problems/valid-palindrome/) |
 | 344 | Reverse String | 2 | [Solve](https://leetcode.com/problems/reverse-string/) |
 | 844 | Backspace String Compare | 2 | [Solve](https://leetcode.com/problems/backspace-string-compare/) |
-| 167 | Two Sum II | 3 | [Solve](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/) |
 
 ### Pattern Matching (KMP)
 
@@ -202,13 +208,19 @@ public static char? FirstNonRepeatingChar(string s)
 
 ### Sliding Window
 
+Fixed / variable window over a **string** (contiguous substring).
+
 | # | Problem | Diff | Link |
 | --- | --- | --- | --- |
 | 3 | Longest Substring Without Repeating Characters | 3 | [Solve](https://leetcode.com/problems/longest-substring-without-repeating-characters/) |
+| 340 | Longest Substring with At Most K Distinct Characters | 3 | [Solve](https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters/) |
+| 159 | Longest Substring with At Most Two Distinct Characters | 3 | [Solve](https://leetcode.com/problems/longest-substring-with-at-most-two-distinct-characters/) |
 | 424 | Longest Repeating Character Replacement | 3 | [Solve](https://leetcode.com/problems/longest-repeating-character-replacement/) |
 | 567 | Permutation in String | 3 | [Solve](https://leetcode.com/problems/permutation-in-string/) |
 | 438 | Find All Anagrams in a String | 3 | [Solve](https://leetcode.com/problems/find-all-anagrams-in-a-string/) |
 | 76 | Minimum Window Substring | 4 | [Solve](https://leetcode.com/problems/minimum-window-substring/) |
+| 1456 | Maximum Number of Vowels in a Substring of Given Length | 2 | [Solve](https://leetcode.com/problems/maximum-number-of-vowels-in-a-substring-of-given-length/) |
+| 187 | Repeated DNA Sequences | 3 | [Solve](https://leetcode.com/problems/repeated-dna-sequences/) |
 
 **One-liner:** String problems → frequency map, two pointers, or sliding window.
 
