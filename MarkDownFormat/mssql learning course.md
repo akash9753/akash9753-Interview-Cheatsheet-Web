@@ -487,23 +487,18 @@ TRUNCATE TABLE students;
 
 ### DELETE vs TRUNCATE
 
-Both remove rows from a table, but they work very differently in SQL Server — especially around logging, speed, triggers, and identity columns.
-
-| Aspect | `DELETE` | `TRUNCATE TABLE` |
-| --- | --- | --- |
-| **Type** | DML (Data Manipulation Language) | DDL-like operation (deallocates data pages) |
-| **Syntax** | `DELETE FROM table [WHERE condition]` | `TRUNCATE TABLE table` |
-| **WHERE clause** | **Yes** — delete specific rows | **No** — removes **all** rows only |
-| **Speed** | Slower — row-by-row delete | Faster — deallocates extents (minimal logging) |
-| **Transaction log** | Logs **each deleted row** | Logs **page deallocations** (much less log) |
-| **Rollback** | Yes — inside `BEGIN TRAN` / `ROLLBACK` | Yes — inside explicit transaction (SQL Server) |
-| **Triggers** | Fires `ON DELETE` triggers | Does **not** fire `DELETE` triggers |
-| **IDENTITY column** | Does **not** reset seed | **Resets** identity to seed value |
-| **Foreign keys** | Works with FK rules (`CASCADE`, etc.) | **Fails** if another table has FK referencing this table |
-| **Permissions** | `DELETE` permission | `ALTER` permission on table |
-| **Row count** | Returns count of deleted rows | No per-row count returned |
-| **Locking** | Row-level locks (can escalate) | Table lock + schema modification lock |
-| **Use when** | Remove some rows, need triggers/audit, FK-safe partial delete | Empty entire table fast — dev/reset, no row filter needed |
+| `DELETE` | `TRUNCATE` |
+| --- | --- |
+| Deletes rows one by one | Removes all rows at once |
+| Can use `WHERE` clause | Cannot use `WHERE` clause |
+| `DELETE FROM Employee WHERE Id = 1;` | `TRUNCATE TABLE Employee;` |
+| Logs each row deletion | Minimally logged (faster) |
+| Slower | Faster |
+| Identity value is **not** reset | Identity value **is** reset (SQL Server) |
+| DML (Data Manipulation Language) | DDL (Data Definition Language) |
+| Can be rolled back if inside a transaction | Can be rolled back in SQL Server if inside a transaction |
+| Triggers are fired | Triggers are **not** fired |
+| Table structure remains | Table structure remains |
 
 ```sql
 -- DELETE — specific rows, fires triggers, keeps identity seed
@@ -2699,9 +2694,31 @@ WITH (
 | `CROSS APPLY` | Like `INNER JOIN` — only rows where the right side returns data |
 | `OUTER APPLY` | Like `LEFT JOIN` — keeps left rows even if right side is empty |
 
-### Temporary Tables
+### Temporary Tables and Table Types
+
+In SQL Server, commonly used table types are:
+
+| Type | Example | Scope |
+| --- | --- | --- |
+| **Permanent Table** | `CREATE TABLE Employee (...)` | Stored permanently in the database |
+| **Local Temporary Table** | `CREATE TABLE #Temp (...)` | Available only in the current session |
+| **Global Temporary Table** | `CREATE TABLE ##Temp (...)` | Available to all sessions until the last session using it closes |
+| **Table Variable** | `DECLARE @Temp TABLE (...)` | Available only inside the current batch, function, or stored procedure |
+| **Table-Valued Parameter** | `@Employees EmployeeType READONLY` | Used to pass multiple rows into a stored procedure |
+| **Derived Table** | `SELECT * FROM (SELECT ...) AS T` | Exists only inside the query |
+| **Common Table Expression** | `WITH CTE AS (...)` | Exists only for the next statement |
+| **View** | `CREATE VIEW EmployeeView AS ...` | Virtual table based on a query |
+
+#### Most common inside stored procedures
+
+- `#Temp` table (local temporary)
+- `##Temp` table (global temporary)
+- `@TableVariable`
+- Table-Valued Parameter (TVP)
+- Permanent table
 
 ```sql
+-- Local temp table — session-scoped, in tempdb
 CREATE TABLE #SessionTemp (
     emp_id INT,
     salary NUMERIC(10, 2)
@@ -2711,7 +2728,22 @@ INSERT INTO #SessionTemp
 SELECT emp_id, salary FROM employees WHERE department = 'Tech';
 
 SELECT * FROM #SessionTemp;
+
+-- Table variable — batch / procedure scoped
+DECLARE @SessionTemp TABLE (
+    emp_id INT,
+    salary NUMERIC(10, 2)
+);
+
+INSERT INTO @SessionTemp
+SELECT emp_id, salary FROM employees WHERE department = 'Tech';
 ```
+
+| Point | `#temp` table | `@table` variable |
+| --- | --- | --- |
+| Scope | Current session | Current batch / procedure |
+| Indexes / statistics | Yes — good for large intermediate sets | Limited — no rich statistics |
+| Best for | Multi-step logic, larger data | Small sets, simple SP logic |
 
 - `#temp` tables are session-scoped and stored in `tempdb`
 - Support indexes and statistics — useful for multi-step ETL or heavy intermediate results
@@ -2836,15 +2868,18 @@ HAVING AVG(salary) > 90000;
 
 ### DELETE vs TRUNCATE
 
-| Aspect | `DELETE` | `TRUNCATE TABLE` |
-| --- | --- | --- |
-| **Category** | DML | DDL-like (page deallocation) |
-| **Filter rows** | `WHERE` supported | All rows only — no `WHERE` |
-| **Speed** | Slower (row-by-row) | Faster (minimal logging) |
-| **Triggers** | Fires `ON DELETE` | Does not fire `DELETE` triggers |
-| **IDENTITY** | Seed unchanged | Reset to seed |
-| **Foreign keys** | Respects FK / cascade rules | Blocked if referenced by another table's FK |
-| **Best for** | Partial delete, audit trails | Fast full-table reset (staging/dev tables) |
+| `DELETE` | `TRUNCATE` |
+| --- | --- |
+| Deletes rows one by one | Removes all rows at once |
+| Can use `WHERE` clause | Cannot use `WHERE` clause |
+| `DELETE FROM Employee WHERE Id = 1;` | `TRUNCATE TABLE Employee;` |
+| Logs each row deletion | Minimally logged (faster) |
+| Slower | Faster |
+| Identity value is **not** reset | Identity value **is** reset (SQL Server) |
+| DML | DDL |
+| Can be rolled back inside a transaction | Can be rolled back in SQL Server inside a transaction |
+| Triggers are fired | Triggers are **not** fired |
+| Table structure remains | Table structure remains |
 
 ```sql
 DELETE FROM orders WHERE status = 'Cancelled';   -- some rows
@@ -2852,6 +2887,23 @@ TRUNCATE TABLE staging_import;                 -- all rows, fast reset
 ```
 
 > **One-liner:** `DELETE` removes specific rows with full logging and triggers; `TRUNCATE` empties the whole table fast and resets identity.
+
+### Types of Tables in SQL Server
+
+| Type | Example | Scope |
+| --- | --- | --- |
+| Permanent Table | `CREATE TABLE Employee (...)` | Stored in the database |
+| Local Temp `#Temp` | `CREATE TABLE #Temp (...)` | Current session only |
+| Global Temp `##Temp` | `CREATE TABLE ##Temp (...)` | All sessions until last user disconnects |
+| Table Variable | `DECLARE @Temp TABLE (...)` | Current batch / procedure |
+| Table-Valued Parameter | `@Employees EmployeeType READONLY` | Pass multiple rows into an SP |
+| Derived Table | `FROM (SELECT ...) AS T` | Inside that query only |
+| CTE | `WITH CTE AS (...)` | Next statement only |
+| View | `CREATE VIEW ... AS ...` | Virtual table from a query |
+
+**Most used in stored procedures:** `#Temp`, `##Temp`, `@TableVariable`, TVP, permanent tables.
+
+> **One-liner:** Permanent tables persist; `#temp` is session-scoped; `@table` is batch-scoped; CTE/derived tables exist only for the query.
 
 ### Different Types of Joins
 
