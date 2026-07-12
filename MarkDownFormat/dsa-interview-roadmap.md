@@ -175,9 +175,20 @@ public static char? FirstRepeatingChar(string s)
 
 public static char? FirstNonRepeatingChar(string s)
 {
-    var freq = new Dictionary<char, int>();
-    foreach (char c in s) freq[c] = freq.GetValueOrDefault(c) + 1;
-    foreach (char c in s) if (freq[c] == 1) return c;
+    var counts = new Dictionary<char, int>();
+
+    foreach (char c in s)
+    {
+        if (counts.ContainsKey(c))
+            counts[c]++;
+        else
+            counts[c] = 1;
+    }
+
+    foreach (char c in s)
+        if (counts[c] == 1)
+            return c;
+
     return null;
 }
 ```
