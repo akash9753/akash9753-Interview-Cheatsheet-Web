@@ -60,25 +60,11 @@
 
 **Foundation of many problems. Master indexing & traversal.**
 
-### Basic
-
-| # | Problem | Diff | Link |
-| --- | --- | --- | --- |
-| 1 | Two Sum | 2 | [Solve](https://leetcode.com/problems/two-sum/) |
-| 121 | Best Time to Buy and Sell Stock | 2 | [Solve](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/) |
-| 217 | Contains Duplicate | 2 | [Solve](https://leetcode.com/problems/contains-duplicate/) |
-| 238 | Product of Array Except Self | 3 | [Solve](https://leetcode.com/problems/product-of-array-except-self/) |
-| 283 | Move Zeroes | 2 | [Solve](https://leetcode.com/problems/move-zeroes/) |
-| 26 | Remove Duplicates from Sorted Array | 2 | [Solve](https://leetcode.com/problems/remove-duplicates-from-sorted-array/) |
-| 189 | Rotate Array | 3 | [Solve](https://leetcode.com/problems/rotate-array/) |
-| 169 | Majority Element | 2 | [Solve](https://leetcode.com/problems/majority-element/) |
-| 268 | Missing Number | 2 | [Solve](https://leetcode.com/problems/missing-number/) |
-| 448 | Find All Numbers Disappeared in an Array | 2 | [Solve](https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/) |
-
 ### Prefix Sum
 
 | # | Problem | Diff | Link |
 | --- | --- | --- | --- |
+| 238 | Product of Array Except Self | 3 | [Solve](https://leetcode.com/problems/product-of-array-except-self/) |
 | 303 | Range Sum Query — Immutable | 2 | [Solve](https://leetcode.com/problems/range-sum-query-immutable/) |
 | 560 | Subarray Sum Equals K | 5 | [Solve](https://leetcode.com/problems/subarray-sum-equals-k/) |
 | 525 | Contiguous Array | 4 | [Solve](https://leetcode.com/problems/contiguous-array/) |
@@ -129,6 +115,16 @@
 | 153 | Find Minimum in Rotated Sorted Array | 3 | [Solve](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/) |
 | 162 | Find Peak Element | 3 | [Solve](https://leetcode.com/problems/find-peak-element/) |
 
+### Array Scan / In-place
+
+| # | Problem | Diff | Link |
+| --- | --- | --- | --- |
+| 121 | Best Time to Buy and Sell Stock | 2 | [Solve](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/) |
+| 189 | Rotate Array | 3 | [Solve](https://leetcode.com/problems/rotate-array/) |
+| 169 | Majority Element | 2 | [Solve](https://leetcode.com/problems/majority-element/) |
+| 268 | Missing Number | 2 | [Solve](https://leetcode.com/problems/missing-number/) |
+| 448 | Find All Numbers Disappeared in an Array | 2 | [Solve](https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/) |
+
 **One-liner:** Arrays + prefix sum / window / two pointers / binary search cover most medium interviews.
 
 ---
@@ -138,38 +134,6 @@
 ## String
 
 **Crucial for pattern matching and parsing problems.**
-
-### Basic
-
-| # | Problem | Diff | Link |
-| --- | --- | --- | --- |
-| 387 | First Unique Character in a String | 3 | [Solve](https://leetcode.com/problems/first-unique-character-in-a-string/) |
-| 344 | Reverse String | 2 | [Solve](https://leetcode.com/problems/reverse-string/) |
-| 28 | Find the Index of the First Occurrence | 4 | [Solve](https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/) |
-
-### First Repeating vs Non-Repeating (`"swiss"`)
-
-| Problem | Answer | Approach |
-| --- | --- | --- |
-| First **repeating** | `'s'` | One pass + `HashSet` |
-| First **non-repeating** | `'w'` | Frequency map + second pass |
-
-```csharp
-public static char? FirstRepeatingChar(string s)
-{
-    var seen = new HashSet<char>();
-    foreach (char c in s) if (!seen.Add(c)) return c;
-    return null;
-}
-
-public static char? FirstNonRepeatingChar(string s)
-{
-    var freq = new Dictionary<char, int>();
-    foreach (char c in s) freq[c] = freq.GetValueOrDefault(c) + 1;
-    foreach (char c in s) if (freq[c] == 1) return c;
-    return null;
-}
-```
 
 ### Two Pointers
 
@@ -193,6 +157,30 @@ public static char? FirstNonRepeatingChar(string s)
 | 242 | Valid Anagram | 3 | [Solve](https://leetcode.com/problems/valid-anagram/) |
 | 49 | Group Anagrams | 3 | [Solve](https://leetcode.com/problems/group-anagrams/) |
 | 387 | First Unique Character in a String | 3 | [Solve](https://leetcode.com/problems/first-unique-character-in-a-string/) |
+
+#### First Repeating vs Non-Repeating (`"swiss"`)
+
+| Problem | Answer | Approach |
+| --- | --- | --- |
+| First **repeating** | `'s'` | One pass + `HashSet` |
+| First **non-repeating** | `'w'` | Frequency map + second pass |
+
+```csharp
+public static char? FirstRepeatingChar(string s)
+{
+    var seen = new HashSet<char>();
+    foreach (char c in s) if (!seen.Add(c)) return c;
+    return null;
+}
+
+public static char? FirstNonRepeatingChar(string s)
+{
+    var freq = new Dictionary<char, int>();
+    foreach (char c in s) freq[c] = freq.GetValueOrDefault(c) + 1;
+    foreach (char c in s) if (freq[c] == 1) return c;
+    return null;
+}
+```
 
 ### Palindrome
 
