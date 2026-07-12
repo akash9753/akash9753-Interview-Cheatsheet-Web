@@ -1727,17 +1727,308 @@ sp_helptext 'enrollment_details';
 | --- | --- |
 | What is a view? | Saved SELECT query — virtual table with no stored data (unless indexed view) |
 | View vs table? | View is a query definition; data lives in underlying base tables |
-| ROW_NUMBER vs RANK vs DENSE_RANK? | ROW_NUMBER = unique sequential; RANK skips after ties; DENSE_RANK no gaps after ties |
-| LAG vs LEAD? | LAG accesses previous row; LEAD accesses next row — useful for period-over-period |
-| PARTITION BY in window functions? | Divides result into groups — function resets per partition |
-| NTILE purpose? | Divides rows into N roughly equal buckets (e.g. quartiles) |
 
 **Must-know points:**
 - Views simplify complex joins and can enforce **security** (hide columns/rows)
-- Window functions use `OVER (PARTITION BY ... ORDER BY ...)` — no GROUP BY collapse
-- `ROW_NUMBER()` is ideal for deduplication with a CTE + `WHERE rn = 1`
 - Indexed views (materialized) store data — have restrictions on definition
 - `sp_helptext` shows view definition; `INFORMATION_SCHEMA.VIEWS` lists all views
+
+### Window Functions
+
+Window functions calculate a value for **each row** using a related set of rows (the “window”) — without collapsing the result set like `GROUP BY`.
+
+![What are window functions](/assets/mssql/window-functions-overview.png)
+
+#### Benefits of Window Functions
+
+![Benefits of window functions](/assets/mssql/window-function-benefits.png)
+
+| Benefit | Meaning |
+| --- | --- |
+| **Advanced analytics** | Running totals, moving averages, ranks, cumulative distributions |
+| **Non-aggregating** | Do **not** collapse rows — every row stays visible with extra calculated columns |
+| **Flexibility** | Used in `SELECT` (and can drive `ORDER BY` / filtering via CTE) |
+
+#### Use cases
+
+![Window function use cases](/assets/mssql/window-usecases.png)
+
+| Use case | Typical function |
+| --- | --- |
+| Rank employees within each department by salary | `RANK` / `DENSE_RANK` / `ROW_NUMBER` |
+| Running total of salary budget per department | `SUM() OVER (... ROWS BETWEEN ...)` |
+| Compare an employee’s salary to the previous hire | `LAG` |
+
+#### How `OVER` defines the window
+
+![OVER clause patterns](/assets/mssql/window-over-clause.png)
+
+| Syntax | Window meaning | Example |
+| --- | --- | --- |
+| `OVER (PARTITION BY col)` | Group of rows with the same `col` | Avg salary **per department** |
+| `OVER (ORDER BY col)` | From start up to current row | Running total for whole table |
+| `OVER (PARTITION BY col1 ORDER BY col2)` | Per group, from group start up to current row | Running total **per department** |
+
+```sql
+FUNCTION_NAME() OVER (
+    PARTITION BY column   -- optional: restart calculation per group
+    ORDER BY column       -- required for ranking / lag / running totals
+    ROWS BETWEEN ...      -- optional: frame of rows to include
+)
+```
+
+---
+
+### `ROW_NUMBER` vs `RANK` vs `DENSE_RANK`
+
+All three assign a number based on `ORDER BY`. The difference is how they treat **ties**.
+
+```sql
+SELECT
+    fname,
+    salary,
+    ROW_NUMBER() OVER (ORDER BY salary DESC) AS row_num,
+    RANK()       OVER (ORDER BY salary DESC) AS rank_val,
+    DENSE_RANK() OVER (ORDER BY salary DESC) AS dense_rank_val
+FROM employees;
+```
+
+| Function | Ties | Gaps after ties? | Example for salaries 100k, 100k, 90k |
+| --- | --- | --- | --- |
+| `ROW_NUMBER()` | Breaks ties — every row unique | N/A | 1, 2, 3 |
+| `RANK()` | Same rank for equal values | **Yes** — skips next number | 1, 1, 3 |
+| `DENSE_RANK()` | Same rank for equal values | **No** — consecutive | 1, 1, 2 |
+
+With `PARTITION BY` — ranking **restarts** for each group:
+
+```sql
+SELECT
+    fname,
+    department,
+    salary,
+    DENSE_RANK() OVER (PARTITION BY department ORDER BY salary DESC) AS dept_rank
+FROM employees;
+```
+
+| Use case | Best function |
+| --- | --- |
+| Deduplicate — keep one row per group | `ROW_NUMBER()` + CTE + `WHERE rn = 1` |
+| Olympic ranking (ties leave a gap) | `RANK()` |
+| “3rd highest salary” including ties | `DENSE_RANK()` |
+
+> **One-liner:** `ROW_NUMBER` = unique; `RANK` skips after ties; `DENSE_RANK` stays consecutive after ties.
+
+---
+
+### `LAG` vs `LEAD`
+
+Both look at a **different row** in the ordered window without a self-join.
+
+![LAG vs LEAD](/assets/mssql/lag-vs-lead.png)
+
+| Function | Looks | Meaning |
+| --- | --- | --- |
+| `LAG(col)` | **Previous** row (up / behind) | Value from the row before the current row |
+| `LEAD(col)` | **Next** row (down / ahead) | Value from the row after the current row |
+
+```sql
+-- LEAD — next salary when ordered highest → lowest
+SELECT
+    fname,
+    department,
+    salary,
+    LEAD(salary) OVER (ORDER BY salary DESC) AS next_lower_salary
+FROM employees;
+
+-- LAG — previous hire's salary (compare to earlier hire)
+SELECT
+    fname,
+    hire_date,
+    salary,
+    LAG(salary, 1, 0) OVER (ORDER BY hire_date) AS previous_hire_salary
+FROM employees
+WHERE department = 'Tech';
+```
+
+| Point | Detail |
+| --- | --- |
+| Default offset | `1` — one row away |
+| First / last row | Returns `NULL` unless you pass a default (e.g. `LAG(salary, 1, 0)`) |
+| Common use | Period-over-period change, previous vs next hire, consecutive comparison |
+
+> **One-liner:** `LAG` = look back; `LEAD` = look ahead — both need `ORDER BY` in `OVER`.
+
+---
+
+### `ROWS BETWEEN` — window frame
+
+![ROWS BETWEEN definition](/assets/mssql/rows-between-definition.png)
+
+`ROWS BETWEEN` tells the window function: **for the row I’m on, use only this group of surrounding rows**.
+
+![ROWS BETWEEN boundaries](/assets/mssql/rows-between-boundaries.png)
+
+```sql
+AGGREGATE_FUNCTION() OVER (
+    PARTITION BY ...
+    ORDER BY ...
+    ROWS BETWEEN <start_boundary> AND <end_boundary>
+)
+```
+
+| Boundary | Meaning |
+| --- | --- |
+| `CURRENT ROW` | The row being processed |
+| `UNBOUNDED PRECEDING` | From the **first** row of the partition |
+| `UNBOUNDED FOLLOWING` | To the **last** row of the partition |
+| `n PRECEDING` | `n` rows before current |
+| `n FOLLOWING` | `n` rows after current |
+
+#### Running total
+
+![Running total example](/assets/mssql/running-total-example.png)
+
+```sql
+SELECT
+    fname,
+    department,
+    hire_date,
+    salary,
+    SUM(salary) OVER (
+        PARTITION BY department
+        ORDER BY hire_date
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS running_salary_total
+FROM employees;
+```
+
+Example (Sales):
+
+| fname | hire_date | salary | running_salary_total |
+| --- | --- | --- | --- |
+| Zain | 2019-09-14 | 115000 | 115000 |
+| Fatima | 2022-11-22 | 78000 | 193000 |
+| Vikram | 2023-01-30 | 75000 | 268000 |
+
+#### Why `ROWS` matters (duplicate `ORDER BY` values)
+
+![ROWS vs default RANGE running total](/assets/mssql/rows-vs-range-running-total.png)
+
+Default frame often behaves like `RANGE` — tied order values can get the **same** running total.
+
+| Approach | Effect with two people at salary 180000 |
+| --- | --- |
+| Default / `RANGE` | Both may show `360000` together |
+| `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` | Row-by-row: `180000`, then `360000` |
+
+Prefer **`ROWS BETWEEN`** when you want a true per-row running total.
+
+#### Moving average (3 rows)
+
+![3-row moving average](/assets/mssql/moving-average-3rows.png)
+
+```sql
+SELECT
+    fname,
+    hire_date,
+    salary,
+    AVG(salary) OVER (
+        ORDER BY hire_date
+        ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING
+    ) AS moving_avg_3_rows
+FROM employees;
+```
+
+Includes: previous row + current row + next row.
+
+---
+
+### `FIRST_VALUE` and `LAST_VALUE`
+
+| Function | Returns |
+| --- | --- |
+| `FIRST_VALUE(col)` | Value from the **first** row of the window frame |
+| `LAST_VALUE(col)` | Value from the **last** row of the window frame |
+
+```sql
+SELECT
+    fname,
+    department,
+    salary,
+    FIRST_VALUE(fname) OVER (
+        PARTITION BY department
+        ORDER BY salary DESC
+        ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+    ) AS top_earner_in_dept,
+    LAST_VALUE(fname) OVER (
+        PARTITION BY department
+        ORDER BY fname
+        ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+    ) AS last_in_dept
+FROM employees;
+```
+
+**Interview tip:** `LAST_VALUE` often looks “wrong” with the default frame (ends at current row). Use:
+
+```sql
+ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+```
+
+so the frame covers the **whole** partition.
+
+---
+
+### `NTILE`
+
+`NTILE(n)` splits ordered rows into **n** roughly equal buckets (quartiles, tiers, bands).
+
+![NTILE quartiles](/assets/mssql/ntile-quartiles.png)
+
+```sql
+-- Company-wide salary quartiles (1 = highest band)
+SELECT
+    fname,
+    salary,
+    NTILE(4) OVER (ORDER BY salary DESC) AS salary_quartile
+FROM employees;
+```
+
+![NTILE department tiers](/assets/mssql/ntile-dept-tiers.png)
+
+```sql
+-- Top / middle / bottom earners inside each department
+SELECT
+    fname,
+    department,
+    salary,
+    NTILE(3) OVER (PARTITION BY department ORDER BY salary DESC) AS dept_salary_tier
+FROM employees;
+```
+
+| `NTILE(n)` | Meaning |
+| --- | --- |
+| `NTILE(4)` | Quartiles — 4 groups |
+| `NTILE(3)` | Top / middle / bottom tiers |
+| With `PARTITION BY` | Buckets reset per department |
+
+> **One-liner:** `NTILE(n)` = split into `n` buckets by `ORDER BY` — great for salary bands and A/B tiers.
+
+---
+
+| Question | Answer |
+| --- | --- |
+| Window vs `GROUP BY`? | Window keeps all rows; `GROUP BY` collapses to one row per group |
+| `ROW_NUMBER` vs `RANK` vs `DENSE_RANK`? | Unique vs skip-after-ties vs consecutive-after-ties |
+| `LAG` vs `LEAD`? | Previous row vs next row |
+| Why `ROWS BETWEEN`? | Defines exactly which surrounding rows feed the calculation |
+| `LAST_VALUE` tip? | Expand frame to `UNBOUNDED FOLLOWING` or you often get current row only |
+| `NTILE` purpose? | Divide rows into N roughly equal buckets |
+
+**Must-know points (window functions):**
+- Window functions use `OVER (PARTITION BY ... ORDER BY ...)` — rows are **not** collapsed
+- `ROW_NUMBER()` is ideal for deduplication with a CTE + `WHERE rn = 1`
+- Use `ROWS BETWEEN` for correct running totals when `ORDER BY` has duplicates
+- `LAG`/`LEAD` replace many self-joins for previous/next comparisons
 
 <a id="topic-13"></a>
 
@@ -2804,6 +3095,72 @@ FROM employees;
 | Top N distinct levels (3rd highest salary with ties) | `DENSE_RANK()` |
 
 > **One-liner:** `ROW_NUMBER` = unique; `RANK` skips after ties; `DENSE_RANK` keeps consecutive ranks after ties.
+
+### LAG vs LEAD
+
+| Function | Looks at | Example |
+| --- | --- | --- |
+| `LAG(col)` | **Previous** row | Previous hire’s salary |
+| `LEAD(col)` | **Next** row | Next lower salary in ordered list |
+
+```sql
+SELECT fname, salary,
+       LAG(salary)  OVER (ORDER BY hire_date) AS prev_salary,
+       LEAD(salary) OVER (ORDER BY hire_date) AS next_salary
+FROM employees;
+```
+
+First row of `LAG` / last row of `LEAD` → `NULL` (or your default: `LAG(salary, 1, 0)`).
+
+> **One-liner:** `LAG` looks back; `LEAD` looks ahead — both need `ORDER BY` in `OVER`.
+
+### ROWS BETWEEN (window frame)
+
+Defines which surrounding rows feed the calculation for the current row.
+
+| Boundary | Meaning |
+| --- | --- |
+| `UNBOUNDED PRECEDING` | From first row |
+| `CURRENT ROW` | This row |
+| `UNBOUNDED FOLLOWING` | To last row |
+| `n PRECEDING` / `n FOLLOWING` | Fixed offset |
+
+```sql
+-- Running total
+SUM(salary) OVER (
+  ORDER BY hire_date
+  ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+)
+
+-- 3-row moving average
+AVG(salary) OVER (
+  ORDER BY hire_date
+  ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING
+)
+```
+
+Use `ROWS` (not default `RANGE`) when `ORDER BY` has duplicates and you want true per-row running totals.
+
+> **One-liner:** `ROWS BETWEEN` sets the exact frame — from/to relative to the current row.
+
+### FIRST_VALUE, LAST_VALUE, NTILE
+
+| Function | Purpose |
+| --- | --- |
+| `FIRST_VALUE(col)` | Value from first row of the frame |
+| `LAST_VALUE(col)` | Value from last row of the frame — expand frame to whole partition |
+| `NTILE(n)` | Split into `n` buckets (quartiles / tiers) |
+
+```sql
+NTILE(4) OVER (ORDER BY salary DESC) AS salary_quartile
+
+LAST_VALUE(fname) OVER (
+  PARTITION BY department ORDER BY fname
+  ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+) AS last_in_dept
+```
+
+> **One-liner:** `FIRST_VALUE`/`LAST_VALUE` pick ends of the frame; `NTILE(n)` bands rows into `n` groups.
 
 ### Clustered vs Non-Clustered Index
 
