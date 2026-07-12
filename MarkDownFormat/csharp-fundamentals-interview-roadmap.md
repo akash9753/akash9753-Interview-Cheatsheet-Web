@@ -789,12 +789,22 @@ System.Collections.Generic
 
 ## 8. Generics
 
-- Generics allow classes, methods, and interfaces to use a placeholder type such as `T`.
-- Generic code can work with different data types safely.
-- Generic constraints restrict which types can be used as type arguments.
+**Generics allow you to write reusable code that works with different data types while keeping type safety.**
+
+Instead of writing separate classes or methods for `int`, `string`, `Employee`, etc., you write one version with a placeholder type (usually `T`). The compiler enforces the correct type at compile time — no casting, no boxing for value types, fewer runtime errors.
+
+| Without generics | With generics |
+| --- | --- |
+| `ArrayList` stores `object` — cast required, boxing risk | `List<T>` stores exact type — no cast, type-safe |
+| Duplicate code per type | One reusable `Repository<T>`, `Stack<T>`, etc. |
+| Errors often appear at runtime | Errors caught at compile time |
+
+- Generics work with **classes**, **methods**, **interfaces**, and **delegates**.
+- Generic constraints (`where T : ...`) restrict which types can be used as type arguments.
 - Constraints improve compile-time safety and allow access to members of a known base type or interface.
 
 ```csharp
+// Reusable + type-safe — works with any class type
 class Repository<T> where T : class
 {
     public void Add(T item)
@@ -802,6 +812,10 @@ class Repository<T> where T : class
         // Add item
     }
 }
+
+Repository<Employee> employees = new();
+employees.Add(new Employee()); // OK
+// employees.Add(42);          // Compile error — not Employee
 ```
 
 ### Common Generic Constraint Examples
@@ -816,7 +830,7 @@ class Repository<T> where T : class
 
 | Question | Answer |
 | --- | --- |
-| Why generics? | Type safety without boxing; reusable code for any type |
+| Why generics? | Reusable code for different types **with type safety** — no casting/boxing like non-generic collections |
 | `where T : class`? | Reference types only |
 | `where T : struct`? | Value types only (excludes nullable) |
 | Covariance `out`? | `IEnumerable<Derived>` assignable to `IEnumerable<Base>` — output positions |

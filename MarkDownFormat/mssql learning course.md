@@ -1517,6 +1517,85 @@ FROM (
 WHERE avg > 90000;
 ```
 
+### CTE (Common Table Expression)
+
+![CTE definition](/assets/mssql/cte-definition.png)
+
+A **CTE (Common Table Expression)** is a temporary result set that you can define within a query to simplify complex SQL statements.
+
+It is named with `WITH`, exists only for the next statement, and makes multi-step logic easy to read (often cleaner than nested subqueries).
+
+#### CTE syntax
+
+![CTE syntax](/assets/mssql/cte-syntax.png)
+
+```sql
+WITH cte_name (optional_column_list) AS (
+    -- CTE query definition
+    SELECT ...
+)
+-- Main query referencing the CTE
+SELECT ...
+FROM cte_name
+WHERE ...;
+```
+
+#### Use Case 1 — Employees earning more than their department average
+
+![CTE use case 1](/assets/mssql/cte-usecase-1.png)
+
+```sql
+---------- CTE ----------
+WITH avgsal AS (
+    SELECT department, AVG(salary) AS dept_avg
+    FROM employees
+    GROUP BY department
+)
+SELECT e.fname, e.department, e.salary, a.dept_avg
+FROM employees e
+JOIN avgsal a ON e.department = a.department
+WHERE e.salary > a.dept_avg;
+```
+
+| Step | What happens |
+| --- | --- |
+| CTE `avgsal` | One average salary per department |
+| JOIN | Attach each employee to their department average |
+| `WHERE` | Keep only employees above that average |
+
+#### Use Case 2 — Highest-paid employee in each department
+
+![CTE use case 2](/assets/mssql/cte-usecase-2.png)
+
+```sql
+WITH maxsal AS (
+    SELECT
+        department,
+        MAX(salary) AS dept_max
+    FROM employees
+    GROUP BY department
+)
+SELECT
+    emp_id, fname, e.department, salary, m.dept_max
+FROM employees e
+JOIN maxsal m ON e.department = m.department
+WHERE salary = m.dept_max;
+```
+
+| Step | What happens |
+| --- | --- |
+| CTE `maxsal` | Highest salary per department |
+| JOIN + `WHERE` | Keep employees whose salary equals that department max |
+
+> **Note:** The same problems can also be solved with window functions (`AVG() OVER (PARTITION BY department)`, `RANK()` / `ROW_NUMBER()`). CTEs + `GROUP BY` are the classic readable approach.
+
+| Point | CTE | Subquery in `FROM` | Temp table (`#temp`) |
+| --- | --- | --- | --- |
+| Syntax | `WITH name AS (...)` | `FROM (SELECT ...) alias` | `CREATE TABLE #t` |
+| Readability | High — named steps | Medium | Good for multi-batch |
+| Scope | Next statement only | Single statement | Session-scoped |
+| Recursion | Supported | No | No |
+
 | Question | Answer |
 | --- | --- |
 | Subquery vs JOIN? | Subquery nests logic inside another query; JOIN combines tables — often interchangeable, optimizer may treat similarly |
@@ -1529,7 +1608,8 @@ WHERE avg > 90000;
 **Must-know points:**
 - Subquery in `WHERE` runs first (conceptually) to produce a value or list for the outer query
 - **Correlated** subqueries depend on outer row — evaluate once per outer row
-- CTEs with `WITH ... AS (...)` make complex queries readable and enable **recursive** hierarchies
+- **CTE** = temporary named result with `WITH` — simplifies complex SQL; scope is the next statement
+- Classic CTE uses: above department average, max per department, `ROW_NUMBER` dedup
 - `IN (subquery)` fails if subquery returns NULLs unexpectedly — consider `EXISTS`
 - Inline views in `FROM` must have an alias
 
@@ -3289,19 +3369,34 @@ LEFT JOIN Orders o ON c.id = o.customer_id;
 
 ### CTE (Common Table Expression)
 
-A **CTE** is a named temporary result set defined with `WITH` — readable, reusable within the same query, and supports **recursion**.
+![CTE definition](/assets/mssql/cte-definition.png)
+
+A **CTE** is a temporary result set defined with `WITH` — readable, reusable within the same query, and supports **recursion**.
+
+![CTE syntax](/assets/mssql/cte-syntax.png)
 
 ```sql
--- Readable multi-step query
-WITH dept_avg AS (
-    SELECT department, AVG(salary) AS avg_sal
+-- Use case: earn more than department average
+WITH avgsal AS (
+    SELECT department, AVG(salary) AS dept_avg
     FROM employees
     GROUP BY department
 )
-SELECT e.name, e.salary, d.avg_sal
+SELECT e.fname, e.department, e.salary, a.dept_avg
 FROM employees e
-INNER JOIN dept_avg d ON e.department = d.department
-WHERE e.salary > d.avg_sal;
+JOIN avgsal a ON e.department = a.department
+WHERE e.salary > a.dept_avg;
+
+-- Use case: highest-paid employee per department
+WITH maxsal AS (
+    SELECT department, MAX(salary) AS dept_max
+    FROM employees
+    GROUP BY department
+)
+SELECT emp_id, fname, e.department, salary, m.dept_max
+FROM employees e
+JOIN maxsal m ON e.department = m.department
+WHERE salary = m.dept_max;
 
 -- ROW_NUMBER deduplication
 WITH ranked AS (
