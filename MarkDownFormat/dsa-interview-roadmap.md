@@ -16,12 +16,86 @@
 | 2 | Read concept → solve LeetCode links **easy → hard** |
 | 3 | **Revise** patterns regularly before interviews |
 
+### <a id="phase-track"></a>Phase-wise Practice Track (with LeetCode links)
+
+Structured path for working professionals — solve phase by phase. Every problem has a direct link.
+
+#### Phase 1 — Arrays
+
+| # | Problem | Link |
+| --- | --- | --- |
+| 1 | Two Sum | [LeetCode 1](https://leetcode.com/problems/two-sum/) |
+| 121 | Best Time to Buy and Sell Stock | [LeetCode 121](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/) |
+| 217 | Contains Duplicate | [LeetCode 217](https://leetcode.com/problems/contains-duplicate/) |
+| 238 | Product of Array Except Self | [LeetCode 238](https://leetcode.com/problems/product-of-array-except-self/) |
+| 53 | Maximum Subarray (Kadane’s) | [LeetCode 53](https://leetcode.com/problems/maximum-subarray/) |
+| 152 | Maximum Product Subarray | [LeetCode 152](https://leetcode.com/problems/maximum-product-subarray/) |
+| 283 | Move Zeroes | [LeetCode 283](https://leetcode.com/problems/move-zeroes/) |
+| 26 | Remove Duplicates from Sorted Array | [LeetCode 26](https://leetcode.com/problems/remove-duplicates-from-sorted-array/) |
+| 189 | Rotate Array | [LeetCode 189](https://leetcode.com/problems/rotate-array/) |
+| 153 | Find Minimum in Rotated Sorted Array | [LeetCode 153](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/) |
+| 33 | Search in Rotated Sorted Array | [LeetCode 33](https://leetcode.com/problems/search-in-rotated-sorted-array/) |
+| 169 | Majority Element | [LeetCode 169](https://leetcode.com/problems/majority-element/) |
+| 268 | Missing Number | [LeetCode 268](https://leetcode.com/problems/missing-number/) |
+| 448 | Find All Numbers Disappeared in an Array | [LeetCode 448](https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/) |
+
+#### Phase 2 — Two Pointers
+
+| # | Problem | Link |
+| --- | --- | --- |
+| 125 | Valid Palindrome | [LeetCode 125](https://leetcode.com/problems/valid-palindrome/) |
+| 11 | Container With Most Water | [LeetCode 11](https://leetcode.com/problems/container-with-most-water/) |
+| 167 | Two Sum II (Input Array Is Sorted) | [LeetCode 167](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/) |
+| 15 | 3Sum | [LeetCode 15](https://leetcode.com/problems/3sum/) |
+| 18 | 4Sum | [LeetCode 18](https://leetcode.com/problems/4sum/) |
+| 80 | Remove Duplicates from Sorted Array II | [LeetCode 80](https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/) |
+| 283 | Move Zeroes (two-pointer) | [LeetCode 283](https://leetcode.com/problems/move-zeroes/) |
+| 977 | Squares of a Sorted Array | [LeetCode 977](https://leetcode.com/problems/squares-of-a-sorted-array/) |
+| 844 | Backspace String Compare | [LeetCode 844](https://leetcode.com/problems/backspace-string-compare/) |
+
+#### Phase 3 — Sliding Window
+
+| # | Problem | Link |
+| --- | --- | --- |
+| — | Maximum Sum Subarray of Size K | [GFG](https://www.geeksforgeeks.org/problems/max-sum-subarray-of-size-k5313/1) · [similar: LC 643](https://leetcode.com/problems/maximum-average-subarray-i/) |
+| 3 | Longest Substring Without Repeating Characters | [LeetCode 3](https://leetcode.com/problems/longest-substring-without-repeating-characters/) |
+| 424 | Longest Repeating Character Replacement | [LeetCode 424](https://leetcode.com/problems/longest-repeating-character-replacement/) |
+| 209 | Minimum Size Subarray Sum | [LeetCode 209](https://leetcode.com/problems/minimum-size-subarray-sum/) |
+| 567 | Permutation in String | [LeetCode 567](https://leetcode.com/problems/permutation-in-string/) |
+| 438 | Find All Anagrams in a String | [LeetCode 438](https://leetcode.com/problems/find-all-anagrams-in-a-string/) |
+| 239 | Sliding Window Maximum | [LeetCode 239](https://leetcode.com/problems/sliding-window-maximum/) |
+
+#### Phase 4 — Binary Search
+
+| # | Problem | Link |
+| --- | --- | --- |
+| 704 | Binary Search | [LeetCode 704](https://leetcode.com/problems/binary-search/) |
+| 34 | Find First and Last Position of Element in Sorted Array | [LeetCode 34](https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/) |
+| 35 | Search Insert Position | [LeetCode 35](https://leetcode.com/problems/search-insert-position/) |
+| 162 | Find Peak Element | [LeetCode 162](https://leetcode.com/problems/find-peak-element/) |
+| 153 | Find Minimum in Rotated Sorted Array | [LeetCode 153](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/) |
+| 33 | Search in Rotated Sorted Array | [LeetCode 33](https://leetcode.com/problems/search-in-rotated-sorted-array/) |
+
+#### Phase 5 — Hashing
+
+| # | Problem | Link |
+| --- | --- | --- |
+| 1 | Two Sum (HashMap approach) | [LeetCode 1](https://leetcode.com/problems/two-sum/) |
+| 217 | Contains Duplicate | [LeetCode 217](https://leetcode.com/problems/contains-duplicate/) |
+| 242 | Valid Anagram | [LeetCode 242](https://leetcode.com/problems/valid-anagram/) |
+| 49 | Group Anagrams | [LeetCode 49](https://leetcode.com/problems/group-anagrams/) |
+| 347 | Top K Frequent Elements | [LeetCode 347](https://leetcode.com/problems/top-k-frequent-elements/) |
+| 128 | Longest Consecutive Sequence | [LeetCode 128](https://leetcode.com/problems/longest-consecutive-sequence/) |
+
+> Finish **Phase 1 → 5** in order, then continue with Stack, Linked List, Trees, DP in the pattern sections below.
+
 ---
 
 ## Topic Index
 
 <ul style="line-height:1.8;">
   <li><a href="#topic-1"><span style="color:#2563eb;font-weight:700;">1.</span> DSA Basics & Complexity</a></li>
+  <li><a href="#phase-track"><span style="color:#16a34a;font-weight:700;">Track:</span> Phase-wise Practice (LeetCode links)</a></li>
   <li><a href="#topic-2"><span style="color:#2563eb;font-weight:700;">2.</span> Pattern 1 — Arrays</a></li>
   <li><a href="#topic-3"><span style="color:#2563eb;font-weight:700;">3.</span> Pattern 2 — String</a></li>
   <li><a href="#topic-4"><span style="color:#16a34a;font-weight:700;">4.</span> Pattern 3 — Hashing</a></li>
@@ -94,17 +168,33 @@
 
 | # | Problem | Sub-pattern | Diff | Link |
 | --- | --- | --- | --- | --- |
+| 1 | Two Sum | Hash / Array | 2 | [Solve](https://leetcode.com/problems/two-sum/) |
+| 121 | Best Time to Buy and Sell Stock | Array Scan | 2 | [Solve](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/) |
+| 217 | Contains Duplicate | Hash Set | 2 | [Solve](https://leetcode.com/problems/contains-duplicate/) |
+| 238 | Product of Array Except Self | Prefix Product | 3 | [Solve](https://leetcode.com/problems/product-of-array-except-self/) |
 | 303 | Range Sum Query — Immutable | Prefix Sum | 2 | [Solve](https://leetcode.com/problems/range-sum-query-immutable/) |
 | 560 | Subarray Sum Equals K | Prefix Sum | 5 | [Solve](https://leetcode.com/problems/subarray-sum-equals-k/) |
 | 53 | Maximum Subarray | Kadane's | 3 | [Solve](https://leetcode.com/problems/maximum-subarray/) |
 | 152 | Maximum Product Subarray | Kadane's | 3 | [Solve](https://leetcode.com/problems/maximum-product-subarray/) |
+| 283 | Move Zeroes | Two Pointers | 2 | [Solve](https://leetcode.com/problems/move-zeroes/) |
+| 26 | Remove Duplicates from Sorted Array | Two Pointers | 2 | [Solve](https://leetcode.com/problems/remove-duplicates-from-sorted-array/) |
+| 189 | Rotate Array | In-place | 3 | [Solve](https://leetcode.com/problems/rotate-array/) |
+| 153 | Find Minimum in Rotated Sorted Array | Binary Search | 3 | [Solve](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/) |
+| 169 | Majority Element | Voting / Hash | 2 | [Solve](https://leetcode.com/problems/majority-element/) |
+| 268 | Missing Number | Math / XOR / Hash | 2 | [Solve](https://leetcode.com/problems/missing-number/) |
+| 448 | Find All Numbers Disappeared in an Array | In-place Mark | 2 | [Solve](https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/) |
 | 3 | Longest Substring Without Repeating Characters | Sliding Window | 6 | [Solve](https://leetcode.com/problems/longest-substring-without-repeating-characters/) |
 | 76 | Minimum Window Substring | Sliding Window | 6 | [Solve](https://leetcode.com/problems/minimum-window-substring/) |
 | 424 | Longest Repeating Character Replacement | Sliding Window | 6 | [Solve](https://leetcode.com/problems/longest-repeating-character-replacement/) |
+| 209 | Minimum Size Subarray Sum | Sliding Window | 3 | [Solve](https://leetcode.com/problems/minimum-size-subarray-sum/) |
+| 567 | Permutation in String | Sliding Window | 3 | [Solve](https://leetcode.com/problems/permutation-in-string/) |
+| 438 | Find All Anagrams in a String | Sliding Window | 3 | [Solve](https://leetcode.com/problems/find-all-anagrams-in-a-string/) |
 | 904 | Fruit Into Baskets | Sliding Window | 6 | [Solve](https://leetcode.com/problems/fruit-into-baskets/) |
 | 704 | Binary Search | Binary Search | 2 | [Solve](https://leetcode.com/problems/binary-search/) |
 | 33 | Search in Rotated Sorted Array | Binary Search | 4 | [Solve](https://leetcode.com/problems/search-in-rotated-sorted-array/) |
 | 34 | Find First and Last Position | Binary Search | 4 | [Solve](https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/) |
+| 35 | Search Insert Position | Binary Search | 2 | [Solve](https://leetcode.com/problems/search-insert-position/) |
+| 162 | Find Peak Element | Binary Search | 3 | [Solve](https://leetcode.com/problems/find-peak-element/) |
 
 **One-liner:** Arrays + prefix sum / window / binary search cover a huge share of medium interview questions.
 
@@ -161,6 +251,12 @@ public static char? FirstNonRepeatingChar(string s)
 | 28 | Find the Index of the First Occurrence | KMP / Matching | 4 | [Solve](https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/) |
 | 344 | Reverse String | Two Pointers | 2 | [Solve](https://leetcode.com/problems/reverse-string/) |
 | 167 | Two Sum II | Two Pointers | 5 | [Solve](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/) |
+| 11 | Container With Most Water | Two Pointers | 3 | [Solve](https://leetcode.com/problems/container-with-most-water/) |
+| 15 | 3Sum | Two Pointers | 3 | [Solve](https://leetcode.com/problems/3sum/) |
+| 18 | 4Sum | Two Pointers | 3 | [Solve](https://leetcode.com/problems/4sum/) |
+| 80 | Remove Duplicates from Sorted Array II | Two Pointers | 3 | [Solve](https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/) |
+| 977 | Squares of a Sorted Array | Two Pointers | 2 | [Solve](https://leetcode.com/problems/squares-of-a-sorted-array/) |
+| 844 | Backspace String Compare | Two Pointers / Stack | 2 | [Solve](https://leetcode.com/problems/backspace-string-compare/) |
 
 **One-liner:** String problems → frequency map, two pointers, or sliding window in most cases.
 
