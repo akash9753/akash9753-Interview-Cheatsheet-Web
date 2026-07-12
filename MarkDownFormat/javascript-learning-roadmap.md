@@ -849,7 +849,79 @@ const results = await Promise.all([
 - `Promise.race`: returns the first settled promise
 - `Promise.any`: returns the first fulfilled promise
 
-## 54. What is the output?
+## 54. What is a polyfill?
+
+A **polyfill** is code that provides a modern JavaScript feature on older browsers that do not support it natively.
+
+It “fills the gap” so the same API works everywhere. If the feature already exists, the polyfill usually does nothing.
+
+### Why polyfills are needed
+
+Browsers and engines implement new ECMAScript features at different times. Your code may use `Promise`, `Array.includes`, `fetch`, or `Object.assign`, but an older browser may not have them. A polyfill adds a compatible implementation so the app does not break.
+
+### How a polyfill works
+
+1. Check if the feature exists (`if (!Array.prototype.includes)`).
+2. If missing, define the same API yourself.
+3. If present, leave the native implementation alone.
+
+```javascript
+// Simple polyfill for Array.prototype.includes
+if (!Array.prototype.includes) {
+  Array.prototype.includes = function (value) {
+    return this.indexOf(value) !== -1;
+  };
+}
+
+[1, 2, 3].includes(2); // works even on older engines
+```
+
+```javascript
+// Simple polyfill idea for Promise (real ones are much larger)
+if (typeof Promise === "undefined") {
+  // provide a Promise-like implementation here
+}
+```
+
+### Polyfill vs transpile (Babel)
+
+| Concept | What it does | Example |
+| --- | --- | --- |
+| **Transpile** | Rewrites **syntax** to older JavaScript | Arrow functions → `function`, `const` → `var` |
+| **Polyfill** | Adds missing **APIs / methods** at runtime | `Promise`, `Array.includes`, `fetch` |
+
+Babel cannot fully “transpile” a missing `Promise` into nothing — that needs a polyfill (or a library). Syntax needs transpile; built-in objects/methods need polyfills.
+
+### Common polyfill examples
+
+| Feature | Why polyfilled |
+| --- | --- |
+| `Promise` | Older browsers lack native Promises |
+| `fetch` | Not available in very old browsers |
+| `Array.includes` / `Array.find` | ES2015+ array helpers |
+| `Object.assign` | Object merge helper |
+| `String.padStart` | String formatting |
+
+### Popular polyfill tools
+
+| Tool | Role |
+| --- | --- |
+| **core-js** | Large set of ECMAScript polyfills |
+| **polyfill.io** | Loads only the polyfills the user’s browser needs |
+| **regenerator-runtime** | Needed for async/await/generator support in older targets |
+| **whatwg-fetch** | `fetch` polyfill |
+
+### Interview points
+
+- Polyfills make modern APIs work on older environments.
+- Always feature-detect before overriding natives.
+- Prefer official / well-tested polyfills over hand-rolled ones in production.
+- Bundle size grows with every polyfill — target only the browsers you support.
+- Different from a **shim**: a shim often adapts an API; a polyfill aims to match the standard behaviour of a missing feature.
+
+> **Interview one-liner:** A polyfill is runtime code that implements a modern JS feature in older browsers when that feature is missing.
+
+## 55. What is the output?
 
 ```javascript
 console.log(typeof null);
@@ -863,7 +935,7 @@ object
 
 This is a historical JavaScript behaviour.
 
-## 55. What is the output?
+## 56. What is the output?
 
 ```javascript
 console.log([] == false);
@@ -879,7 +951,7 @@ false
 
 The first comparison performs type coercion.
 
-## 56. What is the output?
+## 57. What is the output?
 
 ```javascript
 let a = 10;
