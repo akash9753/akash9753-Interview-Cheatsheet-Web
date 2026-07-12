@@ -339,6 +339,47 @@ Management Group
 - App registrations and OAuth/OIDC
 - Privileged Identity Management (PIM)
 
+### What is Managed Identity?
+
+A **Managed Identity** is an Azure feature that gives your application an automatically managed identity in **Microsoft Entra ID** (formerly Azure AD).
+
+This lets your application securely access Azure resources **without storing secrets, passwords, or connection strings**.
+
+> **Important:** Managed Identity is **not** related to ASP.NET Core Identity (Identity Manager). They solve different problems.
+
+| Managed Identity | ASP.NET Core Identity |
+| --- | --- |
+| Used to authenticate an **application** or Azure resource | Used to authenticate **users** |
+| Provided by **Azure** | Implemented in **your application** |
+| No username/password or secrets | Uses username/password, external login, etc. |
+| Used to access Azure services (Key Vault, Storage, SQL, Service Bus) | Used for user login and authorization |
+
+#### Example — without Managed Identity
+
+```text
+.NET API
+   ↓
+Connection String / Client Secret
+   ↓
+Azure Key Vault
+```
+
+You must store and rotate secrets yourself.
+
+#### Example — with Managed Identity
+
+```text
+.NET API (Managed Identity)
+        │
+        ▼
+Microsoft Entra ID
+        │
+        ▼
+Azure Key Vault
+```
+
+Azure automatically authenticates your application — no secrets in code or config.
+
 ### Managed Identity Types
 
 | Type | Scope | Use Case |
@@ -359,6 +400,8 @@ Management Group
 | --- | --- |
 | Entra ID vs on-prem AD? | Entra ID = cloud identity; can sync with AD via Entra Connect for hybrid |
 | Service principal? | Identity for apps/services — used by automation and app-to-Azure auth |
+| What is Managed Identity? | Azure-managed Entra ID identity for apps — access Key Vault/Storage/SQL without secrets |
+| Managed Identity vs ASP.NET Core Identity? | Managed Identity = app → Azure resources; ASP.NET Identity = user login in your app |
 | Managed Identity benefit? | No credentials in code — Azure manages rotation automatically |
 | Conditional Access? | Policy engine — require MFA, compliant device, trusted location |
 | RBAC vs Azure AD roles? | Azure AD roles = directory level; RBAC = Azure resource access |
@@ -910,6 +953,28 @@ Identity (Entra ID, MFA)
 | Example | `rg-ecommerce-prod` holds App Service, SQL, Storage |
 
 > **One-liner:** Resource Group groups related resources — deploy, manage, and delete them together.
+
+### What is Managed Identity?
+
+A Managed Identity gives your .NET app (or other Azure resource) an Entra ID identity so it can call Azure services **without storing secrets**.
+
+| Managed Identity | ASP.NET Core Identity |
+| --- | --- |
+| Authenticates the **app** to Azure | Authenticates **users** in your app |
+| Azure-managed (no passwords in code) | Username/password, OAuth logins, etc. |
+| Access Key Vault, Storage, SQL, Service Bus | Login, roles, claims in your application |
+
+```text
+Without MI:  App → Client Secret → Key Vault   (you manage secrets)
+With MI:     App → Entra ID → Key Vault        (Azure authenticates the app)
+```
+
+| Type | Detail |
+| --- | --- |
+| System-assigned | Tied to one resource lifecycle |
+| User-assigned | Independent; can be shared across resources |
+
+> **One-liner:** Managed Identity is app identity for Azure resources — not user login (that’s ASP.NET Core Identity).
 
 ### What are Availability Zones?
 
