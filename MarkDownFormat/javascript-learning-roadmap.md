@@ -343,7 +343,37 @@ const promise = new Promise((resolve, reject) => {
 promise.then(result => console.log(result));
 ```
 
-## 19. What is `async`/`await`?
+## 19. Difference between Observable and Promise
+
+| Aspect | Promise | Observable |
+| --- | --- | --- |
+| **Values** | Single value (or error) | Zero, one, or **many** values over time |
+| **Eager vs lazy** | **Eager** — starts as soon as created | **Lazy** — starts only when someone **subscribes** |
+| **Cancellable** | Not cancellable by default | **Cancellable** via `unsubscribe()` |
+| **Operators** | Limited (`then`, `catch`, `finally`) | Rich operators (`map`, `filter`, `switchMap`, `retry`, etc.) |
+| **Library** | Built into JavaScript | RxJS (common in Angular) |
+| **Completion** | Settles once (fulfilled / rejected) | Can emit multiple times, then complete |
+| **Typical use** | One-shot HTTP call, async result | Streams — HTTP, events, WebSockets, form inputs |
+
+```javascript
+// Promise — one result
+const promise = fetch("/api/users").then(res => res.json());
+
+// Observable — stream of values (RxJS)
+import { fromEvent } from "rxjs";
+import { map } from "rxjs/operators";
+
+const clicks$ = fromEvent(button, "click").pipe(
+    map(event => event.clientX)
+);
+
+const subscription = clicks$.subscribe(x => console.log(x));
+subscription.unsubscribe(); // cancel
+```
+
+> **Interview one-liner:** Promise = one future value, eager, not cancellable; Observable = stream of values, lazy, cancellable, with operators.
+
+## 20. What is `async`/`await`?
 
 `async`/`await` provides a cleaner way to work with promises.
 
@@ -359,7 +389,7 @@ async function getData() {
 }
 ```
 
-## 20. Difference between synchronous and asynchronous code
+## 21. Difference between synchronous and asynchronous code
 
 Synchronous code executes one statement at a time.
 Asynchronous code allows other operations to continue while waiting.
@@ -382,11 +412,11 @@ End
 Async
 ```
 
-## 21. What is the event loop?
+## 22. What is the event loop?
 
 The event loop checks whether the call stack is empty and moves asynchronous callbacks from queues to the call stack.
 
-## 22. Difference between microtask and macrotask
+## 23. Difference between microtask and macrotask
 
 Promise callbacks are microtasks. `setTimeout` callbacks are macrotasks.
 
@@ -411,7 +441,7 @@ Promise
 Timeout
 ```
 
-## 23. What are `call`, `apply`, and `bind`?
+## 24. What are `call`, `apply`, and `bind`?
 
 They are used to control the value of `this`.
 
@@ -433,7 +463,7 @@ boundFunction();
 - `apply` accepts an array.
 - `bind` returns a new function.
 
-## 24. What is destructuring?
+## 25. What is destructuring?
 
 Destructuring extracts values from arrays or objects.
 
@@ -449,7 +479,7 @@ const numbers = [10, 20];
 const [first, second] = numbers;
 ```
 
-## 25. What is the spread operator?
+## 26. What is the spread operator?
 
 The spread operator expands array or object values.
 
@@ -461,7 +491,7 @@ const user = { name: "Akash" };
 const updatedUser = { ...user, city: "Pune" };
 ```
 
-## 26. What is the rest operator?
+## 27. What is the rest operator?
 
 The rest operator collects multiple values into an array.
 
@@ -471,7 +501,7 @@ function sum(...numbers) {
 }
 ```
 
-## 27. Difference between `map`, `filter`, and `reduce`
+## 28. Difference between `map`, `filter`, and `reduce`
 
 ```javascript
 const numbers = [1, 2, 3, 4];
@@ -485,7 +515,7 @@ const total = numbers.reduce((sum, x) => sum + x, 0);
 - `filter`: selects matching items
 - `reduce`: produces one final value
 
-## 28. Difference between `forEach` and `map`
+## 29. Difference between `forEach` and `map`
 
 `forEach` executes a function but does not return a new array.
 `map` returns a new transformed array.
@@ -494,7 +524,7 @@ const total = numbers.reduce((sum, x) => sum + x, 0);
 const result = [1, 2, 3].map(x => x * 2);
 ```
 
-## 29. What is shallow copy?
+## 30. What is shallow copy?
 
 A shallow copy creates a new outer object, but nested objects still share references.
 
@@ -511,7 +541,7 @@ copy.address.city = "Mumbai";
 console.log(original.address.city); // Mumbai
 ```
 
-## 30. How do you create a deep copy?
+## 31. How do you create a deep copy?
 
 For supported data types:
 
@@ -521,7 +551,7 @@ const copy = structuredClone(original);
 
 `JSON.parse(JSON.stringify(object))` has limitations with dates, functions, `undefined`, and circular references.
 
-## 31. `JSON.stringify()` vs `JSON.parse()`
+## 32. `JSON.stringify()` vs `JSON.parse()`
 
 | `JSON.stringify()` | `JSON.parse()` |
 | --- | --- |
@@ -537,7 +567,7 @@ const json = JSON.stringify(user); // '{"name":"Akash","age":33}'
 const parsed = JSON.parse(json);   // { name: "Akash", age: 33 }
 ```
 
-## 32. What is optional chaining?
+## 33. What is optional chaining?
 
 Optional chaining safely accesses nested properties.
 
@@ -545,7 +575,7 @@ Optional chaining safely accesses nested properties.
 const city = user?.address?.city;
 ```
 
-## 33. What is nullish coalescing?
+## 34. What is nullish coalescing?
 
 `??` returns the right value only when the left value is `null` or `undefined`.
 
@@ -556,7 +586,7 @@ console.log(count || 10); // 10
 console.log(count ?? 10); // 0
 ```
 
-## 34. What is an IIFE?
+## 35. What is an IIFE?
 
 An IIFE is a function that runs immediately after creation.
 
@@ -566,7 +596,7 @@ An IIFE is a function that runs immediately after creation.
 })();
 ```
 
-## 35. What is currying?
+## 36. What is currying?
 
 Currying converts a function with multiple arguments into a sequence of functions.
 
@@ -596,7 +626,7 @@ console.log(double(5)); // 10
 console.log(triple(5)); // 15
 ```
 
-## 36. What is function debouncing?
+## 37. What is function debouncing?
 
 Debouncing executes a function only after calls have stopped for a specified time.
 
@@ -616,7 +646,7 @@ function debounce(callback, delay) {
 
 Commonly used for search input.
 
-## 37. What is throttling?
+## 38. What is throttling?
 
 Throttling limits a function to execute at most once during a specified interval.
 
@@ -639,7 +669,7 @@ function throttle(callback, delay) {
 
 Commonly used for scrolling and resizing.
 
-## 38. Difference between debouncing and throttling
+## 39. Difference between debouncing and throttling
 
 | Aspect | Debouncing | Throttling |
 | --- | --- | --- |
@@ -649,7 +679,7 @@ Commonly used for scrolling and resizing.
 | **Typical use** | Search input, form validation, autocomplete | Scroll, resize, mouse move, button spam prevention |
 | **Example** | User types `"a"`, `"ap"`, `"app"` — API runs once after typing stops | User scrolls continuously — handler runs every 200ms max |
 
-## 39. What is prototypal inheritance?
+## 40. What is prototypal inheritance?
 
 JavaScript objects can inherit properties and methods from other objects through the prototype chain.
 
@@ -664,7 +694,7 @@ const user = Object.create(person);
 user.greet();
 ```
 
-## 40. What is a JavaScript class?
+## 41. What is a JavaScript class?
 
 A class is syntactic sugar over JavaScript’s prototype-based inheritance.
 
@@ -682,7 +712,7 @@ class Person {
 const person = new Person("Akash");
 ```
 
-## 41. Difference between `localStorage` and `sessionStorage`
+## 42. Difference between `localStorage` and `sessionStorage`
 
 | Feature | `localStorage` | `sessionStorage` |
 | --- | --- | --- |
@@ -692,7 +722,7 @@ const person = new Person("Akash");
 
 Both store values as strings.
 
-## 42. What is event bubbling?
+## 43. What is event bubbling?
 
 During bubbling, an event moves from the **target element toward its parent elements** (bottom → top).
 
@@ -702,7 +732,7 @@ parent.addEventListener("click", () => {
 });
 ```
 
-## 43. What is event capturing?
+## 44. What is event capturing?
 
 During capturing (trickling), an event moves from the **root toward the target element** (top → bottom).
 
@@ -718,7 +748,7 @@ parent.addEventListener(
 
 Default `addEventListener` uses bubbling (`useCapture = false`).
 
-## 44. What is event delegation?
+## 45. What is event delegation?
 
 Event delegation attaches one event handler to a parent instead of separate handlers to every child.
 
@@ -730,7 +760,7 @@ document.querySelector("#list").addEventListener("click", event => {
 });
 ```
 
-## 45. Event bubbling vs capturing vs delegation
+## 46. Event bubbling vs capturing vs delegation
 
 | Aspect | Bubbling | Capturing | Delegation |
 | --- | --- | --- | --- |
@@ -742,13 +772,13 @@ document.querySelector("#list").addEventListener("click", event => {
 
 **Event flow order:** Capturing phase → Target phase → Bubbling phase
 
-## 46. How do you stop event bubbling?
+## 47. How do you stop event bubbling?
 
 ```javascript
 event.stopPropagation();
 ```
 
-## 47. Difference between `slice` and `splice`
+## 48. Difference between `slice` and `splice`
 
 `slice` returns selected elements without modifying the original array.
 
@@ -762,7 +792,7 @@ const result = array.slice(1, 3);
 array.splice(1, 2);
 ```
 
-## 48. Difference between `find` and `filter`
+## 49. Difference between `find` and `filter`
 
 `find` returns the first matching element.
 `filter` returns all matching elements in an array.
@@ -772,7 +802,7 @@ const first = users.find(user => user.id === 1);
 const active = users.filter(user => user.isActive);
 ```
 
-## 49. What is strict mode?
+## 50. What is strict mode?
 
 Strict mode catches common mistakes and prevents unsafe JavaScript behaviour.
 
@@ -780,7 +810,7 @@ Strict mode catches common mistakes and prevents unsafe JavaScript behaviour.
 "use strict";
 ```
 
-## 50. What is memoization?
+## 51. What is memoization?
 
 Memoization stores previously calculated results to avoid repeated calculations.
 
@@ -801,7 +831,7 @@ function memoize(callback) {
 }
 ```
 
-## 51. What is `Promise.all()`?
+## 52. What is `Promise.all()`?
 
 It executes multiple promises concurrently and resolves when all succeed. It rejects when any one promise rejects.
 
@@ -812,14 +842,14 @@ const results = await Promise.all([
 ]);
 ```
 
-## 52. Difference between Promise methods
+## 53. Difference between Promise methods
 
 - `Promise.all`: all must succeed
 - `Promise.allSettled`: waits for every promise
 - `Promise.race`: returns the first settled promise
 - `Promise.any`: returns the first fulfilled promise
 
-## 53. What is the output?
+## 54. What is the output?
 
 ```javascript
 console.log(typeof null);
@@ -833,7 +863,7 @@ object
 
 This is a historical JavaScript behaviour.
 
-## 54. What is the output?
+## 55. What is the output?
 
 ```javascript
 console.log([] == false);
@@ -849,7 +879,7 @@ false
 
 The first comparison performs type coercion.
 
-## 55. What is the output?
+## 56. What is the output?
 
 ```javascript
 let a = 10;
