@@ -185,6 +185,15 @@ export const courses = [
     cardDesc: '16 real interview questions — LINQ, EF Core, API errors, MySQL indexes, thread pool, performance, and coding.',
     brand: 'Sprinto Inter Q and Answer',
   },
+  {
+    slug: 'moonspro-noida',
+    mdFile: 'moonspro-noida-interview-prep.md',
+    num: '20',
+    category: 'interview-qa',
+    cardTitle: 'Moonspro Noida',
+    cardDesc: 'Full-stack interview prep — .NET backend, React/JS frontend, Azure, coding outputs, and detailed answers.',
+    brand: 'Moonspro Noida — Full Stack Interview Prep',
+  },
 ];
 
 const markdownModules = import.meta.glob('../../MarkDownFormat/*.md', {
