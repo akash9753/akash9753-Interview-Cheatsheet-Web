@@ -22,7 +22,7 @@ export const courseCategories = [
   {
     id: 'system-design',
     label: 'System Design',
-    description: 'HLD, LLD, SOLID, design patterns, microservices, and architecture',
+    description: 'HLD, LLD, SOLID principles, design patterns, microservices, and architecture',
   },
   {
     id: 'interview-qa',
@@ -137,8 +137,17 @@ export const courses = [
     num: '14',
     category: 'system-design',
     cardTitle: 'System Design',
-    cardDesc: 'HLD vs LLD, SOLID, design patterns, scalability, microservices, databases, caching, CAP, messaging, and classic interview problems.',
+    cardDesc: 'HLD vs LLD, design patterns, scalability, microservices, databases, caching, CAP, messaging, and classic interview problems.',
     brand: 'System Design Interview Roadmap',
+  },
+  {
+    slug: 'solid-principles',
+    mdFile: 'solid-principles-interview-roadmap.md',
+    num: '17',
+    category: 'system-design',
+    cardTitle: 'SOLID Principles',
+    cardDesc: 'SRP, OCP, LSP, ISP, DIP — bad vs good C# examples and one-liner interview answers.',
+    brand: 'SOLID Principles Interview Guide',
   },
   {
     slug: 'dsa',
