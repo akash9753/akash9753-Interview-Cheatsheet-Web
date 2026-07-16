@@ -85,6 +85,22 @@ Six real ASP.NET Core scenario questions from the QP WhatsApp group — with the
 
 **Why:** Database write + queue publish are not atomic. The transactional outbox keeps both in the same DB transaction; a background worker publishes reliably afterward.
 
+![RabbitMQ architecture — Producer, Exchange, Bindings, Queues, Consumer](/assets/aspnet/rabbitmq-architecture.png)
+
+**How it fits together:**
+
+1. API saves **order + outbox row** in one DB transaction  
+2. Background worker reads outbox and publishes `OrderPlaced` to the broker  
+3. **Producer** sends message to an **Exchange**  
+4. **Bindings** route by key/pattern to the right **Queues**  
+5. **Consumers** (email, inventory, analytics) process messages independently  
+
+| Exchange type | Routing |
+| --- | --- |
+| **Direct** | Exact binding key match |
+| **Topic** | Pattern match (`eu.de.*`, `us.#`) |
+| **Fanout** | Broadcast to all bound queues |
+
 > **One-liner:** DB commit + queue publish can split → transactional outbox.
 
 ---
