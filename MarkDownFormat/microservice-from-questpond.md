@@ -2,7 +2,7 @@
 
 ## Goal
 
-QuestPond-style microservice learning notes — **Day 10 RabbitMQ fundamentals** and **Day 11 resiliency with Polly**. Focused on .NET interview answers with clear architecture and code.
+QuestPond-style microservice learning notes — **Day 10 RabbitMQ**, **Day 11 API Gateway with Ocelot**, and **Day 12 resiliency with Polly**. Focused on .NET interview answers with clear architecture and code.
 
 ---
 
@@ -10,7 +10,8 @@ QuestPond-style microservice learning notes — **Day 10 RabbitMQ fundamentals**
 
 <ul>
   <li><a href="#day-10">Day 10 — RabbitMQ Fundamentals</a></li>
-  <li><a href="#day-11">Day 11 — Resiliency using Polly</a></li>
+  <li><a href="#day-11">Day 11 — API Gateway Pattern using Ocelot</a></li>
+  <li><a href="#day-12">Day 12 — Resiliency using Polly</a></li>
   <li><a href="#quick-answers">Interview Quick Answers</a></li>
 </ul>
 
@@ -285,7 +286,328 @@ In real .NET microservices, teams often use **MassTransit** or **NServiceBus** o
 
 <a id="day-11"></a>
 
-## Day 11 — Resiliency using Polly
+## Day 11 — API Gateway Pattern using Ocelot
+
+> QuestPond session: **API Gateway pattern using Ocelot** (31-08-2025)
+
+### Why do microservices need an API Gateway?
+
+Without a gateway, every client must know every service URL:
+
+```text
+Mobile / Web / Partner
+   ├── http://orders:5001
+   ├── http://payments:5002
+   ├── http://catalog:5003
+   └── http://users:5004
+```
+
+Problems:
+- Clients are tightly coupled to service topology  
+- Auth, rate limiting, SSL repeated everywhere  
+- Hard to change internal URLs / versions  
+- CORS and security rules scatter across services  
+
+**API Gateway pattern** puts one front door in front of all services:
+
+```text
+Client
+  ↓
+API Gateway (Ocelot)
+  ├── Authentication / Authorization
+  ├── Routing / load balancing
+  ├── Rate limiting
+  ├── Request aggregation
+  ├── Headers / path transforms
+  └── QoS (timeouts, retries)
+  ↓
+Order | Payment | Catalog | User microservices
+```
+
+> **One-liner:** API Gateway is the single entry point — clients call the gateway; the gateway routes to microservices.
+
+---
+
+### API Gateway vs Load Balancer vs Reverse Proxy
+
+| Component | Main job |
+| --- | --- |
+| **Load balancer** | Distribute traffic across instances |
+| **Reverse proxy** | Forward requests; hide internal hosts |
+| **API Gateway** | Reverse proxy **plus** API features (auth, rate limit, aggregation, versioning) |
+
+Ocelot is an **API Gateway for .NET** — configuration-driven routing on top of ASP.NET Core.
+
+> **One-liner:** LB spreads traffic; gateway adds API management on top of routing.
+
+---
+
+### What is Ocelot?
+
+**Ocelot** is an open-source .NET API Gateway. You typically:
+
+1. Create an ASP.NET Core empty/web project  
+2. Add Ocelot NuGet package  
+3. Define routes in `ocelot.json`  
+4. Call `AddOcelot()` + `UseOcelot()`  
+
+| Feature | Ocelot support |
+| --- | --- |
+| Routing | Upstream path → Downstream host/path |
+| Load balancing | Round robin, least connection, etc. |
+| Authentication | JWT / IdentityServer integration |
+| Rate limiting | Per-route limits |
+| QoS | Timeout + Polly-style breaker options |
+| Aggregation | Combine multiple downstream responses |
+| Caching | Response caching |
+| Header/claim transforms | Add/remove/change headers |
+
+**Alternatives:** YARP (Microsoft, high performance), Azure API Management, Kong, AWS API Gateway.
+
+> **One-liner:** Ocelot = config-based .NET API gateway for routing and cross-cutting concerns.
+
+---
+
+### Core Ocelot concepts
+
+| Term | Meaning |
+| --- | --- |
+| **Upstream** | What the **client** calls (gateway URL/path) |
+| **Downstream** | Internal microservice URL Ocelot forwards to |
+| **ReRoute / Route** | Mapping from upstream → downstream |
+| **GlobalConfiguration** | Shared settings (base URL, rate limit defaults, QoS) |
+| **Service discovery** | Optional Consul/Eureka/K8s instead of hard-coded hosts |
+
+```text
+Client → GET /gateway/orders/1
+              │
+              ▼ upstream: /orders/{id}
+         Ocelot route
+              │
+              ▼ downstream: http://orders-service/api/orders/{id}
+         Order microservice
+```
+
+---
+
+### Minimal `ocelot.json` example
+
+```json
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/orders/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 5001 }
+      ],
+      "UpstreamPathTemplate": "/orders/{id}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/payments",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 5002 }
+      ],
+      "UpstreamPathTemplate": "/payments",
+      "UpstreamHttpMethod": [ "POST" ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:7000"
+  }
+}
+```
+
+**Meaning:**
+- Client calls `GET https://localhost:7000/orders/5`  
+- Ocelot forwards to `http://localhost:5001/api/orders/5`  
+
+---
+
+### ASP.NET Core wiring
+
+```csharp
+// Program.cs
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
+builder.Services.AddOcelot(builder.Configuration);
+
+var app = builder.Build();
+await app.UseOcelot();
+app.Run();
+```
+
+Package: `Ocelot` (and optionally `Ocelot.Provider.Consul`, `Ocelot.Provider.Polly`, etc.).
+
+> **One-liner:** Load `ocelot.json`, `AddOcelot`, `UseOcelot` — routes become your public API surface.
+
+---
+
+### Multiple instances + load balancing
+
+```json
+"DownstreamHostAndPorts": [
+  { "Host": "orders-1", "Port": 5001 },
+  { "Host": "orders-2", "Port": 5001 }
+],
+"LoadBalancerOptions": {
+  "Type": "RoundRobin"
+}
+```
+
+| Type | Behavior |
+| --- | --- |
+| RoundRobin | Rotate instances |
+| LeastConnection | Prefer fewer active connections |
+| NoLoadBalancer | First / only host |
+| CookieStickySessions | Same client sticks to same instance |
+
+> **One-liner:** List multiple downstream hosts and pick a load-balancer type in the route.
+
+---
+
+### Authentication at the gateway
+
+Typical pattern:
+1. Client sends JWT in `Authorization` header  
+2. Ocelot validates token once at the edge  
+3. Forwards identity claims downstream (or re-validates per service for defense in depth)
+
+```json
+"AuthenticationOptions": {
+  "AuthenticationProviderKey": "Bearer",
+  "AllowedScopes": []
+}
+```
+
+In `Program.cs`, register JWT bearer with the same key name Ocelot expects.
+
+**Interview tip:** Gateway auth reduces duplication, but critical services may still validate tokens themselves.
+
+> **One-liner:** Validate JWT at Ocelot so internal services are not publicly exposed without auth.
+
+---
+
+### Rate limiting at the gateway
+
+Protect downstream services from noisy clients:
+
+```json
+"RateLimitOptions": {
+  "ClientWhitelist": [],
+  "EnableRateLimiting": true,
+  "Period": "1m",
+  "PeriodTimespan": 60,
+  "Limit": 100
+}
+```
+
+When exceeded → **429 Too Many Requests**.
+
+> **One-liner:** Rate limit at the gateway so one client cannot flood every microservice.
+
+---
+
+### QoS — timeout and quality of service
+
+```json
+"QoSOptions": {
+  "ExceptionsAllowedBeforeBreaking": 3,
+  "DurationOfBreak": 5000,
+  "TimeoutValue": 3000
+}
+```
+
+| Setting | Meaning |
+| --- | --- |
+| TimeoutValue | Max wait for downstream (ms) |
+| ExceptionsAllowedBeforeBreaking | Failures before circuit opens |
+| DurationOfBreak | How long to fail fast (ms) |
+
+This connects Day 11 (gateway) with Day 12 (Polly resiliency): Ocelot can apply breaker/timeout around downstream calls.
+
+> **One-liner:** QoS on a route adds timeout + circuit-breaker behavior for that downstream dependency.
+
+---
+
+### Request aggregation (BFF-style)
+
+One upstream call → multiple downstream calls → combined response.
+
+Useful when a UI needs Order + Customer in one round trip.
+
+| Pattern | Idea |
+| --- | --- |
+| **API Gateway** | Shared gateway for all clients |
+| **BFF (Backend for Frontend)** | Separate gateway/API shaped per client (web BFF, mobile BFF) |
+
+Keep **business logic out of the gateway** — aggregation and routing only.
+
+> **One-liner:** Aggregation reduces client round trips; BFF customizes the gateway per client type.
+
+---
+
+### Path / header transforms
+
+Ocelot can rewrite paths and headers before forwarding:
+
+| Transform | Example |
+| --- | --- |
+| Path | `/gateway/orders` → `/api/v1/orders` |
+| Add header | Inject correlation ID |
+| Claims to headers | Pass user id to downstream |
+
+Helps keep internal APIs private while exposing a clean public contract.
+
+---
+
+### Service discovery (optional)
+
+Hard-coded hosts work for demos. In production:
+
+| Approach | Example |
+| --- | --- |
+| Config hosts | `DownstreamHostAndPorts` in JSON |
+| Consul / Eureka | Ocelot provider packages |
+| Kubernetes | DNS service names (`orders.default.svc.cluster.local`) |
+
+> **One-liner:** Prefer service discovery or K8s DNS over hard-coded IPs when services scale dynamically.
+
+---
+
+### Good practices
+
+| Do | Don't |
+| --- | --- |
+| Put auth, routing, rate limit in gateway | Put business rules in Ocelot |
+| Version public routes (`/v1/...`) | Expose every internal endpoint |
+| Run multiple gateway instances behind LB | Treat gateway as only one box (SPOF) |
+| Log correlation IDs end-to-end | Hide all errors with empty 500s |
+| Combine with Polly/QoS for resiliency | Retry non-idempotent POSTs blindly |
+
+---
+
+### Day 11 interview checklist
+
+| Question | Short answer |
+| --- | --- |
+| Why API Gateway? | Single entry for routing, auth, rate limit, aggregation |
+| What is Ocelot? | .NET API gateway configured mainly via `ocelot.json` |
+| Upstream vs Downstream? | Client-facing path vs internal service URL |
+| Gateway vs load balancer? | Gateway = API features; LB = distribute traffic |
+| BFF? | Gateway tailored per frontend (web/mobile) |
+| Rate limiting? | Cap requests at edge → 429 |
+| QoS in Ocelot? | Timeout + circuit breaker for downstream |
+| SPOF risk? | Scale gateway horizontally behind a load balancer |
+
+---
+
+<a id="day-12"></a>
+
+## Day 12 — Resiliency using Polly
 
 ### Why resiliency in microservices?
 
@@ -480,23 +802,25 @@ services.AddHttpClient<IPaymentClient, PaymentClient>()
 
 ---
 
-### Resiliency vs messaging (Day 10 + Day 11 together)
+### Resiliency vs messaging (Day 10 + Day 12 together)
 
 | Approach | Helps with |
 | --- | --- |
 | **RabbitMQ async** | Decouple services; absorb spikes; retry via requeue/DLQ |
 | **Polly on HTTP** | Protect sync calls that must stay request/response |
+| **Ocelot QoS** | Timeout/breaker at the API Gateway edge |
 | **Outbox** | Reliable publish after DB commit |
 | **Idempotent consumers** | Safe at-least-once delivery |
 
 Don’t use Polly retry as a substitute for good architecture. Use:
 - Polly for **transient sync failures**  
 - Queues for **async workloads and decoupling**  
-- Circuit breaker to **stop hammering a dead service**
+- Circuit breaker to **stop hammering a dead service**  
+- Ocelot for **edge routing, auth, and rate limiting**
 
 ---
 
-### Day 11 interview checklist
+### Day 12 interview checklist
 
 | Question | Short answer |
 | --- | --- |
@@ -531,6 +855,20 @@ Don’t use Polly retry as a substitute for good architecture. Use:
 | DLQ | Holds poison/expired messages |
 | At-least-once | Duplicates possible → idempotency required |
 
+### Ocelot / API Gateway
+
+| Topic | One-liner |
+| --- | --- |
+| API Gateway | Single entry point for microservices |
+| Ocelot | .NET gateway configured via `ocelot.json` |
+| Upstream | Path/URL the client calls |
+| Downstream | Internal service Ocelot forwards to |
+| Rate limiting | Cap requests at the edge (429) |
+| QoS | Timeout + circuit breaker per route |
+| Aggregation | One call → multiple services → combined response |
+| BFF | Gateway shaped per frontend (web/mobile) |
+| vs YARP | Ocelot = full gateway features; YARP = high-perf reverse proxy |
+
 ### Polly
 
 | Topic | One-liner |
@@ -552,7 +890,7 @@ Don’t use Polly retry as a substitute for good architecture. Use:
 2. Direct = exact, Topic = pattern, Fanout = all  
 3. Ack + durable queues + DLQ for reliability  
 4. At-least-once needs idempotent consumers  
-5. Polly = Retry + Circuit Breaker + Timeout + Fallback  
-6. Retry transient only; open circuit on repeated failure  
-7. Wrap policies; attach to `IHttpClientFactory`  
-8. Queues for async decoupling; Polly for sync call protection
+5. API Gateway = single entry; Ocelot routes upstream → downstream  
+6. Auth + rate limit + QoS belong at the gateway edge  
+7. Polly = Retry + Circuit Breaker + Timeout + Fallback  
+8. Queues for async; Ocelot for edge; Polly for sync call protection

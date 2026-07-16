@@ -200,7 +200,7 @@ export const courses = [
     num: '21',
     category: 'system-design',
     cardTitle: 'Microservice from QuestPond',
-    cardDesc: 'Day 10 RabbitMQ (AMQP, exchange, binding, queues, topics) and Day 11 resiliency with Polly.',
+    cardDesc: 'Day 10 RabbitMQ, Day 11 Ocelot API Gateway, Day 12 Polly resiliency — QuestPond microservice notes.',
     brand: 'Microservice from QuestPond',
   },
 ];
