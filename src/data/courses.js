@@ -114,6 +114,15 @@ export const courses = [
     brand: 'Scenario-Based Interview Q&A',
   },
   {
+    slug: 'aspnet-core-qp-scenarios',
+    mdFile: 'aspnet-core-qp-scenarios.md',
+    num: '19',
+    category: 'interview-qa',
+    cardTitle: 'ASP.NET Core QP Scenarios',
+    cardDesc: '6 real ASP.NET Core scenarios from QP WhatsApp — filters, rate limiting, HybridCache, N+1, outbox, CSRF.',
+    brand: '6 Real ASP.NET Core Scenarios (QP WhatsApp)',
+  },
+  {
     slug: 'react-qp',
     mdFile: 'react-qp.md',
     num: '12',
