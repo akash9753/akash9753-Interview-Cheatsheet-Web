@@ -2,7 +2,7 @@
 
 ## Goal
 
-QuestPond-style microservice learning notes — **Day 10 RabbitMQ**, **Day 11 API Gateway with Ocelot**, and **Day 12 resiliency with Polly**. Focused on .NET interview answers with clear architecture and code.
+QuestPond-style microservice learning notes — **Day 10 RabbitMQ**, **Day 11 Ocelot API Gateway**, **Day 12 Polly**, and **Day 14 OpenID / OAuth Code Flow with Azure AD**. Focused on .NET interview answers with clear architecture and code.
 
 ---
 
@@ -12,6 +12,7 @@ QuestPond-style microservice learning notes — **Day 10 RabbitMQ**, **Day 11 AP
   <li><a href="#day-10">Day 10 — RabbitMQ Fundamentals</a></li>
   <li><a href="#day-11">Day 11 — API Gateway Pattern using Ocelot</a></li>
   <li><a href="#day-12">Day 12 — Resiliency using Polly</a></li>
+  <li><a href="#day-14">Day 14 — Security with OpenID / OAuth Code Flow (Azure AD)</a></li>
   <li><a href="#quick-answers">Interview Quick Answers</a></li>
 </ul>
 
@@ -835,6 +836,358 @@ Don’t use Polly retry as a substitute for good architecture. Use:
 
 ---
 
+<a id="day-14"></a>
+
+## Day 14 — Applying Security using OpenID / OAuth Code Flow with Azure AD
+
+### Why this topic matters in microservices
+
+In a microservice system you typically have:
+
+| App type | Needs |
+| --- | --- |
+| **SPA / MVC / Blazor web app** | User login (interactive) |
+| **API / microservices** | Validate tokens, enforce scopes/roles |
+| **Daemon / worker** | App-only access (client credentials) |
+
+**Azure AD** (now **Microsoft Entra ID**) is the identity provider (IdP).  
+**OAuth 2.0** authorizes access to APIs.  
+**OpenID Connect (OIDC)** adds authentication (who the user is) on top of OAuth.
+
+> **One-liner:** OAuth = authorization; OpenID Connect = authentication on top of OAuth; Azure AD is the identity provider.
+
+---
+
+### OAuth 2.0 vs OpenID Connect
+
+| | OAuth 2.0 | OpenID Connect |
+| --- | --- | --- |
+| Purpose | Grant access to resources (API) | Prove user identity (login) |
+| Main token | **Access token** | **ID token** (+ often access token) |
+| Question answered | What can this client do? | Who is the user? |
+| Spec | Authorization framework | Identity layer on OAuth |
+
+In Azure AD app registrations you usually enable both: users sign in with OIDC, APIs are called with OAuth access tokens.
+
+---
+
+### Main OAuth roles
+
+| Role | Example |
+| --- | --- |
+| **Resource Owner** | End user |
+| **Client** | Your web app / SPA |
+| **Authorization Server** | Azure AD / Entra ID |
+| **Resource Server** | Your ASP.NET Core API / microservice |
+
+---
+
+### Common OAuth flows (know which to pick)
+
+| Flow | Who uses it | Notes |
+| --- | --- | --- |
+| **Authorization Code** | Web apps with backend | Most important interview flow |
+| **Authorization Code + PKCE** | SPA / mobile / public clients | No client secret on browser |
+| **Client Credentials** | Service-to-service | No user; app identity |
+| **Device Code** | TVs / CLI | User approves on another device |
+| **Implicit** | Old SPA flow | **Deprecated** — do not use |
+
+> **One-liner:** Prefer Authorization Code (+ PKCE for public clients); never use Implicit for new apps.
+
+---
+
+### Authorization Code Flow — step by step (Azure AD)
+
+This is the flow QuestPond focuses on for securing apps with Azure AD.
+
+```text
+1. User opens Web App
+2. App redirects browser to Azure AD /authorize
+3. User signs in (and consents if needed)
+4. Azure AD redirects back with ?code=...
+5. App backend exchanges code + client_secret (or PKCE) at /token
+6. Azure AD returns:
+     - access_token  → call APIs
+     - id_token      → who logged in (OIDC)
+     - refresh_token → get new access tokens (if allowed)
+7. App calls microservice API with:
+     Authorization: Bearer <access_token>
+8. API validates token (issuer, audience, signature, lifetime, scopes/roles)
+```
+
+```text
+Browser                Web App                 Azure AD              API
+   |                      |                       |                   |
+   |-- click Login ------>|                       |                   |
+   |<-- 302 /authorize ---|                       |                   |
+   |---------------------------- GET /authorize ->|                   |
+   |<--------------------------- login UI --------|                   |
+   |---------------------------- credentials ---->|                   |
+   |<-- 302 redirect?code=... --------------------|                   |
+   |-- follow redirect -->|                       |                   |
+   |                      |-- POST /token (code)->|                   |
+   |                      |<-- tokens ------------|                   |
+   |                      |-- API + Bearer token ------------------>|
+   |                      |<-- 200 OK ------------------------------|
+```
+
+> **One-liner:** Browser gets a short-lived **code**; only the backend exchanges it for tokens — secrets never sit in the browser.
+
+---
+
+### Why Authorization Code is safer than putting tokens in the URL
+
+| Bad (old Implicit) | Good (Auth Code) |
+| --- | --- |
+| Access token in redirect URL / browser history | Code in redirect; tokens from back-channel `/token` |
+| Hard to keep secrets | Confidential clients use `client_secret` or certificate |
+| Tokens leak via Referer logs | Short-lived code, one-time use |
+
+For SPAs: still use Auth Code, but with **PKCE** (no client secret in JavaScript).
+
+---
+
+### PKCE (Proof Key for Code Exchange)
+
+Used when the client cannot safely store a secret (SPA/mobile).
+
+1. App creates `code_verifier` (random)  
+2. Sends `code_challenge` = hash(verifier) to `/authorize`  
+3. At `/token`, sends original `code_verifier`  
+4. Azure AD verifies challenge — blocks stolen-code attacks  
+
+> **One-liner:** PKCE proves the app that started login is the same app redeeming the code.
+
+---
+
+### Azure AD / Entra ID setup (what to configure)
+
+#### 1) App registration for the **Web App** (client)
+
+| Setting | Value |
+| --- | --- |
+| Platform | Web |
+| Redirect URI | `https://localhost:7001/signin-oidc` |
+| Client secret or certificate | For confidential web apps |
+| API permissions | Microsoft Graph / your API scopes |
+
+#### 2) App registration for the **API** (resource)
+
+| Setting | Value |
+| --- | --- |
+| Expose an API | Application ID URI e.g. `api://orders-api` |
+| Scopes | e.g. `Orders.Read`, `Orders.Write` |
+| App roles (optional) | e.g. `Admin`, `Reader` for RBAC |
+
+#### 3) Grant the web app permission to the API scope
+
+Admin consent if required.
+
+**Important IDs you’ll use in code:**
+- **Tenant ID**  
+- **Client ID** (Application ID)  
+- **Client secret** (web app only)  
+- **Audience** = API App ID URI or API client ID  
+
+---
+
+### Tokens you must explain in interviews
+
+| Token | Contains | Used for |
+| --- | --- | --- |
+| **ID token** | User identity claims (`sub`, `name`, `oid`, `preferred_username`) | Sign-in / create local session |
+| **Access token** | `aud`, `scp`/`roles`, `iss`, `exp` | Authorize API calls |
+| **Refresh token** | Opaque to app | Silently get new access tokens |
+
+**Never** send ID token to your API as the API credential — APIs expect **access tokens**.
+
+> **One-liner:** ID token = who you are; access token = what you’re allowed to call.
+
+---
+
+### ASP.NET Core Web App — OpenID Connect with Azure AD
+
+```csharp
+builder.Services
+    .AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
+    .EnableTokenAcquisitionToCallDownstreamApi()
+    .AddInMemoryTokenCaches();
+
+builder.Services.AddAuthorization();
+```
+
+`appsettings.json`:
+
+```json
+{
+  "AzureAd": {
+    "Instance": "https://login.microsoftonline.com/",
+    "TenantId": "<tenant-id>",
+    "ClientId": "<web-app-client-id>",
+    "ClientSecret": "<secret>",
+    "CallbackPath": "/signin-oidc"
+  },
+  "DownstreamApi": {
+    "BaseUrl": "https://localhost:5001",
+    "Scopes": "api://orders-api/Orders.Read"
+  }
+}
+```
+
+Packages commonly used:
+- `Microsoft.Identity.Web`
+- `Microsoft.Identity.Web.UI`
+
+Middleware:
+
+```csharp
+app.UseAuthentication();
+app.UseAuthorization();
+```
+
+Protect MVC pages/controllers with `[Authorize]`.
+
+> **One-liner:** `AddMicrosoftIdentityWebApp` wires OIDC login against Azure AD for the web app.
+
+---
+
+### ASP.NET Core API — validate Azure AD access tokens
+
+```csharp
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("OrdersRead", p =>
+        p.RequireScope("Orders.Read"));
+});
+```
+
+API `appsettings.json`:
+
+```json
+{
+  "AzureAd": {
+    "Instance": "https://login.microsoftonline.com/",
+    "TenantId": "<tenant-id>",
+    "ClientId": "<api-client-id>",
+    "Audience": "api://orders-api"
+  }
+}
+```
+
+Controller:
+
+```csharp
+[Authorize]
+[HttpGet]
+public IActionResult GetOrders() => Ok();
+
+[Authorize(Policy = "OrdersRead")]
+[HttpGet("secure")]
+public IActionResult GetSecureOrders() => Ok();
+```
+
+**Validation checks the middleware performs:**
+- Signature (Azure AD signing keys / JWKS)  
+- Issuer (`iss`)  
+- Audience (`aud`)  
+- Lifetime (`exp` / `nbf`)  
+- Scopes / roles / policies  
+
+> **One-liner:** APIs use JWT Bearer validation — trust Azure AD tokens only if issuer, audience, and signature match.
+
+---
+
+### Calling the API from the web app (on-behalf-of / token acquisition)
+
+After user login, the web app acquires an **access token for the API** and calls it:
+
+```csharp
+var token = await _tokenAcquisition
+    .GetAccessTokenForUserAsync(new[] { "api://orders-api/Orders.Read" });
+
+httpClient.DefaultRequestHeaders.Authorization =
+    new AuthenticationHeaderValue("Bearer", token);
+```
+
+Flow name often discussed: user-delegated access (auth code → access token with user context).
+
+For **daemon apps** (no user): use **Client Credentials** and app permissions/roles.
+
+---
+
+### Scopes vs App Roles (RBAC)
+
+| Mechanism | Typical use |
+| --- | --- |
+| **Delegated scopes** (`scp`) | User + app calling API (`Orders.Read`) |
+| **App roles** (`roles`) | User roles or app-only roles (`Admin`) |
+| **ASP.NET policies** | Map scopes/roles to `[Authorize(Policy=...)]` |
+
+Azure AD tokens may carry:
+- `scp`: space-separated delegated scopes  
+- `roles`: app role assignments  
+
+> **One-liner:** Scopes = what the client can do for the user; roles = RBAC assignments in the token.
+
+---
+
+### Securing microservices + Ocelot together
+
+Typical production shape:
+
+```text
+Browser
+  → Web App (OIDC login with Azure AD)
+  → API Gateway / Ocelot (validate JWT, rate limit)
+  → Microservices (validate JWT again or trust gateway + network)
+```
+
+| Layer | Security job |
+| --- | --- |
+| Azure AD | Issue tokens after Auth Code flow |
+| Web app | Login, store session/cookies, acquire API tokens |
+| Ocelot | Edge auth + routing |
+| Each API | Validate bearer token + scopes/roles |
+
+Also use **HTTPS everywhere**, short token lifetimes, and refresh token rotation where supported.
+
+---
+
+### Common interview pitfalls
+
+| Mistake | Fix |
+| --- | --- |
+| Put client secret in SPA | Use Auth Code + PKCE; no secret in browser |
+| Send ID token to API | Send **access token** |
+| Wrong `Audience` | Match API App ID URI / client ID |
+| Multi-tenant issuer confusion | Validate `tid` / correct issuer URL |
+| Using Implicit flow | Migrated to Auth Code + PKCE |
+| Only gateway validates, APIs trust all internal traffic blindly | Prefer defense in depth |
+
+---
+
+### Day 14 interview checklist
+
+| Question | Short answer |
+| --- | --- |
+| OAuth vs OIDC? | OAuth authorizes APIs; OIDC authenticates users |
+| Auth Code flow? | Redirect → code → backend exchanges for tokens |
+| Why better than Implicit? | Tokens via back channel; code is short-lived |
+| PKCE? | Protects public clients from code interception |
+| ID vs access token? | Identity vs API authorization |
+| Azure AD role? | Authorization server / IdP |
+| How API trusts token? | Validate signature, issuer, audience, lifetime, scopes |
+| Web app package? | `Microsoft.Identity.Web` OIDC |
+| API package? | JWT Bearer / `AddMicrosoftIdentityWebApi` |
+| Service-to-service? | Client Credentials flow |
+
+---
+
 <a id="quick-answers"></a>
 
 ## Interview Quick Answers
@@ -882,6 +1235,21 @@ Don’t use Polly retry as a substitute for good architecture. Use:
 | Policy wrap | Combine policies in a pipeline |
 | HttpClientFactory | Attach resiliency to outbound HTTP |
 
+### OpenID / OAuth / Azure AD
+
+| Topic | One-liner |
+| --- | --- |
+| OAuth 2.0 | Authorization framework for API access |
+| OpenID Connect | Authentication layer on top of OAuth |
+| Azure AD / Entra ID | Identity provider / authorization server |
+| Auth Code flow | Redirect → code → exchange for tokens (best for web apps) |
+| PKCE | Protects public clients during code exchange |
+| ID token | Who the user is |
+| Access token | What the client can call on the API |
+| Scopes | Delegated permissions in the access token |
+| App roles | RBAC claims for users/apps |
+| API validation | JWT Bearer — issuer, audience, signature, lifetime |
+
 ---
 
 ## 60-second revision
@@ -893,4 +1261,6 @@ Don’t use Polly retry as a substitute for good architecture. Use:
 5. API Gateway = single entry; Ocelot routes upstream → downstream  
 6. Auth + rate limit + QoS belong at the gateway edge  
 7. Polly = Retry + Circuit Breaker + Timeout + Fallback  
-8. Queues for async; Ocelot for edge; Polly for sync call protection
+8. Queues for async; Ocelot for edge; Polly for sync call protection  
+9. OAuth authorizes; OIDC authenticates; Azure AD issues tokens  
+10. Auth Code (+ PKCE) → access token to APIs; validate JWT on every microservice
