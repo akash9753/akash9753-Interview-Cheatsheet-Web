@@ -194,6 +194,15 @@ export const courses = [
     cardDesc: 'Full-stack interview prep — .NET backend, React/JS frontend, Azure, coding outputs, and detailed answers.',
     brand: 'Moonspro Noida — Full Stack Interview Prep',
   },
+  {
+    slug: 'microservice-from-questpond',
+    mdFile: 'microservice-from-questpond.md',
+    num: '21',
+    category: 'system-design',
+    cardTitle: 'Microservice from QuestPond',
+    cardDesc: 'Day 10 RabbitMQ (AMQP, exchange, binding, queues, topics) and Day 11 resiliency with Polly.',
+    brand: 'Microservice from QuestPond',
+  },
 ];
 
 const markdownModules = import.meta.glob('../../MarkDownFormat/*.md', {
