@@ -441,49 +441,60 @@ SELECT * FROM employees;
 
 ## 5. Data Manipulation Language (DML)
 
-### CRUD Operations
+| Feature | DDL (Data Definition Language) | DML (Data Manipulation Language) |
+| --- | --- | --- |
+| Purpose | Defines or changes database structure | Manipulates data inside tables |
+| Works On | Database objects (tables, views, indexes) | Records (rows) |
+| Auto Commit | Yes (usually auto-commits) | No (can use `COMMIT` / `ROLLBACK`) |
+| Rollback | Generally not possible after execution | Possible until committed |
 
-#### Create / Insert Data
+### DDL Commands
 
-```sql
-INSERT INTO students (student_id, name, age, grade)
-VALUES (101, 'raju', 10, 5);
+- **CREATE** – Create a table/database
+- **ALTER** – Modify table structure
+- **DROP** – Delete a table/database
+- **TRUNCATE** – Remove all rows, keep table structure
+- **RENAME** – Rename an object
 
-INSERT INTO students (student_id, name, age, grade)
-VALUES
-    (102, 'sham', 12, 7),
-    (103, 'baburao', 41, 9);
-```
-
-#### Read Data
-
-```sql
-SELECT * FROM students;
-SELECT age FROM students;
-SELECT * FROM students WHERE student_id = 102;
-SELECT age FROM students WHERE student_id = 102;
-```
-
-#### Update Data
+**Example:**
 
 ```sql
-UPDATE students
-SET grade = 12
-WHERE student_id = 103;
+CREATE TABLE Employee (
+    Id INT,
+    Name VARCHAR(100)
+);
 ```
 
-#### Delete Data
+### DML Commands
+
+- **INSERT** – Add new rows
+- **UPDATE** – Modify existing rows
+- **DELETE** – Remove rows
+- **MERGE** – Insert/Update/Delete based on matching conditions
+
+**Example:**
 
 ```sql
-DELETE FROM students
-WHERE student_id IN (101, 102);
+INSERT INTO Employee (Id, Name)
+VALUES (1, 'Akash');
+
+UPDATE Employee
+SET Name = 'Rahul'
+WHERE Id = 1;
+
+DELETE FROM Employee
+WHERE Id = 1;
 ```
 
-#### Truncate Data
+### One-line interview answer
 
-```sql
-TRUNCATE TABLE students;
-```
+- **DDL:** "DDL is used to define or modify the database schema or structure."
+- **DML:** "DML is used to insert, update, delete, or retrieve data from database tables."
+
+### Easy way to remember
+
+- **DDL = Design** → Creates or changes table structure.
+- **DML = Manage** → Inserts, updates, and deletes table data.
 
 ### DELETE vs TRUNCATE
 
@@ -499,53 +510,6 @@ TRUNCATE TABLE students;
 | Can be rolled back if inside a transaction | Can be rolled back in SQL Server if inside a transaction |
 | Triggers are fired | Triggers are **not** fired |
 | Table structure remains | Table structure remains |
-
-```sql
--- DELETE — specific rows, fires triggers, keeps identity seed
-BEGIN TRANSACTION;
-
-DELETE FROM orders
-WHERE order_date < '2020-01-01';
-
--- Check: SELECT IDENT_CURRENT('orders');  -- identity NOT reset
-
-ROLLBACK TRANSACTION;  -- or COMMIT
-
--- TRUNCATE — all rows, fast, resets identity, no WHERE
-BEGIN TRANSACTION;
-
-TRUNCATE TABLE staging_orders;
-
--- Check: SELECT IDENT_CURRENT('staging_orders');  -- identity reset to seed
-
-ROLLBACK TRANSACTION;  -- or COMMIT
-```
-
-| Related | Difference |
-| --- | --- |
-| `TRUNCATE` vs `DROP TABLE` | `TRUNCATE` empties data but **keeps** table structure; `DROP` removes the table entirely |
-| `DELETE` without `WHERE` | Deletes all rows but still row-by-row — slower than `TRUNCATE`, keeps identity, fires triggers |
-
-| Question | Answer |
-| --- | --- |
-| What is DML? | Data Manipulation Language — `INSERT`, `SELECT`, `UPDATE`, `DELETE`, `MERGE` |
-| INSERT with explicit columns vs `INSERT ... SELECT`? | Explicit lists target columns; `SELECT` copies rows from another query/table |
-| UPDATE without WHERE? | Updates **every row** in the table — dangerous in production |
-| `DELETE` vs `TRUNCATE`? | `DELETE` = row-level DML with `WHERE`; `TRUNCATE` = fast full-table empty, resets identity |
-| Can `TRUNCATE` use `WHERE`? | No — all rows only; use `DELETE` for filtered removal |
-| Does `TRUNCATE` fire triggers? | No — `DELETE` triggers do not run |
-| Which resets IDENTITY? | `TRUNCATE` resets to seed; `DELETE` does not |
-| FK blocking `TRUNCATE`? | Yes — if another table references this table via FK |
-| TRUNCATE vs DROP TABLE? | TRUNCATE empties rows, keeps structure; DROP removes the table object |
-| What is MERGE? | Upsert — inserts new rows and updates existing in one statement based on a match condition |
-| Can you roll back DELETE? | Yes, inside an explicit transaction with `BEGIN TRAN` / `COMMIT` / `ROLLBACK` |
-
-**Must-know points:**
-- Always use **WHERE** on UPDATE and DELETE unless you intend to affect all rows
-- `TRUNCATE` cannot be used if FK references exist (unless specific conditions met)
-- `INSERT` column list order must match `VALUES` order
-- `MERGE` is powerful but complex — test carefully for unintended updates
-- DML changes data; DDL changes structure — know which you're running
 
 <a id="topic-6"></a>
 
