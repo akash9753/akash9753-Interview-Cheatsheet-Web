@@ -150,6 +150,15 @@ export const courses = [
     brand: 'SOLID Principles Interview Guide',
   },
   {
+    slug: 'design-patterns',
+    mdFile: 'design-patterns-interview-roadmap.md',
+    num: '18',
+    category: 'system-design',
+    cardTitle: 'Design Patterns',
+    cardDesc: 'Singleton, Factory, Builder, Adapter, Decorator, Strategy, Mediator, Observer — C# examples and one-liners.',
+    brand: 'Design Patterns Interview Guide',
+  },
+  {
     slug: 'dsa',
     mdFile: 'dsa-interview-roadmap.md',
     num: '15',
