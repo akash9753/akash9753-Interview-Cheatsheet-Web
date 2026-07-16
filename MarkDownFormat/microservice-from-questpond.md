@@ -2,7 +2,7 @@
 
 ## Goal
 
-QuestPond-style microservice learning notes — **Day 10 RabbitMQ**, **Day 11 Ocelot API Gateway**, **Day 12 Polly**, **Day 14 OpenID / OAuth Code Flow with Azure AD**, and **Day 17 Health Checks / Monitoring / Service Discovery**. Focused on .NET interview answers with clear architecture and code.
+QuestPond-style microservice learning notes — **Day 10 RabbitMQ**, **Day 11 Ocelot**, **Day 12 Polly**, **Day 14 Azure AD OAuth/OIDC**, **Day 17 Health Checks / Monitoring / Discovery**, and **Day 18 Transactions in Microservices**. Focused on .NET interview answers with clear architecture and code.
 
 ---
 
@@ -14,6 +14,7 @@ QuestPond-style microservice learning notes — **Day 10 RabbitMQ**, **Day 11 Oc
   <li><a href="#day-12">Day 12 — Resiliency using Polly</a></li>
   <li><a href="#day-14">Day 14 — Security with OpenID / OAuth Code Flow (Azure AD)</a></li>
   <li><a href="#day-17">Day 17 — Health Checks, Monitoring & Service Discovery</a></li>
+  <li><a href="#day-18">Day 18 — Transactions in Microservices</a></li>
   <li><a href="#quick-answers">Interview Quick Answers</a></li>
 </ul>
 
@@ -1353,6 +1354,256 @@ So your API can call:
 
 ---
 
+<a id="day-18"></a>
+
+## Day 18 — Transactions in Microservices
+
+### The core problem
+
+In a **monolith**, one database transaction can cover Order + Payment + Inventory:
+
+```text
+BEGIN TRAN
+  Insert Order
+  Update Inventory
+  Insert Payment
+COMMIT
+```
+
+In **microservices**, each service usually owns its own database:
+
+```text
+Order Service DB     Payment Service DB     Inventory Service DB
+```
+
+You **cannot** (and usually should not) wrap all three in one classic ACID transaction across services.
+
+> **One-liner:** Microservices break single-DB transactions — you need distributed patterns and eventual consistency.
+
+---
+
+### Why classic 2PC (two-phase commit) is avoided
+
+**2PC** = Prepare all participants, then Commit all (or abort all).
+
+| Issue | Meaning |
+| --- | --- |
+| Blocking | Coordinator / participant failure can lock resources |
+| Latency | Extra network round-trips |
+| Coupling | Services must support distributed XA transactions |
+| Cloud fit | Often unsupported or expensive across DBs/queues |
+
+> **One-liner:** Prefer saga + outbox over 2PC in modern microservice designs.
+
+---
+
+### Local transaction (still important)
+
+Each service still uses **strong ACID** inside its own boundary:
+
+```csharp
+await using var tx = await db.Database.BeginTransactionAsync();
+db.Orders.Add(order);
+await db.SaveChangesAsync();
+await tx.CommitAsync();
+```
+
+Rule: **one service = one database = local transactions**. Cross-service consistency is handled differently.
+
+> **One-liner:** Keep ACID local; design business workflows across services as sagas.
+
+---
+
+### Eventual consistency
+
+After `PlaceOrder`:
+1. Order service saves order (committed)  
+2. Later, Payment and Inventory catch up via messages/events  
+3. System is briefly inconsistent, then converges  
+
+| Term | Meaning |
+| --- | --- |
+| **Strong consistency** | Everyone sees the same data immediately |
+| **Eventual consistency** | Systems converge after a short delay |
+| **Compensation** | Undo/correct earlier steps if a later step fails |
+
+> **One-liner:** Microservices accept eventual consistency and use compensating actions when steps fail.
+
+---
+
+### Saga pattern — the main interview answer
+
+A **saga** is a sequence of **local transactions** coordinated by messages/commands. If a step fails, run **compensating transactions**.
+
+Example: Place Order
+
+```text
+1. CreateOrder          (Order service)
+2. ReserveInventory     (Inventory service)
+3. ChargePayment        (Payment service)
+4. ConfirmOrder         (Order service)
+
+If ChargePayment fails:
+  → ReleaseInventory
+  → CancelOrder
+```
+
+#### Choreography vs Orchestration
+
+| Style | How it works | Pros | Cons |
+| --- | --- | --- | --- |
+| **Choreography** | Services publish/subscribe events (`OrderCreated` → Inventory reacts) | Loose coupling, no central boss | Harder to see full flow; cyclic events risk |
+| **Orchestration** | A saga orchestrator tells each service what to do next | Clear workflow, easier monitoring | Orchestrator can become complex |
+
+```text
+Choreography:
+OrderCreated → InventoryReserved → PaymentCompleted → OrderConfirmed
+
+Orchestration:
+Saga Orchestrator
+  → command ReserveInventory
+  → command ChargePayment
+  → command ConfirmOrder
+```
+
+> **One-liner:** Saga = local steps + compensations; choreography = events; orchestration = central coordinator.
+
+---
+
+### Compensating transactions
+
+Compensation is **not always a perfect undo** — it is a business reverse action.
+
+| Forward step | Compensation |
+| --- | --- |
+| CreateOrder | CancelOrder |
+| ReserveStock | ReleaseStock |
+| ChargeCard | RefundPayment |
+| SendEmail | Send “cancelled” email (or do nothing) |
+
+Make every step **idempotent** — messages can be redelivered.
+
+> **One-liner:** Compensation reverses business effect; handlers must be safe to run more than once.
+
+---
+
+### Transactional Outbox (must-know)
+
+Problem:
+
+```text
+Save Order to DB  ✅
+Publish OrderPlaced to RabbitMQ  ❌  (app crashes here)
+```
+
+Order exists, but no event → other services never react.
+
+**Outbox fix:**
+
+```text
+BEGIN TRAN
+  Insert Order
+  Insert OutboxMessage (OrderPlaced payload)
+COMMIT
+
+Background worker:
+  Read unpublished outbox rows
+  Publish to broker
+  Mark published
+```
+
+| Benefit | Detail |
+| --- | --- |
+| Atomic write | Business data + event intent in one local transaction |
+| Reliable publish | Worker retries until broker accepts |
+| Fits RabbitMQ/Kafka | Works with at-least-once delivery |
+
+Often paired with **Inbox** on the consumer (dedupe processed message IDs).
+
+> **One-liner:** Outbox = save event with business data in one DB transaction, publish asynchronously.
+
+---
+
+### Inbox pattern (consumer side)
+
+| Pattern | Side | Purpose |
+| --- | --- | --- |
+| Outbox | Producer | Don’t lose outbound events |
+| Inbox | Consumer | Don’t process the same message twice |
+
+```text
+Receive message
+  → if MessageId already in Inbox → ignore
+  → else process + insert Inbox row in same local TX
+```
+
+> **One-liner:** Outbox prevents lost publishes; Inbox prevents duplicate processing.
+
+---
+
+### CAP and microservices (interview framing)
+
+| Letter | Meaning |
+| --- | --- |
+| **C** | Consistency |
+| **A** | Availability |
+| **P** | Partition tolerance |
+
+Distributed systems must tolerate network partitions (**P**). You usually trade strict **C** for **A** + eventual consistency (AP-ish designs with careful workflows).
+
+Don’t overclaim CAP in interviews — use it to justify why sagas exist.
+
+> **One-liner:** Across services you prioritize availability and partition tolerance, then design for eventual consistency.
+
+---
+
+### Practical .NET building blocks
+
+| Piece | Role |
+| --- | --- |
+| EF Core local transaction / `SaveChanges` | ACID inside one service |
+| Outbox table + hosted service | Reliable messaging |
+| RabbitMQ / MassTransit | Transport + consumers |
+| Saga state machine (MassTransit / custom) | Orchestrated long-running workflows |
+| Idempotency keys | Safe retries |
+
+MassTransit / NServiceBus often provide outbox + saga state out of the box.
+
+---
+
+### Anti-patterns to avoid
+
+| Anti-pattern | Why it hurts |
+| --- | --- |
+| Shared database across all services | Breaks ownership; creates coupling |
+| Distributed 2PC everywhere | Fragile and slow |
+| “Fire and forget” publish after commit with no outbox | Lost events on crash |
+| Non-idempotent consumers | Duplicate charges / double inventory |
+| Giant orchestrator with business rules in every service | Unmaintainable spaghetti |
+
+---
+
+### End-to-end interview story (use this)
+
+“When a user places an order, the Order service saves the order and an outbox row in one transaction. A worker publishes `OrderPlaced`. Inventory and Payment handle the event as saga steps. If payment fails, we publish compensating commands to release stock and cancel the order. Each handler is idempotent, so retries are safe. We accept a short window of eventual consistency.”
+
+---
+
+### Day 18 interview checklist
+
+| Question | Short answer |
+| --- | --- |
+| Why no single transaction across services? | Each service owns its DB; distributed TX is hard |
+| What is a saga? | Sequence of local TX + compensations |
+| Choreography vs orchestration? | Events between services vs central coordinator |
+| What is outbox? | Persist event with data, publish later reliably |
+| What is inbox? | Dedupe processed messages on consumer |
+| Eventual consistency? | Data converges after delay, not instantly |
+| 2PC? | Strong distributed commit — usually avoided in cloud microservices |
+| Idempotency? | Processing the same message twice is safe |
+
+---
+
 <a id="quick-answers"></a>
 
 ## Interview Quick Answers
@@ -1415,6 +1666,20 @@ So your API can call:
 | App roles | RBAC claims for users/apps |
 | API validation | JWT Bearer — issuer, audience, signature, lifetime |
 
+### Transactions in Microservices
+
+| Topic | One-liner |
+| --- | --- |
+| Local TX | ACID inside one service / one DB |
+| Distributed TX / 2PC | Avoid in most microservice designs |
+| Saga | Local steps + compensating actions |
+| Choreography | Services react to each other’s events |
+| Orchestration | Central saga coordinator drives steps |
+| Outbox | Atomic save of data + outbound event |
+| Inbox | Consumer-side dedupe |
+| Eventual consistency | System converges after async updates |
+| Idempotency | Safe under at-least-once delivery |
+
 ---
 
 ## 60-second revision
@@ -1428,5 +1693,6 @@ So your API can call:
 7. Polly = Retry + Circuit Breaker + Timeout + Fallback  
 8. Queues for async; Ocelot for edge; Polly for sync call protection  
 9. OAuth authorizes; OIDC authenticates; Azure AD issues tokens  
-10. Auth Code (+ PKCE) → access token to APIs; validate JWT on every microservice
-11. Liveness vs readiness + monitoring + discovery keeps traffic safe and problems visible
+10. Auth Code (+ PKCE) → access token to APIs; validate JWT on every microservice  
+11. Liveness vs readiness + monitoring + discovery keeps traffic safe and problems visible  
+12. Cross-service work = saga + outbox/inbox + eventual consistency (not 2PC)

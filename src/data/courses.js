@@ -200,7 +200,7 @@ export const courses = [
     num: '21',
     category: 'system-design',
     cardTitle: 'Microservice from QuestPond',
-    cardDesc: 'Day 10 RabbitMQ, Day 11 Ocelot, Day 12 Polly, Day 14 OpenID/OAuth Code Flow with Azure AD.',
+    cardDesc: 'Day 10 RabbitMQ, Day 11 Ocelot, Day 12 Polly, Day 14 Azure AD, Day 17 health/discovery, Day 18 transactions (saga/outbox).',
     brand: 'Microservice from QuestPond',
   },
 ];
