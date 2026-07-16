@@ -900,6 +900,16 @@ In Azure AD app registrations you usually enable both: users sign in with OIDC, 
 
 This is the flow QuestPond focuses on for securing apps with Azure AD.
 
+![OpenID Connect flow — JS to Azure AD to Code/Token to Ocelot](/assets/aspnet/openid-connect-flow.png)
+
+**OpenID Connect flow (from the diagram):**
+
+| Step | Flow | Meaning |
+| --- | --- | --- |
+| 1 | `JS → AD → Code` | SPA/JS app redirects user to **Azure AD**; after login AD returns an authorization **code** |
+| 2 | `JS -Code→ AD → Token` | App sends the **code** back to AD `/token` and receives **tokens** (access + ID) |
+| 3 | `JS --Token→ Ocelot :--Calls` | App calls APIs through **Ocelot** gateway using `Authorization: Bearer <token>` |
+
 ```text
 1. User opens Web App
 2. App redirects browser to Azure AD /authorize
