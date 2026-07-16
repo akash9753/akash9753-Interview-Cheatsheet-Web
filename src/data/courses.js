@@ -203,6 +203,24 @@ export const courses = [
     cardDesc: 'Day 10 RabbitMQ, Day 11 Ocelot, Day 12 Polly, Day 14 Azure AD, Day 17 health/discovery, Day 18 transactions (saga/outbox).',
     brand: 'Microservice from QuestPond',
   },
+  {
+    slug: 'azure-service-bus',
+    mdFile: 'azure-service-bus-interview-guide.md',
+    num: '22',
+    category: 'cloud-devops',
+    cardTitle: 'Azure Service Bus',
+    cardDesc: 'Queues, topics, sessions, DLQ, Peek-Lock, duplicate detection, outbox, security, and .NET examples.',
+    brand: 'Azure Service Bus Interview Guide',
+  },
+  {
+    slug: 'azure-functions-logic-apps',
+    mdFile: 'azure-functions-logic-apps-interview-guide.md',
+    num: '23',
+    category: 'cloud-devops',
+    cardTitle: 'Azure Functions and Logic Apps',
+    cardDesc: 'Triggers, bindings, hosting plans, Durable Functions, Logic Apps connectors, and when to use which.',
+    brand: 'Azure Functions and Logic Apps Interview Guide',
+  },
 ];
 
 const markdownModules = import.meta.glob('../../MarkDownFormat/*.md', {
