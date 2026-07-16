@@ -2,7 +2,7 @@
 
 ## Goal
 
-QuestPond-style microservice learning notes — **Day 10 RabbitMQ**, **Day 11 Ocelot API Gateway**, **Day 12 Polly**, and **Day 14 OpenID / OAuth Code Flow with Azure AD**. Focused on .NET interview answers with clear architecture and code.
+QuestPond-style microservice learning notes — **Day 10 RabbitMQ**, **Day 11 Ocelot API Gateway**, **Day 12 Polly**, **Day 14 OpenID / OAuth Code Flow with Azure AD**, and **Day 17 Health Checks / Monitoring / Service Discovery**. Focused on .NET interview answers with clear architecture and code.
 
 ---
 
@@ -13,6 +13,7 @@ QuestPond-style microservice learning notes — **Day 10 RabbitMQ**, **Day 11 Oc
   <li><a href="#day-11">Day 11 — API Gateway Pattern using Ocelot</a></li>
   <li><a href="#day-12">Day 12 — Resiliency using Polly</a></li>
   <li><a href="#day-14">Day 14 — Security with OpenID / OAuth Code Flow (Azure AD)</a></li>
+  <li><a href="#day-17">Day 17 — Health Checks, Monitoring & Service Discovery</a></li>
   <li><a href="#quick-answers">Interview Quick Answers</a></li>
 </ul>
 
@@ -1198,6 +1199,160 @@ Also use **HTTPS everywhere**, short token lifetimes, and refresh token rotation
 
 ---
 
+<a id="day-17"></a>
+
+## Day 17 — Health Checks, Monitoring, and Service Discovery
+
+### Why this matters
+
+In microservices, instances scale up/down constantly and fail independently. To keep the system safe:
+- **Health checks** tell load balancers/orchestrators which instances can receive traffic.
+- **Monitoring** tells you quickly when things are failing and why.
+- **Service discovery** tells clients/routers where services currently live.
+
+> **One-liner:** Health = “can I receive traffic?”, Monitoring = “what is broken?”, Discovery = “where is it right now?”
+
+---
+
+### Health checks (Liveness vs Readiness vs Startup)
+
+Use at least two of the three:
+
+| Type | Meaning | When it’s used |
+| --- | --- | --- |
+| **Liveness** | “Is the process still alive?” | Restart if deadlocked/crashed |
+| **Readiness** | “Can this instance handle requests right now?” | Don’t send traffic until dependencies are ready |
+| **Startup** | “Give the app time to boot.” | Avoid killing slow-start services |
+
+**Interview explanation:**  
+- Liveness protects against broken processes.  
+- Readiness protects users from seeing partial outages (e.g., DB down, migrations not done).  
+- Startup prevents flapping during cold start.
+
+> **One-liner:** Liveness restarts; readiness routes.
+
+---
+
+### Health endpoints in ASP.NET Core
+
+Typical endpoints you expose:
+- `/health/live` (liveness)
+- `/health/ready` (readiness)
+- `/health` (aggregate, optional)
+- `/metrics` (Prometheus scraping, optional)
+
+Example concept (DI-friendly):
+- Live returns 200 when the process is running.
+- Ready checks dependencies (DB connectivity, cache ping, message broker reachability as appropriate).
+
+**Important:** Make readiness checks **fast**. If you block on slow dependencies, you’ll create routing churn.
+
+> **One-liner:** Readiness checks dependencies; liveness checks process health.
+
+---
+
+### Kubernetes probes (quick interview mapping)
+
+| Probe | Kubernetes checks | Maps to |
+| --- | --- | --- |
+| `livenessProbe` | `/health/live` | Liveness |
+| `readinessProbe` | `/health/ready` | Readiness |
+| `startupProbe` | “wait until app is up” | Startup |
+
+Good settings:
+- `initialDelaySeconds` / `failureThreshold` sized to your boot time
+- readiness probe timeouts smaller than your user-facing SLOs
+
+---
+
+### Monitoring: what to collect (logs, metrics, traces)
+
+In interviews, say you use the **three pillars**:
+
+| Pillar | What you get | Tooling examples |
+| --- | --- | --- |
+| **Logs** | Event history (errors, warnings) | Serilog + Elasticsearch / App Insights |
+| **Metrics** | Numbers over time (latency, error rate, saturation) | Prometheus / App Insights |
+| **Distributed Tracing** | Request path across services | OpenTelemetry + Jaeger/Zipkin |
+
+**Must-know concepts:**
+- Track **p95/p99 latency**, error rate, and saturation (CPU, thread pool, queue depth).
+- Add **correlation IDs** and propagate them through HTTP headers and message metadata.
+- Alert on symptoms (SLO burn rate), not just raw CPU.
+
+> **One-liner:** Observe p95/p99 + error rate + saturation, and trace across service boundaries.
+
+---
+
+### SLOs / SLAs and alerting
+
+Interview-friendly phrasing:
+- **SLA** = contractual uptime (often %)  
+- **SLO** = operational goal (latency/error/availability target)  
+- Alert when SLO is at risk (burn rate).
+
+Example SLOs:
+- 99.9% successful requests
+- p95 API latency < 300ms
+- Consumer processing lag < 30s
+
+---
+
+### Service discovery (where is the service?)
+
+Service discovery solves: “instances come and go; how do callers find healthy ones?”
+
+Common approaches:
+
+| Approach | Example | Notes |
+| --- | --- | --- |
+| **Static config** | `orders-service:5001` | Works for demos; brittle at scale |
+| **DNS-based** | Kubernetes Service DNS | Usually with DNS + load balancing |
+| **Service registry** | Consul / Eureka | Central registry with health checks |
+| **Client-side discovery** | Client queries registry | Client picks an instance |
+| **Server-side discovery** | Gateway/load balancer queries registry | Simpler clients |
+
+> **One-liner:** Discovery is “dynamic service locations”; health checks keep only healthy endpoints in rotation.
+
+---
+
+### Service discovery + health checks integration
+
+Typical production flow:
+1. Service instance registers in registry (or becomes available via DNS)
+2. Health checks keep it “healthy/unhealthy”
+3. Router/load balancer uses only healthy endpoints
+
+Failure mode to mention:
+- If health is wrong (slow or failing readiness), traffic can be routed to broken instances.
+
+---
+
+### Service discovery in Kubernetes (practical interview answer)
+
+Common naming:
+- Services get stable DNS names like: `orders.default.svc.cluster.local`
+- Deployments/replicas scale behind a Service; kube-proxy routes to healthy pods.
+
+So your API can call:
+- `http://orders` (via Service DNS) instead of specific pod IPs.
+
+---
+
+### Day 17 interview checklist
+
+| Question | Short answer |
+| --- | --- |
+| Liveness vs readiness? | Liveness = process alive (restart); readiness = can serve traffic |
+| What is startup probe? | Extra grace time during cold start to avoid restarts |
+| What do you monitor? | p95/p99 latency, error rate, saturation, queue lag |
+| How do you trace requests? | Propagate correlation IDs + OpenTelemetry spans |
+| What is service discovery? | Finding current healthy instances as topology changes |
+| Discovery vs load balancer? | Discovery finds endpoints; LB routes traffic among them |
+| Where do health checks matter? | They decide which instances receive traffic (routing/autoscaling/registry) |
+
+---
+
 <a id="quick-answers"></a>
 
 ## Interview Quick Answers
@@ -1274,3 +1429,4 @@ Also use **HTTPS everywhere**, short token lifetimes, and refresh token rotation
 8. Queues for async; Ocelot for edge; Polly for sync call protection  
 9. OAuth authorizes; OIDC authenticates; Azure AD issues tokens  
 10. Auth Code (+ PKCE) → access token to APIs; validate JWT on every microservice
+11. Liveness vs readiness + monitoring + discovery keeps traffic safe and problems visible
