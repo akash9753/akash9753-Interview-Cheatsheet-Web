@@ -529,11 +529,11 @@ a.Speak();  // "Woof" — late binding
 | Base reference | Calls derived version | Calls base version |
 | Keyword | `override` | `new` |
 
-Method hiding means hiding the implementation of a base class method in a derived class using the `new` keyword.
+The **`new`** keyword is used for **member hiding**. When a derived class declares a member with the same name and signature as a member in the base class and marks it with `new`, the derived member **hides** the base member. Which member is called depends on the **compile-time type of the reference**, not the runtime type of the object.
 
 - The derived class provides a new implementation.
 - The base method is still accessible through a base class reference.
-- Method hiding is different from overriding.
+- Method hiding is different from overriding (`virtual` / `override`).
 
 ```csharp
 public class BaseClass
@@ -551,8 +551,15 @@ public class ChildClass : BaseClass
         Console.WriteLine("Child display");
     }
 }
+
+ChildClass child = new ChildClass();
+BaseClass asBase = child;
+
+child.Display();    // "Child display" — reference type is ChildClass
+asBase.Display();   // "Base display"  — reference type is BaseClass (hiding, not polymorphism)
 ```
 
+> **Interview one-liner:** `new` hides the base member; the call uses the compile-time reference type, not the runtime object type.
 ### Early Binding vs Late Binding
 
 | Feature | Early Binding | Late Binding |
