@@ -1098,10 +1098,16 @@ Important points:
 
 A singleton is created **once** and reused for the app lifetime. A scoped service is created **once per request**. Injecting scoped into singleton causes a **captive dependency** — the singleton holds the first scoped instance forever.
 
+**Rule:**
+
+- ✅ A service can depend on another service with the **same or longer** lifetime.
+- ❌ A service should **not** directly depend on a service with a **shorter** lifetime.
+
 | Lifetime rule | Allowed injection |
 | --- | --- |
 | Singleton → Singleton | Yes |
 | Scoped → Scoped / Transient | Yes (within same scope) |
+| Scoped → Singleton | Yes — Singleton lives longer than Scoped |
 | Transient → anything | Yes |
 | Singleton → Scoped | **No** — captive dependency |
 | Singleton → DbContext | **Never** — use `IDbContextFactory` or `IServiceScopeFactory` |
@@ -1118,18 +1124,22 @@ using var scope = _scopeFactory.CreateScope();
 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 ```
 
+> **Interview one-liner:** Scoped can access Singleton because Singleton lives longer than Scoped. Singleton cannot directly access Scoped because Scoped may be disposed while the Singleton is still alive.
+
 | Question | Answer |
 | --- | --- |
 | Why use DI? | Loose coupling, testability, centralized registration, lifecycle management |
 | Preferred injection style? | Constructor injection — dependencies explicit and required |
 | Transient vs scoped? | Transient = new every resolve; scoped = one per request (default for web services) |
 | Can scoped be injected into singleton? | **No** — captive dependency; singleton keeps one scoped instance for app lifetime |
+| Lifetime dependency rule? | Depend only on same or longer lifetime — Scoped → Singleton OK; Singleton → Scoped not OK |
 | `DbContext` lifetime? | Always scoped — one per request; never singleton |
 | Fix captive dependency? | Inject `IServiceScopeFactory` and `CreateScope()`, or `IDbContextFactory` for EF |
 
 **Must-know points:**
 - Register interfaces, not concrete types, in `Program.cs` / `ConfigureServices`
 - **Captive dependency** = singleton holding scoped (e.g. `DbContext`) — stale state, no per-request dispose, not thread-safe
+- A service may depend on same/longer lifetime only — never capture a shorter-lived service
 - `DbContext` is scoped: one request = one unit of work; use `IDbContextFactory` in singletons/background jobs
 - `IServiceProvider` resolves services; prefer constructor injection over `GetService()` in app code
 

@@ -199,7 +199,12 @@ Expect follow-ups: “How is auth done?”, “How do services talk?”, “Bigg
 
 **Classic bug:** Injecting **scoped** `DbContext` into a **singleton** → captive dependency / disposed context / thread issues.
 
-> **One-liner:** Transient = always new; Scoped = per request; Singleton = app-wide — never capture scoped in singleton.
+**Rule:**
+
+- ✅ A service can depend on another service with the **same or longer** lifetime.
+- ❌ A service should **not** directly depend on a service with a **shorter** lifetime.
+
+> **Interview one-liner:** Scoped can access Singleton because Singleton lives longer than Scoped. Singleton cannot directly access Scoped because Scoped may be disposed while the Singleton is still alive.
 
 ---
 
