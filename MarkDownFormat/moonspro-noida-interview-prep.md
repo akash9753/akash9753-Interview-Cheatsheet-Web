@@ -204,6 +204,10 @@ Expect follow-ups: “How is auth done?”, “How do services talk?”, “Bigg
 - ✅ A service can depend on another service with the **same or longer** lifetime.
 - ❌ A service should **not** directly depend on a service with a **shorter** lifetime.
 
+![DI lifetime complete compatibility — Singleton/Scoped/Transient](/assets/aspnet/di-lifetime-complete-compatibility.png)
+
+![Scoped and Transient injection rules by consumer lifetime](/assets/aspnet/di-lifetime-scoped-transient-matrix.png)
+
 > **Interview one-liner:** Scoped can access Singleton because Singleton lives longer than Scoped. Singleton cannot directly access Scoped because Scoped may be disposed while the Singleton is still alive.
 
 ---

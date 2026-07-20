@@ -1103,13 +1103,18 @@ A singleton is created **once** and reused for the app lifetime. A scoped servic
 - ✅ A service can depend on another service with the **same or longer** lifetime.
 - ❌ A service should **not** directly depend on a service with a **shorter** lifetime.
 
+![DI lifetime complete compatibility — Singleton/Scoped/Transient](/assets/aspnet/di-lifetime-complete-compatibility.png)
+
+![Scoped and Transient injection rules by consumer lifetime](/assets/aspnet/di-lifetime-scoped-transient-matrix.png)
+
 | Lifetime rule | Allowed injection |
 | --- | --- |
 | Singleton → Singleton | Yes |
 | Scoped → Scoped / Transient | Yes (within same scope) |
 | Scoped → Singleton | Yes — Singleton lives longer than Scoped |
 | Transient → anything | Yes |
-| Singleton → Scoped | **No** — captive dependency |
+| Singleton → Scoped | **No** — captive dependency (use `IServiceScopeFactory`) |
+| Singleton → Transient | Allowed, but Transient becomes effectively one instance for that Singleton |
 | Singleton → DbContext | **Never** — use `IDbContextFactory` or `IServiceScopeFactory` |
 
 ```csharp
