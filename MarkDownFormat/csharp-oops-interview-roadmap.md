@@ -436,9 +436,33 @@ public class Puppy : Dog
 | Multiple interfaces | Yes | `class X : IA, IB` |
 | Hierarchical | Yes | `Dog : Animal`, `Cat : Animal` |
 
+### Q: If C# doesn't support multiple inheritance, how do you achieve it?
+
+**Answer:** C# does not support multiple inheritance with **classes** to avoid the **Diamond Problem**. However, it achieves multiple inheritance by allowing a class to **implement multiple interfaces**.
+
+```csharp
+// ❌ Not allowed — multiple class inheritance
+// public class Hybrid : Animal, Machine { }
+
+// ✅ Allowed — multiple interface inheritance
+public interface IFlyable { void Fly(); }
+public interface ISwimmable { void Swim(); }
+
+public class Duck : Animal, IFlyable, ISwimmable
+{
+    public void Fly() => Console.WriteLine("Flying");
+    public void Swim() => Console.WriteLine("Swimming");
+}
+```
+
+**Diamond Problem (why classes are blocked):** if `D` inherited from `B` and `C`, and both `B`/`C` inherited from `A` with the same method, the compiler would not know which `A` implementation to use.
+
+> **Interview one-liner:** No multiple class inheritance (Diamond Problem); use multiple interfaces instead.
+
 | Question | Answer |
 | --- | --- |
 | Why no multiple inheritance? | Diamond problem — ambiguous which base method to call |
+| How do you achieve it then? | Implement multiple interfaces on one class |
 | `protected` members? | Visible in base and derived classes, hidden from outside |
 | `sealed` class? | `sealed class X` — cannot be inherited (`string` is sealed) |
 | `sealed override`? | `public sealed override void M()` — child classes cannot override again |
@@ -448,6 +472,7 @@ public class Puppy : Dog
 - All classes implicitly inherit `object` (or another base)
 - `base.Method()` calls parent implementation from override
 - Interface inheritance is separate from class inheritance
+- Default interface methods (C# 8+) can still create diamond conflicts — resolve with explicit implementation
 
 ---
 
