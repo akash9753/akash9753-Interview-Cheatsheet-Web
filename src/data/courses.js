@@ -217,9 +217,9 @@ export const courses = [
     mdFile: 'azure-functions-logic-apps-interview-guide.md',
     num: '23',
     category: 'cloud-devops',
-    cardTitle: 'Azure Functions and Logic Apps',
-    cardDesc: 'Triggers, bindings, hosting plans, Durable Functions, Logic Apps connectors, and when to use which.',
-    brand: 'Azure Functions and Logic Apps Interview Guide',
+    cardTitle: 'Azure Functions',
+    cardDesc: 'Quick revision — Azure Function vs Function App and advantages of serverless Functions.',
+    brand: 'Azure Functions Revision Notes',
   },
 ];
 
