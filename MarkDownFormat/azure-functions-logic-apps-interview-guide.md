@@ -34,6 +34,11 @@ Quick revision for **Azure Functions** — basics, Visual Studio workflow, confi
   <li><a href="#input-binding-example">Input Binding Example</a></li>
   <li><a href="#no-binding-example">When We Cannot Use Binding</a></li>
   <li><a href="#bindings-next">Triggers vs Bindings — What Next?</a></li>
+  <li><a href="#durable-basics">Durable Functions — Basic Concepts</a></li>
+  <li><a href="#durable-orchestration">Orchestrator vs Activity Functions</a></li>
+  <li><a href="#durable-state">State in Durable Functions</a></li>
+  <li><a href="#durable-vs-regular">Regular vs Durable Functions</a></li>
+  <li><a href="#durable-checkpoints">How State Is Maintained (Checkpoints)</a></li>
 </ul>
 
 ---
@@ -905,6 +910,164 @@ If you skip trigger videos, you can jump to **Bindings** — they are a separate
 
 ---
 
+<a id="durable-basics"></a>
+
+## Durable Functions — Basic Concepts
+
+**Azure Durable Functions** extend regular Functions with **stateful workflows** — long-running processes that remember progress.
+
+Four core concepts to know first:
+
+| Concept | Simple meaning |
+| --- | --- |
+| **Orchestration** | Coordinating multiple steps/functions as one workflow |
+| **Orchestrator function** | Controller function — decides which steps run and in what order |
+| **Activity function** | Individual unit of work — does the actual job (DB, HTTP, email, etc.) |
+| **State** | What the workflow remembers — sequence, inputs, results, failures |
+
+> **One-liner:** Orchestrator = boss; Activity = worker; State = workflow memory.
+
+---
+
+<a id="durable-orchestration"></a>
+
+## Orchestrator vs Activity Functions
+
+```text
+Orchestrator Function (controller)
+        │
+        ├── calls ──► Activity 1 (step-1)
+        ├── calls ──► Activity 2 (step-2)
+        ├── calls ──► Activity 3 (step-3)
+        └── calls ──► Activity 4 (step-4)
+```
+
+The **orchestrator** does not do heavy work itself — it **calls activity functions**.
+
+### Execution patterns
+
+| Pattern | Meaning |
+| --- | --- |
+| **One after another** | Step 1 → Step 2 → Step 3 (function chaining) |
+| **Parallel** | Step 1, 2, 3 run together → then combine (fan-out / fan-in) |
+| **After event** | Wait for external event or human approval, then continue |
+
+```csharp
+[Function("OrderOrchestrator")]
+public static async Task RunOrchestrator(
+    [OrchestrationTrigger] TaskOrchestrationContext context)
+{
+    // one after another
+    await context.CallActivityAsync("ValidateOrder", order);
+    await context.CallActivityAsync("ChargePayment", order);
+    await context.CallActivityAsync("SendEmail", order);
+
+    // OR parallel
+    var tasks = new[]
+    {
+        context.CallActivityAsync("NotifyWarehouse", order),
+        context.CallActivityAsync("NotifyCustomer", order)
+    };
+    await Task.WhenAll(tasks);
+}
+```
+
+> **One-liner:** Orchestrator calls activities — sequential, parallel, or after an external event.
+
+---
+
+<a id="durable-state"></a>
+
+## State in Durable Functions
+
+**State** = what the orchestrator remembers during a workflow:
+
+| State tracks | Example |
+| --- | --- |
+| **Sequence** | Step 1 done, now on Step 2 |
+| **Input** | OrderId, customer data passed to activities |
+| **Result** | Payment succeeded, email sent |
+| **Failed** | Which step failed and why |
+
+```text
+Orchestrator (controller)
+   State:
+     1. sequence  → which step we are on
+     2. input     → data passed in
+     3. result    → output from each activity
+     4. failed    → error info if any step failed
+```
+
+### What "memory" means
+
+Durable Functions have **memory** — they remember what they were doing even when:
+- The app **crashes**  
+- The app **waits a long time** for an external event  
+
+If the app fails midway → **resumes from where it failed**, not from the beginning.
+
+You can write **long-running workflows** without your code running continuously the whole time (orchestrator sleeps between steps).
+
+> **One-liner:** State = sequence + input + result + failure — survives crash and long waits.
+
+---
+
+<a id="durable-vs-regular"></a>
+
+## Regular vs Durable Functions
+
+| | Regular Azure Functions | Durable Functions |
+| --- | --- | --- |
+| **Use for** | Simple, quick tasks | Long-running, multi-step workflows |
+| **Retry logic** | You write it manually | Handled by framework |
+| **External events** | Hard to wait for (approval, webhook) | Built-in — wait for events |
+| **On crash** | Starts from all over | **Resumes from where it failed** |
+| **State / memory** | Stateless | Stateful — remembers progress |
+| **Code running** | Runs once per trigger | Workflow can span hours/days with pauses |
+
+### Can regular functions do the same?
+
+**Partially** — you could write custom C# methods, queues, DB state tables, retry loops, and timers yourself.
+
+**But Durable Functions give you:**
+- Built-in orchestration engine  
+- Automatic checkpointing  
+- Retry and failure recovery  
+- Less boilerplate for workflows  
+
+> **One-liner:** Regular = stateless quick tasks; Durable = multi-step workflows with built-in state, retry, and resume.
+
+---
+
+<a id="durable-checkpoints"></a>
+
+## How State Is Maintained (Checkpoints)
+
+Durable Functions do **not** keep state only in memory.
+
+They save **checkpoints** to an **Azure Storage Account** (tables/queues/blobs used by the Durable Task framework).
+
+| What gets checkpointed | Stored where |
+| --- | --- |
+| Which activities were called | Azure Storage |
+| Order / sequence of steps | Azure Storage |
+| Inputs to each activity | Azure Storage |
+| Results from each activity | Azure Storage |
+| Failure status | Azure Storage |
+
+```text
+Orchestrator runs Step 1  →  checkpoint saved to Storage
+Orchestrator runs Step 2  →  checkpoint saved to Storage
+App crashes               →  reload checkpoint from Storage
+Orchestrator resumes Step 3 (does NOT redo Step 1 & 2)
+```
+
+**Why storage?** If the function instance dies, another instance can pick up the orchestration from the last checkpoint.
+
+> **One-liner:** State = checkpoints in Azure Storage — not RAM — so workflow survives restarts and long waits.
+
+---
+
 ## 30-second revision
 
 1. Function = trigger code; Function App = host  
@@ -924,4 +1087,6 @@ If you skip trigger videos, you can jump to **Bindings** — they are a separate
 15. Bindings = declarative I/O; input = read, output = write; HTTP POST → blob example  
 16. Input binding demo: GET `{userid}` → Cosmos DB user; explicit code when custom HTTP response needed  
 17. Private Endpoint = Function App private IP in VNET; block public, allow VM-in-VNET calls only  
-18. Architecture: Fun App extended into VNET; VM calls functions via Private Endpoint; public blocked
+18. Architecture: Fun App extended into VNET; VM calls functions via Private Endpoint; public blocked  
+19. Durable = Orchestrator + Activities + State; sequential / parallel / wait-for-event  
+20. Checkpoints in Azure Storage — resume after crash, not restart from step 1

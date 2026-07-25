@@ -218,7 +218,7 @@ export const courses = [
     num: '23',
     category: 'cloud-devops',
     cardTitle: 'Azure Functions',
-    cardDesc: 'Revision — create/deploy, HTTP trigger, local.settings.json, hosting plans, portal test, App Insights.',
+    cardDesc: 'Revision — Functions basics, triggers, bindings, VNET, Durable Functions orchestrator/activity/state.',
     brand: 'Azure Functions Revision Notes',
   },
 ];
