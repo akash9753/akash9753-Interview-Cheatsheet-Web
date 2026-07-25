@@ -18,6 +18,7 @@ Quick revision for **Azure Service Bus** — what it is, concepts, queue workflo
   <li><a href="#send-custom-object">Send Custom C# Object (Serialize)</a></li>
   <li><a href="#receive-custom-object">Receive Custom C# Object (Deserialize)</a></li>
   <li><a href="#receive-from-vs">Receive Message from Visual Studio</a></li>
+  <li><a href="#message-operations">Different Operations on Message</a></li>
   <li><a href="#example">Example — User Registration & Email</a></li>
   <li><a href="#advantages">Advantages</a></li>
 </ul>
@@ -504,6 +505,126 @@ Visual Studio (C#)
 
 ---
 
+<a id="message-operations"></a>
+
+## Different Operations on Message
+
+After **Receive** (Peek-Lock mode), the message is **locked** — you must choose what to do with it.
+
+```text
+Receive message (locked)
+        │
+        ├── Complete     → deleted from queue ✅
+        ├── Abandon      → back in queue (any receiver)
+        ├── Defer        → set aside (pick up later by sequence number)
+        └── Dead-letter  → moved to dead-letter queue (DLQ)
+```
+
+| Operation | What happens | Delivery count | When to use |
+| --- | --- | --- | --- |
+| **Complete** | Message **deleted** from queue | — | Receiver **successfully processed** the message |
+| **Abandon** | Message **stays in queue** — another receiver can get it | **+1** | Receiver **cannot process now** — let someone else retry |
+| **Defer** | Message **kept aside** — not visible until you fetch it by sequence number | **+1** | **Process later yourself** (e.g. waiting for another order to arrive) |
+| **Dead-letter** | Message **moved to dead-letter queue** (DLQ) | — | **Bad/invalid message** — inspect & debug |
+
+---
+
+### 1. Complete
+
+Message is **removed from the queue** permanently.
+
+```csharp
+await receiver.CompleteMessageAsync(received);
+```
+
+> Used when receiver **processed the message successfully**.
+
+---
+
+### 2. Abandon
+
+Message goes **back to the queue**. Another worker can receive it.
+
+- **Delivery count increases by 1**
+- After **MaxDeliveryCount** (default 10), message auto-moves to **dead-letter queue**
+
+```csharp
+await receiver.AbandonMessageAsync(received);
+```
+
+> Used when receiver **doesn't need / can't handle** the message right now — let another receiver try.
+
+---
+
+### 3. Defer
+
+Message is **kept aside** in the queue — not available to normal receive.
+
+- You save the **sequence number**
+- Later you call **`ReceiveDeferredMessageAsync(sequenceNumber)`** to pick it up again
+- **Delivery count increases by 1**
+
+```csharp
+long sequenceNumber = received.SequenceNumber;
+await receiver.DeferMessageAsync(received);
+
+// ... later, when ready to process ...
+ServiceBusReceivedMessage deferred =
+    await receiver.ReceiveDeferredMessageAsync(sequenceNumber);
+
+// process, then Complete or Abandon
+await receiver.CompleteMessageAsync(deferred);
+```
+
+| Abandon | Defer |
+| --- | --- |
+| Back in queue for **any** receiver | Set aside for **you** to fetch by sequence number |
+| "Someone else should try" | "I'll process this **later**" |
+
+> **Explain:** Defer = temporary hold — e.g. order message arrives before payment message; defer order until payment is ready, then receive both in order.
+
+---
+
+### 4. Dead-letter
+
+Message is **moved to the dead-letter queue** (DLQ).
+
+- Path: `{queue-name}/$deadletterqueue`
+- You can still **receive messages from DLQ** for inspection
+- Also happens **automatically** when max delivery count is exceeded
+
+```csharp
+await receiver.DeadLetterMessageAsync(received,
+    deadLetterReason: "InvalidPayload",
+    deadLetterErrorDescription: "OrderId missing");
+```
+
+```csharp
+// receive from dead-letter queue
+ServiceBusReceiver dlqReceiver = client.CreateReceiver(
+    "orders-queue",
+    new ServiceBusReceiverOptions { SubQueue = SubQueue.DeadLetter });
+
+ServiceBusReceivedMessage deadMsg = await dlqReceiver.ReceiveMessageAsync();
+```
+
+> Used for **debugging** — poison messages, bad format, business rule failures.
+
+---
+
+### Quick comparison
+
+```text
+Complete     → processed OK        → gone from queue
+Abandon      → can't process now   → back in queue (+1 delivery count)
+Defer        → process later       → hidden until ReceiveDeferredMessageAsync
+Dead-letter  → poison / bad msg    → DLQ for debugging
+```
+
+> **One-liner:** Complete = done; Abandon = retry by anyone; Defer = handle later yourself; Dead-letter = move to DLQ for debug.
+
+---
+
 <a id="example"></a>
 
 ## Example — User Registration & Email
@@ -566,4 +687,5 @@ Registration does **not** wait for email to finish — that is the async benefit
 7. Custom object: serialize to JSON → send → peek in Portal  
 8. Receive object: read message → deserialize to C# class  
 9. Receive from VS: Client + Receiver → CompleteMessageAsync  
-10. User Reg → queue → Email Sender; advantages = decoupled + load balancing
+10. Message ops: Complete (done), Abandon (retry), Defer (later), Dead-letter (DLQ/debug)  
+11. User Reg → queue → Email Sender; advantages = decoupled + load balancing
