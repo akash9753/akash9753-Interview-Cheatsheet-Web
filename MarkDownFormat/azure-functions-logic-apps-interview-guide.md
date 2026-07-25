@@ -39,6 +39,9 @@ Quick revision for **Azure Functions** — basics, Visual Studio workflow, confi
   <li><a href="#durable-state">State in Durable Functions</a></li>
   <li><a href="#durable-vs-regular">Regular vs Durable Functions</a></li>
   <li><a href="#durable-checkpoints">How State Is Maintained (Checkpoints)</a></li>
+  <li><a href="#durable-use-cases">Durable Functions — Use Cases</a></li>
+  <li><a href="#fan-out-fan-in">Fan-Out / Fan-In Pattern</a></li>
+  <li><a href="#human-intervention">Human Intervention Pattern</a></li>
 </ul>
 
 ---
@@ -1068,6 +1071,117 @@ Orchestrator resumes Step 3 (does NOT redo Step 1 & 2)
 
 ---
 
+<a id="durable-use-cases"></a>
+
+## Durable Functions — Use Cases
+
+Two common real-world patterns:
+
+| Use case | Pattern | Example |
+| --- | --- | --- |
+| **1. Fan-Out / Fan-In** | Run many tasks in parallel, then combine results | Deliver AC from nearest warehouse |
+| **2. Human intervention** | Pause workflow until a person approves/confirms | HR employee onboarding |
+
+> **One-liner:** Durable Functions shine for parallel aggregation and workflows that wait for humans.
+
+---
+
+<a id="fan-out-fan-in"></a>
+
+## Fan-Out / Fan-In Pattern
+
+### Definitions
+
+| Term | Meaning |
+| --- | --- |
+| **Fan-Out** | Start **multiple steps in parallel** |
+| **Fan-In** | **Wait for all** parallel steps to finish, then combine results |
+
+### Example — E-Commerce AC order
+
+**Requirement:** Customer orders an AC — deliver from the **nearest/fastest** warehouse.
+
+Company has warehouses in: **Mumbai, Pune, Delhi, Chennai**.
+
+```text
+Orchestrator Function
+        │
+        ├── Fan-Out (parallel) ──► Activity: Check Mumbai  (stock? delivery time?)
+        ├──                    ──► Activity: Check Pune
+        ├──                    ──► Activity: Check Delhi
+        └──                    ──► Activity: Check Chennai
+        │
+        ▼
+   Fan-In — aggregate all results
+        │
+        ▼
+   Pick city with shortest delivery time → dispatch order
+```
+
+**Why Durable Functions?** Orchestrator **maintains state** — remembers each city's stock and delivery time result before picking the winner.
+
+```csharp
+// Fan-Out
+var mumbai = context.CallActivityAsync<WarehouseResult>("CheckWarehouse", "Mumbai");
+var pune   = context.CallActivityAsync<WarehouseResult>("CheckWarehouse", "Pune");
+var delhi  = context.CallActivityAsync<WarehouseResult>("CheckWarehouse", "Delhi");
+var chennai= context.CallActivityAsync<WarehouseResult>("CheckWarehouse", "Chennai");
+
+var results = await Task.WhenAll(mumbai, pune, delhi, chennai);
+
+// Fan-In
+var best = results.OrderBy(r => r.DeliveryDays).First();
+await context.CallActivityAsync("DispatchOrder", best);
+```
+
+> **One-liner:** Fan-Out = parallel checks; Fan-In = combine results — e.g. pick fastest warehouse.
+
+---
+
+<a id="human-intervention"></a>
+
+## Human Intervention Pattern
+
+### Requirement — Employee onboarding (HR system)
+
+1. Create employee record in HR system  
+2. Create corporate email ID  
+3. Assign laptop  
+4. Deliver laptop to employee → **wait for "laptop received" confirmation** (human step)  
+5. **Only after confirmation** → assign project to employee  
+
+### Solution with Durable Functions
+
+```text
+Orchestrator
+  Step 1 ──► Create HR record        (activity)
+  Step 2 ──► Create email            (activity)
+  Step 3 ──► Assign laptop           (activity)
+  Step 4 ──► WAIT for human event    ("laptop received" confirmation)
+  Step 5 ──► Assign project          (activity — runs only after step 4)
+```
+
+| Steps 1–3 | Orchestrator runs activities automatically |
+| Step 4 | Workflow **sleeps** — waits for external human confirmation |
+| Step 5 | Runs only when step 4 event arrives |
+
+**Why Durable Functions?** It **maintains state (memory)** — orchestrator can **sleep after step 3** without running continuously, then **wake up** when step 4 is completed (external event / approval).
+
+```csharp
+await context.CallActivityAsync("CreateEmployee", employee);
+await context.CallActivityAsync("CreateEmail", employee);
+await context.CallActivityAsync("AssignLaptop", employee);
+
+// wait for human confirmation (external event)
+await context.WaitForExternalEvent<bool>("LaptopReceived");
+
+await context.CallActivityAsync("AssignProject", employee);
+```
+
+> **One-liner:** Human intervention = orchestrator pauses until approval/event, then continues — state saved in checkpoints.
+
+---
+
 ## 30-second revision
 
 1. Function = trigger code; Function App = host  
@@ -1089,4 +1203,6 @@ Orchestrator resumes Step 3 (does NOT redo Step 1 & 2)
 17. Private Endpoint = Function App private IP in VNET; block public, allow VM-in-VNET calls only  
 18. Architecture: Fun App extended into VNET; VM calls functions via Private Endpoint; public blocked  
 19. Durable = Orchestrator + Activities + State; sequential / parallel / wait-for-event  
-20. Checkpoints in Azure Storage — resume after crash, not restart from step 1
+20. Checkpoints in Azure Storage — resume after crash, not restart from step 1  
+21. Fan-Out/Fan-In = parallel warehouse checks → pick fastest delivery  
+22. Human intervention = onboarding waits for laptop confirmation before assign project
