@@ -23,6 +23,10 @@ Quick revision for **Azure Functions** — basics, Visual Studio workflow, confi
   <li><a href="#azurite">What is Azurite?</a></li>
   <li><a href="#install-azurite">How to Install Azurite</a></li>
   <li><a href="#storage-explorer">Azure Storage Explorer</a></li>
+  <li><a href="#triggers">Triggers in Azure Functions</a></li>
+  <li><a href="#cron">CRON Expression (Timer Trigger)</a></li>
+  <li><a href="#service-bus-trigger">Service Bus Trigger Example</a></li>
+  <li><a href="#bindings-next">Triggers vs Bindings — What Next?</a></li>
 </ul>
 
 ---
@@ -399,6 +403,145 @@ In `local.settings.json`:
 
 ---
 
+<a id="triggers"></a>
+
+## Triggers in Azure Functions
+
+A **trigger** decides **when** an Azure Function runs. Every function has exactly **one trigger**.
+
+| Trigger | When it runs |
+| --- | --- |
+| **HttpTrigger** | Someone hits the function URL (API call) |
+| **TimerTrigger** | On a schedule (CRON expression) |
+| **ServiceBusTrigger** | Message arrives on Service Bus queue/topic subscription |
+| **QueueTrigger** | Message arrives on Storage Queue |
+| **CosmosDBTrigger** | Document changes in Cosmos DB |
+| **EventHubTrigger** | Event arrives on Event Hub |
+| **BlobTrigger** | File uploaded/changed in Blob Storage |
+
+> **One-liner:** Trigger = the event that starts your function.
+
+### Timer trigger — common local error
+
+If Timer trigger fails with:
+
+```text
+unable to connect to storage account
+```
+
+**Fix:** Install and run **Azurite** — Timer triggers need storage even locally.
+
+---
+
+<a id="cron"></a>
+
+## CRON Expression (Timer Trigger)
+
+A **CRON expression** schedules when a Timer trigger function runs.
+
+### Azure Functions format (6 fields)
+
+```text
+{second} {minute} {hour} {day} {month} {day-of-week}
+```
+
+| Field | Range |
+| --- | --- |
+| second | 0–59 |
+| minute | 0–59 |
+| hour | 0–23 |
+| day | 1–31 |
+| month | 1–12 |
+| day-of-week | 0–6 (Sun–Sat) |
+
+### Examples
+
+| Schedule | CRON expression |
+| --- | --- |
+| Every hour | `0 0 * * * *` |
+| Every 5 minutes | `0 */5 * * * *` |
+| 1st of every month at midnight | `0 0 0 1 * *` |
+
+```csharp
+[Function("ScheduledJob")]
+public void Run([TimerTrigger("0 */5 * * * *")] TimerInfo timer)
+{
+    // runs every 5 minutes
+}
+```
+
+> **One-liner:** Azure Timer CRON = 6 fields starting with seconds — `0 */5 * * * *` = every 5 minutes.
+
+---
+
+<a id="service-bus-trigger"></a>
+
+## Service Bus Trigger Example
+
+Typical microservice pattern:
+
+```text
+Order Service (Console App)
+        │
+        │  sends Order detail
+        ▼
+Service Bus Queue
+        │
+        │  message arrives
+        ▼
+Dispatch Service (Azure Function + Service Bus Trigger)
+        │
+        └── picks up order and processes/dispatches
+```
+
+| Component | Role |
+| --- | --- |
+| **Order Service** | Console app — sends order JSON to Service Bus queue |
+| **Service Bus Queue** | Buffer between producer and consumer |
+| **Dispatch Service** | Azure Function with **ServiceBusTrigger** — auto-runs when message arrives |
+
+```csharp
+[Function("DispatchOrder")]
+public void Run(
+    [ServiceBusTrigger("orders-queue", Connection = "ServiceBusConnection")]
+    string orderMessage)
+{
+    // read order detail from message and dispatch
+}
+```
+
+> **One-liner:** Service Bus Trigger = function wakes up automatically when a queue message arrives.
+
+---
+
+<a id="bindings-next"></a>
+
+## Triggers vs Bindings — What Next?
+
+### More trigger types (optional deep dive)
+
+You can learn these triggers separately — they are **optional** for understanding later topics:
+
+- Cosmos DB trigger  
+- Service Bus trigger  
+- Event Hub trigger  
+- Queue trigger, Blob trigger, etc.  
+
+**Note:** Understanding every trigger is **not required** to learn **Bindings** — no hard dependency.
+
+### What are Bindings?
+
+| Concept | Role |
+| --- | --- |
+| **Trigger** | Starts the function (one per function) |
+| **Binding** | Extra input/output connection (read blob, write queue, etc.) |
+
+If you skip trigger videos, you can jump to **Bindings** — they are a separate topic.
+
+> **One-liner:** Trigger starts the function; bindings are optional extra I/O — learning all triggers is not mandatory before bindings.
+
+---
+
 ## 30-second revision
 
 1. Function = trigger code; Function App = host  
@@ -410,4 +553,6 @@ In `local.settings.json`:
 7. VNET Integration = reach private resources; Private Endpoint = private access to function  
 8. App Insights = logs, exceptions, slow function detection  
 9. Azurite = local storage emulator; install via npm when local Functions fail on storage  
-10. Storage Explorer = GUI for cloud + Azurite blobs/queues/tables
+10. Storage Explorer = GUI for cloud + Azurite blobs/queues/tables  
+11. Trigger = when function runs; Timer uses 6-field CRON; Service Bus trigger = queue message  
+12. Order app → Service Bus queue → Dispatch Function is classic async pattern
