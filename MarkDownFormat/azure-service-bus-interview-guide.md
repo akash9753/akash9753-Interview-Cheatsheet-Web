@@ -16,6 +16,7 @@ Quick revision for **Azure Service Bus** — what it is, concepts, queue workflo
   <li><a href="#sdk">Azure Service Bus SDK (C#)</a></li>
   <li><a href="#send-from-vs">Send Message from Visual Studio</a></li>
   <li><a href="#send-custom-object">Send Custom C# Object (Serialize)</a></li>
+  <li><a href="#receive-custom-object">Receive Custom C# Object (Deserialize)</a></li>
   <li><a href="#receive-from-vs">Receive Message from Visual Studio</a></li>
   <li><a href="#example">Example — User Registration & Email</a></li>
   <li><a href="#advantages">Advantages</a></li>
@@ -392,6 +393,65 @@ C# Object  →  Serialize (JSON)  →  ServiceBusMessage  →  Queue  →  Porta
 
 ---
 
+<a id="receive-custom-object"></a>
+
+## Receive Custom C# Object (Deserialize)
+
+Reverse of sending — **read message** from queue, then **deserialize** JSON back into your C# class.
+
+### Steps
+
+1. **Read message** from Service Bus Queue (`ServiceBusReceiver`)  
+2. Get message body as string (JSON)  
+3. **Deserialize** → map/convert into custom C# object  
+4. Use the object in your code  
+
+```csharp
+public class Order
+{
+    public int OrderId { get; set; }
+    public string CustomerName { get; set; }
+    public decimal Amount { get; set; }
+}
+
+await using var client = new ServiceBusClient(connectionString);
+ServiceBusReceiver receiver = client.CreateReceiver("orders-queue");
+
+ServiceBusReceivedMessage received = await receiver.ReceiveMessageAsync();
+if (received != null)
+{
+    string json = received.Body.ToString();
+
+    // deserialize → custom C# object
+    Order order = JsonSerializer.Deserialize<Order>(json)!;
+
+    Console.WriteLine($"Order {order.OrderId} for {order.CustomerName}");
+
+    await receiver.CompleteMessageAsync(received);
+}
+```
+
+```text
+Queue message (JSON)
+        │
+        │  Read message
+        ▼
+ServiceBusReceiver
+        │
+        │  Deserialize
+        ▼
+Custom C# Object (Order)
+```
+
+| Step | Action |
+| --- | --- |
+| Send side | Object → **Serialize** → JSON → queue |
+| Receive side | Queue → read message → **Deserialize** → Object |
+
+> **One-liner:** Read message body → deserialize JSON into your C# class.
+
+---
+
 <a id="receive-from-vs"></a>
 
 ## Receive Message from Visual Studio
@@ -504,5 +564,6 @@ Registration does **not** wait for email to finish — that is the async benefit
 5. SDK: Client → Sender / Receiver / Processor  
 6. Send from VS: Client + Sender → verify message in Azure Portal queue  
 7. Custom object: serialize to JSON → send → peek in Portal  
-8. Receive from VS: Client + Receiver → CompleteMessageAsync  
-9. User Reg → queue → Email Sender; advantages = decoupled + load balancing
+8. Receive object: read message → deserialize to C# class  
+9. Receive from VS: Client + Receiver → CompleteMessageAsync  
+10. User Reg → queue → Email Sender; advantages = decoupled + load balancing
