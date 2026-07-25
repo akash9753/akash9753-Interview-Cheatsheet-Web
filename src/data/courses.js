@@ -209,8 +209,8 @@ export const courses = [
     num: '22',
     category: 'cloud-devops',
     cardTitle: 'Azure Service Bus',
-    cardDesc: 'Queues, topics, sessions, DLQ, Peek-Lock, duplicate detection, outbox, security, and .NET examples.',
-    brand: 'Azure Service Bus Interview Guide',
+    cardDesc: 'Quick revision — message broker, User Reg → Email example, decoupled services and load balancing.',
+    brand: 'Azure Service Bus Revision Notes',
   },
   {
     slug: 'azure-functions-logic-apps',
