@@ -13,6 +13,7 @@ Quick revision for **Azure Service Bus** — what it is, concepts, queue workflo
   <li><a href="#concepts">Concepts — Namespace, Queue, Topic & Subscription</a></li>
   <li><a href="#queue-workflow">Queue Workflow — Create, Send, Receive</a></li>
   <li><a href="#connection-strings">Connection Strings</a></li>
+  <li><a href="#sdk">Azure Service Bus SDK (C#)</a></li>
   <li><a href="#example">Example — User Registration & Email</a></li>
   <li><a href="#advantages">Advantages</a></li>
 </ul>
@@ -166,6 +167,115 @@ In production prefer **Managed Identity + RBAC** over long-lived connection stri
 
 ---
 
+<a id="sdk"></a>
+
+## Azure Service Bus SDK (C#)
+
+Package: `Azure.Messaging.ServiceBus`
+
+Four main types to remember:
+
+| Class | Purpose |
+| --- | --- |
+| **ServiceBusClient** | Connects your C# code to Azure Service Bus |
+| **ServiceBusSender** | Sends messages |
+| **ServiceBusReceiver** | Receives messages |
+| **ServiceBusProcessor** | Receives messages with built-in extras (like Receiver + automation) |
+
+---
+
+### 1. ServiceBusClient
+
+- Entry point — connects C# app to Service Bus  
+- Needs **connection string** (namespace or entity-scoped)  
+
+```csharp
+await using var client = new ServiceBusClient(connectionString);
+```
+
+> **One-liner:** ServiceBusClient = connection to Service Bus using connection string.
+
+---
+
+### 2. ServiceBusSender
+
+- Used to **send** messages  
+- Created from `ServiceBusClient`  
+- Needs **queue name** OR **topic name**  
+
+```csharp
+ServiceBusSender sender = client.CreateSender("orders-queue");
+
+var message = new ServiceBusMessage("Hello");
+await sender.SendMessageAsync(message);
+```
+
+> **One-liner:** ServiceBusSender = send to a specific queue or topic.
+
+---
+
+### 3. ServiceBusReceiver
+
+- Used to **receive** messages  
+- Created from `ServiceBusClient`  
+- Needs:
+  - **Queue name** — for queue  
+  - **OR Topic name + Subscription name** — for pub/sub  
+
+```csharp
+// from queue
+ServiceBusReceiver receiver = client.CreateReceiver("orders-queue");
+
+// from topic subscription
+ServiceBusReceiver subReceiver = client.CreateReceiver("orders-topic", "email-subscription");
+
+ServiceBusReceivedMessage msg = await receiver.ReceiveMessageAsync();
+```
+
+> **One-liner:** ServiceBusReceiver = pull messages from queue or topic+subscription.
+
+---
+
+### 4. ServiceBusProcessor
+
+- Works like **ServiceBusReceiver** but with **extra built-in features**:
+  - Automatic message pumping (background loop)  
+  - Concurrency handling  
+  - Error handling callbacks  
+
+```csharp
+ServiceBusProcessor processor = client.CreateProcessor("orders-queue");
+
+processor.ProcessMessageAsync += async args =>
+{
+    string body = args.Message.Body.ToString();
+    await args.CompleteMessageAsync(args.Message);
+};
+
+await processor.StartProcessingAsync();
+```
+
+| Receiver | Processor |
+| --- | --- |
+| You call `ReceiveMessageAsync()` manually | Runs continuously in background |
+| More control | Easier for long-running workers |
+
+> **One-liner:** ServiceBusProcessor = automated receiver with concurrency and error hooks.
+
+---
+
+### SDK flow summary
+
+```text
+ServiceBusClient (connection string)
+    ├── CreateSender("queue-or-topic")     → send messages
+    ├── CreateReceiver("queue")            → receive (manual)
+    ├── CreateReceiver("topic", "sub")     → receive from subscription
+    └── CreateProcessor("queue")           → receive (automatic)
+```
+
+---
+
 <a id="example"></a>
 
 ## Example — User Registration & Email
@@ -223,4 +333,5 @@ Registration does **not** wait for email to finish — that is the async benefit
 2. **Namespace** = container; **Queue** = point-to-point; **Topic** = pub/sub with subscriptions  
 3. Workflow: create namespace → create queue → send msg → receive msg  
 4. Connection string: namespace (whole container) vs queue (one queue)  
-5. User Reg → queue → Email Sender; advantages = decoupled + load balancing
+5. SDK: Client → Sender / Receiver / Processor  
+6. User Reg → queue → Email Sender; advantages = decoupled + load balancing
