@@ -14,6 +14,7 @@ Quick revision for **Azure Service Bus** — what it is, concepts, queue workflo
   <li><a href="#queue-workflow">Queue Workflow — Create, Send, Receive</a></li>
   <li><a href="#connection-strings">Connection Strings</a></li>
   <li><a href="#sdk">Azure Service Bus SDK (C#)</a></li>
+  <li><a href="#send-from-vs">Send Message from Visual Studio</a></li>
   <li><a href="#example">Example — User Registration & Email</a></li>
   <li><a href="#advantages">Advantages</a></li>
 </ul>
@@ -276,6 +277,63 @@ ServiceBusClient (connection string)
 
 ---
 
+<a id="send-from-vs"></a>
+
+## Send Message from Visual Studio
+
+Hands-on steps to send a message to an **Azure Service Bus Queue** from a C# app in Visual Studio:
+
+1. Create namespace + queue in Azure Portal (if not done)  
+2. Copy **connection string** into app settings / `local.settings.json`  
+3. Use **`ServiceBusClient`** + **`ServiceBusSender`** in code  
+4. Run from Visual Studio  
+5. **Cross-check in Azure Portal** — open the queue and verify message count / peek message  
+
+### Code (send to queue)
+
+```csharp
+string connectionString = "<your-connection-string>";
+string queueName = "orders-queue";
+
+await using var client = new ServiceBusClient(connectionString);
+ServiceBusSender sender = client.CreateSender(queueName);
+
+var message = new ServiceBusMessage("Test message from Visual Studio");
+await sender.SendMessageAsync(message);
+
+Console.WriteLine("Message sent!");
+```
+
+### What we use
+
+| Class | Role in this demo |
+| --- | --- |
+| **ServiceBusClient** | Connect to Service Bus |
+| **ServiceBusSender** | Send message to the queue |
+
+### Verify in Azure Portal
+
+1. Go to **Azure Portal** → your **Service Bus Namespace**  
+2. Open **Queues** → select your queue  
+3. Check **Active message count** increased  
+4. Use **Service Bus Explorer** (in portal) to **Peek** or **Receive** the message  
+
+```text
+Visual Studio (C#)
+   ServiceBusClient + ServiceBusSender
+        │
+        │  send message
+        ▼
+Azure Service Bus Queue
+        │
+        ▼
+Azure Portal → verify message arrived ✅
+```
+
+> **One-liner:** VS sends with Client + Sender → confirm message in Portal queue explorer.
+
+---
+
 <a id="example"></a>
 
 ## Example — User Registration & Email
@@ -334,4 +392,5 @@ Registration does **not** wait for email to finish — that is the async benefit
 3. Workflow: create namespace → create queue → send msg → receive msg  
 4. Connection string: namespace (whole container) vs queue (one queue)  
 5. SDK: Client → Sender / Receiver / Processor  
-6. User Reg → queue → Email Sender; advantages = decoupled + load balancing
+6. Send from VS: Client + Sender → verify message in Azure Portal queue  
+7. User Reg → queue → Email Sender; advantages = decoupled + load balancing
