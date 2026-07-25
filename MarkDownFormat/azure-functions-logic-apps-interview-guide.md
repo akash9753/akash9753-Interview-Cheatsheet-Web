@@ -28,6 +28,7 @@ Quick revision for **Azure Functions** — basics, Visual Studio workflow, confi
   <li><a href="#service-bus-trigger">Service Bus Trigger Example</a></li>
   <li><a href="#cosmos-db-trigger">Cosmos DB Trigger</a></li>
   <li><a href="#event-hub-trigger">Event Hub Trigger</a></li>
+  <li><a href="#bindings">Bindings in Azure Functions</a></li>
   <li><a href="#bindings-next">Triggers vs Bindings — What Next?</a></li>
 </ul>
 
@@ -617,6 +618,67 @@ public void Run(
 
 ---
 
+<a id="bindings"></a>
+
+## Bindings in Azure Functions
+
+A **binding** is a **declarative** way to connect a function to Azure resources — storage, queues, databases, etc.
+
+Instead of writing manual SDK code to read/write every time, you declare bindings in the function signature.
+
+| Why use bindings? | Manual code works too, but bindings… |
+| --- | --- |
+| Shorter code | Less boilerplate |
+| Cleaner | Crisp, readable function |
+| Less error-prone | Runtime handles connection wiring |
+
+### Input binding vs output binding
+
+| Type | Direction | Meaning |
+| --- | --- | --- |
+| **Input binding** | Resource → Function | Function **reads** data from Azure resource |
+| **Output binding** | Function → Resource | Function **writes** data to Azure resource |
+
+Examples of resources: Blob Storage, Queue, SQL, Cosmos DB, Service Bus, etc.
+
+### Demo — Output binding (HTTP + Blob)
+
+**Scenario:** User posts feedback via HTTP POST API → function saves feedback as a **blob**.
+
+```text
+Client
+  │  HTTP POST (feedback JSON)
+  ▼
+Azure Function
+  ├── HttpTrigger        (input — starts function, receives request)
+  └── Blob output binding (output — writes feedback to blob storage)
+```
+
+```csharp
+[Function("SubmitFeedback")]
+public static async Task<IActionResult> Run(
+    [HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest req,
+    [Blob("feedback/{rand-guid}.json", FileAccess.Write, Connection = "AzureWebJobsStorage")]
+    Stream outputBlob)
+{
+    string body = await new StreamReader(req.Body).ReadToEndAsync();
+    await using var writer = new StreamWriter(outputBlob);
+    await writer.WriteAsync(body);
+    return new OkResult();
+}
+```
+
+**Flow:**
+1. `[HttpTrigger]` — API receives POST feedback  
+2. Function reads feedback body  
+3. `[Blob]` output binding — stores content in blob storage  
+
+> **One-liner:** Bindings = declarative read/write to Azure resources; input = read in, output = write out.
+
+**When bindings are not enough:** Sometimes you need **explicit manual code** (custom logic, complex SDK calls, fine-grained control) — bindings cover common cases; manual code for advanced scenarios.
+
+---
+
 <a id="bindings-next"></a>
 
 ## Triggers vs Bindings — What Next?
@@ -636,12 +698,13 @@ You can learn these triggers separately — they are **optional** for understand
 
 | Concept | Role |
 | --- | --- |
-| **Trigger** | Starts the function (one per function) |
-| **Binding** | Extra input/output connection (read blob, write queue, etc.) |
+| **Trigger** | Starts the function (one per function) — also an input binding |
+| **Input binding** | Extra data **into** the function (read from resource) |
+| **Output binding** | Data **out** of the function (write to resource) |
 
 If you skip trigger videos, you can jump to **Bindings** — they are a separate topic.
 
-> **One-liner:** Trigger starts the function; bindings are optional extra I/O — learning all triggers is not mandatory before bindings.
+> **One-liner:** Trigger starts the function; bindings are optional extra I/O — input reads, output writes.
 
 ---
 
@@ -660,4 +723,5 @@ If you skip trigger videos, you can jump to **Bindings** — they are a separate
 11. Trigger = when function runs; Timer uses 6-field CRON; Service Bus trigger = queue message  
 12. Order app → Service Bus queue → Dispatch Function is classic async pattern  
 13. Cosmos DB Trigger = new user saved → function sends welcome email from document fields  
-14. Event Hub Trigger = function runs when message/event arrives in Event Hub stream
+14. Event Hub Trigger = function runs when message/event arrives in Event Hub stream  
+15. Bindings = declarative I/O; input = read, output = write; HTTP POST → blob example
