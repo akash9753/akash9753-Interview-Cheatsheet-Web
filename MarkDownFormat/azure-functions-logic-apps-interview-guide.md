@@ -27,6 +27,7 @@ Quick revision for **Azure Functions** — basics, Visual Studio workflow, confi
   <li><a href="#cron">CRON Expression (Timer Trigger)</a></li>
   <li><a href="#service-bus-trigger">Service Bus Trigger Example</a></li>
   <li><a href="#cosmos-db-trigger">Cosmos DB Trigger</a></li>
+  <li><a href="#event-hub-trigger">Event Hub Trigger</a></li>
   <li><a href="#bindings-next">Triggers vs Bindings — What Next?</a></li>
 </ul>
 
@@ -570,6 +571,52 @@ public void Run(
 
 ---
 
+<a id="event-hub-trigger"></a>
+
+## Event Hub Trigger
+
+**Azure Function with Event Hub Trigger** runs when a **message/event** is available in **Azure Event Hub**.
+
+Event Hub is used for **high-volume streaming data** — telemetry, logs, clickstream, IoT events.
+
+```text
+Producer (app / device / service)
+        │
+        │  sends events
+        ▼
+Azure Event Hub
+        │
+        │  new event available
+        ▼
+Azure Function (EventHubTrigger)
+        └── processes the event
+```
+
+```csharp
+[Function("ProcessEventHubMessage")]
+public void Run(
+    [EventHubTrigger("my-event-hub", Connection = "EventHubConnection")]
+    EventData[] events,
+    FunctionContext context)
+{
+    foreach (var eventData in events)
+    {
+        var body = eventData.Body.ToString();
+        // process telemetry / log / event
+    }
+}
+```
+
+| Use case | Why Event Hub |
+| --- | --- |
+| Application telemetry | High throughput event stream |
+| IoT sensor data | Many devices sending events |
+| Log ingestion | Continuous stream of log events |
+
+> **One-liner:** Event Hub Trigger = function runs automatically when a message/event arrives in Event Hub.
+
+---
+
 <a id="bindings-next"></a>
 
 ## Triggers vs Bindings — What Next?
@@ -612,4 +659,5 @@ If you skip trigger videos, you can jump to **Bindings** — they are a separate
 10. Storage Explorer = GUI for cloud + Azurite blobs/queues/tables  
 11. Trigger = when function runs; Timer uses 6-field CRON; Service Bus trigger = queue message  
 12. Order app → Service Bus queue → Dispatch Function is classic async pattern  
-13. Cosmos DB Trigger = new user saved → function sends welcome email from document fields
+13. Cosmos DB Trigger = new user saved → function sends welcome email from document fields  
+14. Event Hub Trigger = function runs when message/event arrives in Event Hub stream
