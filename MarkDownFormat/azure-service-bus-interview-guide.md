@@ -15,6 +15,7 @@ Quick revision for **Azure Service Bus** — what it is, concepts, queue workflo
   <li><a href="#connection-strings">Connection Strings</a></li>
   <li><a href="#sdk">Azure Service Bus SDK (C#)</a></li>
   <li><a href="#send-from-vs">Send Message from Visual Studio</a></li>
+  <li><a href="#send-custom-object">Send Custom C# Object (Serialize)</a></li>
   <li><a href="#receive-from-vs">Receive Message from Visual Studio</a></li>
   <li><a href="#example">Example — User Registration & Email</a></li>
   <li><a href="#advantages">Advantages</a></li>
@@ -335,6 +336,62 @@ Azure Portal → verify message arrived ✅
 
 ---
 
+<a id="send-custom-object"></a>
+
+## Send Custom C# Object (Serialize)
+
+Service Bus messages carry **bytes/text** — not raw C# objects. So you **serialize** your object first, then send.
+
+### Steps
+
+1. Create a custom C# class (e.g. `Order`, `User`)  
+2. **Serialize** object to JSON (or XML) string  
+3. Send serialized string as `ServiceBusMessage` body  
+4. **Cross-check in Azure Portal** — peek message and verify object data  
+
+```csharp
+public class Order
+{
+    public int OrderId { get; set; }
+    public string CustomerName { get; set; }
+    public decimal Amount { get; set; }
+}
+
+var order = new Order
+{
+    OrderId = 101,
+    CustomerName = "Akash",
+    Amount = 1500.50m
+};
+
+// Step 1: serialize
+string json = JsonSerializer.Serialize(order);
+
+// Step 2: send
+await using var client = new ServiceBusClient(connectionString);
+ServiceBusSender sender = client.CreateSender("orders-queue");
+
+var message = new ServiceBusMessage(json)
+{
+    ContentType = "application/json"
+};
+await sender.SendMessageAsync(message);
+```
+
+### Verify in Azure Portal
+
+1. Open queue in **Service Bus Explorer**  
+2. **Peek** message  
+3. Confirm JSON body contains your object fields (`OrderId`, `CustomerName`, `Amount`)  
+
+```text
+C# Object  →  Serialize (JSON)  →  ServiceBusMessage  →  Queue  →  Portal peek ✅
+```
+
+> **One-liner:** Serialize object to JSON first, then send — verify object data in Portal peek.
+
+---
+
 <a id="receive-from-vs"></a>
 
 ## Receive Message from Visual Studio
@@ -446,5 +503,6 @@ Registration does **not** wait for email to finish — that is the async benefit
 4. Connection string: namespace (whole container) vs queue (one queue)  
 5. SDK: Client → Sender / Receiver / Processor  
 6. Send from VS: Client + Sender → verify message in Azure Portal queue  
-7. Receive from VS: Client + Receiver → CompleteMessageAsync  
-8. User Reg → queue → Email Sender; advantages = decoupled + load balancing
+7. Custom object: serialize to JSON → send → peek in Portal  
+8. Receive from VS: Client + Receiver → CompleteMessageAsync  
+9. User Reg → queue → Email Sender; advantages = decoupled + load balancing
