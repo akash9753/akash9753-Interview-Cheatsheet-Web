@@ -218,7 +218,7 @@ export const courses = [
     num: '23',
     category: 'cloud-devops',
     cardTitle: 'Azure Functions',
-    cardDesc: 'Quick revision — Azure Function vs Function App and advantages of serverless Functions.',
+    cardDesc: 'Revision — create/deploy, HTTP trigger, local.settings.json, hosting plans, portal test, App Insights.',
     brand: 'Azure Functions Revision Notes',
   },
 ];
