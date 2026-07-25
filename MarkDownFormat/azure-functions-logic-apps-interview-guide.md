@@ -29,6 +29,8 @@ Quick revision for **Azure Functions** — basics, Visual Studio workflow, confi
   <li><a href="#cosmos-db-trigger">Cosmos DB Trigger</a></li>
   <li><a href="#event-hub-trigger">Event Hub Trigger</a></li>
   <li><a href="#bindings">Bindings in Azure Functions</a></li>
+  <li><a href="#input-binding-example">Input Binding Example</a></li>
+  <li><a href="#no-binding-example">When We Cannot Use Binding</a></li>
   <li><a href="#bindings-next">Triggers vs Bindings — What Next?</a></li>
 </ul>
 
@@ -675,7 +677,107 @@ public static async Task<IActionResult> Run(
 
 > **One-liner:** Bindings = declarative read/write to Azure resources; input = read in, output = write out.
 
-**When bindings are not enough:** Sometimes you need **explicit manual code** (custom logic, complex SDK calls, fine-grained control) — bindings cover common cases; manual code for advanced scenarios.
+**When bindings are not enough:** Sometimes you need **explicit manual code** — see examples below.
+
+---
+
+<a id="input-binding-example"></a>
+
+## Input Binding Example
+
+**Scenario:** HTTP GET API with `{userid}` in URL → function reads user from **Cosmos DB** and returns it.
+
+```text
+Client  GET /api/user/{userid}
+              │
+              ▼
+Azure Function
+  ├── HttpTrigger      (starts function — userid from route)
+  └── CosmosDB input   (reads user document by id)
+```
+
+```csharp
+[Function("GetUser")]
+public static IActionResult Run(
+    [HttpTrigger(AuthorizationLevel.Function, "get", Route = "user/{userid}")]
+    HttpRequest req,
+    string userid,
+    [CosmosDB(
+        databaseName: "UserDb",
+        containerName: "Users",
+        Id = "{userid}",
+        PartitionKey = "{userid}",
+        Connection = "CosmosDbConnection")]
+    User user)
+{
+    if (user == null)
+        return new NotFoundResult();
+
+    return new OkObjectResult(user);
+}
+```
+
+| Step | Binding |
+| --- | --- |
+| 1 | `[HttpTrigger]` — GET with `{userid}` in route |
+| 2 | `[CosmosDB]` input binding — loads user document automatically |
+
+**Manual alternative:** You can write explicit Cosmos SDK code to connect, query by id, and return JSON — bindings just make code **crisp and short**.
+
+> **One-liner:** Input binding = data flows in from Cosmos/queue/blob without manual SDK boilerplate.
+
+---
+
+<a id="no-binding-example"></a>
+
+## When We Cannot Use Binding
+
+**Problem with output binding only:**
+
+Same feedback POST scenario:
+- `[HttpTrigger]` receives feedback  
+- `[Blob]` output binding saves to storage  
+
+**Issue:** Caller only gets **`200 OK`** — not a custom response body like:
+
+```json
+{ "message": "Feedback saved successfully", "id": "abc-123" }
+```
+
+**Solution:** Write **explicit code** when you need **both**:
+1. Save to blob (or any storage)  
+2. Return a **custom HTTP response** to the caller  
+
+```csharp
+[Function("SubmitFeedbackExplicit")]
+public static async Task<IActionResult> Run(
+    [HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest req,
+    BlobServiceClient blobClient)
+{
+    string body = await new StreamReader(req.Body).ReadToEndAsync();
+    var id = Guid.NewGuid().ToString();
+
+    // explicit blob write
+    var container = blobClient.GetBlobContainerClient("feedback");
+    await container.CreateIfNotExistsAsync();
+    var blob = container.GetBlobClient($"{id}.json");
+    await blob.UploadAsync(BinaryData.FromString(body));
+
+    // custom response
+    return new OkObjectResult(new
+    {
+        message = "Feedback saved successfully",
+        id = id
+    });
+}
+```
+
+| Use binding | Use explicit code |
+| --- | --- |
+| Simple save + 200 OK is enough | Need custom response body |
+| Standard I/O, less code | Full control over HTTP result + side effects |
+
+> **One-liner:** Output binding often returns only 200 OK — use explicit SDK code when caller needs a custom response plus storage write.
 
 ---
 
@@ -724,4 +826,5 @@ If you skip trigger videos, you can jump to **Bindings** — they are a separate
 12. Order app → Service Bus queue → Dispatch Function is classic async pattern  
 13. Cosmos DB Trigger = new user saved → function sends welcome email from document fields  
 14. Event Hub Trigger = function runs when message/event arrives in Event Hub stream  
-15. Bindings = declarative I/O; input = read, output = write; HTTP POST → blob example
+15. Bindings = declarative I/O; input = read, output = write; HTTP POST → blob example  
+16. Input binding demo: GET `{userid}` → Cosmos DB user; explicit code when custom HTTP response needed
