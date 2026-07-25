@@ -20,6 +20,9 @@ Quick revision for **Azure Functions** — basics, Visual Studio workflow, confi
   <li><a href="#hosting-pricing">Hosting Plan Pricing</a></li>
   <li><a href="#portal-test">Test in Azure Portal</a></li>
   <li><a href="#app-insights">Application Insights</a></li>
+  <li><a href="#azurite">What is Azurite?</a></li>
+  <li><a href="#install-azurite">How to Install Azurite</a></li>
+  <li><a href="#storage-explorer">Azure Storage Explorer</a></li>
 </ul>
 
 ---
@@ -303,6 +306,99 @@ It stores:
 
 ---
 
+<a id="azurite"></a>
+
+## What is Azurite?
+
+**Azurite** is a **local emulator** that makes your PC act like an **Azure Storage Account** for development.
+
+It emulates:
+- Blob storage  
+- Queue storage  
+- Table storage  
+
+### When do you need Azurite?
+
+Install Azurite if:
+- You want local development without connecting to real Azure Storage  
+- You run **Azure Functions in Visual Studio** with `UseDevelopmentStorage=true`  
+- You get errors like **"unable to connect to storage account"**  
+
+Azure Functions runtime **requires** a storage account connection (`AzureWebJobsStorage`). Locally, Azurite provides that storage.
+
+> **One-liner:** Azurite = local fake Azure Storage for dev — required when Functions can't reach cloud storage.
+
+---
+
+<a id="install-azurite"></a>
+
+## How to Install Azurite
+
+### Prerequisites
+
+1. Install **Node.js** from [https://nodejs.org](https://nodejs.org)  
+2. Open **Windows PowerShell (Admin)**  
+
+### Step 1 — Check Node.js
+
+```powershell
+node -v
+npm -v
+```
+
+If not installed, download and install Node.js first.
+
+### Step 2 — Install and run Azurite
+
+```powershell
+npm install -g azurite
+azurite --version
+azurite
+```
+
+| Command | Purpose |
+| --- | --- |
+| `npm install -g azurite` | Install Azurite globally |
+| `azurite --version` | Verify installation |
+| `azurite` | Start local storage emulator |
+
+Keep Azurite running while developing Functions locally.
+
+In `local.settings.json`:
+
+```json
+"AzureWebJobsStorage": "UseDevelopmentStorage=true"
+```
+
+> **One-liner:** Install Node.js → `npm install -g azurite` → run `azurite` → use `UseDevelopmentStorage=true`.
+
+---
+
+<a id="storage-explorer"></a>
+
+## Azure Storage Explorer
+
+**Azure Storage Explorer** is a **desktop GUI app** to manage Azure storage resources — **blobs**, **queues**, **tables**, and **file shares**.
+
+### What you can do
+
+| Feature | Use |
+| --- | --- |
+| Connect to cloud storage | View/manage real Azure Storage accounts |
+| Connect to local storage | View Azurite emulator data on your PC |
+| Upload/download blobs | Test file triggers and blob storage |
+| View queues | Inspect messages for queue-triggered functions |
+
+### Install
+
+1. Download from [Azure Storage Explorer](https://azure.microsoft.com/en-us/products/storage/storage-explorer)  
+2. Double-click installer and complete setup  
+3. Connect to **Local & Attached** → **Emulator** (Azurite) or your Azure subscription  
+
+> **One-liner:** Storage Explorer = GUI to browse cloud or local (Azurite) storage — blobs, queues, tables.
+
+---
+
 ## 30-second revision
 
 1. Function = trigger code; Function App = host  
@@ -312,4 +408,6 @@ It stores:
 5. HTTP trigger = API; keys needed for Function URL testing  
 6. Consumption/Flex = dev (cheap); Premium/App Service = prod  
 7. VNET Integration = reach private resources; Private Endpoint = private access to function  
-8. App Insights = logs, exceptions, slow function detection
+8. App Insights = logs, exceptions, slow function detection  
+9. Azurite = local storage emulator; install via npm when local Functions fail on storage  
+10. Storage Explorer = GUI for cloud + Azurite blobs/queues/tables
