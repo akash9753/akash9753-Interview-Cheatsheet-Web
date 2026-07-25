@@ -209,7 +209,7 @@ export const courses = [
     num: '22',
     category: 'cloud-devops',
     cardTitle: 'Azure Service Bus',
-    cardDesc: 'Quick revision — message broker, User Reg → Email example, decoupled services and load balancing.',
+    cardDesc: 'Revision — namespace, queue, topic/subscription, send/receive workflow, connection strings, advantages.',
     brand: 'Azure Service Bus Revision Notes',
   },
   {
