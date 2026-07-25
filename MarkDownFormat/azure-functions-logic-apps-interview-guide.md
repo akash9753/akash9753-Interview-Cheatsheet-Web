@@ -16,6 +16,7 @@ Quick revision for **Azure Functions** — basics, Visual Studio workflow, confi
   <li><a href="#connection-strings">Connection Strings</a></li>
   <li><a href="#portal-create">Create Function App from Portal</a></li>
   <li><a href="#networking">Private Endpoint vs VNET Integration</a></li>
+  <li><a href="#private-endpoint-function">Private Endpoint in Azure Function</a></li>
   <li><a href="#hosting-plans">Hosting Plans</a></li>
   <li><a href="#hosting-pricing">Hosting Plan Pricing</a></li>
   <li><a href="#portal-test">Test in Azure Portal</a></li>
@@ -210,6 +211,47 @@ Private Endpoint:     Client in VNET ──calls──► Function (private IP)
 ```
 
 > **One-liner:** VNET Integration = function reaches private network; Private Endpoint = function is reached privately.
+
+---
+
+<a id="private-endpoint-function"></a>
+
+## Private Endpoint in Azure Function
+
+By default, an Azure Function App is reachable from the **public internet** (HTTP URL).
+
+**Problem:** What if you want the function accessible **only from a VNET** — not from the public internet?
+
+**Solution:** **Private Endpoint**
+
+### What Private Endpoint does
+
+```text
+Before (public):
+  Internet ──► Function App (public URL)
+
+After (private endpoint):
+  Internet ──✗──► Function App
+  VM inside VNET ──► Function App (private IP in VNET)
+```
+
+Private Endpoint gives your Function App a **private IP address** inside your Virtual Network. Only resources in (or connected to) that VNET can call it.
+
+### Steps to understand / verify
+
+1. **Learn the concept** — Private Endpoint blocks public access, allows VNET-only access  
+2. **Create Private Endpoint** for the Function App linked to your VNET  
+3. **Verify public blocked** — try calling function URL from internet → should fail  
+4. **Verify VNET works** — call function from a **VM inside the same VNET** → should succeed  
+
+| Check | Expected result |
+| --- | --- |
+| Call from public internet | ❌ Not reachable |
+| Call from VM in linked VNET | ✅ Works |
+
+**Note:** Private Endpoint usually requires **Premium** or suitable hosting plan with VNET support — not typical on basic Consumption without proper networking setup.
+
+> **One-liner:** Private Endpoint = Function App reachable only inside VNET, not from public internet.
 
 ---
 
@@ -827,4 +869,5 @@ If you skip trigger videos, you can jump to **Bindings** — they are a separate
 13. Cosmos DB Trigger = new user saved → function sends welcome email from document fields  
 14. Event Hub Trigger = function runs when message/event arrives in Event Hub stream  
 15. Bindings = declarative I/O; input = read, output = write; HTTP POST → blob example  
-16. Input binding demo: GET `{userid}` → Cosmos DB user; explicit code when custom HTTP response needed
+16. Input binding demo: GET `{userid}` → Cosmos DB user; explicit code when custom HTTP response needed  
+17. Private Endpoint = Function App private IP in VNET; block public, allow VM-in-VNET calls only
