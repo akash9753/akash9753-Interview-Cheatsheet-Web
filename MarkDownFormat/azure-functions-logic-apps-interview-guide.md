@@ -26,6 +26,7 @@ Quick revision for **Azure Functions** — basics, Visual Studio workflow, confi
   <li><a href="#triggers">Triggers in Azure Functions</a></li>
   <li><a href="#cron">CRON Expression (Timer Trigger)</a></li>
   <li><a href="#service-bus-trigger">Service Bus Trigger Example</a></li>
+  <li><a href="#cosmos-db-trigger">Cosmos DB Trigger</a></li>
   <li><a href="#bindings-next">Triggers vs Bindings — What Next?</a></li>
 </ul>
 
@@ -514,6 +515,61 @@ public void Run(
 
 ---
 
+<a id="cosmos-db-trigger"></a>
+
+## Cosmos DB Trigger
+
+**Azure Cosmos DB Trigger** runs a function when documents are **created or updated** in a Cosmos DB container.
+
+### Example scenario — user registration
+
+```text
+User registers
+   │
+   ▼
+Save user in Cosmos DB
+   │
+   ▼
+Cosmos DB Trigger fires (new record added)
+   │
+   ▼
+Email Service (Azure Function)
+   └── reads UserName, UserEmail, Gender, City, etc.
+   └── sends welcome email
+```
+
+| Step | What happens |
+| --- | --- |
+| 1 | User details saved to Cosmos DB |
+| 2 | Cosmos DB Trigger detects new document |
+| 3 | Function reads fields from the new record |
+| 4 | Function sends welcome email automatically |
+
+```csharp
+[Function("SendWelcomeEmail")]
+public void Run(
+    [CosmosDBTrigger(
+        databaseName: "UserDb",
+        containerName: "Users",
+        Connection = "CosmosDbConnection",
+        LeaseContainerName = "leases",
+        CreateLeaseContainerIfNotExists = true)]
+    IReadOnlyList<User> users)
+{
+    foreach (var user in users)
+    {
+        // use user.UserName, user.UserEmail, user.Gender, user.City...
+        // send welcome email
+    }
+}
+```
+
+**Note:** Cosmos DB trigger uses a **lease container** to track which changes were already processed.
+
+> **One-liner:** Cosmos DB Trigger = auto-run function when a new/updated document is saved — e.g. send welcome email after user registration.
+
+---
+
 <a id="bindings-next"></a>
 
 ## Triggers vs Bindings — What Next?
@@ -555,4 +611,5 @@ If you skip trigger videos, you can jump to **Bindings** — they are a separate
 9. Azurite = local storage emulator; install via npm when local Functions fail on storage  
 10. Storage Explorer = GUI for cloud + Azurite blobs/queues/tables  
 11. Trigger = when function runs; Timer uses 6-field CRON; Service Bus trigger = queue message  
-12. Order app → Service Bus queue → Dispatch Function is classic async pattern
+12. Order app → Service Bus queue → Dispatch Function is classic async pattern  
+13. Cosmos DB Trigger = new user saved → function sends welcome email from document fields
