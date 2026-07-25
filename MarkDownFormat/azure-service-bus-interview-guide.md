@@ -15,6 +15,7 @@ Quick revision for **Azure Service Bus** — what it is, concepts, queue workflo
   <li><a href="#connection-strings">Connection Strings</a></li>
   <li><a href="#sdk">Azure Service Bus SDK (C#)</a></li>
   <li><a href="#send-from-vs">Send Message from Visual Studio</a></li>
+  <li><a href="#receive-from-vs">Receive Message from Visual Studio</a></li>
   <li><a href="#example">Example — User Registration & Email</a></li>
   <li><a href="#advantages">Advantages</a></li>
 </ul>
@@ -334,6 +335,58 @@ Azure Portal → verify message arrived ✅
 
 ---
 
+<a id="receive-from-vs"></a>
+
+## Receive Message from Visual Studio
+
+Receive a message from an **Azure Service Bus Queue** in a C# app in Visual Studio:
+
+1. Ensure message exists in queue (send first or use Portal)  
+2. Use **`ServiceBusClient`** + **`ServiceBusReceiver`**  
+3. Run receiver app from Visual Studio  
+4. Process message and **Complete** it (Peek-Lock mode)  
+
+### Code (receive from queue)
+
+```csharp
+string connectionString = "<your-connection-string>";
+string queueName = "orders-queue";
+
+await using var client = new ServiceBusClient(connectionString);
+ServiceBusReceiver receiver = client.CreateReceiver(queueName);
+
+ServiceBusReceivedMessage received = await receiver.ReceiveMessageAsync();
+if (received != null)
+{
+    string body = received.Body.ToString();
+    Console.WriteLine($"Received: {body}");
+
+    await receiver.CompleteMessageAsync(received); // remove from queue
+}
+```
+
+### What we use
+
+| Class | Role in this demo |
+| --- | --- |
+| **ServiceBusClient** | Connect to Service Bus |
+| **ServiceBusReceiver** | Receive message from the queue |
+
+```text
+Azure Service Bus Queue
+        │
+        │  receive msg
+        ▼
+Visual Studio (C#)
+   ServiceBusClient + ServiceBusReceiver
+        │
+        └── CompleteMessageAsync → message removed from queue
+```
+
+> **One-liner:** VS receives with Client + Receiver → CompleteMessage removes it from queue.
+
+---
+
 <a id="example"></a>
 
 ## Example — User Registration & Email
@@ -393,4 +446,5 @@ Registration does **not** wait for email to finish — that is the async benefit
 4. Connection string: namespace (whole container) vs queue (one queue)  
 5. SDK: Client → Sender / Receiver / Processor  
 6. Send from VS: Client + Sender → verify message in Azure Portal queue  
-7. User Reg → queue → Email Sender; advantages = decoupled + load balancing
+7. Receive from VS: Client + Receiver → CompleteMessageAsync  
+8. User Reg → queue → Email Sender; advantages = decoupled + load balancing
