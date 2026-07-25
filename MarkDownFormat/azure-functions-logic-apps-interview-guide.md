@@ -17,6 +17,7 @@ Quick revision for **Azure Functions** — basics, Visual Studio workflow, confi
   <li><a href="#portal-create">Create Function App from Portal</a></li>
   <li><a href="#networking">Private Endpoint vs VNET Integration</a></li>
   <li><a href="#private-endpoint-function">Private Endpoint in Azure Function</a></li>
+  <li><a href="#networking-architecture">Function App + VNET Architecture</a></li>
   <li><a href="#hosting-plans">Hosting Plans</a></li>
   <li><a href="#hosting-pricing">Hosting Plan Pricing</a></li>
   <li><a href="#portal-test">Test in Azure Portal</a></li>
@@ -252,6 +253,58 @@ Private Endpoint gives your Function App a **private IP address** inside your Vi
 **Note:** Private Endpoint usually requires **Premium** or suitable hosting plan with VNET support — not typical on basic Consumption without proper networking setup.
 
 > **One-liner:** Private Endpoint = Function App reachable only inside VNET, not from public internet.
+
+---
+
+<a id="networking-architecture"></a>
+
+## Function App + VNET Architecture
+
+High-level picture of how **Function App**, **VNET Integration**, and **Private Endpoint** fit together:
+
+```text
+                    ┌─────────────────────────────┐
+                    │  Function App ("Fun App")   │
+                    │  Public IP (default)        │
+                    │  ├── GetProduct             │
+                    │  └── GetStock               │
+                    └──────────┬──────────────────┘
+                               │
+              VNET Integration │  "extended" into VNET
+              (outbound)       │
+                               ▼
+┌──────────────────────────────────────────────────────┐
+│                      VNET                            │
+│                                                      │
+│   ┌─────────┐         ┌──────────────────┐          │
+│   │   VM    │ ──✅──► │ Private Endpoint │          │
+│   │ private │  calls  │ (Function App    │          │
+│   │   IP    │         │  private IP)     │          │
+│   └─────────┘         └──────────────────┘          │
+│                                                      │
+└──────────────────────────────────────────────────────┘
+
+        Public Internet ──✗──► Function (when PE enabled)
+```
+
+### Parts explained
+
+| Component | Role |
+| --- | --- |
+| **Function App** | Hosts functions like `GetProduct`, `GetStock`; has public IP by default |
+| **VNET Integration ("extended")** | Function App can **call into** VNET — reach VM, private SQL, internal APIs |
+| **VM (private IP)** | Resource inside VNET — not on public internet |
+| **Private Endpoint** | Function App gets **private IP inside VNET** — VM calls functions privately |
+| **Public Internet** | Blocked from calling function when private access-only is configured |
+
+### Two directions (remember both)
+
+| Direction | Mechanism | Example |
+| --- | --- | --- |
+| **Function → VNET** | VNET Integration | Function calls private API on VM |
+| **VNET → Function** | Private Endpoint | VM calls `GetProduct` without public internet |
+
+> **One-liner:** VNET Integration = function reaches VM; Private Endpoint = VM reaches function — both keep traffic private.
 
 ---
 
@@ -870,4 +923,5 @@ If you skip trigger videos, you can jump to **Bindings** — they are a separate
 14. Event Hub Trigger = function runs when message/event arrives in Event Hub stream  
 15. Bindings = declarative I/O; input = read, output = write; HTTP POST → blob example  
 16. Input binding demo: GET `{userid}` → Cosmos DB user; explicit code when custom HTTP response needed  
-17. Private Endpoint = Function App private IP in VNET; block public, allow VM-in-VNET calls only
+17. Private Endpoint = Function App private IP in VNET; block public, allow VM-in-VNET calls only  
+18. Architecture: Fun App extended into VNET; VM calls functions via Private Endpoint; public blocked
