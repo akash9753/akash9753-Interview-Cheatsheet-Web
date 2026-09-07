@@ -227,7 +227,7 @@ export const courses = [
     num: '24',
     category: 'cloud-devops',
     cardTitle: 'Azure by Harshit',
-    cardDesc: 'Azure notes from Harshit — 18 topic sections for interview preparation.',
+    cardDesc: 'Azure notes from Harshit — 18 days for interview preparation.',
     brand: 'Azure by Harshit',
   },
 ];
