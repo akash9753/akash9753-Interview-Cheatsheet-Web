@@ -221,6 +221,15 @@ export const courses = [
     cardDesc: 'Revision — Functions basics, triggers, bindings, VNET, Durable Functions orchestrator/activity/state.',
     brand: 'Azure Functions Revision Notes',
   },
+  {
+    slug: 'azure-by-harshit',
+    mdFile: 'azure-by-harshit.md',
+    num: '24',
+    category: 'cloud-devops',
+    cardTitle: 'Azure by Harshit',
+    cardDesc: 'Azure notes from Harshit — 18 topic sections for interview preparation.',
+    brand: 'Azure by Harshit',
+  },
 ];
 
 const markdownModules = import.meta.glob('../../MarkDownFormat/*.md', {
